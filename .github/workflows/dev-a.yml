@@ -1,0 +1,47 @@
+name: 🚀 Deploy Team A to Dev
+
+# 1. หุ่นยนต์จะทำงานตอนไหน?
+on:
+  push:
+    branches:
+      - dev # ทำงานเมื่อมีการผลักโค้ดเข้า branch ชื่อ dev เท่านั้น
+    paths:
+      - 'backend-a/**' # ทำงานเมื่อโฟลเดอร์นี้มีการเปลี่ยนแปลง
+
+# 2. หุ่นยนต์ต้องทำอะไรบ้าง? (แบ่งเป็นงานๆ - Jobs)
+jobs:
+  
+  # งานที่ 1: ตรวจสอบว่าโค้ดพังไหม (Continuous Integration)
+  test-code:
+    runs-on: ubuntu-latest # ยืมคอมพิวเตอร์ Ubuntu ของ GitHub มาใช้รัน
+    steps:
+      - name: 📥 โหลดโค้ดลงมาในเครื่อง
+        uses: actions/checkout@v4
+
+      - name: 🐍 ติดตั้ง Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 ติดตั้ง Dependencies
+        working-directory: ./backend-a
+        run: pip install -r requirements.txt
+
+      - name: ✅ ตรวจสอบ (จำลองว่าเทสต์ผ่าน)
+        run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
+
+  # งานที่ 2: สร้าง Docker Image (Continuous Deployment)
+  build-and-push:
+    needs: test-code # ★ บังคับว่า งานที่ 1 ต้องผ่านก่อน ถึงจะทำตรงนี้ได้
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 โหลดโค้ดลงมา
+        uses: actions/checkout@v4
+
+      # ขั้นตอนนี้คือการเอา Dockerfile ที่เราเขียนมา Build เป็น Image
+      - name: 🐳 สร้าง Docker Image
+        working-directory: ./backend-a
+        run: |
+          docker build -t my-academic-api:dev .
+          echo "สร้าง Docker Image สำเร็จแล้ว!"
+          # (ในของจริง เราจะต้องเพิ่มคำสั่ง Push ส่ง Image นี้ไปเก็บไว้ที่ Server ครับ)
