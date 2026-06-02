@@ -1,16 +1,16 @@
-name: 🚀 Deploy Team A to Dev
+name: 🚀 Deploy Team A to Production
 
 env:
   PROJECT_ID: 'schooldark'
-  
+
   REGION: 'us-central1'
   REPO_NAME: 'team-a'       # Artifact Registry Repo
-  SERVICE_NAME: 'a-service-dev' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
+  SERVICE_NAME: 'a-service-prod' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
 
 on:
   push:
     branches:
-      - dev
+      - prod
     paths:
       - 'backend-a/**'
 
@@ -33,7 +33,7 @@ jobs:
   build-and-deploy:
     needs: test-code
     runs-on: ubuntu-latest
-    environment: dev
+    environment: prod
     
     steps:
       - uses: actions/checkout@v4
