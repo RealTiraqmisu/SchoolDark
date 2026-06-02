@@ -5,7 +5,7 @@ env:
   
   REGION: 'us-central1'
   REPO_NAME: 'dev-a'       # Artifact Registry Repo
-  SERVICE_NAME: 'academic-service' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
+  SERVICE_NAME: 'a-service-dev' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
 
 on:
   push:
