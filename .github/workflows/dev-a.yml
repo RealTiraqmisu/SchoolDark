@@ -23,13 +23,13 @@ jobs:
   test-code:
     runs-on: ubuntu-latest
     steps:
-        uses: actions/checkout@v4
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-        working-directory: ./backend-a
-        run: pip install -r requirements.txt
-        run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
+      -  working-directory: ./backend-a
+      -  run: pip install -r requirements.txt
+      -  run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
 
   build-and-deploy:
     needs: test-code
