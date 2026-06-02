@@ -1,0 +1,70 @@
+name: 🚀 Deploy Team A to Production
+
+env:
+  PROJECT_ID: 'schooldark'
+
+  REGION: 'us-central1'
+  REPO_NAME: 'team-a'       # Artifact Registry Repo
+  SERVICE_NAME: 'a-service-prod' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
+
+on:
+  push:
+    branches:
+      - prod
+    paths:
+      - 'backend-a/**'
+
+permissions:
+  contents: read
+
+jobs:
+  
+  test-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - working-directory: ./backend-a
+        run: pip install -r requirements.txt
+      - run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
+
+  build-and-deploy:
+    needs: test-code
+    runs-on: ubuntu-latest
+    environment: prod
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🔑 ล็อกอินเข้า GCP ด้วย JSON Key
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: 🐳 ตั้งค่าให้ Docker รู้จัก Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: 📦 Build & Push เข้าโกดัง GCP
+        working-directory: ./backend-a
+        run: |
+          # ตั้งชื่อ Image ให้มีรหัส Commit ต่อท้าย จะได้รู้ว่า Deploy จากโค้ดชุดไหน
+          IMAGE_PATH="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
+          
+          docker build -t $IMAGE_PATH .
+          docker push $IMAGE_PATH
+
+      - name: 🚀 Deploy ขึ้น Cloud Run (🔒 ล็อคสเปคขั้นต่ำ กันเงินรั่ว!)
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --max-instances=1 --service-account=gihub-deployer@schooldark.iam.gserviceaccount.com --port=8000'
+
+      - name: 🎉 สรุปผลการ Deploy
+        run: |
+          echo "✅ Deploy สำเร็จเรียบร้อย!"
+          echo "🌐 ${{ steps.deploy.outputs.url }}"
