@@ -7,38 +7,28 @@ env:
   REPO_NAME: 'dev-a'       # Artifact Registry Repo
   SERVICE_NAME: 'academic-service' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
 
-# 1. หุ่นยนต์จะทำงานตอนไหน?
 on:
   push:
     branches:
-      - dev # ทำงานเมื่อมีการผลักโค้ดเข้า branch ชื่อ dev เท่านั้น
+      - dev
     paths:
-      - 'backend-a/**' # ทำงานเมื่อโฟลเดอร์นี้มีการเปลี่ยนแปลง
+      - 'backend-a/**'
 
 permissions:
   packages: write
   contents: read
 
-# 2. หุ่นยนต์ต้องทำอะไรบ้าง? (แบ่งเป็นงานๆ - Jobs)
 jobs:
   
-  # งานที่ 1: ตรวจสอบว่าโค้ดพังไหม (Continuous Integration)
   test-code:
-    runs-on: ubuntu-latest # ยืมคอมพิวเตอร์ Ubuntu ของ GitHub มาใช้รัน
+    runs-on: ubuntu-latest
     steps:
-      - name: 📥 โหลดโค้ดลงมาในเครื่อง
         uses: actions/checkout@v4
-
-      - name: 🐍 ติดตั้ง Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
-      - name: 📦 ติดตั้ง Dependencies
         working-directory: ./backend-a
         run: pip install -r requirements.txt
-
-      - name: ✅ ตรวจสอบ (จำลองว่าเทสต์ผ่าน)
         run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
 
   build-and-deploy:
@@ -47,8 +37,7 @@ jobs:
     environment: dev
     
     steps:
-      - name: 📥 โหลดโค้ดลงมา
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: 🔑 ล็อกอินเข้า GCP ด้วย JSON Key
         uses: google-github-actions/auth@v2
@@ -74,10 +63,6 @@ jobs:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ env.REGION }}
           image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-          # คำสั่ง flags คือคาถาป้องกันเงินรั่ว:
-          # --cpu=1 --memory=512Mi (สเปคเล็กสุด)
-          # --max-instances=1 (ห้ามแตกตัวเกิน 1 เครื่องเด็ดขาด)
-          # --allow-unauthenticated (อนุญาตให้คนนอกเข้าเว็บได้โดยไม่ต้องมีรหัส Google)
           flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --max-instances=1'
 
       - name: 🎉 สรุปผลการ Deploy
