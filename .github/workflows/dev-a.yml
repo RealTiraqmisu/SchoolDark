@@ -1,5 +1,12 @@
 name: 🚀 Deploy Team A to Dev
 
+env:
+  PROJECT_ID: 'schooldark'
+  
+  REGION: 'us-central1'
+  REPO_NAME: 'dev-a'       # Artifact Registry Repo
+  SERVICE_NAME: 'academic-service' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
+
 # 1. หุ่นยนต์จะทำงานตอนไหน?
 on:
   push:
@@ -7,6 +14,10 @@ on:
       - dev # ทำงานเมื่อมีการผลักโค้ดเข้า branch ชื่อ dev เท่านั้น
     paths:
       - 'backend-a/**' # ทำงานเมื่อโฟลเดอร์นี้มีการเปลี่ยนแปลง
+
+permissions:
+  packages: write
+  contents: read
 
 # 2. หุ่นยนต์ต้องทำอะไรบ้าง? (แบ่งเป็นงานๆ - Jobs)
 jobs:
@@ -38,10 +49,61 @@ jobs:
       - name: 📥 โหลดโค้ดลงมา
         uses: actions/checkout@v4
 
+      - name: 🔑 ล็อกอินเข้าโกดังของ GitHub (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} # GitHub จัดการรหัสผ่านนี้ให้เราอัตโนมัติ!
+
       # ขั้นตอนนี้คือการเอา Dockerfile ที่เราเขียนมา Build เป็น Image
       - name: 🐳 สร้าง Docker Image
         working-directory: ./backend-a
         run: |
-          docker build -t my-academic-api:dev .
+          docker build -t $IMAGE_NAME:dev .
+          docker push $IMAGE_NAME:dev
           echo "สร้าง Docker Image สำเร็จแล้ว!"
-          # (ในของจริง เราจะต้องเพิ่มคำสั่ง Push ส่ง Image นี้ไปเก็บไว้ที่ Server ครับ)
+
+  build-and-deploy:
+    needs: test-code
+    runs-on: ubuntu-latest
+    environment: dev
+    
+    steps:
+      - name: 📥 โหลดโค้ดลงมา
+        uses: actions/checkout@v4
+
+      - name: 🔑 ล็อกอินเข้า GCP ด้วย JSON Key
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: 🐳 ตั้งค่าให้ Docker รู้จัก Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: 📦 Build & Push เข้าโกดัง GCP
+        working-directory: ./backend-a
+        run: |
+          # ตั้งชื่อ Image ให้มีรหัส Commit ต่อท้าย จะได้รู้ว่า Deploy จากโค้ดชุดไหน
+          IMAGE_PATH="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
+          
+          docker build -t $IMAGE_PATH .
+          docker push $IMAGE_PATH
+
+      - name: 🚀 Deploy ขึ้น Cloud Run (🔒 ล็อคสเปคขั้นต่ำ กันเงินรั่ว!)
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          # คำสั่ง flags คือคาถาป้องกันเงินรั่ว:
+          # --cpu=1 --memory=512Mi (สเปคเล็กสุด)
+          # --max-instances=1 (ห้ามแตกตัวเกิน 1 เครื่องเด็ดขาด)
+          # --allow-unauthenticated (อนุญาตให้คนนอกเข้าเว็บได้โดยไม่ต้องมีรหัส Google)
+          flags: '--allow-unauthenticated --cpu=1 --memory=512Mi --max-instances=1'
+
+      - name: 🎉 สรุปผลการ Deploy
+        run: |
+          echo "✅ Deploy สำเร็จเรียบร้อย!"
+          echo "🌐 คุณสามารถเข้าใช้งาน API ได้ที่: ${{ steps.deploy.outputs.url }}"
