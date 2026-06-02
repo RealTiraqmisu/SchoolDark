@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: '3.11'
       -  working-directory: ./backend-a
-      -  run: pip install -r requirements.txt
+         run: pip install -r requirements.txt
       -  run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
 
   build-and-deploy:
