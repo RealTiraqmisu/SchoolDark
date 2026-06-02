@@ -41,29 +41,6 @@ jobs:
       - name: ✅ ตรวจสอบ (จำลองว่าเทสต์ผ่าน)
         run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
 
-  # งานที่ 2: สร้าง Docker Image (Continuous Deployment)
-  build-and-push:
-    needs: test-code # ★ บังคับว่า งานที่ 1 ต้องผ่านก่อน ถึงจะทำตรงนี้ได้
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 โหลดโค้ดลงมา
-        uses: actions/checkout@v4
-
-      - name: 🔑 ล็อกอินเข้าโกดังของ GitHub (GHCR)
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }} # GitHub จัดการรหัสผ่านนี้ให้เราอัตโนมัติ!
-
-      # ขั้นตอนนี้คือการเอา Dockerfile ที่เราเขียนมา Build เป็น Image
-      - name: 🐳 สร้าง Docker Image
-        working-directory: ./backend-a
-        run: |
-          docker build -t $IMAGE_NAME:dev .
-          docker push $IMAGE_NAME:dev
-          echo "สร้าง Docker Image สำเร็จแล้ว!"
-
   build-and-deploy:
     needs: test-code
     runs-on: ubuntu-latest
