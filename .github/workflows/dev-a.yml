@@ -15,7 +15,6 @@ on:
       - 'backend-a/**'
 
 permissions:
-  packages: write
   contents: read
 
 jobs:
@@ -27,9 +26,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      -  working-directory: ./backend-a
-         run: pip install -r requirements.txt
-      -  run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
+      - working-directory: ./backend-a
+        run: pip install -r requirements.txt
+      - run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
 
   build-and-deploy:
     needs: test-code
@@ -68,4 +67,4 @@ jobs:
       - name: 🎉 สรุปผลการ Deploy
         run: |
           echo "✅ Deploy สำเร็จเรียบร้อย!"
-          echo "🌐 คุณสามารถเข้าใช้งาน API ได้ที่: ${{ steps.deploy.outputs.url }}"
+          echo "🌐 ${{ steps.deploy.outputs.url }}"
