@@ -1,18 +1,18 @@
-name: 🚀 Deploy Team A to Staging
+name: 🚀 Deploy Team B to Dev
 
 env:
   PROJECT_ID: 'schooldark'
-
+  
   REGION: 'us-central1'
   REPO_NAME: 'backend-repo'       # Artifact Registry Repo
-  SERVICE_NAME: 'a-service-staging' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
+  SERVICE_NAME: 'b-service-dev' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
 
 on:
   push:
     branches:
-      - staging
+      - dev
     paths:
-      - 'backend-a/**'
+      - 'backend-b/**'
 
 permissions:
   contents: read
@@ -26,14 +26,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - working-directory: ./backend-a
+      - working-directory: ./backend-b
         run: pip install -r requirements.txt
       - run: echo "โค้ดไม่มี Error! พร้อมไปต่อ"
 
   build-and-deploy:
     needs: test-code
     runs-on: ubuntu-latest
-    environment: staging
+    environment: dev
     
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
 
       - name: 📦 Build & Push เข้าโกดัง GCP
-        working-directory: ./backend-a
+        working-directory: ./backend-b
         run: |
           # ตั้งชื่อ Image ให้มีรหัส Commit ต่อท้าย จะได้รู้ว่า Deploy จากโค้ดชุดไหน
           IMAGE_PATH="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"

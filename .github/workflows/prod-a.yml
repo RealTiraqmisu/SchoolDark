@@ -4,7 +4,7 @@ env:
   PROJECT_ID: 'schooldark'
 
   REGION: 'us-central1'
-  REPO_NAME: 'team-a'       # Artifact Registry Repo
+  REPO_NAME: 'backend-repo'       # Artifact Registry Repo
   SERVICE_NAME: 'a-service-prod' # ชื่อ Service ที่จะไปโผล่ใน Cloud Run
 
 on:
