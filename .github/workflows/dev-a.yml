@@ -55,7 +55,7 @@ jobs:
           docker build -t $IMAGE_PATH .
           docker push $IMAGE_PATH
 
-      - name: 🚀 Deploy ขึ้น Cloud Run (🔒 ล็อคสเปคขั้นต่ำ กันเงินรั่ว!)
+      - name: 🚀 Deploy ขึ้น Cloud Run
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v2
         with:
