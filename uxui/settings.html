@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การตั้งค่าระบบ | SchoolDark</title>
+    <meta name="description" content="ระบบการตั้งค่า SchoolDark — จัดการสิทธิ์ผู้ใช้งาน, ตั้งค่าเวลาเข้าออก, ผู้ลงนาม และการตั้งค่าทั่วไป">
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-group">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+                        <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                    </svg>
+                    <div>
+                        <h1>SchoolDark</h1>
+                        <span>Settings</span>
+                    </div>
+                </div>
+                <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="ย่อเมนู">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+            <p class="menu-label">การตั้งค่า</p>
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="menu-item active" data-view="general" id="menu-general">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <span>การตั้งค่าทั่วไป</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-view="schedule" id="menu-schedule">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <span>ตั้งค่าวันเวลาเข้าออก</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-view="permissions" id="menu-permissions">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>ตั้งค่าสิทธิ์ผู้ใช้งาน</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-view="signatories" id="menu-signatories">
+                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span>ผู้ลงนาม</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-divider"></div>
+            <p class="menu-label" style="margin-top:12px;">ระบบอื่นๆ</p>
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="menu-item" href="index.html">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <span>ระบบการลา</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" href="personnel.html">
+                        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <span>ข้อมูลบุคลากร</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-badge">
+                    <div class="user-avatar">AD</div>
+                    <div class="user-info">
+                        <div class="user-name">แอดมิน ระบบ</div>
+                        <div class="user-role">ผู้ดูแลระบบ</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="page-title">
+                    <h2 id="current-view-title">การตั้งค่าทั่วไป</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle-btn" id="theme-toggle" title="สลับโหมดสีสว่าง/มืด">
+                        <svg viewBox="0 0 24 24" id="theme-icon">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-body">
+
+                <!-- ==============================
+                     VIEW 1: การตั้งค่าทั่วไป
+                ================================ -->
+                <section id="view-general" class="view-section active">
+                    <div class="settings-overview-grid">
+
+                        <!-- Quick-nav cards -->
+                        <div class="quick-nav-card" data-goto="schedule">
+                            <div class="qnc-icon" style="background: linear-gradient(135deg, hsl(250,85%,65%), hsl(199,89%,48%));">
+                                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <div class="qnc-text">
+                                <h3>ตั้งค่าวันเวลาเข้าออก</h3>
+                                <p>กำหนดเวลาเริ่ม-สิ้นสุดงาน, กะเรียน และค่าสาย</p>
+                            </div>
+                            <svg class="qnc-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+
+                        <div class="quick-nav-card" data-goto="permissions">
+                            <div class="qnc-icon" style="background: linear-gradient(135deg, hsl(38,92%,50%), hsl(350,84%,55%));">
+                                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <div class="qnc-text">
+                                <h3>ตั้งค่าสิทธิ์ผู้ใช้งาน</h3>
+                                <p>กำหนดบทบาทและการเข้าถึงระบบ</p>
+                            </div>
+                            <svg class="qnc-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+
+                        <div class="quick-nav-card" data-goto="signatories">
+                            <div class="qnc-icon" style="background: linear-gradient(135deg, hsl(142,72%,45%), hsl(199,89%,48%));">
+                                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div class="qnc-text">
+                                <h3>ผู้ลงนาม</h3>
+                                <p>จัดการรายชื่อผู้มีอำนาจลงนามในเอกสาร</p>
+                            </div>
+                            <svg class="qnc-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- School Info Card -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                ข้อมูลโรงเรียน
+                            </h3>
+                            <button class="btn btn-primary btn-sm" id="btn-save-school">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                บันทึก
+                            </button>
+                        </div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="school-name-th">ชื่อโรงเรียน (ภาษาไทย) <span class="req">*</span></label>
+                                <input type="text" id="school-name-th" class="glass-input" value="โรงเรียนตัวอย่าง" placeholder="ชื่อโรงเรียน...">
+                            </div>
+                            <div class="form-group">
+                                <label for="school-name-en">School Name (English)</label>
+                                <input type="text" id="school-name-en" class="glass-input" value="Example School" placeholder="School name...">
+                            </div>
+                            <div class="form-group">
+                                <label for="school-code">รหัสโรงเรียน (สพฐ.)</label>
+                                <input type="text" id="school-code" class="glass-input" value="1012345" placeholder="รหัสสถานศึกษา">
+                            </div>
+                            <div class="form-group">
+                                <label for="school-phone">เบอร์โทรศัพท์โรงเรียน</label>
+                                <input type="text" id="school-phone" class="glass-input" value="02-XXX-XXXX" placeholder="02-XXX-XXXX">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="school-address">ที่อยู่</label>
+                                <textarea id="school-address" class="glass-textarea" rows="2" placeholder="ที่ตั้งโรงเรียน...">123 ถ.ตัวอย่าง แขวงตัวอย่าง เขตตัวอย่าง กรุงเทพมหานคร 10000</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Academic Year Card -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                ปีการศึกษาปัจจุบัน
+                            </h3>
+                        </div>
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label for="acad-year">ปีการศึกษา (พ.ศ.)</label>
+                                <input type="number" id="acad-year" class="glass-input" value="2568" min="2560" max="2600">
+                            </div>
+                            <div class="form-group">
+                                <label for="acad-start">วันเปิดเรียนเทอม 1</label>
+                                <input type="date" id="acad-start" class="glass-input" value="2025-05-16">
+                            </div>
+                            <div class="form-group">
+                                <label for="acad-end">วันปิดเรียนเทอม 2</label>
+                                <input type="date" id="acad-end" class="glass-input" value="2026-03-31">
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; margin-top:4px;">
+                            <button class="btn btn-primary btn-sm" id="btn-save-acad">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                บันทึก
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- System Toggle Card -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                ตั้งค่าการแจ้งเตือนระบบ
+                            </h3>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <span class="toggle-title">เปิดใช้งานการแจ้งเตือนผ่านระบบ</span>
+                                <span class="toggle-desc">แสดงการแจ้งเตือนบนแดชบอร์ดเมื่อมีเหตุการณ์สำคัญ</span>
+                            </div>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <span class="toggle-title">ส่งอีเมลแจ้งเตือนอัตโนมัติ</span>
+                                <span class="toggle-desc">ส่งอีเมลแจ้งผู้บริหารเมื่อมีการเปลี่ยนแปลงข้อมูลสำคัญ</span>
+                            </div>
+                            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <span class="toggle-title">บันทึก Log การใช้งานระบบ</span>
+                                <span class="toggle-desc">บันทึกประวัติการใช้งานของผู้ใช้ทุกคนในระบบ</span>
+                            </div>
+                            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==============================
+                     VIEW 2: ตั้งค่าวันเวลาเข้าออก
+                ================================ -->
+                <section id="view-schedule" class="view-section">
+                    <!-- Shift Cards Overview -->
+                    <div class="shift-cards-row">
+                        <div class="shift-stat-card">
+                            <div class="shift-stat-icon" style="background: var(--primary-glow); color: var(--primary);">
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <div>
+                                <div class="shift-stat-label">เวลาเข้างานปกติ</div>
+                                <div class="shift-stat-value" id="display-start-time">07:30 น.</div>
+                            </div>
+                        </div>
+                        <div class="shift-stat-card">
+                            <div class="shift-stat-icon" style="background: var(--success-bg); color: var(--success);">
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <div>
+                                <div class="shift-stat-label">เวลาเลิกงานปกติ</div>
+                                <div class="shift-stat-value" id="display-end-time">16:30 น.</div>
+                            </div>
+                        </div>
+                        <div class="shift-stat-card">
+                            <div class="shift-stat-icon" style="background: var(--warning-bg); color: var(--warning);">
+                                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            </div>
+                            <div>
+                                <div class="shift-stat-label">ขีดจำกัดสาย</div>
+                                <div class="shift-stat-value" id="display-late-threshold">15 นาที</div>
+                            </div>
+                        </div>
+                        <div class="shift-stat-card">
+                            <div class="shift-stat-icon" style="background: var(--info-bg); color: var(--info);">
+                                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <div>
+                                <div class="shift-stat-label">วันทำงาน</div>
+                                <div class="shift-stat-value">จ–ศ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Work Hours Settings -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                เวลาทำงานหลัก (กะปกติ)
+                            </h3>
+                            <button class="btn btn-primary btn-sm" id="btn-save-hours">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                บันทึก
+                            </button>
+                        </div>
+                        <div class="form-grid-4">
+                            <div class="form-group">
+                                <label for="work-start">เวลาเข้างาน <span class="req">*</span></label>
+                                <input type="time" id="work-start" class="glass-input" value="07:30">
+                            </div>
+                            <div class="form-group">
+                                <label for="work-end">เวลาเลิกงาน <span class="req">*</span></label>
+                                <input type="time" id="work-end" class="glass-input" value="16:30">
+                            </div>
+                            <div class="form-group">
+                                <label for="lunch-start">เวลาพักกลางวัน (เริ่ม)</label>
+                                <input type="time" id="lunch-start" class="glass-input" value="12:00">
+                            </div>
+                            <div class="form-group">
+                                <label for="lunch-end">เวลาพักกลางวัน (สิ้นสุด)</label>
+                                <input type="time" id="lunch-end" class="glass-input" value="13:00">
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label for="late-threshold">นาทีที่ถือว่า "มาสาย" (นาที)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="late-threshold" class="glass-input" value="15" min="1" max="60">
+                                    <span class="unit-label">นาที</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="early-out-threshold">นาทีที่ถือว่า "กลับก่อน" (นาที)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="early-out-threshold" class="glass-input" value="15" min="1" max="60">
+                                    <span class="unit-label">นาที</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ot-start">เวลาเริ่มนับ OT (หลังเลิกงาน)</label>
+                                <input type="time" id="ot-start" class="glass-input" value="17:00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Working Days -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                กำหนดวันทำงานประจำสัปดาห์
+                            </h3>
+                        </div>
+                        <p class="card-desc">เลือกวันที่นับเป็นวันทำงาน (วันที่ไม่ได้เลือกจะถือว่าเป็นวันหยุด)</p>
+                        <div class="weekday-selector">
+                            <label class="day-btn"><input type="checkbox" value="sun"><span>อา</span></label>
+                            <label class="day-btn checked"><input type="checkbox" value="mon" checked><span>จ</span></label>
+                            <label class="day-btn checked"><input type="checkbox" value="tue" checked><span>อ</span></label>
+                            <label class="day-btn checked"><input type="checkbox" value="wed" checked><span>พ</span></label>
+                            <label class="day-btn checked"><input type="checkbox" value="thu" checked><span>พฤ</span></label>
+                            <label class="day-btn checked"><input type="checkbox" value="fri" checked><span>ศ</span></label>
+                            <label class="day-btn"><input type="checkbox" value="sat"><span>ส</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Special Shifts -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                                กะพิเศษ / กะนักเรียน
+                            </h3>
+                            <button class="btn btn-secondary btn-sm" id="btn-add-shift">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                เพิ่มกะ
+                            </button>
+                        </div>
+                        <div class="shifts-list" id="shifts-list">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Public Holidays -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                วันหยุดนักขัตฤกษ์ / วันหยุดพิเศษ
+                            </h3>
+                            <button class="btn btn-secondary btn-sm" id="btn-add-holiday">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                เพิ่มวันหยุด
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="holiday-table">
+                                <thead>
+                                    <tr>
+                                        <th>วันที่</th>
+                                        <th>ชื่อวันหยุด</th>
+                                        <th>ประเภท</th>
+                                        <th style="text-align:center; width:80px;">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="holiday-table-body">
+                                    <!-- Injected by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==============================
+                     VIEW 3: ตั้งค่าสิทธิ์ผู้ใช้งาน
+                ================================ -->
+                <section id="view-permissions" class="view-section">
+                    <!-- Role Summary Row -->
+                    <div class="role-summary-row">
+                        <div class="role-summary-card">
+                            <div class="role-badge" style="background: linear-gradient(135deg, hsl(350,84%,55%), hsl(350,84%,40%));">ผอ.</div>
+                            <div class="role-summary-info">
+                                <div class="role-summary-name">ผู้อำนวยการ</div>
+                                <div class="role-summary-count" id="count-director">1 คน</div>
+                            </div>
+                        </div>
+                        <div class="role-summary-card">
+                            <div class="role-badge" style="background: linear-gradient(135deg, hsl(38,92%,50%), hsl(38,92%,35%));">รอง</div>
+                            <div class="role-summary-info">
+                                <div class="role-summary-name">รองผู้อำนวยการ</div>
+                                <div class="role-summary-count" id="count-vp">2 คน</div>
+                            </div>
+                        </div>
+                        <div class="role-summary-card">
+                            <div class="role-badge" style="background: linear-gradient(135deg, hsl(250,85%,65%), hsl(250,85%,50%));">ผท.</div>
+                            <div class="role-summary-info">
+                                <div class="role-summary-name">ผู้ดูแลระบบ (HR)</div>
+                                <div class="role-summary-count" id="count-admin">3 คน</div>
+                            </div>
+                        </div>
+                        <div class="role-summary-card">
+                            <div class="role-badge" style="background: linear-gradient(135deg, hsl(199,89%,48%), hsl(199,89%,35%));">ครู</div>
+                            <div class="role-summary-info">
+                                <div class="role-summary-name">ครู / อาจารย์</div>
+                                <div class="role-summary-count" id="count-teacher">24 คน</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Role Permissions Matrix -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                สิทธิ์การเข้าถึงตามบทบาท (Role Matrix)
+                            </h3>
+                        </div>
+                        <div class="table-container">
+                            <table class="permission-table">
+                                <thead>
+                                    <tr>
+                                        <th>ฟีเจอร์ / โมดูล</th>
+                                        <th class="perm-col">ผอ.</th>
+                                        <th class="perm-col">รองผอ.</th>
+                                        <th class="perm-col">ผท.ระบบ</th>
+                                        <th class="perm-col">ครู</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="perm-group-header"><td colspan="5">📋 ระบบการลา</td></tr>
+                                    <tr>
+                                        <td class="perm-feature">ดูใบลาทั้งหมด</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="perm-feature">ยื่นใบลา</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="perm-feature">อนุมัติ/ปฏิเสธใบลา</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="perm-feature">ตั้งค่าการลา</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                    </tr>
+                                    <tr class="perm-group-header"><td colspan="5">👤 ระบบบุคลากร</td></tr>
+                                    <tr>
+                                        <td class="perm-feature">ดูข้อมูลบุคลากร</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot partial"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="perm-feature">แก้ไขข้อมูลบุคลากร</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="perm-feature">นำเข้าข้อมูล (Import)</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                    </tr>
+                                    <tr class="perm-group-header"><td colspan="5">⚙️ การตั้งค่าระบบ</td></tr>
+                                    <tr>
+                                        <td class="perm-feature">การตั้งค่าทั่วไป</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="perm-feature">จัดการสิทธิ์ผู้ใช้</td>
+                                        <td class="perm-col"><span class="perm-dot allow"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                        <td class="perm-col"><span class="perm-dot deny"></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="perm-legend">
+                            <span><span class="perm-dot allow"></span> มีสิทธิ์</span>
+                            <span><span class="perm-dot deny"></span> ไม่มีสิทธิ์</span>
+                            <span><span class="perm-dot partial"></span> สิทธิ์จำกัด (เฉพาะข้อมูลตัวเอง)</span>
+                        </div>
+                    </div>
+
+                    <!-- User Role Assignment -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                จัดการบทบาทผู้ใช้งานรายบุคคล
+                            </h3>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <div class="search-box-mini">
+                                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                    <input type="text" id="user-search" class="glass-input" placeholder="ค้นหาชื่อ..." style="padding:6px 10px;">
+                                </div>
+                                <select class="glass-select" id="filter-role" style="width:140px; padding:6px 10px; font-size:13px;">
+                                    <option value="">ทุกบทบาท</option>
+                                    <option value="ผู้อำนวยการ">ผู้อำนวยการ</option>
+                                    <option value="รองผู้อำนวยการ">รองผู้อำนวยการ</option>
+                                    <option value="ผู้ดูแลระบบ">ผู้ดูแลระบบ</option>
+                                    <option value="ครู">ครู</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ชื่อ-นามสกุล</th>
+                                        <th>ตำแหน่ง</th>
+                                        <th>บทบาทในระบบ</th>
+                                        <th>สถานะ</th>
+                                        <th style="text-align:center; width:100px;">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="user-role-table-body">
+                                    <!-- Injected by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==============================
+                     VIEW 4: ผู้ลงนาม
+                ================================ -->
+                <section id="view-signatories" class="view-section">
+
+                    <!-- Info Banner -->
+                    <div class="info-banner">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <div>
+                            <strong>ผู้ลงนามในเอกสาร</strong>
+                            <span> — กำหนดรายชื่อบุคคลที่ปรากฏเป็นผู้ลงนามในใบลา, หนังสือรับรอง และเอกสารราชการต่างๆ ที่ออกโดยโรงเรียน</span>
+                        </div>
+                    </div>
+
+                    <!-- Signatory Cards -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                รายชื่อผู้ลงนาม
+                            </h3>
+                            <button class="btn btn-primary btn-sm" id="btn-add-signatory">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                เพิ่มผู้ลงนาม
+                            </button>
+                        </div>
+
+                        <div class="signatory-grid" id="signatory-grid">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Document Type Assignment -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>
+                                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                กำหนดผู้ลงนามตามประเภทเอกสาร
+                            </h3>
+                        </div>
+                        <div class="doc-sign-list" id="doc-sign-list">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </section>
+
+            </div><!-- end content-body -->
+        </main>
+    </div><!-- end app-container -->
+
+    <!-- ===== MODALS ===== -->
+
+    <!-- Modal: Add/Edit Shift -->
+    <div class="modal-overlay" id="modal-shift" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-shift-title">เพิ่มกะงาน</h3>
+                <button class="modal-close" data-close="modal-shift">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="shift-name">ชื่อกะ <span class="req">*</span></label>
+                <input type="text" id="shift-name" class="glass-input" placeholder="เช่น กะเช้า, กะบ่าย">
+            </div>
+            <div class="form-grid-2" style="margin-top:0;">
+                <div class="form-group">
+                    <label for="shift-start">เวลาเริ่ม</label>
+                    <input type="time" id="shift-start" class="glass-input" value="08:00">
+                </div>
+                <div class="form-group">
+                    <label for="shift-end">เวลาสิ้นสุด</label>
+                    <input type="time" id="shift-end" class="glass-input" value="17:00">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" data-close="modal-shift">ยกเลิก</button>
+                <button class="btn btn-primary" id="btn-confirm-shift">บันทึกกะ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Holiday -->
+    <div class="modal-overlay" id="modal-holiday" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>เพิ่มวันหยุด</h3>
+                <button class="modal-close" data-close="modal-holiday">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="holiday-date">วันที่ <span class="req">*</span></label>
+                <input type="date" id="holiday-date" class="glass-input">
+            </div>
+            <div class="form-group">
+                <label for="holiday-name">ชื่อวันหยุด <span class="req">*</span></label>
+                <input type="text" id="holiday-name" class="glass-input" placeholder="เช่น วันสงกรานต์">
+            </div>
+            <div class="form-group">
+                <label for="holiday-type">ประเภท</label>
+                <select id="holiday-type" class="glass-select">
+                    <option value="national">วันหยุดนักขัตฤกษ์</option>
+                    <option value="school">วันหยุดของโรงเรียน</option>
+                    <option value="special">วันหยุดพิเศษ</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" data-close="modal-holiday">ยกเลิก</button>
+                <button class="btn btn-primary" id="btn-confirm-holiday">เพิ่มวันหยุด</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit User Role -->
+    <div class="modal-overlay" id="modal-user-role" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>แก้ไขบทบาทผู้ใช้งาน</h3>
+                <button class="modal-close" data-close="modal-user-role">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label>ชื่อผู้ใช้งาน</label>
+                <input type="text" id="modal-user-name" class="glass-input" disabled>
+            </div>
+            <div class="form-group">
+                <label for="modal-user-role-select">บทบาทในระบบ <span class="req">*</span></label>
+                <select id="modal-user-role-select" class="glass-select">
+                    <option value="ผู้อำนวยการ">ผู้อำนวยการ</option>
+                    <option value="รองผู้อำนวยการ">รองผู้อำนวยการ</option>
+                    <option value="ผู้ดูแลระบบ">ผู้ดูแลระบบ</option>
+                    <option value="ครู">ครู</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="modal-user-status">สถานะบัญชี</label>
+                <select id="modal-user-status" class="glass-select">
+                    <option value="active">เปิดใช้งาน</option>
+                    <option value="inactive">ปิดใช้งาน</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" data-close="modal-user-role">ยกเลิก</button>
+                <button class="btn btn-primary" id="btn-confirm-user-role">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Signatory -->
+    <div class="modal-overlay" id="modal-signatory" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-sign-title">เพิ่มผู้ลงนาม</h3>
+                <button class="modal-close" data-close="modal-signatory">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="sign-prefix">คำนำหน้า</label>
+                <select id="sign-prefix" class="glass-select">
+                    <option value="นาย">นาย</option>
+                    <option value="นาง">นาง</option>
+                    <option value="นางสาว">นางสาว</option>
+                    <option value="ดร.">ดร.</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="sign-fullname">ชื่อ-นามสกุล <span class="req">*</span></label>
+                <input type="text" id="sign-fullname" class="glass-input" placeholder="ชื่อ-นามสกุล">
+            </div>
+            <div class="form-group">
+                <label for="sign-position">ตำแหน่ง <span class="req">*</span></label>
+                <input type="text" id="sign-position" class="glass-input" placeholder="เช่น ผู้อำนวยการโรงเรียน">
+            </div>
+            <div class="form-group">
+                <label for="sign-order">ลำดับการลงนาม</label>
+                <select id="sign-order" class="glass-select">
+                    <option value="1">ลำดับที่ 1 (ผู้ลงนามหลัก)</option>
+                    <option value="2">ลำดับที่ 2</option>
+                    <option value="3">ลำดับที่ 3</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="sign-doc-types">ประเภทเอกสารที่รับผิดชอบ</label>
+                <div class="checkbox-grid" style="grid-template-columns: repeat(2, 1fr);">
+                    <label class="checkbox-card"><input type="checkbox" value="ใบลา" checked><span class="checkbox-label">ใบลา</span></label>
+                    <label class="checkbox-card"><input type="checkbox" value="หนังสือรับรอง"><span class="checkbox-label">หนังสือรับรอง</span></label>
+                    <label class="checkbox-card"><input type="checkbox" value="เอกสารทั่วไป"><span class="checkbox-label">เอกสารทั่วไป</span></label>
+                    <label class="checkbox-card"><input type="checkbox" value="ใบผ่านงาน"><span class="checkbox-label">ใบผ่านงาน</span></label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" data-close="modal-signatory">ยกเลิก</button>
+                <button class="btn btn-primary" id="btn-confirm-signatory">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-container"></div>
+
+    <script src="settings.js"></script>
+</body>
+</html>
