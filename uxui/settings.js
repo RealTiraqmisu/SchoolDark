@@ -759,7 +759,7 @@ function formatThaiDate(dateString) {
     
     const monthNames = [
         "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.",
-        "ก.ค.", "ส.อ.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+        "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
     ];
     
     return `${day} ${monthNames[month]} ${String(year).substring(2)}`;

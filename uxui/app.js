@@ -26,8 +26,11 @@ const App = (() => {
     const VIEW_TITLES = {
         'dashboard-main'  : { title: 'แดชบอร์ดภาพรวม',           crumb: 'SchoolDark / ภาพรวม' },
         'leave-settings'  : { title: 'ตั้งค่าการลา',              crumb: 'ระบบการลา / ตั้งค่า' },
-        'leave-form'      : { title: 'ฟอร์มการลา (ผู้ใช้)',        crumb: 'ระบบการลา / ยื่นใบลา' },
+        'leave-form'      : { title: 'ยื่นคำขอลา',        crumb: 'ระบบการลา / ยื่นใบลา' },
         'leave-approve'   : { title: 'อนุมัติการลา',              crumb: 'ระบบการลา / อนุมัติ' },
+        'settings'        : { title: 'ตั้งค่าการลา',              crumb: 'ระบบการลา / ตั้งค่า' },
+        'form'            : { title: 'ยื่นคำขอลา',        crumb: 'ระบบการลา / ยื่นใบลา' },
+        'approve'         : { title: 'อนุมัติการลา',              crumb: 'ระบบการลา / อนุมัติ' },
         'directory'       : { title: 'รายชื่อบุคลากร',             crumb: 'บุคลากร / รายชื่อ' },
         'basic-info'      : { title: 'ข้อมูลพื้นฐานบุคลากร',       crumb: 'บุคลากร / ข้อมูลพื้นฐาน' },
         'education'       : { title: 'ข้อมูลการศึกษา & อบรม',     crumb: 'บุคลากร / การศึกษา' },
@@ -48,6 +51,11 @@ const App = (() => {
     function navigate(moduleName, viewName) {
         if (!viewName) viewName = MODULE_DEFAULT_VIEWS[moduleName] || moduleName;
 
+        // Auto-fix viewName for leave module if prefix 'leave-' is missing
+        if (moduleName === 'leave' && !viewName.startsWith('leave-')) {
+            viewName = 'leave-' + viewName;
+        }
+
         // 1. Hide all module sections
         qsa('.module-section').forEach(s => s.classList.remove('active'));
 
@@ -65,13 +73,20 @@ const App = (() => {
         // 4. Update sidebar active state
         qsa('.menu-item').forEach(item => {
             item.classList.remove('active');
-            if (item.dataset.module === moduleName && item.dataset.view === viewName) {
-                item.classList.add('active');
+            const itemMod = item.dataset.module || item.getAttribute('data-module');
+            const itemVal = item.dataset.view || item.getAttribute('data-view');
+            const cleanView = viewName.replace('leave-', '');
+            const fullView = viewName.startsWith('leave-') ? viewName : 'leave-' + viewName;
+
+            if (itemMod === moduleName || (moduleName === 'leave' && itemMod === 'leave')) {
+                if (itemVal === viewName || itemVal === cleanView || itemVal === fullView || item.id === 'menu-' + fullView || item.id === 'menu-leave-' + cleanView) {
+                    item.classList.add('active');
+                }
             }
         });
 
         // 5. Update header title / breadcrumb
-        const meta = VIEW_TITLES[viewName] || { title: viewName, crumb: '' };
+        const meta = VIEW_TITLES[viewName] || VIEW_TITLES[viewName.replace('leave-', '')] || { title: viewName, crumb: '' };
         const titleEl = qs('#current-view-title');
         const crumbEl = qs('#page-breadcrumb');
         if (titleEl) titleEl.textContent = meta.title;
@@ -246,6 +261,60 @@ const App = (() => {
         });
     }
 
+    // --- Confirmation Modal ---
+    let confirmCallback = null;
+    function showConfirm({ title = 'ยืนยันการดำเนินการ', message = 'คุณแน่ใจหรือไม่?', confirmLabel = 'ยืนยัน', requireNote = false, onConfirm }) {
+        const titleEl = document.getElementById('modal-confirm-title');
+        const messageEl = document.getElementById('modal-confirm-message');
+        const noteContainer = document.getElementById('modal-confirm-note-container');
+        const noteInput = document.getElementById('modal-confirm-note');
+        const confirmBtn = document.getElementById('modal-confirm-btn');
+
+        if(titleEl) titleEl.textContent = title;
+        if(messageEl) messageEl.innerHTML = message;
+        if(confirmBtn) confirmBtn.textContent = confirmLabel;
+        
+        if (noteContainer && noteInput) {
+            noteContainer.style.display = requireNote ? 'block' : 'none';
+            noteInput.value = '';
+            if (requireNote) noteInput.placeholder = 'กรุณาระบุเหตุผล...';
+        }
+
+        confirmCallback = () => {
+            if (requireNote && noteInput && noteInput.value.trim() === '') {
+                showToast('กรุณาระบุเหตุผลหรือหมายเหตุก่อนยืนยัน', 'warning');
+                noteInput.focus();
+                return;
+            }
+            if (onConfirm) onConfirm(requireNote && noteInput ? noteInput.value.trim() : null);
+            closeConfirm();
+        };
+
+        if (confirmBtn) {
+            // Remove old listener
+            const newBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+            newBtn.addEventListener('click', confirmCallback);
+        }
+
+        openModal('modal-confirm');
+    }
+
+    function closeConfirm() {
+        closeModal('modal-confirm');
+    }
+
+    // --- Error Modal ---
+    function showError(message) {
+        const msgEl = document.getElementById('modal-error-message');
+        if (msgEl) msgEl.innerHTML = message;
+        openModal('modal-error');
+    }
+
+    function closeError() {
+        closeModal('modal-error');
+    }
+
     // --- Toast Notification ---
     function showToast(message, type = 'success', duration = 3000) {
         const container = qs('#toast-container');
@@ -320,6 +389,10 @@ const App = (() => {
         navigate,
         openModal,
         closeModal,
+        showConfirm,
+        closeConfirm,
+        showError,
+        closeError,
         showToast,
         updateApprovalBadge,
         init,

@@ -112,6 +112,51 @@ const INITIAL_REQUESTS = [
         status: "pending",
         submittedDate: "2026-06-29",
         comment: ""
+    },
+    {
+        id: "REQ005",
+        teacherId: "T001",
+        teacherName: "ครูสมชาย ใจดี",
+        leaveType: "vacation",
+        startDate: "2026-08-10",
+        endDate: "2026-08-10",
+        durationType: "full",
+        netDays: 1.0,
+        reason: "ติดต่อราชการเรื่องโอนย้ายทะเบียนบ้าน",
+        attachment: null,
+        status: "approved",
+        submittedDate: "2026-08-01",
+        comment: "รับทราบ"
+    },
+    {
+        id: "REQ006",
+        teacherId: "T002",
+        teacherName: "ครูรุ่งทิพย์ ส่องแสง",
+        leaveType: "sick",
+        startDate: "2026-08-10",
+        endDate: "2026-08-11",
+        durationType: "full",
+        netDays: 2.0,
+        reason: "อาหารเป็นพิษรุนแรง แพทย์ให้พัก 2 วัน",
+        attachment: { name: "medical_006.jpg", size: "850 KB" },
+        status: "pending",
+        submittedDate: "2026-08-09",
+        comment: ""
+    },
+    {
+        id: "REQ007",
+        teacherId: "T004",
+        teacherName: "ครูพิชิต ชัยชนะ",
+        leaveType: "vacation",
+        startDate: "2026-08-10",
+        endDate: "2026-08-14",
+        durationType: "full",
+        netDays: 5.0,
+        reason: "พักผ่อนประจำปีพาครอบครัวไปเที่ยวต่างประเทศ",
+        attachment: null,
+        status: "approved",
+        submittedDate: "2026-07-25",
+        comment: "อนุญาต เดินทางปลอดภัยครับ"
     }
 ];
 
@@ -127,11 +172,16 @@ let systemState = {
     currentSettingsStep: 1,
     editingRequestId: null,
     calendarYear: new Date().getFullYear(),
-    calendarMonth: new Date().getMonth()
+    calendarMonth: new Date().getMonth(),
+    calendarDay: new Date().getDate(),
+    calendarMode: "month"
 };
 
 // Initialize system database from LocalStorage or seed data
 function initializeDatabase() {
+    // Force refresh requests data to load new overlapping leave mock data
+    localStorage.removeItem("schooldark_requests");
+
     if (!localStorage.getItem("schooldark_settings")) {
         localStorage.setItem("schooldark_settings", JSON.stringify(INITIAL_SETTINGS));
     }
@@ -142,10 +192,19 @@ function initializeDatabase() {
         localStorage.setItem("schooldark_requests", JSON.stringify(INITIAL_REQUESTS));
     }
 
-    systemState.settings = JSON.parse(localStorage.getItem("schooldark_settings"));
-    systemState.teachers = JSON.parse(localStorage.getItem("schooldark_teachers"));
-    systemState.requests = JSON.parse(localStorage.getItem("schooldark_requests"));
+    try {
+        systemState.settings = JSON.parse(localStorage.getItem("schooldark_settings")) || INITIAL_SETTINGS;
+        systemState.teachers = JSON.parse(localStorage.getItem("schooldark_teachers")) || INITIAL_TEACHERS;
+        systemState.requests = JSON.parse(localStorage.getItem("schooldark_requests")) || INITIAL_REQUESTS;
+    } catch (e) {
+        systemState.settings = INITIAL_SETTINGS;
+        systemState.teachers = INITIAL_TEACHERS;
+        systemState.requests = INITIAL_REQUESTS;
+    }
 }
+
+// Call database init immediately on script evaluation
+initializeDatabase();
 
 function saveStateToLocalStorage() {
     localStorage.setItem("schooldark_settings", JSON.stringify(systemState.settings));
@@ -196,15 +255,16 @@ function closeModal(id) {
 
 function updateSidebarVisibility() {
     const role = systemState.currentRole;
-    const settingsMenu = document.getElementById("sidebar-menu-settings");
-    const approveMenu = document.getElementById("sidebar-menu-approve");
+    const settingsMenu = document.getElementById("menu-leave-settings") || document.getElementById("sidebar-menu-settings");
+    const approveMenu = document.getElementById("menu-leave-approve") || document.getElementById("sidebar-menu-approve");
     
     if (role === "teacher") {
         if (settingsMenu) settingsMenu.style.display = "none";
         if (approveMenu) approveMenu.style.display = "none";
         
         // Redirect if currently on a restricted view
-        if (systemState.activeView === "settings" || systemState.activeView === "approve") {
+        const active = systemState.activeView || "";
+        if (active === "settings" || active === "approve" || active === "leave-settings" || active === "leave-approve") {
             navigateToView("form");
         }
     } else {
@@ -255,28 +315,43 @@ function calculateNetLeaveDays(startDateStr, endDateStr, durationType) {
 // -------------------------------------------------------------
 
 function navigateToView(viewId) {
-    // Strip "leave-" prefix if exists
-    if (viewId.startsWith("leave-")) {
-        viewId = viewId.replace("leave-", "");
-    }
+    if (!viewId) viewId = "form";
+    
+    let fullViewId = viewId.startsWith("leave-") ? viewId : "leave-" + viewId;
+    let cleanViewId = fullViewId.replace("leave-", "");
 
     // Role based access redirection check
-    if (systemState.currentRole === "teacher" && (viewId === "settings" || viewId === "approve")) {
-        viewId = "form";
+    if (systemState.currentRole === "teacher" && (cleanViewId === "settings" || cleanViewId === "approve")) {
+        fullViewId = "leave-form";
+        cleanViewId = "form";
+    }
+
+    // Delegate to App Router if available
+    if (typeof App !== "undefined" && typeof App.navigate === "function") {
+        systemState.activeView = cleanViewId;
+        App.navigate("leave", fullViewId);
+        return;
+    }
+
+    // Fallback: Ensure module-leave section is active
+    const moduleLeave = document.getElementById("module-leave");
+    if (moduleLeave) {
+        document.querySelectorAll(".module-section").forEach(m => m.classList.remove("active"));
+        moduleLeave.classList.add("active");
     }
 
     // Hide all view sections
     document.querySelectorAll(".view-section").forEach(sec => sec.classList.remove("active"));
     // Show target view
-    const targetSection = document.getElementById(`view-leave-${viewId}`);
+    const targetSection = document.getElementById(`view-${fullViewId}`);
     if (targetSection) {
         targetSection.classList.add("active");
-        systemState.activeView = viewId;
+        systemState.activeView = cleanViewId;
     }
 
     // Update sidebar navigation selection
     document.querySelectorAll(".menu-item").forEach(item => {
-        if (item.getAttribute("data-view") === "leave-" + viewId) {
+        if (item.getAttribute("data-view") === fullViewId || item.getAttribute("data-view") === cleanViewId) {
             item.classList.add("active");
         } else {
             item.classList.remove("active");
@@ -286,23 +361,23 @@ function navigateToView(viewId) {
     // Update Top Title header
     const titleLabelMap = {
         "settings": "ตั้งค่าการลา (ฝ่ายบริหาร)",
-        "form": "ฟอร์มยื่นการลา & แดชบอร์ดโควตา",
+        "form": "ยื่นคำขอลา",
         "approve": "การอนุมัติการลา (ฝั่งผู้อนุมัติ)"
     };
     const titleEl = document.getElementById("current-view-title");
     if (titleEl) {
-        titleEl.textContent = titleLabelMap[viewId] || "ระบบการลา";
+        titleEl.textContent = titleLabelMap[cleanViewId] || "ระบบการลา";
     }
 
     // Set step indicators on loading
-    syncUserJourneySteps(viewId);
+    syncUserJourneySteps(cleanViewId);
     
     // Refresh content for that specific view
-    if (viewId === "settings") {
+    if (cleanViewId === "settings") {
         renderSettingsView();
-    } else if (viewId === "form") {
+    } else if (cleanViewId === "form") {
         renderFormView();
-    } else if (viewId === "approve") {
+    } else if (cleanViewId === "approve") {
         renderApprovalView();
     }
 }
@@ -385,13 +460,24 @@ function renderSettingsView() {
 
     // Make sure we load the correct active step card in the wizard
     goToSettingsStep(systemState.currentSettingsStep || 1);
+
+    // Update Virtual Preview
+    updateAllSettingsPreviews();
 }
 
 function removeApprover(index) {
-    systemState.settings.approvers.splice(index, 1);
-    saveStateToLocalStorage();
-    renderSettingsView();
-    showToast("ลบรายชื่อผู้อนุมัติแล้ว", "warning");
+    App.showConfirm({
+        title: "ยืนยันการลบ",
+        message: "แน่ใจหรือไม่? ชื่อนี้จะถูกลบออกจากรายการผู้อนุมัติ",
+        confirmLabel: "ลบ",
+        requireNote: false,
+        onConfirm: () => {
+            systemState.settings.approvers.splice(index, 1);
+            saveStateToLocalStorage();
+            renderSettingsView();
+            showToast("ลบรายชื่อผู้อนุมัติแล้ว", "warning");
+        }
+    });
 }
 
 function addApprover() {
@@ -546,10 +632,17 @@ function prevSettingsStep() {
 // -------------------------------------------------------------
 
 function renderFormView() {
-    const activeTeacher = systemState.teachers.find(t => t.id === systemState.selectedTeacherId);
+    if (!systemState.teachers || systemState.teachers.length === 0) {
+        initializeDatabase();
+    }
+    let activeTeacher = systemState.teachers.find(t => t.id === systemState.selectedTeacherId);
+    if (!activeTeacher && systemState.teachers && systemState.teachers.length > 0) {
+        activeTeacher = systemState.teachers[0];
+        systemState.selectedTeacherId = activeTeacher.id;
+    }
     if (!activeTeacher) return;
     
-    const settings = systemState.settings;
+    const settings = systemState.settings || INITIAL_SETTINGS;
     
     // 1. Update visual circular progress rings & quotas
     updateQuotaCard("sick", settings.quotaSick, activeTeacher.sickUsed);
@@ -734,7 +827,7 @@ function openSubmitReview() {
 
     // Rule validation check: Medical cert required for sick leave > 3 days
     if (leaveType === "sick" && daysNum >= 3 && systemState.settings.ruleSickDoc && !systemState.tempAttachment) {
-        showToast("กรุณาแนบใบรับรองแพทย์เนื่องจากลาป่วยเกิน 3 วัน", "danger");
+        App.showError("ไม่สามารถบันทึกคำขอได้<br><span style='font-size:14px;color:var(--text-muted);'>กรุณาแนบใบรับรองแพทย์เนื่องจากลาป่วยเกิน 3 วัน ตามกฎระเบียบของโรงเรียน</span>");
         return;
     }
 
@@ -1017,6 +1110,17 @@ function renderApprovalView(filterStatus = "all") {
         return;
     }
 
+    // Populate profile teacher select dropdown
+    const profileSelect = document.getElementById("profile-teacher-select");
+    if (profileSelect && profileSelect.options.length <= 1) {
+        systemState.teachers.forEach(t => {
+            const opt = document.createElement("option");
+            opt.value = t.id;
+            opt.textContent = t.name;
+            profileSelect.appendChild(opt);
+        });
+    }
+
     // Render leave calendar
     renderLeaveCalendar();
 
@@ -1131,16 +1235,38 @@ function renderLeaveCalendar() {
 
     container.innerHTML = "";
 
+    const mode = systemState.calendarMode || "month";
     const year = systemState.calendarYear;
     const month = systemState.calendarMonth;
+    const day = systemState.calendarDay || 1;
+    const targetDate = new Date(year, month, day);
 
-    const thaiMonths = [
+    const thaiMonthsShort = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+    const thaiMonthsFull = [
         "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
         "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
     ];
+    const thaiDaysFull = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
 
-    label.textContent = `${thaiMonths[month]} ${year + 543}`;
+    if (mode === "month") {
+        label.textContent = `${thaiMonthsFull[month]} ${year + 543}`;
+        renderMonthCalendarView(container, year, month);
+    } else if (mode === "week") {
+        const dayOfWeek = targetDate.getDay();
+        const startOfWeek = new Date(targetDate);
+        startOfWeek.setDate(targetDate.getDate() - dayOfWeek);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
 
+        label.textContent = `${startOfWeek.getDate()} ${thaiMonthsShort[startOfWeek.getMonth()]} - ${endOfWeek.getDate()} ${thaiMonthsShort[endOfWeek.getMonth()]} ${endOfWeek.getFullYear() + 543}`;
+        renderWeekCalendarView(container, startOfWeek);
+    } else if (mode === "day") {
+        label.textContent = `วัน${thaiDaysFull[targetDate.getDay()]}ที่ ${targetDate.getDate()} ${thaiMonthsFull[targetDate.getMonth()]} ${year + 543}`;
+        renderDayCalendarView(container, targetDate);
+    }
+}
+
+function renderMonthCalendarView(container, year, month) {
     const grid = document.createElement("div");
     grid.className = "calendar-grid";
 
@@ -1169,57 +1295,160 @@ function renderLeaveCalendar() {
         grid.appendChild(cell);
     }
 
-    // Render active days of the current month
-    for (let day = 1; day <= totalDays; day++) {
+    // Render active days of current month
+    for (let d = 1; d <= totalDays; d++) {
         const cell = document.createElement("div");
         cell.className = "calendar-cell";
         
-        const currentCellDate = new Date(year, month, day);
+        const currentCellDate = new Date(year, month, d);
         const dayOfWeek = currentCellDate.getDay();
-        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         
         const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
         const isHoliday = THAILAND_HOLIDAYS_2026.includes(dateString);
 
-        if (isWeekend) {
-            cell.classList.add("weekend");
-        }
+        if (isWeekend) cell.classList.add("weekend");
         if (isHoliday) {
             cell.classList.add("holiday");
             cell.title = "วันหยุดนักขัตฤกษ์";
         }
-        
-        if (isCurrentMonthYear && day === todayDate) {
-            cell.classList.add("today");
-        }
+        if (isCurrentMonthYear && d === todayDate) cell.classList.add("today");
 
-        cell.innerHTML = `<span class="calendar-cell-date">${day}</span>`;
+        cell.innerHTML = `<span class="calendar-cell-date">${d}</span>`;
 
         if (!isWeekend && !isHoliday) {
             const activeLeaves = systemState.requests.filter(req => {
                 const start = parseDateString(req.startDate);
                 const end = parseDateString(req.endDate);
                 if (!start || !end) return false;
-                
                 const cellTime = currentCellDate.getTime();
-                const startTime = start.getTime();
-                const endTime = end.getTime();
-                return cellTime >= startTime && cellTime <= endTime;
+                return cellTime >= start.getTime() && cellTime <= end.getTime();
+            });
+
+            const MAX_VISIBLE = 2;
+            const visibleLeaves = activeLeaves.slice(0, MAX_VISIBLE);
+            const overflowCount = activeLeaves.length - MAX_VISIBLE;
+
+            visibleLeaves.forEach(req => {
+                const pill = document.createElement("div");
+                pill.className = `calendar-leave-pill ${req.leaveType} ${req.status}`;
+                const shortName = req.teacherName.split(" ")[0];
+                const typeLabel = { "sick": "ป่วย", "vacation": "กิจ/พัก", "maternity": "คลอด" };
+                const statusIndicator = req.status === "pending" ? `
+                    <svg viewBox="0 0 24 24" style="width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.5; display: inline-block; vertical-align: middle; margin-right: 3px;">
+                        <path d="M5 2h14M5 22h14M17 2v6.26a1 1 0 0 1-.29.7l-4.42 4.42a1 1 0 0 0 0 1.42l4.42 4.42a1 1 0 0 1 .29.7V22M7 2v6.26a1 1 0 0 0 .29.7V22"/>
+                    </svg>
+                ` : "";
+                pill.innerHTML = `${statusIndicator}${shortName} (${typeLabel[req.leaveType] || req.leaveType})`;
+                pill.title = `${req.teacherName} - ${typeLabelShort(req.leaveType)} (${req.netDays} วัน): ${req.reason}`;
+                pill.onclick = (e) => {
+                    e.stopPropagation();
+                    viewRequestDetails(req.id);
+                };
+                cell.appendChild(pill);
+            });
+
+            if (overflowCount > 0) {
+                const moreBadge = document.createElement("div");
+                moreBadge.className = "calendar-more-badge";
+                moreBadge.textContent = `+${overflowCount} เพิ่มเติม`;
+                moreBadge.title = `ดูรายชื่อผู้ลาทั้งหมด (${activeLeaves.length} คน)`;
+                moreBadge.onclick = (e) => {
+                    e.stopPropagation();
+                    openDayLeavesModal(currentCellDate);
+                };
+                cell.appendChild(moreBadge);
+            }
+
+            if (activeLeaves.length > 0) {
+                cell.style.cursor = "pointer";
+                cell.onclick = () => openDayLeavesModal(currentCellDate);
+            }
+        } else if (isHoliday) {
+            const holidayName = HOLIDAY_NAMES_2026[dateString] || "วันหยุดนักขัตฤกษ์";
+            const holidaySpan = document.createElement("span");
+            holidaySpan.className = "calendar-holiday-name";
+            holidaySpan.textContent = holidayName;
+            cell.appendChild(holidaySpan);
+        }
+
+        grid.appendChild(cell);
+    }
+
+    // Padding for next month
+    const gridCellCount = firstDayIndex + totalDays;
+    const remainingCells = 42 - gridCellCount;
+    const totalPaddedCells = (remainingCells >= 7) ? 35 : 42;
+    const finalPaddingCount = totalPaddedCells - gridCellCount;
+
+    for (let i = 1; i <= finalPaddingCount; i++) {
+        const cell = document.createElement("div");
+        cell.className = "calendar-cell inactive";
+        cell.innerHTML = `<span class="calendar-cell-date">${i}</span>`;
+        grid.appendChild(cell);
+    }
+
+    container.appendChild(grid);
+}
+
+function renderWeekCalendarView(container, startOfWeek) {
+    const grid = document.createElement("div");
+    grid.className = "calendar-grid";
+
+    const dayHeaders = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."];
+    dayHeaders.forEach(day => {
+        const dayHeader = document.createElement("div");
+        dayHeader.className = "calendar-header-day";
+        dayHeader.textContent = day;
+        grid.appendChild(dayHeader);
+    });
+
+    const thaiMonthsShort = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+    const today = new Date();
+
+    for (let i = 0; i < 7; i++) {
+        const currentCellDate = new Date(startOfWeek);
+        currentCellDate.setDate(startOfWeek.getDate() + i);
+
+        const d = currentCellDate.getDate();
+        const m = currentCellDate.getMonth();
+        const y = currentCellDate.getFullYear();
+
+        const cell = document.createElement("div");
+        cell.className = "calendar-cell";
+        cell.style.minHeight = "140px";
+
+        const dayOfWeek = currentCellDate.getDay();
+        const dateString = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isHoliday = THAILAND_HOLIDAYS_2026.includes(dateString);
+
+        if (isWeekend) cell.classList.add("weekend");
+        if (isHoliday) {
+            cell.classList.add("holiday");
+            cell.title = "วันหยุดนักขัตฤกษ์";
+        }
+        if (today.getFullYear() === y && today.getMonth() === m && today.getDate() === d) {
+            cell.classList.add("today");
+        }
+
+        cell.innerHTML = `<span class="calendar-cell-date">${d} ${thaiMonthsShort[m]}</span>`;
+
+        if (!isWeekend && !isHoliday) {
+            const activeLeaves = systemState.requests.filter(req => {
+                const start = parseDateString(req.startDate);
+                const end = parseDateString(req.endDate);
+                if (!start || !end) return false;
+                const cellTime = currentCellDate.getTime();
+                return cellTime >= start.getTime() && cellTime <= end.getTime();
             });
 
             activeLeaves.forEach(req => {
                 const pill = document.createElement("div");
                 pill.className = `calendar-leave-pill ${req.leaveType} ${req.status}`;
-                
-                const shortName = req.teacherName.split(" ")[0];
                 const typeLabel = { "sick": "ป่วย", "vacation": "กิจ/พัก", "maternity": "คลอด" };
-                const statusIndicator = req.status === "pending" ? `
-                    <svg viewBox="0 0 24 24" style="width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.5; display: inline-block; vertical-align: middle; margin-right: 3px;">
-                        <path d="M5 2h14M5 22h14M17 2v6.26a1 1 0 0 1-.29.7l-4.42 4.42a1 1 0 0 0 0 1.42l4.42 4.42a1 1 0 0 1 .29.7V22M7 2v6.26a1 1 0 0 0 .29.7l4.42 4.42a1 1 0 0 1 0 1.42l-4.42 4.42a1 1 0 0 0-.29.7V22"/>
-                    </svg>
-                ` : "";
-                pill.innerHTML = `${statusIndicator}${shortName} (${typeLabel[req.leaveType] || req.leaveType})`;
-                
+                pill.innerHTML = `${req.teacherName.split(" ")[0]} (${typeLabel[req.leaveType] || req.leaveType})`;
                 pill.title = `${req.teacherName} - ${typeLabelShort(req.leaveType)} (${req.netDays} วัน): ${req.reason}`;
                 pill.onclick = (e) => {
                     e.stopPropagation();
@@ -1238,38 +1467,236 @@ function renderLeaveCalendar() {
         grid.appendChild(cell);
     }
 
-    // Render inactive days for next month
-    const gridCellCount = firstDayIndex + totalDays;
-    const remainingCells = 42 - gridCellCount;
-    const finalPadding = remainingCells >= 7 ? remainingCells - 7 : remainingCells;
-    const totalPaddedCells = (remainingCells >= 7) ? 35 : 42;
-    const finalPaddingCount = totalPaddedCells - gridCellCount;
-
-    for (let i = 1; i <= finalPaddingCount; i++) {
-        const cell = document.createElement("div");
-        cell.className = "calendar-cell inactive";
-        cell.innerHTML = `<span class="calendar-cell-date">${i}</span>`;
-        grid.appendChild(cell);
-    }
-
     container.appendChild(grid);
 }
 
+function renderDayCalendarView(container, targetDate) {
+    const dayView = document.createElement("div");
+    dayView.className = "calendar-day-view-container";
+
+    const y = targetDate.getFullYear();
+    const m = targetDate.getMonth();
+    const d = targetDate.getDate();
+    const dayOfWeek = targetDate.getDay();
+    const dateString = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+    const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+    const isHoliday = THAILAND_HOLIDAYS_2026.includes(dateString);
+
+    let statusTag = `<span class="badge badge-approved" style="background:rgba(16,185,129,0.15);color:var(--success);">วันทำการปกติ</span>`;
+    if (isWeekend) {
+        statusTag = `<span class="badge badge-rejected" style="background:rgba(239,68,68,0.15);color:var(--danger);">วันหยุดเสาร์-อาทิตย์</span>`;
+    } else if (isHoliday) {
+        const holidayName = HOLIDAY_NAMES_2026[dateString] || "วันหยุดนักขัตฤกษ์";
+        statusTag = `<span class="badge badge-pending" style="background:rgba(245,158,11,0.15);color:var(--warning);">${holidayName}</span>`;
+    }
+
+    const activeLeaves = systemState.requests.filter(req => {
+        const start = parseDateString(req.startDate);
+        const end = parseDateString(req.endDate);
+        if (!start || !end) return false;
+        const cellTime = targetDate.getTime();
+        return cellTime >= start.getTime() && cellTime <= end.getTime();
+    });
+
+    let contentHtml = "";
+
+    if (activeLeaves.length === 0) {
+        contentHtml = `
+            <div style="text-align:center; padding: 40px 20px; color: var(--text-muted);">
+                <svg viewBox="0 0 24 24" style="width: 40px; height: 40px; stroke: currentColor; fill: none; stroke-width: 1.5; margin-bottom: 8px; opacity: 0.5; display:inline-block;">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <p style="margin: 0; font-size: 14px; font-weight: 500;">ไม่มีบุคลากรครูยื่นขอลาในวันนี้ (ปฏิบัติงานปกติ)</p>
+            </div>
+        `;
+    } else {
+        contentHtml = activeLeaves.map(req => {
+            const typeLabel = { "sick": "ลาป่วย", "vacation": "ลาพักผ่อน / ลากิจ", "maternity": "ลาคลอดบุตร" };
+            return `
+                <div class="calendar-day-card">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--primary), var(--info)); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; font-family:var(--font-heading);">
+                            ${req.teacherName.slice(0, 2)}
+                        </div>
+                        <div>
+                            <div style="font-weight:600; color:var(--text-primary); font-size:14px;">${req.teacherName}</div>
+                            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                                เหตุผล: ${req.reason}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="text-align:right;">
+                            <span class="calendar-leave-pill ${req.leaveType} ${req.status}" style="display:inline-flex;">
+                                ${typeLabel[req.leaveType] || req.leaveType} (${req.netDays} วัน)
+                            </span>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+                                ${formatThaiDate(req.startDate)} - ${formatThaiDate(req.endDate)}
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary btn-icon" style="width:32px; height:32px; border-radius:6px;" onclick="viewRequestDetails('${req.id}')">
+                            <svg viewBox="0 0 24 24" style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    dayView.innerHTML = `
+        <div class="calendar-day-header">
+            <div>
+                <strong style="font-size:15px;color:var(--text-primary);">สถานะวันปฏิบัติงาน</strong>
+            </div>
+            <div>${statusTag}</div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-muted);margin-bottom:12px;">
+            รายการบุคลากรครูที่ลาในวันนี้ (${activeLeaves.length} คน)
+        </div>
+        <div>${contentHtml}</div>
+    `;
+
+    container.appendChild(dayView);
+}
+
+function openDayLeavesModal(cellDate) {
+    const thaiMonthsFull = [
+        "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+        "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+    ];
+    const thaiDaysFull = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+
+    const d = cellDate.getDate();
+    const m = cellDate.getMonth();
+    const y = cellDate.getFullYear();
+
+    const dateTitle = `รายชื่อผู้ลาประจำวัน${thaiDaysFull[cellDate.getDay()]}ที่ ${d} ${thaiMonthsFull[m]} ${y + 543}`;
+    
+    const dateTitleEl = document.getElementById("modal-day-leaves-date");
+    if (dateTitleEl) dateTitleEl.textContent = dateTitle;
+
+    const bodyEl = document.getElementById("modal-day-leaves-body");
+    if (!bodyEl) return;
+
+    const activeLeaves = systemState.requests.filter(req => {
+        const start = parseDateString(req.startDate);
+        const end = parseDateString(req.endDate);
+        if (!start || !end) return false;
+        const cellTime = cellDate.getTime();
+        return cellTime >= start.getTime() && cellTime <= end.getTime();
+    });
+
+    if (activeLeaves.length === 0) {
+        bodyEl.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted);">ไม่มีข้อมูลการยื่นขอลาในวันนี้</div>`;
+    } else {
+        const typeLabel = { "sick": "ลาป่วย", "vacation": "ลาพักผ่อน / ลากิจ", "maternity": "ลาคลอดบุตร" };
+        bodyEl.innerHTML = activeLeaves.map(req => {
+            return `
+                <div class="calendar-day-card" style="margin-bottom:12px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--primary), var(--info)); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; font-family:var(--font-heading);">
+                            ${req.teacherName.slice(0, 2)}
+                        </div>
+                        <div>
+                            <div style="font-weight:600; color:var(--text-primary); font-size:14px;">${req.teacherName}</div>
+                            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                                เหตุผล: ${req.reason}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="text-align:right;">
+                            <span class="calendar-leave-pill ${req.leaveType} ${req.status}" style="display:inline-flex;">
+                                ${typeLabel[req.leaveType] || req.leaveType} (${req.netDays} วัน)
+                            </span>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+                                ${formatThaiDate(req.startDate)} - ${formatThaiDate(req.endDate)}
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary btn-icon" style="width:32px; height:32px; border-radius:6px;" onclick="closeModal('modal-day-leaves'); viewRequestDetails('${req.id}');">
+                            <svg viewBox="0 0 24 24" style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    const switchBtn = document.getElementById("modal-day-switch-view-btn");
+    if (switchBtn) {
+        switchBtn.onclick = () => {
+            closeModal("modal-day-leaves");
+            systemState.calendarMode = "day";
+            systemState.calendarYear = y;
+            systemState.calendarMonth = m;
+            systemState.calendarDay = d;
+            
+            document.querySelectorAll(".cal-mode-btn").forEach(b => {
+                if (b.getAttribute("data-mode") === "day") b.classList.add("active");
+                else b.classList.remove("active");
+            });
+
+            renderLeaveCalendar();
+        };
+    }
+
+    openModal("modal-day-leaves");
+}
+
 function prevCalendarMonth() {
-    systemState.calendarMonth--;
-    if (systemState.calendarMonth < 0) {
-        systemState.calendarMonth = 11;
-        systemState.calendarYear--;
+    const mode = systemState.calendarMode || "month";
+    const currDate = new Date(systemState.calendarYear, systemState.calendarMonth, systemState.calendarDay || 15);
+    
+    if (mode === "month") {
+        systemState.calendarMonth--;
+        if (systemState.calendarMonth < 0) {
+            systemState.calendarMonth = 11;
+            systemState.calendarYear--;
+        }
+    } else if (mode === "week") {
+        currDate.setDate(currDate.getDate() - 7);
+        systemState.calendarYear = currDate.getFullYear();
+        systemState.calendarMonth = currDate.getMonth();
+        systemState.calendarDay = currDate.getDate();
+    } else if (mode === "day") {
+        currDate.setDate(currDate.getDate() - 1);
+        systemState.calendarYear = currDate.getFullYear();
+        systemState.calendarMonth = currDate.getMonth();
+        systemState.calendarDay = currDate.getDate();
     }
     renderLeaveCalendar();
 }
 
 function nextCalendarMonth() {
-    systemState.calendarMonth++;
-    if (systemState.calendarMonth > 11) {
-        systemState.calendarMonth = 0;
-        systemState.calendarYear++;
+    const mode = systemState.calendarMode || "month";
+    const currDate = new Date(systemState.calendarYear, systemState.calendarMonth, systemState.calendarDay || 15);
+    
+    if (mode === "month") {
+        systemState.calendarMonth++;
+        if (systemState.calendarMonth > 11) {
+            systemState.calendarMonth = 0;
+            systemState.calendarYear++;
+        }
+    } else if (mode === "week") {
+        currDate.setDate(currDate.getDate() + 7);
+        systemState.calendarYear = currDate.getFullYear();
+        systemState.calendarMonth = currDate.getMonth();
+        systemState.calendarDay = currDate.getDate();
+    } else if (mode === "day") {
+        currDate.setDate(currDate.getDate() + 1);
+        systemState.calendarYear = currDate.getFullYear();
+        systemState.calendarMonth = currDate.getMonth();
+        systemState.calendarDay = currDate.getDate();
     }
+    renderLeaveCalendar();
+}
+
+function resetCalendarToToday() {
+    const today = new Date();
+    systemState.calendarYear = today.getFullYear();
+    systemState.calendarMonth = today.getMonth();
+    systemState.calendarDay = today.getDate();
     renderLeaveCalendar();
 }
 
@@ -1277,44 +1704,56 @@ function approveRequestDirect(reqId) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
     
-    if (!confirm(`คุณแน่ใจหรือไม่ที่จะอนุมัติใบลาของ ${req.teacherName}?`)) return;
-    
-    // Update request state
-    req.status = "approved";
-    req.comment = "อนุมัติในระบบ";
-    
-    // Deduct quota from teacher
-    const teacher = systemState.teachers.find(t => t.id === req.teacherId);
-    if (teacher) {
-        if (req.leaveType === "sick") teacher.sickUsed += req.netDays;
-        else if (req.leaveType === "vacation") teacher.vacationUsed += req.netDays;
-        else if (req.leaveType === "maternity") teacher.maternityUsed += req.netDays;
-    }
-    
-    saveStateToLocalStorage();
-    renderApprovalView();
-    updateApprovalBadge();
-    showToast(`อนุมัติใบลาของ ${req.teacherName} สำเร็จ`, "success");
-    
-    // Sync steps
-    updateJourneyStepProgress("approve", 3);
+    App.showConfirm({
+        title: "ยืนยันอนุมัติใบลา",
+        message: `ยืนยันการอนุมัติใบลาของ <strong style="color:var(--primary);">${req.teacherName}</strong><br>ประเภท: ${typeLabelShort(req.leaveType)} (${req.netDays} วัน)`,
+        confirmLabel: "อนุมัติ",
+        requireNote: true,
+        onConfirm: (note) => {
+            // Update request state
+            req.status = "approved";
+            req.comment = note || "อนุมัติในระบบ";
+            
+            // Deduct quota from teacher
+            const teacher = systemState.teachers.find(t => t.id === req.teacherId);
+            if (teacher) {
+                if (req.leaveType === "sick") teacher.sickUsed += req.netDays;
+                else if (req.leaveType === "vacation") teacher.vacationUsed += req.netDays;
+                else if (req.leaveType === "maternity") teacher.maternityUsed += req.netDays;
+            }
+            
+            saveStateToLocalStorage();
+            renderApprovalView();
+            updateApprovalBadge();
+            showToast(`อนุมัติใบลาของ ${req.teacherName} สำเร็จ`, "success");
+            
+            // Sync steps
+            updateJourneyStepProgress("approve", 3);
+        }
+    });
 }
 
 function rejectRequestDirect(reqId) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
     
-    if (!confirm(`คุณแน่ใจหรือไม่ที่จะปฏิเสธใบลาของ ${req.teacherName}?`)) return;
-    
-    req.status = "rejected";
-    req.comment = "ปฏิเสธคำขอใบลา";
-    
-    saveStateToLocalStorage();
-    renderApprovalView();
-    updateApprovalBadge();
-    showToast(`ปฏิเสธคำขอการลาของ ${req.teacherName}`, "danger");
-    
-    updateJourneyStepProgress("approve", 3);
+    App.showConfirm({
+        title: "ปฏิเสธคำขอการลา",
+        message: `คุณกำลังปฏิเสธใบลาของ <strong style="color:var(--danger);">${req.teacherName}</strong>`,
+        confirmLabel: "ปฏิเสธ",
+        requireNote: true,
+        onConfirm: (note) => {
+            req.status = "rejected";
+            req.comment = note;
+            
+            saveStateToLocalStorage();
+            renderApprovalView();
+            updateApprovalBadge();
+            showToast(`ปฏิเสธคำขอการลาของ ${req.teacherName}`, "danger");
+            
+            updateJourneyStepProgress("approve", 3);
+        }
+    });
 }
 
 function resetRequestStatus(reqId) {
@@ -1494,11 +1933,9 @@ document.addEventListener("DOMContentLoaded", () => {
         
         showToast(`สลับจำลองสิทธิ์เป็น: ${role === "head" ? "ผู้อนุมัติ (ผอ.)" : "คุณครูผู้ขอลา"}`, "info");
         
-        // Dynamic sidebar updates and redirection
+        // Dynamic sidebar updates and view navigation
         updateSidebarVisibility();
-        
-        // Refresh active view
-        navigateToView(systemState.activeView);
+        navigateToView(systemState.activeView || "form");
     });
 
     // 5. Theme Toggle Switch
@@ -1613,12 +2050,67 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("approve-filter-approved").addEventListener("click", (e) => setActiveFilter(e, "approve", "approved"));
     document.getElementById("approve-filter-rejected").addEventListener("click", (e) => setActiveFilter(e, "approve", "rejected"));
 
-    // Calendar month controls
+    // Approve View Tabs (Requests vs Profile)
+    document.querySelectorAll(".approve-tab-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            // Update active state of buttons
+            document.querySelectorAll(".approve-tab-btn").forEach(b => b.classList.remove("active"));
+            e.target.classList.add("active");
+            
+            // Show corresponding content
+            const tabId = e.target.getAttribute("data-tab");
+            document.querySelectorAll(".approve-tab-content").forEach(content => {
+                content.classList.remove("active");
+                content.style.display = "none";
+            });
+            const activeContent = document.getElementById(`approve-tab-${tabId}`);
+            if (activeContent) {
+                activeContent.classList.add("active");
+                activeContent.style.display = "block";
+            }
+        });
+    });
+
+    // Profile teacher select
+    const profileSelect = document.getElementById("profile-teacher-select");
+    if (profileSelect) {
+        profileSelect.addEventListener("change", (e) => {
+            const teacherId = e.target.value;
+            const emptyState = document.getElementById("profile-empty-state");
+            const panelState = document.getElementById("panel-teacher-profile");
+            
+            if (!teacherId) {
+                emptyState.style.display = "block";
+                panelState.style.display = "none";
+            } else {
+                emptyState.style.display = "none";
+                panelState.style.display = "block";
+                renderTeacherLeaveProfile(teacherId);
+                renderLeaveHistoryTimeline(teacherId);
+            }
+        });
+    }
+
+    // Calendar month & mode controls
     const prevMonthBtn = document.getElementById("calendar-prev-month-btn");
     const nextMonthBtn = document.getElementById("calendar-next-month-btn");
     if (prevMonthBtn && nextMonthBtn) {
         prevMonthBtn.addEventListener("click", prevCalendarMonth);
         nextMonthBtn.addEventListener("click", nextCalendarMonth);
+    }
+
+    document.querySelectorAll(".cal-mode-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            document.querySelectorAll(".cal-mode-btn").forEach(b => b.classList.remove("active"));
+            e.target.classList.add("active");
+            systemState.calendarMode = e.target.getAttribute("data-mode");
+            renderLeaveCalendar();
+        });
+    });
+
+    const todayBtn = document.getElementById("calendar-today-btn");
+    if (todayBtn) {
+        todayBtn.addEventListener("click", resetCalendarToToday);
     }
 });
 
@@ -1632,6 +2124,89 @@ function setActiveFilter(e, category, status) {
     } else {
         renderApprovalView(status);
     }
+}
+
+function renderTeacherLeaveProfile(teacherId) {
+    const teacher = systemState.teachers.find(t => t.id === teacherId);
+    if (!teacher) return;
+
+    // Mini Quota Cards
+    const quotaCardsContainer = document.getElementById("profile-quota-cards");
+    if (!quotaCardsContainer) return;
+
+    const sickUsed = teacher.sickUsed || 0;
+    const vacationUsed = teacher.vacationUsed || 0;
+    const maternityUsed = teacher.maternityUsed || 0;
+
+    const quotaSick = systemState.settings.quotaSick || 30;
+    const quotaVacation = systemState.settings.quotaVacation || 10;
+    const quotaMaternity = systemState.settings.quotaMaternity || 90;
+
+    const quotas = [
+        { type: "sick", label: "ลาป่วย", used: sickUsed, total: quotaSick },
+        { type: "vacation", label: "ลาพักผ่อน / ลากิจ", used: vacationUsed, total: quotaVacation },
+        { type: "maternity", label: "ลาคลอดบุตร", used: maternityUsed, total: quotaMaternity }
+    ];
+
+    quotaCardsContainer.innerHTML = quotas.map(q => {
+        const remaining = Math.max(0, q.total - q.used);
+        return `
+            <div class="mini-quota-card ${q.type}">
+                <div class="mini-quota-title">${q.label}คงเหลือ</div>
+                <div class="mini-quota-value">${remaining}</div>
+                <div class="mini-quota-limit">ใช้ไปแล้ว ${q.used} จาก ${q.total} วัน</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderLeaveHistoryTimeline(teacherId) {
+    const container = document.getElementById("profile-history-list");
+    if (!container) return;
+
+    // Filter requests for this teacher
+    const requests = systemState.requests.filter(r => r.teacherId === teacherId);
+    
+    if (requests.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); background: var(--bg-card); border-radius: 8px;">ไม่พบประวัติการยื่นขอลาของครูท่านนี้ในระบบ</div>`;
+        return;
+    }
+
+    // Sort by start date descending
+    requests.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+    container.innerHTML = requests.map(req => {
+        const startDate = new Date(req.startDate);
+        const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+        const monthStr = thaiMonths[startDate.getMonth()];
+        const dayStr = startDate.getDate().toString().padStart(2, '0');
+        
+        let statusBadge = "";
+        if (req.status === "approved") {
+            statusBadge = `<div style="color: var(--success); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="20 6 9 17 4 12"/></svg>อนุมัติแล้ว</div>`;
+        } else if (req.status === "pending") {
+            statusBadge = `<div style="color: var(--warning); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>รออนุมัติ</div>`;
+        } else {
+            statusBadge = `<div style="color: var(--danger); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>ไม่อนุมัติ</div>`;
+        }
+
+        return `
+            <div class="history-item">
+                <div class="history-date-box">
+                    <span class="history-date-month">${monthStr}</span>
+                    <span class="history-date-day">${dayStr}</span>
+                </div>
+                <div class="history-info">
+                    <div class="history-type">${typeLabelShort(req.leaveType)}</div>
+                    <div class="history-duration">
+                        ${formatThaiDate(req.startDate)} - ${formatThaiDate(req.endDate)} 
+                        <span style="display:inline-block; margin-left:8px; padding:2px 6px; background: rgba(255,255,255,0.1); border-radius: 4px; font-weight:600;">${req.netDays} วัน</span>
+                    </div>
+                </div>
+                ${statusBadge}
+            </div>
+        `;
+    }).join('');
 }
 
 // -------------------------------------------------------------
@@ -1655,4 +2230,326 @@ function typeLabelShort(type) {
     const label = { "sick": "ลาป่วย", "vacation": "ลาพักผ่อน", "maternity": "ลาคลอด" };
     return label[type] || type;
 }
+
+
+// -------------------------------------------------------------
+// SETTINGS VIRTUAL PREVIEW (Component 4+5 — Steps 1 to 6)
+// -------------------------------------------------------------
+
+function updatePreviewStep1() {
+    const container = document.getElementById("preview-step-1");
+    if (!container) return;
+    const cutoffInput = document.getElementById("cutoff-date");
+    const dateStr = cutoffInput ? cutoffInput.value : "2026-12-31";
+    const cutoffDate = new Date(dateStr);
+    
+    const year = isNaN(cutoffDate.getFullYear()) ? 2026 : cutoffDate.getFullYear();
+    const thaiYear = year + 543;
+    
+    const today = new Date();
+    const startOfYear = new Date(year, 0, 1);
+    const endOfYear = isNaN(cutoffDate.getTime()) ? new Date(year, 11, 31) : cutoffDate;
+    
+    const totalMs = Math.max(1, endOfYear.getTime() - startOfYear.getTime());
+    const elapsedMs = Math.max(0, today.getTime() - startOfYear.getTime());
+    const pct = Math.min(100, Math.max(0, Math.round((elapsedMs / totalMs) * 100))) || 65;
+    
+    const diffDays = Math.max(0, Math.ceil((endOfYear.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+
+    container.innerHTML = `
+        <div style="width:100%; text-align:left;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:13px; font-weight:600; color:var(--text-primary);">รอบปีการทำงาน ${thaiYear}</span>
+                <span class="badge badge-approved" style="font-size:11px; padding:2px 8px;">ผ่านไปแล้ว ${pct}%</span>
+            </div>
+            <div style="width:100%; height:10px; background:rgba(255,255,255,0.08); border-radius:5px; overflow:hidden; margin-bottom:10px;">
+                <div style="width:${pct}%; height:100%; background:linear-gradient(90deg, var(--primary), var(--info)); transition:width 0.3s;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-bottom:12px;">
+                <span>1 ม.ค. ${thaiYear}</span>
+                <span style="color:var(--warning); font-weight:600;">📍 วันนี้</span>
+                <span>31 ธ.ค. ${thaiYear}</span>
+            </div>
+            <div style="background:var(--primary-glow); border:1px solid rgba(99,102,241,0.25); padding:10px 12px; border-radius:6px; font-size:12px; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--primary);fill:none;stroke-width:2;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <div>
+                    <div><strong>วันล้างยอดสะสม:</strong> ${endOfYear.getDate()} ธ.ค. ${thaiYear}</div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">(เหลืออีก ${diffDays} วัน ก่อนเริ่มสิทธิ์โควตาปีถัดไป)</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function updatePreviewStep2() {
+    const container = document.getElementById("preview-step-2");
+    if (!container) return;
+
+    const approvers = systemState.settings.approvers || ["ครูวิชัย เรียนดี"];
+    
+    if (approvers.length === 0) {
+        container.innerHTML = `
+            <div style="width:100%; text-align:center; padding:20px; color:var(--danger); background:var(--danger-bg); border-radius:8px; border:1px dashed var(--danger);">
+                ⚠️ ยังไม่ได้กำหนดผู้อนุมัติ (ครูจะไม่สามารถยื่นขอลาได้)
+            </div>
+        `;
+        return;
+    }
+
+    const stepsHtml = approvers.map((name, index) => `
+        <div style="display:flex; align-items:center; gap:10px; background:var(--bg-elevated); padding:10px 12px; border-radius:8px; border:1px solid var(--border-color); width:100%;">
+            <div style="width:24px; height:24px; border-radius:50%; background:var(--primary); color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center;">
+                ${index + 1}
+            </div>
+            <div style="flex:1;">
+                <div style="font-size:13px; font-weight:600; color:var(--text-primary);">${name}</div>
+                <div style="font-size:11px; color:var(--text-muted);">ผู้อนุมัติลำดับที่ ${index + 1}</div>
+            </div>
+            <span class="badge badge-pending" style="font-size:10px; padding:2px 6px;">พิจารณา</span>
+        </div>
+        ${index < approvers.length - 1 ? `<div style="width:2px; height:12px; background:var(--border-color); margin:2px 0 2px 23px;"></div>` : ""}
+    `).join('');
+
+    container.innerHTML = `
+        <div style="width:100%; text-align:left;">
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">เส้นทางการอนุมัติคำขอลา (Approval Flow):</div>
+            <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px; font-weight:500;">🧑‍🏫 ครูยื่นคำขอลา</div>
+                <div style="width:2px; height:10px; background:var(--primary); margin:0 0 6px 23px;"></div>
+                ${stepsHtml}
+                <div style="width:2px; height:10px; background:var(--success); margin:6px 0 4px 23px;"></div>
+                <div style="font-size:12px; color:var(--success); font-weight:600;">✅ ใบลาอนุมัติสำเร็จ</div>
+            </div>
+        </div>
+    `;
+}
+
+function updatePreviewStep3() {
+    const container = document.getElementById("preview-step-3");
+    if (!container) return;
+
+    const qSick = parseInt(document.getElementById("quota-sick")?.value || 30);
+    const qVacation = parseInt(document.getElementById("quota-vacation")?.value || 10);
+    const qMaternity = parseInt(document.getElementById("quota-maternity")?.value || 90);
+
+    container.innerHTML = `
+        <div style="width:100%; display:flex; flex-direction:column; gap:10px;">
+            <div class="mini-quota-card sick" style="background:var(--warning-bg); border-color:rgba(245,158,11,0.3); padding:12px; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; font-weight:600; color:var(--warning);">🤒 ลาป่วยคงเหลือ</span>
+                    <strong style="font-size:18px; color:var(--warning);">${qSick} วัน</strong>
+                </div>
+                <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; margin-top:8px; overflow:hidden;">
+                    <div style="width:100%; height:100%; background:var(--warning);"></div>
+                </div>
+                <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">สิทธิ์เริ่มต้นปีการศึกษา: ${qSick} วัน</div>
+            </div>
+
+            <div class="mini-quota-card vacation" style="background:var(--info-bg); border-color:rgba(14,165,233,0.3); padding:12px; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; font-weight:600; color:var(--info);">✈️ ลาพักผ่อน/ลากิจคงเหลือ</span>
+                    <strong style="font-size:18px; color:var(--info);">${qVacation} วัน</strong>
+                </div>
+                <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; margin-top:8px; overflow:hidden;">
+                    <div style="width:100%; height:100%; background:var(--info);"></div>
+                </div>
+                <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">สิทธิ์เริ่มต้นปีการศึกษา: ${qVacation} วัน</div>
+            </div>
+
+            <div class="mini-quota-card maternity" style="background:var(--success-bg); border-color:rgba(16,185,129,0.3); padding:12px; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; font-weight:600; color:var(--success);">👶 ลาคลอดบุตรคงเหลือ</span>
+                    <strong style="font-size:18px; color:var(--success);">${qMaternity} วัน</strong>
+                </div>
+                <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; margin-top:8px; overflow:hidden;">
+                    <div style="width:100%; height:100%; background:var(--success);"></div>
+                </div>
+                <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">สิทธิ์เริ่มต้นปีการศึกษา: ${qMaternity} วัน</div>
+            </div>
+        </div>
+    `;
+}
+
+function updatePreviewStep4() {
+    const container = document.getElementById("preview-step-4");
+    if (!container) return;
+
+    const rHalfDay = document.getElementById("rule-half-day")?.checked;
+    const rSickDoc = document.getElementById("rule-sick-doc")?.checked;
+    const rAdvance = parseInt(document.getElementById("rule-advance-days")?.value || 3);
+    const rRollover = document.getElementById("rule-rollover")?.checked;
+    const rRolloverMax = parseInt(document.getElementById("rule-rollover-max")?.value || 5);
+
+    let halfDayHtml = rHalfDay ? `
+        <div style="display:flex; gap:6px; margin-top:4px;">
+            <span class="badge" style="background:var(--primary); color:white; font-size:11px;">ทั้งวัน</span>
+            <span class="badge" style="background:var(--bg-elevated); border:1px solid var(--border-color); color:var(--text-primary); font-size:11px;">ครึ่งเช้า (0.5 วัน)</span>
+            <span class="badge" style="background:var(--bg-elevated); border:1px solid var(--border-color); color:var(--text-primary); font-size:11px;">ครึ่งบ่าย (0.5 วัน)</span>
+        </div>
+    ` : `
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">(ยื่นลาได้เฉพาะเต็มวันเท่านั้น)</div>
+    `;
+
+    let sickDocHtml = rSickDoc ? `
+        <div style="background:var(--danger-bg); border:1px solid rgba(239,68,68,0.3); padding:8px 10px; border-radius:6px; font-size:11px; color:var(--danger); margin-top:8px;">
+            ⚠️ บังคับแนบใบรับรองแพทย์ เมื่อยื่นลาป่วยติดต่อกันเกิน 3 วัน
+        </div>
+    ` : "";
+
+    let advanceHtml = rAdvance > 0 ? `
+        <div style="background:var(--warning-bg); border:1px solid rgba(245,158,11,0.3); padding:8px 10px; border-radius:6px; font-size:11px; color:var(--warning); margin-top:8px;">
+            ⏰ ต้องยื่นคำขอล่วงหน้าอย่างน้อย ${rAdvance} วันทำการ
+        </div>
+    ` : "";
+
+    let rolloverHtml = rRollover ? `
+        <div style="background:var(--info-bg); border:1px solid rgba(14,165,233,0.3); padding:8px 10px; border-radius:6px; font-size:11px; color:var(--info); margin-top:8px;">
+            ✈️ วันลาพักผ่อนคงเหลือ ทบสะสมไปปีถัดไปได้สูงสุด ${rRolloverMax} วัน
+        </div>
+    ` : "";
+
+    container.innerHTML = `
+        <div style="width:100%; text-align:left; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px;">
+            <div style="font-size:12px; font-weight:600; color:var(--primary); margin-bottom:8px;">📝 ฟอร์มคำขอลา (มุมมองครู)</div>
+            
+            <div style="margin-bottom:10px;">
+                <span style="font-size:12px; color:var(--text-muted);">ช่วงเวลาการลา:</span>
+                ${halfDayHtml}
+            </div>
+
+            ${advanceHtml}
+            ${sickDocHtml}
+            ${rolloverHtml}
+        </div>
+    `;
+}
+
+function updatePreviewStep5() {
+    const container = document.getElementById("preview-step-5");
+    if (!container) return;
+
+    const late1 = parseInt(document.getElementById("alert-late-1")?.value || 3);
+    const late2 = parseInt(document.getElementById("alert-late-2")?.value || 7);
+    const visaDays = parseInt(document.getElementById("alert-visa")?.value || 30);
+    const workpermitDays = parseInt(document.getElementById("alert-workpermit")?.value || 30);
+    const licenseDays = parseInt(document.getElementById("alert-license")?.value || 60);
+
+    container.innerHTML = `
+        <div style="width:100%; display:flex; flex-direction:column; gap:10px; text-align:left;">
+            <div style="background:var(--warning-bg); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:12px;">
+                <div style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--warning);">
+                    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    แจ้งเตือนมาสาย (ครั้งที่ 1)
+                </div>
+                <div style="font-size:12px; color:var(--text-primary); margin-top:4px;">
+                    🔔 ครูสมชาย ใจดี มาสายสะสมครบ <strong>${late1} ครั้ง</strong> แล้ว
+                </div>
+            </div>
+
+            <div style="background:var(--danger-bg); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:12px;">
+                <div style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--danger);">
+                    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    แจ้งเตือนมาสาย (ครั้งที่ 2 - วิกฤต)
+                </div>
+                <div style="font-size:12px; color:var(--text-primary); margin-top:4px;">
+                    🚨 ครูสมชาย ใจดี มาสายสะสมครบ <strong>${late2} ครั้ง</strong> (ต้องรายงานผู้บริหาร)
+                </div>
+            </div>
+
+            <div style="background:var(--info-bg); border:1px solid rgba(14,165,233,0.3); border-radius:8px; padding:12px;">
+                <div style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--info);">
+                    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    แจ้งเตือนวันหมดอายุเอกสาร
+                </div>
+                <div style="font-size:11px; color:var(--text-secondary); margin-top:4px; line-height:1.5;">
+                    • วีซ่า: เตือนล่วงหน้า <strong>${visaDays} วัน</strong><br>
+                    • Work Permit: เตือนล่วงหน้า <strong>${workpermitDays} วัน</strong><br>
+                    • ใบประกอบวิชาชีพ: เตือนล่วงหน้า <strong>${licenseDays} วัน</strong>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function updatePreviewStep6() {
+    const container = document.getElementById("preview-step-6");
+    if (!container) return;
+
+    const checkedBoxes = Array.from(document.querySelectorAll(".recipient-checkbox:checked")).map(cb => cb.value);
+
+    let recipientsStr = checkedBoxes.length > 0 ? checkedBoxes.join(", ") : "⚠️ ยังไม่ได้เลือกผู้รับการแจ้งเตือน";
+
+    container.innerHTML = `
+        <div style="width:100%; text-align:left; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:14px;">
+            <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--primary); margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                ตัวอย่างอีเมล/ข้อความแจ้งเตือนอัตโนมัติ
+            </div>
+
+            <div style="font-size:12px; margin-bottom:6px;">
+                <span style="color:var(--text-muted);">ส่งถึง:</span>
+                <strong style="color:${checkedBoxes.length > 0 ? "var(--success)" : "var(--danger)"}; margin-left:4px;">${recipientsStr}</strong>
+            </div>
+
+            <div style="background:var(--bg-elevated); padding:10px; border-radius:6px; border:1px solid var(--border-color); font-size:11px; margin-top:8px;">
+                <div style="font-weight:600; color:var(--text-primary); margin-bottom:4px;">[SchoolDark] คำขอลาใหม่: ครูสมชาย ใจดี</div>
+                <div style="color:var(--text-secondary);">ประเภท: ลาป่วย (3 วัน) | เหตุผล: ผ่าตัดฟันคุดทันตกรรมตามแพทย์นัด</div>
+                <div style="display:flex; gap:6px; margin-top:8px;">
+                    <span class="badge badge-approved" style="font-size:10px;">อนุมัติ</span>
+                    <span class="badge badge-rejected" style="font-size:10px;">ไม่อนุมัติ</span>
+                </div>
+            </div>
+            
+            <div style="font-size:10px; color:var(--text-muted); margin-top:10px; text-align:right;">
+                มีผู้รับการแจ้งเตือนทั้งหมด ${checkedBoxes.length} คน
+            </div>
+        </div>
+    `;
+}
+
+function updateAllSettingsPreviews() {
+    updatePreviewStep1();
+    updatePreviewStep2();
+    updatePreviewStep3();
+    updatePreviewStep4();
+    updatePreviewStep5();
+    updatePreviewStep6();
+}
+
+function initSettingsPreview() {
+    // Step 1
+    const cutoffInput = document.getElementById("cutoff-date");
+    if (cutoffInput) cutoffInput.addEventListener("change", updatePreviewStep1);
+
+    // Step 3
+    ["quota-sick", "quota-vacation", "quota-maternity"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", updatePreviewStep3);
+    });
+
+    // Step 4
+    ["rule-half-day", "rule-sick-doc", "rule-rollover"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("change", updatePreviewStep4);
+    });
+    ["rule-advance-days", "rule-rollover-max"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", updatePreviewStep4);
+    });
+
+    // Step 5
+    ["alert-late-1", "alert-late-2", "alert-visa", "alert-workpermit", "alert-license"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", updatePreviewStep5);
+    });
+
+    // Step 6
+    document.querySelectorAll(".recipient-checkbox").forEach(cb => {
+        cb.addEventListener("change", updatePreviewStep6);
+    });
+
+    updateAllSettingsPreviews();
+}
+
+document.addEventListener("DOMContentLoaded", initSettingsPreview);
 

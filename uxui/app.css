@@ -17,8 +17,8 @@
     --bg-app:      hsl(222, 47%, 6%);
     --bg-main:     hsl(222, 47%, 10%);
     --bg-sidebar:  hsl(222, 47%, 4%);
-    --bg-card:     rgba(30, 41, 59, 0.45);
-    --border-color: rgba(255, 255, 255, 0.07);
+    --bg-card:     #1e293b;
+    --border-color: rgba(255, 255, 255, 0.1);
     --border-focus: hsla(250, 85%, 65%, 0.5);
     --text-primary:    hsl(210, 40%, 98%);
     --text-secondary:  hsl(215, 20%, 70%);
@@ -77,8 +77,8 @@
     --bg-app:      hsl(210, 40%, 94%);
     --bg-main:     hsl(0, 0%, 100%);
     --bg-sidebar:  hsl(210, 30%, 97%);
-    --bg-card:     rgba(255, 255, 255, 0.7);
-    --border-color: rgba(0, 0, 0, 0.08);
+    --bg-card:     #ffffff;
+    --border-color: rgba(0, 0, 0, 0.12);
     --border-focus: hsla(250, 85%, 55%, 0.4);
     --text-primary:   hsl(222, 47%, 12%);
     --text-secondary: hsl(215, 25%, 35%);
@@ -544,6 +544,7 @@ header.top-header {
 }
 .card-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.6; }
 
+
 /* =============================================================
    SECTION 8: FORMS & INPUTS (Unified)
    ============================================================= */
@@ -945,8 +946,8 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 /* Old settings.css uses display:flex style */
 .modal-overlay[style*="display: flex"] { opacity: 1; pointer-events: all; }
 
-.modal-box, .modal-content {
-    background: var(--bg-sidebar);
+.modal-box, .modal-content, .modal-card {
+    background: #0f172a;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-lg);
     padding: 28px;
@@ -958,16 +959,23 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     box-shadow: var(--shadow-lg);
     transform: translateY(20px) scale(0.97);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 .modal-overlay.active .modal-box,
 .modal-overlay.active .modal-content,
+.modal-overlay.active .modal-card,
 .modal-overlay[style*="display: flex"] .modal-box,
-.modal-overlay[style*="display: flex"] .modal-content {
+.modal-overlay[style*="display: flex"] .modal-content,
+.modal-overlay[style*="display: flex"] .modal-card {
     transform: translateY(0) scale(1);
 }
 .light-mode .modal-box,
-.light-mode .modal-content { background: #ffffff; }
+.light-mode .modal-content,
+.light-mode .modal-card {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
 
 .modal-header {
     display: flex;
@@ -1014,42 +1022,61 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 /* =============================================================
    SECTION 16: TOAST NOTIFICATIONS (Unified)
    ============================================================= */
+/* =============================================================
+   SECTION 16: TOAST NOTIFICATIONS (Unified Top-Center)
+   ============================================================= */
 #toast-container {
     position: fixed;
-    bottom: 28px;
-    right: 28px;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 10px;
     z-index: 9999;
+    pointer-events: none;
 }
 
 .toast {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 18px;
+    padding: 12px 20px;
     border-radius: var(--border-radius-md);
-    background: var(--bg-sidebar);
+    background: #0f172a;
     border: 1px solid var(--border-color);
     border-left: 4px solid var(--primary);
-    box-shadow: var(--shadow-lg);
-    font-size: 13px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    font-size: 13.5px;
     font-weight: 500;
     color: var(--text-primary);
     min-width: 280px;
-    max-width: 380px;
-    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    max-width: 480px;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: slideDownToast 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes slideDownToast {
+    from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.toast.show { opacity: 1; transform: translateY(0) scale(1); }
 .toast svg { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; }
 .toast.success, .toast-success { border-left-color: var(--success); color: var(--success); }
 .toast.error, .toast.danger, .toast-danger { border-left-color: var(--danger); color: var(--danger); }
 .toast.warning, .toast-warning { border-left-color: var(--warning); color: var(--warning); }
-.toast.info { border-left-color: var(--info); color: var(--info); }
+.toast.info, .toast-info { border-left-color: var(--info); color: var(--info); }
+.toast span { color: var(--text-primary); }
 
-@keyframes slideInRight {
-    from { opacity: 0; transform: translateX(40px); }
-    to   { opacity: 1; transform: translateX(0); }
+.light-mode .toast {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 /* =============================================================
@@ -1965,41 +1992,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 /* =============================================================
    SECTION 35: TOAST NOTIFICATIONS (unified)
    ============================================================= */
-#toast-container {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 9999;
-}
-
-.toast {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
-    border-radius: var(--border-radius-md);
-    background: var(--bg-card);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-lg);
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--text-primary);
-    min-width: 240px;
-    max-width: 360px;
-    transform: translateX(120%);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.toast.show { transform: translateX(0); }
-.toast svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
-.toast-success { border-left: 3px solid var(--success); color: var(--success); }
-.toast-error   { border-left: 3px solid var(--danger);  color: var(--danger);  }
-.toast-warning { border-left: 3px solid var(--warning); color: var(--warning); }
-.toast-info    { border-left: 3px solid var(--info);    color: var(--info);    }
-.toast span    { color: var(--text-primary); }
+/* Section 35 Toast Container unified with Section 16 */
 
 .node-author {
     font-size: 11px;
@@ -2076,3 +2069,300 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     border-left-color: var(--primary);
     font-weight: 500;
 }
+
+/* ===== APPROVE TABS ===== */
+.approve-tabs-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+.approve-tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: var(--border-radius-md);
+    transition: all var(--transition-fast);
+}
+.approve-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+.approve-tab-btn.active {
+    background: var(--bg-card);
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+}
+.approve-tab-content {
+    display: none;
+}
+.approve-tab-content.active {
+    display: block;
+    animation: fadeIn var(--transition-normal) ease forwards;
+}
+
+/* ===== MINI QUOTA CARDS ===== */
+.mini-quota-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.mini-quota-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+.mini-quota-card.sick::before { background: var(--warning-color); }
+.mini-quota-card.vacation::before { background: var(--primary-color); }
+.mini-quota-card.maternity::before { background: var(--danger-color); }
+
+.mini-quota-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.mini-quota-value {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    color: var(--text-primary);
+}
+.mini-quota-limit {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* ===== HISTORY TIMELINE ITEMS ===== */
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    transition: transform var(--transition-fast);
+}
+.history-item:hover {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.03);
+}
+.history-date-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-sm);
+    padding: 8px;
+    min-width: 60px;
+    margin-right: 16px;
+}
+.history-date-month {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+.history-date-day {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.history-info {
+    flex: 1;
+}
+.history-type {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+.history-duration {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+
+/* ===== SETTINGS GRID & PREVIEW ===== */
+.settings-step-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: start;
+}
+.settings-form-col {
+    min-width: 0; /* prevent overflow */
+}
+.settings-preview-col {
+    position: sticky;
+    top: 24px;
+}
+.step-preview-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.preview-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.preview-content {
+    padding: 20px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+@media (max-width: 900px) {
+    .settings-step-grid {
+        grid-template-columns: 1fr;
+    }
+    .settings-preview-col {
+        position: static;
+        order: -1; /* Show preview on top on mobile */
+    }
+}
+
+/* ===== TOOLTIPS ===== */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 100;
+}
+[data-tooltip]::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--border-color);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+[data-tooltip]:hover::after,
+[data-tooltip]:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+
+/* ===== CALENDAR MODE SWITCHER ===== */
+.cal-mode-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    cursor: pointer;
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-fast);
+}
+.cal-mode-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+.cal-mode-btn.active {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* Day View Styles */
+.calendar-day-view-container {
+    padding: 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    margin-top: 12px;
+}
+.calendar-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+.calendar-day-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    margin-bottom: 10px;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+.calendar-day-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+}
+
+
+/* ===== CALENDAR COMPACT & EXPANDABLE STYLES ===== */
+.calendar-more-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-glow);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-top: 2px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+.calendar-more-badge:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.03);
+}
+
