@@ -85,6 +85,12 @@ const App = (() => {
             }
         });
 
+        // Auto-expand the active item's submenu (its tabs/wizard steps), collapse the rest
+        qsa('.menu-item-group').forEach(group => group.classList.remove('expanded'));
+        const activeItem = qs('.menu-item.active');
+        const activeGroup = activeItem ? activeItem.closest('.menu-item-group') : null;
+        if (activeGroup) activeGroup.classList.add('expanded');
+
         // 5. Update header title / breadcrumb
         const meta = VIEW_TITLES[viewName] || VIEW_TITLES[viewName.replace('leave-', '')] || { title: viewName, crumb: '' };
         const titleEl = qs('#current-view-title');
@@ -174,6 +180,44 @@ const App = (() => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 navigate(item.dataset.module, item.dataset.view);
+            });
+        });
+    }
+
+    // --- Sidebar submenu (tabs / wizard steps nested under a menu item) ---
+    function bindSubmenus() {
+        qsa('.submenu-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const group = btn.closest('.menu-item-group');
+                if (group) group.classList.toggle('expanded');
+            });
+        });
+
+        qsa('.submenu-item').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                navigate(link.dataset.module, link.dataset.view);
+
+                qsa('.submenu-item').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                const step   = link.dataset.step;
+                const subtab = link.dataset.subtab;
+                const tab    = link.dataset.tab;
+
+                if (step && typeof goToSettingsStep === 'function') {
+                    goToSettingsStep(parseInt(step, 10));
+                } else if (subtab) {
+                    const subtabBtn = qs(`#view-${link.dataset.view} .form-tab-btn[data-subtab="${subtab}"]`);
+                    if (subtabBtn) subtabBtn.click();
+                } else if (tab) {
+                    const tabBtn = qs(`#view-${link.dataset.view} .approve-tab-btn[data-tab="${tab}"]`);
+                    if (tabBtn) tabBtn.click();
+                }
             });
         });
     }
@@ -371,6 +415,7 @@ const App = (() => {
     // --- Init ---
     function init() {
         bindSidebarMenu();
+        bindSubmenus();
         bindSidebarToggle();
         bindThemeToggle();
         bindModalCloseButtons();

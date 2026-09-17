@@ -314,6 +314,57 @@ aside.sidebar.collapsed .user-avatar { height: auto; background: transparent; }
     box-shadow: 0 0 8px var(--primary);
 }
 
+/* Sidebar submenus — expose a menu item's tabs/wizard steps directly in the nav,
+   so you don't have to open the view and scroll to discover what's inside it. */
+.menu-item-row { display: flex; align-items: stretch; gap: 4px; }
+.menu-item-row .menu-item { flex: 1; min-width: 0; }
+.submenu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-md);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+.submenu-toggle:hover { color: var(--text-primary); background: var(--bg-card); border-color: var(--border-color); }
+.submenu-toggle svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; transition: transform var(--transition-speed); }
+.menu-item-group.expanded .submenu-toggle svg { transform: rotate(180deg); }
+.submenu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 0;
+    overflow: hidden;
+    padding-left: 34px;
+    margin: 0;
+    transition: max-height var(--transition-speed);
+}
+.menu-item-group.expanded .submenu { max-height: 600px; }
+.submenu-item {
+    display: block;
+    padding: 7px 10px;
+    margin: 2px 0;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 12.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all var(--transition-speed);
+}
+.submenu-item:hover { color: var(--text-primary); background: var(--bg-card); }
+.submenu-item.active { color: var(--primary); font-weight: 600; background: var(--primary-glow); }
+aside.sidebar.collapsed .submenu,
+aside.sidebar.collapsed .submenu-toggle { display: none; }
+
 /* Module separator in sidebar */
 .sidebar-divider {
     height: 1px;
@@ -1364,8 +1415,22 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 .calendar-leave-pill.sick { background: var(--warning-bg); color: var(--warning); border-color: rgba(245, 158, 11, 0.3); }
 .calendar-leave-pill.vacation { background: var(--info-bg); color: var(--info); border-color: rgba(14, 165, 233, 0.3); }
 .calendar-leave-pill.maternity { background: var(--success-bg); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+/* Generic badge-color variants (used by the student leave calendar, whose leave-type colors are user-defined) */
+.calendar-leave-pill.danger { background: var(--danger-bg); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+.calendar-leave-pill.warning { background: var(--warning-bg); color: var(--warning); border-color: rgba(245, 158, 11, 0.3); }
+.calendar-leave-pill.info { background: var(--info-bg); color: var(--info); border-color: rgba(14, 165, 233, 0.3); }
+.calendar-leave-pill.success { background: var(--success-bg); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+/* Permission-ticket type variants (used by the ticket calendar), matching .type-badge's colors */
+.calendar-leave-pill.class-in { background: var(--warning-bg); color: var(--warning); border-color: rgba(245, 158, 11, 0.3); }
+.calendar-leave-pill.class-out { background: var(--info-bg); color: var(--info); border-color: rgba(14, 165, 233, 0.3); }
+.calendar-leave-pill.school-out { background: var(--danger-bg); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+.calendar-leave-pill.late-permit { background: var(--primary-glow); color: var(--primary); border-color: rgba(99, 102, 241, 0.3); }
+.calendar-leave-pill.parent-pick { background: var(--flow-red-glow); color: var(--flow-red); border-color: rgba(225, 29, 72, 0.3); }
+.calendar-leave-pill.duty-delegate { background: var(--success-bg); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
 .calendar-leave-pill.pending { border-style: dashed; border-color: currentColor; opacity: 0.85; }
 .calendar-leave-pill.approved { font-weight: 600; }
+/* Legend pills that act as a filter toggle for the table below the calendar */
+.calendar-leave-pill.legend-active { box-shadow: 0 0 0 2px currentColor inset; font-weight: 700; }
 .calendar-holiday-name {
     font-size: 10px;
     font-weight: 500;
@@ -2124,9 +2189,14 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     right: 0;
     height: 3px;
 }
-.mini-quota-card.sick::before { background: var(--warning-color); }
-.mini-quota-card.vacation::before { background: var(--primary-color); }
-.mini-quota-card.maternity::before { background: var(--danger-color); }
+.mini-quota-card.sick::before { background: var(--warning); }
+.mini-quota-card.vacation::before { background: var(--primary); }
+.mini-quota-card.maternity::before { background: var(--danger); }
+/* Generic badge-color variants (used by the student leave profile, whose leave-type colors are user-defined) */
+.mini-quota-card.danger::before { background: var(--danger); }
+.mini-quota-card.warning::before { background: var(--warning); }
+.mini-quota-card.info::before { background: var(--info); }
+.mini-quota-card.success::before { background: var(--success); }
 
 .mini-quota-title {
     font-size: 13px;
@@ -2144,6 +2214,10 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     color: var(--text-muted);
     margin-top: 4px;
 }
+
+/* ===== SEARCHABLE NAME LIST ITEMS (individual leave profile pickers) ===== */
+.student-list-item:hover { background: rgba(255, 255, 255, 0.05) !important; border-color: var(--text-muted) !important; }
+.student-list-item.active { background: rgba(14, 165, 233, 0.12) !important; border-color: var(--primary) !important; }
 
 /* ===== HISTORY TIMELINE ITEMS ===== */
 .history-item {
