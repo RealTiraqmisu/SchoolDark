@@ -1110,16 +1110,8 @@ function renderApprovalView(filterStatus = "all") {
         return;
     }
 
-    // Populate profile teacher select dropdown
-    const profileSelect = document.getElementById("profile-teacher-select");
-    if (profileSelect && profileSelect.options.length <= 1) {
-        systemState.teachers.forEach(t => {
-            const opt = document.createElement("option");
-            opt.value = t.id;
-            opt.textContent = t.name;
-            profileSelect.appendChild(opt);
-        });
-    }
+    // Render the searchable teacher list for the "ประวัติการลารายบุคคล" tab
+    renderTeacherProfileList();
 
     // Render leave calendar
     renderLeaveCalendar();
@@ -2071,26 +2063,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Profile teacher select
-    const profileSelect = document.getElementById("profile-teacher-select");
-    if (profileSelect) {
-        profileSelect.addEventListener("change", (e) => {
-            const teacherId = e.target.value;
-            const emptyState = document.getElementById("profile-empty-state");
-            const panelState = document.getElementById("panel-teacher-profile");
-            
-            if (!teacherId) {
-                emptyState.style.display = "block";
-                panelState.style.display = "none";
-            } else {
-                emptyState.style.display = "none";
-                panelState.style.display = "block";
-                renderTeacherLeaveProfile(teacherId);
-                renderLeaveHistoryTimeline(teacherId);
-            }
-        });
-    }
-
     // Calendar month & mode controls
     const prevMonthBtn = document.getElementById("calendar-prev-month-btn");
     const nextMonthBtn = document.getElementById("calendar-next-month-btn");
@@ -2126,13 +2098,44 @@ function setActiveFilter(e, category, status) {
     }
 }
 
-function renderTeacherLeaveProfile(teacherId) {
+// ประวัติการลารายบุคคล — a searchable name list (mirrors the calendar's
+// "day leaves" list pattern); clicking a teacher opens the quota + history
+// detail in modal-teacher-profile instead of a select-and-reveal dropdown.
+function renderTeacherProfileList() {
+    const q = (document.getElementById("teacher-profile-search").value || "").trim().toLowerCase();
+    const container = document.getElementById("teacher-profile-list-container");
+    if (!container) return;
+
+    const filtered = systemState.teachers.filter(t =>
+        t.name.toLowerCase().includes(q) || t.id.toLowerCase().includes(q) || (t.role || "").toLowerCase().includes(q)
+    );
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 12px; color: var(--text-muted); font-size:12px;">ไม่พบคุณครู</div>`;
+        return;
+    }
+
+    container.innerHTML = filtered.map(t => {
+        const pendingCount = systemState.requests.filter(r => r.teacherId === t.id).length;
+        return `
+            <div class="student-list-item" onclick="openTeacherProfileModal('${t.id}')" style="padding:10px 12px;border-radius:var(--border-radius-sm);border:1px solid var(--border-color);background:rgba(255,255,255,0.01);cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                    <div style="font-weight:600;font-size:13px;color:var(--text-primary);">${t.name}</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${t.role || "-"} · ${t.id}</div>
+                </div>
+                <span style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px;">${pendingCount} รายการ
+                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="9 18 15 12 9 6"/></svg>
+                </span>
+            </div>
+        `;
+    }).join('');
+}
+
+function openTeacherProfileModal(teacherId) {
     const teacher = systemState.teachers.find(t => t.id === teacherId);
     if (!teacher) return;
 
-    // Mini Quota Cards
-    const quotaCardsContainer = document.getElementById("profile-quota-cards");
-    if (!quotaCardsContainer) return;
+    document.getElementById("modal-teacher-profile-title").querySelector("span").textContent = `ประวัติการลา: ${teacher.name}`;
 
     const sickUsed = teacher.sickUsed || 0;
     const vacationUsed = teacher.vacationUsed || 0;
@@ -2148,7 +2151,7 @@ function renderTeacherLeaveProfile(teacherId) {
         { type: "maternity", label: "ลาคลอดบุตร", used: maternityUsed, total: quotaMaternity }
     ];
 
-    quotaCardsContainer.innerHTML = quotas.map(q => {
+    const quotaCardsHtml = quotas.map(q => {
         const remaining = Math.max(0, q.total - q.used);
         return `
             <div class="mini-quota-card ${q.type}">
@@ -2158,55 +2161,56 @@ function renderTeacherLeaveProfile(teacherId) {
             </div>
         `;
     }).join('');
-}
 
-function renderLeaveHistoryTimeline(teacherId) {
-    const container = document.getElementById("profile-history-list");
-    if (!container) return;
-
-    // Filter requests for this teacher
     const requests = systemState.requests.filter(r => r.teacherId === teacherId);
-    
+    let historyHtml;
     if (requests.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--text-muted); background: var(--bg-card); border-radius: 8px;">ไม่พบประวัติการยื่นขอลาของครูท่านนี้ในระบบ</div>`;
-        return;
+        historyHtml = `<div style="text-align:center; padding: 20px; color: var(--text-muted); background: var(--bg-card); border-radius: 8px;">ไม่พบประวัติการยื่นขอลาของครูท่านนี้ในระบบ</div>`;
+    } else {
+        const sorted = [...requests].sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+        const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+        historyHtml = sorted.map(req => {
+            const startDate = new Date(req.startDate);
+            const monthStr = thaiMonths[startDate.getMonth()];
+            const dayStr = startDate.getDate().toString().padStart(2, '0');
+
+            let statusBadge = "";
+            if (req.status === "approved") {
+                statusBadge = `<div style="color: var(--success); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="20 6 9 17 4 12"/></svg>อนุมัติแล้ว</div>`;
+            } else if (req.status === "pending") {
+                statusBadge = `<div style="color: var(--warning); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>รออนุมัติ</div>`;
+            } else {
+                statusBadge = `<div style="color: var(--danger); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>ไม่อนุมัติ</div>`;
+            }
+
+            return `
+                <div class="history-item" style="cursor:pointer;" onclick="closeModal('modal-teacher-profile'); viewRequestDetails('${req.id}');">
+                    <div class="history-date-box">
+                        <span class="history-date-month">${monthStr}</span>
+                        <span class="history-date-day">${dayStr}</span>
+                    </div>
+                    <div class="history-info">
+                        <div class="history-type">${typeLabelShort(req.leaveType)}</div>
+                        <div class="history-duration">
+                            ${formatThaiDate(req.startDate)} - ${formatThaiDate(req.endDate)}
+                            <span style="display:inline-block; margin-left:8px; padding:2px 6px; background: rgba(255,255,255,0.1); border-radius: 4px; font-weight:600;">${req.netDays} วัน</span>
+                        </div>
+                    </div>
+                    ${statusBadge}
+                </div>
+            `;
+        }).join('');
     }
 
-    // Sort by start date descending
-    requests.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    document.getElementById("modal-teacher-profile-body").innerHTML = `
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">${teacher.role || "-"} · รหัส: ${teacher.id}</div>
+        <div class="setting-section-title">โควต้าการลาคงเหลือ</div>
+        <div class="grid-3" style="margin-top:12px;margin-bottom:24px;">${quotaCardsHtml}</div>
+        <div class="setting-section-title">ประวัติการลาในปีนี้</div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">${historyHtml}</div>
+    `;
 
-    container.innerHTML = requests.map(req => {
-        const startDate = new Date(req.startDate);
-        const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-        const monthStr = thaiMonths[startDate.getMonth()];
-        const dayStr = startDate.getDate().toString().padStart(2, '0');
-        
-        let statusBadge = "";
-        if (req.status === "approved") {
-            statusBadge = `<div style="color: var(--success); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="20 6 9 17 4 12"/></svg>อนุมัติแล้ว</div>`;
-        } else if (req.status === "pending") {
-            statusBadge = `<div style="color: var(--warning); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>รออนุมัติ</div>`;
-        } else {
-            statusBadge = `<div style="color: var(--danger); display:flex; align-items:center; gap:4px; font-size:12px; font-weight:500;"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>ไม่อนุมัติ</div>`;
-        }
-
-        return `
-            <div class="history-item">
-                <div class="history-date-box">
-                    <span class="history-date-month">${monthStr}</span>
-                    <span class="history-date-day">${dayStr}</span>
-                </div>
-                <div class="history-info">
-                    <div class="history-type">${typeLabelShort(req.leaveType)}</div>
-                    <div class="history-duration">
-                        ${formatThaiDate(req.startDate)} - ${formatThaiDate(req.endDate)} 
-                        <span style="display:inline-block; margin-left:8px; padding:2px 6px; background: rgba(255,255,255,0.1); border-radius: 4px; font-weight:600;">${req.netDays} วัน</span>
-                    </div>
-                </div>
-                ${statusBadge}
-            </div>
-        `;
-    }).join('');
+    openModal("modal-teacher-profile");
 }
 
 // -------------------------------------------------------------
