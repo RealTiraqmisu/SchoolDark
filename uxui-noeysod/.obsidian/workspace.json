@@ -1,0 +1,208 @@
+{
+  "main": {
+    "id": "13c5d7982d2bf85e",
+    "type": "split",
+    "children": [
+      {
+        "id": "639a3efb171c4a31",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "649ffc992a5d002e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "materials/doc/uc-admission.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "uc-admission"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "65a5911b302920d0",
+    "type": "split",
+    "children": [
+      {
+        "id": "3bdda57f061fe49c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a83ffc5ae4e5c73c",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "fdb90935e86781e9",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "ff830e07dc5409a2",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "f9ff38f4cd429b8a",
+    "type": "split",
+    "children": [
+      {
+        "id": "dd73da87beee1211",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c716c909099eb4dd",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "materials/doc/uc-admission.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "f1d47ccf6fd34ae5",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "materials/doc/uc-admission.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "522adcb5ad9cd5c1",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "ed4616df49148ee2",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "91390d245591b5e2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "materials/doc/uc-admission.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "649ffc992a5d002e",
+  "lastOpenFiles": [
+    "materials/doc/uc-registration.md",
+    "materials/doc/copy-of-use-case-description-template.md",
+    "materials/doc/use-case-diagram-notes.md",
+    "materials/doc/(not sure) uc-applicant.md",
+    "materials/doc/uc-settings-registration.md",
+    "materials/doc/use-case-description-index.md",
+    "materials/doc/uc-settings-admission.md",
+    "materials/doc/uc-admission.md",
+    "materials/doc/copy-of-scope.md",
+    "materials/doc/use-case-diagram-notes.md.tmp.47528.a48d92c0cc54",
+    "AGENTS.md",
+    "materials/doc/uc-settings-admission.md.tmp.47528.c4168ee36029",
+    "CLAUDE.md",
+    "materials/doc/uc-admission.md.tmp.47528.b2f7c858253e"
+  ]
+}

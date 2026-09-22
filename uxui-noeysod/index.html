@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบบริหารจัดการผู้สมัครเรียน</title>
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Tailwind Config to match original OKLCH theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3e63dd',
+              foreground: '#ffffff',
+              hover: '#2f51c7'
+            },
+            secondary: {
+              DEFAULT: '#f1f3f9',
+              foreground: '#1e293b'
+            },
+            success: {
+              DEFAULT: '#10b981',
+              foreground: '#ffffff'
+            },
+            warning: {
+              DEFAULT: '#f59e0b',
+              foreground: '#78350f'
+            },
+            info: {
+              DEFAULT: '#0284c7',
+              foreground: '#ffffff'
+            },
+            destructive: {
+              DEFAULT: '#ef4444',
+              foreground: '#ffffff'
+            },
+            muted: {
+              DEFAULT: '#f8fafc',
+              foreground: '#64748b'
+            },
+            card: {
+              DEFAULT: '#ffffff',
+              foreground: '#0f172a'
+            },
+            border: '#e2e8f0'
+          },
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    body {
+      background-color: #f8fafc;
+    }
+    /* Simple Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-card-foreground">
+
+  <!-- Header -->
+  <header class="border-b bg-card shadow-sm sticky top-0 z-30">
+    <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-6 py-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+          <i data-lucide="graduation-cap" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight">ระบบบริหารจัดการผู้สมัครเรียน</h1>
+          <p class="text-xs text-muted-foreground">Student Admission System</p>
+        </div>
+        <!-- Tab navigation inside header -->
+        <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2">
+          <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold bg-primary text-primary-foreground shadow">
+            <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
+          </a>
+          <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-650 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="users" class="h-3.5 w-3.5"></i> ข้อมูลนักเรียน
+          </a>
+          <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-650 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
+          </a>
+        </div>
+      </div>
+      <div class="ml-auto flex items-center gap-2">
+        <a href="status.html" class="inline-flex items-center gap-2 rounded-md bg-sky-50 border border-sky-200 px-3.5 py-1.5 text-sm font-medium hover:bg-sky-100 text-sky-700 transition-colors shadow-sm">
+          <i data-lucide="search" class="h-4 w-4"></i> ระบบตรวจสอบสถานะผู้สมัคร
+        </a>
+        <button id="btn-notify" class="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-3.5 py-1.5 text-sm font-medium hover:bg-primary-hover disabled:opacity-50 disabled:pointer-events-none transition-colors" disabled>
+          <i data-lucide="bell" class="h-4 w-4"></i> แจ้งเตือน (<span id="notify-count">0</span>)
+        </button>
+        <button id="btn-print" class="inline-flex items-center gap-2 rounded-md bg-secondary text-secondary-foreground border border-border px-3.5 py-1.5 text-sm font-medium hover:bg-slate-200 disabled:opacity-50 disabled:pointer-events-none transition-colors" disabled>
+          <i data-lucide="printer" class="h-4 w-4"></i> พิมพ์ (<span id="print-count">0</span>)
+        </button>
+        <a href="apply.html" class="inline-flex items-center gap-2 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+          <i data-lucide="user-plus" class="h-4 w-4"></i> ลงทะเบียนผู้สมัครใหม่
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="mx-auto max-w-[1400px] px-6 py-6 pb-28">
+    
+    <!-- Phase Navigation Visual Roadmap -->
+    <div class="mb-10 mt-4 bg-white border border-border p-6 rounded-2xl shadow-sm relative overflow-hidden">
+      <!-- Background Connecting Line -->
+      <div class="absolute top-[52px] left-[15%] right-[15%] h-1 bg-slate-100 rounded-full -translate-y-1/2">
+        <div id="roadmap-progress-bar" class="h-full bg-primary rounded-full transition-all duration-500 w-[0%]"></div>
+      </div>
+      
+      <!-- Nodes Container -->
+      <div class="relative flex justify-between max-w-4xl mx-auto">
+        <!-- Node 1 -->
+        <button onclick="changePhase(1)" id="roadmap-node-1" class="flex flex-col items-center group focus:outline-none transition-all duration-300 transform hover:scale-105" style="width: 180px;">
+          <div id="roadmap-circle-1" class="w-14 h-14 rounded-full flex items-center justify-center border-2 border-primary bg-primary text-white shadow-md transition-all duration-300 group-hover:shadow-lg">
+            <i data-lucide="file-text" class="h-6 w-6"></i>
+          </div>
+          <span class="mt-2.5 text-xs font-bold text-slate-800 transition-colors" id="roadmap-label-1">รับสมัครและคัดเลือก</span>
+          <span class="text-[10px] text-muted-foreground" id="roadmap-sub-1">เฟสที่ 1</span>
+        </button>
+
+        <!-- Node 2 -->
+        <button onclick="changePhase(2)" id="roadmap-node-2" class="flex flex-col items-center group focus:outline-none transition-all duration-300 transform hover:scale-105" style="width: 180px;">
+          <div id="roadmap-circle-2" class="w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 transition-all duration-300 group-hover:border-primary group-hover:text-primary">
+            <i data-lucide="edit-3" class="h-6 w-6"></i>
+          </div>
+          <span class="mt-2.5 text-xs font-semibold text-slate-500 transition-colors" id="roadmap-label-2">ประกาศผลสอบ</span>
+          <span class="text-[10px] text-slate-400" id="roadmap-sub-2">เฟสที่ 2</span>
+        </button>
+
+        <!-- Node 3 -->
+        <button onclick="changePhase(3)" id="roadmap-node-3" class="flex flex-col items-center group focus:outline-none transition-all duration-300 transform hover:scale-105" style="width: 180px;">
+          <div id="roadmap-circle-3" class="w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 transition-all duration-300 group-hover:border-primary group-hover:text-primary">
+            <i data-lucide="school" class="h-6 w-6"></i>
+          </div>
+          <span class="mt-2.5 text-xs font-semibold text-slate-500 transition-colors" id="roadmap-label-3">รายงานตัวและมอบตัว</span>
+          <span class="text-[10px] text-slate-400" id="roadmap-sub-3">เฟสที่ 3</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Instructions tip -->
+    <p class="mb-4 text-xs text-muted-foreground">
+      เคล็ดลับ: คลิก checkbox ตัวแรก แล้วกด <kbd class="rounded border bg-slate-200 px-1.5 py-0.5 text-[10px] font-medium text-slate-700">Shift</kbd> + คลิกตัวอื่น เพื่อเลือกเป็นช่วง
+    </p>
+
+    <!-- Filters & Search Bar -->
+    <div class="flex flex-wrap gap-3 items-center justify-between mb-4 bg-card p-4 rounded-lg border border-border shadow-sm">
+      <div class="relative w-full max-w-sm">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+          <i data-lucide="search" class="h-4 w-4"></i>
+        </span>
+        <input type="text" id="search-input" oninput="handleFilterChange()" placeholder="ค้นหาชื่อหรือรหัสผู้สมัคร..." class="block w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+      </div>
+      
+      <div class="flex items-center gap-2.5 flex-wrap w-full md:w-auto">
+        <select id="filter-grade" onchange="handleFilterChange()" class="h-9 text-sm rounded-md border border-slate-200 bg-card px-3 focus:outline-none focus:ring-1 focus:ring-primary">
+          <option value="">ทุกระดับชั้น</option>
+          <option value="ม.1">ม.1</option>
+          <option value="ม.4">ม.4</option>
+        </select>
+
+        <select id="filter-plan" onchange="handleFilterChange()" class="h-9 text-sm rounded-md border border-slate-200 bg-card px-3 focus:outline-none focus:ring-1 focus:ring-primary">
+          <option value="">ทุกแผนการเรียน</option>
+          <option value="วิทย์-คณิต">วิทย์-คณิต</option>
+          <option value="ศิลป์-คำนวณ">ศิลป์-คำนวณ</option>
+          <option value="ศิลป์-ภาษา">ศิลป์-ภาษา</option>
+          <option value="คอมพิวเตอร์และเทคโนโลยี">คอมพิวเตอร์และเทคโนโลยี</option>
+          <option value="ทั่วไป">ทั่วไป</option>
+        </select>
+        
+        <button onclick="resetStoreData()" class="h-9 text-xs rounded-md border border-slate-200 px-3 hover:bg-slate-50 text-slate-500 font-medium inline-flex items-center gap-1 transition-colors">
+          <i data-lucide="rotate-ccw" class="h-3.5 w-3.5"></i> รีเซ็ตข้อมูล Demo
+        </button>
+      </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="rounded-lg border border-border bg-card shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-border bg-slate-50/70 text-slate-700 text-xs font-semibold uppercase">
+              <th class="w-10 p-3 text-center">
+                <input type="checkbox" id="check-all" onchange="toggleSelectAll(this.checked)" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300">
+              </th>
+              <th class="w-12 p-3 text-slate-500">#</th>
+              <th class="p-3">ข้อมูลนักเรียน</th>
+              <th class="p-3">วันที่สมัคร</th>
+              <th class="p-3">ระดับชั้น & แผนการเรียน</th>
+              <!-- Conditional column headers will go here dynamically -->
+              <th id="col-header-1" class="p-3">เอกสาร</th>
+              <th id="col-header-2" class="p-3">ห้องสอบ / ที่นั่ง</th>
+              <th id="col-header-3" class="p-3">สถานะค่าสมัคร</th>
+              <th id="col-header-4" class="p-3">ห้องเรียน</th>
+              <th class="p-3">สถานะหลัก</th>
+              <th class="w-16 p-3 text-right">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="applicants-table-body" class="divide-y divide-border text-sm">
+            <!-- Table rows injected via javascript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Floating Bulk Action Bar -->
+  <div id="bulk-action-bar" class="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 hidden">
+    <div class="flex flex-wrap items-center gap-2.5 rounded-full border border-border bg-card px-4 py-2.5 shadow-lg ring-1 ring-black/5 animate-bounce-short">
+      <span class="flex items-center gap-2 pl-1 pr-2 text-sm font-medium">
+        <span id="bulk-selected-count" class="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs text-primary-foreground font-semibold">
+          0
+        </span>
+        เลือกแล้ว
+      </span>
+      <span class="h-5 w-px bg-slate-200"></span>
+      
+      <select id="bulk-status-select" onchange="handleBulkStatusSelect(this.value)" class="h-8 rounded-md border border-slate-200 bg-card px-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary">
+        <option value="">เปลี่ยนสถานะเป็น...</option>
+        <!-- Status options will be loaded dynamically -->
+      </select>
+      
+      <button onclick="triggerBulkNotify()" class="inline-flex items-center justify-center rounded-md bg-secondary border border-border px-3 py-1.5 text-xs font-semibold hover:bg-slate-200 transition-colors text-secondary-foreground">
+        <i data-lucide="mail" class="mr-1.5 h-3.5 w-3.5"></i> ส่งอีเมล
+      </button>
+      <button onclick="triggerBulkExport()" class="inline-flex items-center justify-center rounded-md bg-secondary border border-border px-3 py-1.5 text-xs font-semibold hover:bg-slate-200 transition-colors text-secondary-foreground">
+        <i data-lucide="printer" class="mr-1.5 h-3.5 w-3.5"></i> พิมพ์
+      </button>
+      <button onclick="clearAllSelections()" class="p-1 rounded-full text-slate-400 hover:text-slate-600 transition-colors" aria-label="ยกเลิกการเลือก">
+        <i data-lucide="x" class="h-4 w-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Single Status Change Modal -->
+  <div id="modal-status" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-5 py-4 border-b border-border">
+        <h3 class="text-base font-semibold text-slate-900">ยืนยันการอัปเดตสถานะ?</h3>
+      </div>
+      <div class="p-5 space-y-3">
+        <p class="text-sm text-slate-600">
+          คุณต้องการเปลี่ยนสถานะของ <span id="modal-status-name" class="font-semibold text-slate-900">...</span> จาก 
+          "<span id="modal-status-old" class="font-medium text-slate-700">...</span>" เป็น 
+          "<span id="modal-status-new" class="font-semibold text-primary">...</span>" ใช่หรือไม่?
+        </p>
+        <div id="modal-status-move-warning" class="hidden rounded-md border border-sky-100 bg-sky-50 px-3 py-2 text-xs text-sky-700">
+          ⓘ รายการนี้จะถูกย้ายไปยังแท็บ "<span id="modal-status-target-phase">...</span>"
+        </div>
+        <p class="text-xs text-slate-400">
+          ระบบจะส่งอีเมลแจ้งผู้ปกครองตาม Template ทันทีหากกดยืนยัน
+        </p>
+      </div>
+      <div class="px-5 py-3.5 border-t border-border flex justify-end gap-2 bg-slate-50">
+        <button onclick="closeModal('modal-status')" class="px-4 py-1.5 text-xs font-semibold rounded-md border hover:bg-slate-100 transition-colors">ยกเลิก</button>
+        <button id="modal-status-confirm-btn" class="px-4 py-1.5 text-xs font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover transition-colors">ยืนยัน</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Status Change Modal -->
+  <div id="modal-bulk-status" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-5 py-4 border-b border-border">
+        <h3 class="text-base font-semibold text-slate-900">ยืนยันการอัปเดตสถานะแบบกลุ่ม?</h3>
+      </div>
+      <div class="p-5 space-y-3">
+        <p class="text-sm text-slate-600">
+          กำลังจะเปลี่ยนสถานะของ <span id="modal-bulk-status-count" class="font-semibold text-slate-900">0 รายการ</span> เป็น 
+          "<span id="modal-bulk-status-new" class="font-semibold text-primary">...</span>"
+        </p>
+        <div id="modal-bulk-status-move-warning" class="hidden rounded-md border border-sky-100 bg-sky-50 px-3 py-2 text-xs text-sky-700">
+          ⓘ ทั้งหมดจะถูกย้ายไปยังแท็บ "<span id="modal-bulk-status-target-phase">...</span>"
+        </div>
+        
+        <div class="rounded-md border bg-slate-50 p-3 max-h-36 overflow-y-auto">
+          <div class="mb-1.5 text-xs font-medium text-slate-400">รายชื่อผู้สมัคร (แสดงสูงสุด 5 รายการ)</div>
+          <ul id="modal-bulk-status-list" class="space-y-1 text-xs text-slate-700 divide-y divide-slate-100">
+            <!-- Bulk list items -->
+          </ul>
+        </div>
+        <p class="text-xs text-slate-400">
+          ระบบจะส่งอีเมลแจ้งผู้ปกครองทุกคนตาม Template ทันที (สามารถกดย้อนกลับรายการทั้งหมดได้หลังจากการอัปเดตเสร็จสิ้น)
+        </p>
+      </div>
+      <div class="px-5 py-3.5 border-t border-border flex justify-end gap-2 bg-slate-50">
+        <button onclick="closeModal('modal-bulk-status')" class="px-4 py-1.5 text-xs font-semibold rounded-md border hover:bg-slate-100 transition-colors">ยกเลิก</button>
+        <button id="modal-bulk-status-confirm-btn" class="px-4 py-1.5 text-xs font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover transition-colors">ยืนยัน</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documents Modal -->
+  <div id="modal-docs" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
+    <div class="bg-card w-full max-w-lg rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-5 py-4 border-b border-border flex justify-between items-center">
+        <div>
+          <h3 class="text-base font-semibold text-slate-900">เอกสารแนบของผู้สมัคร</h3>
+          <p id="modal-docs-subtitle" class="text-xs text-slate-400">...</p>
+        </div>
+        <button onclick="closeModal('modal-docs')" class="p-1 rounded-full text-slate-400 hover:bg-slate-100 transition-colors">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+      <div class="p-5 grid grid-cols-2 gap-3 bg-slate-50/50">
+        <div class="rounded-lg border bg-card p-4 text-center text-sm shadow-sm flex flex-col justify-center items-center hover:shadow-md transition-shadow">
+          <i data-lucide="file-text" class="mb-2.5 h-8 w-8 text-primary/75"></i>
+          <span class="font-medium text-slate-700">บัตรประชาชน</span>
+          <span class="text-[10px] text-emerald-600 font-semibold mt-1">อัปโหลดเสร็จสมบูรณ์</span>
+        </div>
+        <div class="rounded-lg border bg-card p-4 text-center text-sm shadow-sm flex flex-col justify-center items-center hover:shadow-md transition-shadow">
+          <i data-lucide="file-text" class="mb-2.5 h-8 w-8 text-primary/75"></i>
+          <span class="font-medium text-slate-700">ทะเบียนบ้าน</span>
+          <span class="text-[10px] text-emerald-600 font-semibold mt-1">อัปโหลดเสร็จสมบูรณ์</span>
+        </div>
+        <div class="rounded-lg border bg-card p-4 text-center text-sm shadow-sm flex flex-col justify-center items-center hover:shadow-md transition-shadow">
+          <i data-lucide="file-text" class="mb-2.5 h-8 w-8 text-primary/75"></i>
+          <span class="font-medium text-slate-700">ใบ ปพ.1 (ระเบียนการเรียน)</span>
+          <span class="text-[10px] text-emerald-600 font-semibold mt-1">อัปโหลดเสร็จสมบูรณ์</span>
+        </div>
+        <div class="rounded-lg border bg-card p-4 text-center text-sm shadow-sm flex flex-col justify-center items-center hover:shadow-md transition-shadow">
+          <i data-lucide="file-image" class="mb-2.5 h-8 w-8 text-primary/75"></i>
+          <span class="font-medium text-slate-700">รูปถ่ายหน้าตรง</span>
+          <span class="text-[10px] text-emerald-600 font-semibold mt-1">อัปโหลดเสร็จสมบูรณ์</span>
+        </div>
+      </div>
+      <div class="px-5 py-3.5 border-t border-border flex justify-end bg-slate-50">
+        <button onclick="closeModal('modal-docs')" class="px-4 py-1.5 text-xs font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover transition-colors">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Modal -->
+  <div id="modal-score" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-5 py-4 border-b border-border">
+        <h3 class="text-base font-semibold text-slate-900">กรอก/แก้ไขคะแนนสอบ</h3>
+        <p id="modal-score-subtitle" class="text-xs text-slate-400">...</p>
+      </div>
+      <div class="p-5 space-y-4">
+        <div>
+          <label for="score-raw" class="block text-xs font-semibold text-slate-500 mb-1.5">คะแนนดิบ (เต็ม 100)</label>
+          <input type="number" id="score-raw" min="0" max="100" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+        </div>
+        <div>
+          <label for="score-gpa" class="block text-xs font-semibold text-slate-500 mb-1.5">คะแนนเฉลี่ยสะสม (GPAX)</label>
+          <input type="number" id="score-gpa" min="0" max="4.00" step="0.01" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+        </div>
+      </div>
+      <div class="px-5 py-3.5 border-t border-border flex justify-end gap-2 bg-slate-50">
+        <button onclick="closeModal('modal-score')" class="px-4 py-1.5 text-xs font-semibold rounded-md border hover:bg-slate-100 transition-colors">ยกเลิก</button>
+        <button id="modal-score-save-btn" class="px-4 py-1.5 text-xs font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover transition-colors">บันทึก</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div id="modal-delete" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-5 py-4 border-b border-border">
+        <h3 class="text-base font-semibold text-slate-900 text-destructive">ลบข้อมูลผู้สมัคร?</h3>
+      </div>
+      <div class="p-5">
+        <p class="text-sm text-slate-600">
+          การลบประวัติของ <span id="modal-delete-name" class="font-semibold text-slate-900">...</span> จะไม่สามารถกู้คืนข้อมูลได้ คุณยืนยันที่จะลบข้อมูลผู้สมัครรายนี้หรือไม่?
+        </p>
+      </div>
+      <div class="px-5 py-3.5 border-t border-border flex justify-end gap-2 bg-slate-50">
+        <button onclick="closeModal('modal-delete')" class="px-4 py-1.5 text-xs font-semibold rounded-md border hover:bg-slate-100 transition-colors">ยกเลิก</button>
+        <button id="modal-delete-confirm-btn" class="px-4 py-1.5 text-xs font-semibold rounded-md bg-destructive text-destructive-foreground hover:bg-red-600 transition-colors">ยืนยันการลบ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print Selection Modal -->
+  <div id="modal-print-select" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div class="px-5 py-4 border-b border-border">
+        <h3 class="text-base font-semibold text-slate-900 font-sans">เลือกเอกสารที่ต้องการพิมพ์</h3>
+        <p class="text-[11px] text-slate-400 font-sans mt-0.5">สำหรับผู้สมัครจำนวน <span id="print-select-count" class="font-bold text-primary">0</span> ราย</p>
+      </div>
+      <div class="p-5 space-y-3 font-sans">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ประเภทเอกสาร</p>
+        
+        <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+          <input type="checkbox" id="print-doc-app" checked class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
+          <div>
+            <span class="text-xs font-bold text-slate-800 block">ใบสมัครและแสดงความจำนง</span>
+            <span class="text-[10px] text-slate-400">ข้อมูลประวัติและสาขาแผนการเรียนที่เลือกสมัคร</span>
+          </div>
+        </label>
+        
+        <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+          <input type="checkbox" id="print-doc-receipt" checked class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
+          <div>
+            <span class="text-xs font-bold text-slate-800 block">ใบแจ้งยอดและหลักฐานการจ่ายเงินค่าสอบ</span>
+            <span class="text-[10px] text-slate-400">หลักฐานจำลองการชำระเงินค่าสมัครสอบคัดเลือก</span>
+          </div>
+        </label>
+
+        <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+          <input type="checkbox" id="print-doc-enroll" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
+          <div>
+            <span class="text-xs font-bold text-slate-800 block">ใบมอบตัวและข้อมูลห้องเรียน</span>
+            <span class="text-[10px] text-slate-400">แบบฟอร์มยืนยันสิทธิ์รายงานตัว (สำหรับเฟส 3)</span>
+          </div>
+        </label>
+      </div>
+      <div class="px-5 py-3.5 border-t border-border flex justify-end gap-2 bg-slate-50 font-sans">
+        <button onclick="closeModal('modal-print-select')" class="px-4 py-1.5 text-xs font-semibold rounded-md border hover:bg-slate-100 transition-colors">ยกเลิก</button>
+        <button onclick="confirmPrintSelect()" class="px-4 py-1.5 text-xs font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover transition-colors">ดูตัวอย่างก่อนพิมพ์</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print Preview Modal -->
+  <div id="modal-print-preview" class="fixed inset-0 z-50 flex items-center justify-center bg-black/45 hidden">
+    <div class="bg-slate-100 w-full max-w-4xl h-[90vh] rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Top Action Bar -->
+      <div class="bg-white border-b px-5 py-3 flex items-center justify-between z-10 font-sans">
+        <div>
+          <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+            <i data-lucide="eye" class="text-primary h-4.5 w-4.5"></i> ตัวอย่างเอกสารก่อนพิมพ์ (จำลอง)
+          </h3>
+          <p class="text-[10px] text-slate-400">แสดงผลเอกสารที่เลือกพิมพ์จำลองรวม <span id="print-preview-sheets-count" class="font-bold text-slate-700">0</span> แผ่น</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="mockDownloadPrintFiles()" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 border border-indigo-200 px-3 py-1.5 text-xs font-bold hover:bg-indigo-100 text-primary transition-colors">
+            <i data-lucide="download" class="h-3.5 w-3.5"></i> ดาวน์โหลด PNG (จำลอง)
+          </button>
+          <button onclick="mockSendToPrinter()" class="inline-flex items-center gap-1.5 rounded-lg bg-primary text-white px-3.5 py-1.5 text-xs font-bold hover:bg-primary-hover transition-colors shadow-sm">
+            <i data-lucide="printer" class="h-3.5 w-3.5"></i> สั่งพิมพ์เอกสาร (จำลอง)
+          </button>
+          <button onclick="closeModal('modal-print-preview')" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors ml-2">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Document Sheet Preview Container -->
+      <div class="flex-1 overflow-y-auto p-8 space-y-8 flex flex-col items-center select-none" id="print-preview-sheets-container">
+        <!-- Dynamic sheets -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Template -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none">
+    <!-- Toasts injected dynamically -->
+  </div>
+
+  <!-- Row Actions Dropdown Overlay Context -->
+  <div id="dropdown-menu" class="fixed bg-white border border-border rounded-md shadow-lg py-1 w-52 hidden z-40 scale-95 duration-100 origin-top-right">
+    <!-- Dropdown content loaded dynamically -->
+  </div>
+
+  <!-- Load database script -->
+  <script src="js/store.js"></script>
+
+  <!-- Dashboard Controller Script -->
+  <script>
+    let currentPhase = 1;
+    let selectedIds = new Set();
+    let lastCheckedId = null;
+
+    // Load initial values
+    window.addEventListener('DOMContentLoaded', () => {
+      changePhase(1);
+      document.addEventListener('click', closeDropdownHandler);
+      document.getElementById('btn-print').onclick = triggerBulkPrint;
+    });
+
+    // Close row dropdown if user clicks outside
+    function closeDropdownHandler(e) {
+      const dropdown = document.getElementById('dropdown-menu');
+      if (!dropdown.contains(e.target) && !e.target.closest('.dropdown-trigger')) {
+        dropdown.classList.add('hidden');
+      }
+    }
+
+    function changePhase(phaseNum) {
+      currentPhase = phaseNum;
+      
+      // Update Roadmap progress line width
+      const bar = document.getElementById('roadmap-progress-bar');
+      if (bar) {
+        bar.style.width = phaseNum === 1 ? '0%' : (phaseNum === 2 ? '50%' : '100%');
+      }
+
+      // Update Roadmap Nodes CSS
+      [1, 2, 3].forEach(p => {
+        const circle = document.getElementById(`roadmap-circle-${p}`);
+        const label = document.getElementById(`roadmap-label-${p}`);
+        const sub = document.getElementById(`roadmap-sub-${p}`);
+        
+        if (!circle || !label || !sub) return;
+
+        if (p === phaseNum) {
+          // Active
+          circle.className = "w-14 h-14 rounded-full flex items-center justify-center border-2 border-primary bg-primary text-white shadow-md ring-4 ring-primary/20 transition-all duration-300";
+          label.className = "mt-2.5 text-xs font-bold text-primary transition-colors";
+          sub.className = "text-[10px] text-primary/80 font-bold transition-colors";
+        } else if (p < phaseNum) {
+          // Completed/Past
+          circle.className = "w-14 h-14 rounded-full flex items-center justify-center border-2 border-emerald-600 bg-emerald-50 text-emerald-600 shadow-sm transition-all duration-300";
+          label.className = "mt-2.5 text-xs font-semibold text-emerald-700 transition-colors";
+          sub.className = "text-[10px] text-emerald-500 font-medium transition-colors";
+        } else {
+          // Pending/Future
+          circle.className = "w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 transition-all duration-300";
+          label.className = "mt-2.5 text-xs font-semibold text-slate-500 transition-colors";
+          sub.className = "text-[10px] text-slate-400 transition-colors";
+        }
+      });
+
+      // Clear check selections on tab switch
+      selectedIds.clear();
+      lastCheckedId = null;
+      document.getElementById('check-all').checked = false;
+
+      renderTable();
+      updateSelectedUI();
+    }
+
+    function handleFilterChange() {
+      renderTable();
+    }
+
+    function getFilteredApplicants() {
+      const all = window.AdmitifyStore.getApplicants();
+      const searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
+      const gradeFilter = document.getElementById('filter-grade').value;
+      const planFilter = document.getElementById('filter-plan').value;
+
+      return all.filter(a => {
+        // Tab Phase match
+        if (window.phaseForStatus(a.status) !== currentPhase) return false;
+        
+        // Search match
+        if (searchQuery) {
+          const matchName = `${a.firstName} ${a.lastName}`.toLowerCase().includes(searchQuery);
+          const matchCode = a.applicantCode.toLowerCase().includes(searchQuery);
+          const matchStdId = a.studentId ? a.studentId.toLowerCase().includes(searchQuery) : false;
+          if (!matchName && !matchCode && !matchStdId) return false;
+        }
+
+        // Grade filter
+        if (gradeFilter && a.gradeLevel !== gradeFilter) return false;
+
+        // Plan filter
+        if (planFilter && a.studyPlan !== planFilter) return false;
+
+        return true;
+      });
+    }
+
+    function formatDate(isoStr) {
+      const d = new Date(isoStr);
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function resetStoreData() {
+      window.AdmitifyStore.reset();
+      selectedIds.clear();
+      lastCheckedId = null;
+      document.getElementById('check-all').checked = false;
+      renderTable();
+      updateSelectedUI();
+      showToast("รีเซ็ตฐานข้อมูลเรียบร้อยแล้ว", "ข้อมูลผู้สมัครถูกตั้งกลับเป็นค่าเริ่มต้น", "success");
+    }
+
+    function getBadgeClass(status) {
+      const map = {
+        unpaid_exam_fee: "bg-amber-100 text-amber-800 border-amber-200",
+        paid_exam_fee: "bg-emerald-100 text-emerald-800 border-emerald-200",
+        awaiting_results: "bg-slate-100 text-slate-600 border-slate-200",
+        passed: "bg-emerald-100 text-emerald-800 border-emerald-200",
+        reserve: "bg-amber-100 text-amber-800 border-amber-200",
+        failed: "bg-rose-100 text-rose-800 border-rose-200",
+        not_reported: "bg-slate-100 text-slate-600 border-slate-200",
+        reported: "bg-sky-100 text-sky-800 border-sky-200",
+        enrolled: "bg-emerald-100 text-emerald-800 border-emerald-200",
+      };
+      return map[status] || "bg-slate-100 text-slate-800";
+    }
+
+    function renderTable() {
+      const rows = getFilteredApplicants();
+      const body = document.getElementById('applicants-table-body');
+      
+      // Update Table column headers visibility based on Phase
+      const h1 = document.getElementById('col-header-1'); // เอกสาร
+      const h2 = document.getElementById('col-header-2'); // ห้องสอบ
+      const h3 = document.getElementById('col-header-3'); // สถานะชำระค่าสมัคร
+      const h4 = document.getElementById('col-header-4'); // ห้องเรียน
+
+      if (currentPhase === 1) {
+        h1.classList.remove('hidden');
+        h2.classList.remove('hidden');
+        h3.classList.add('hidden'); // Removed duplicate fee status column
+        h4.classList.add('hidden'); // Classroom is for Phase 3 only
+      } else if (currentPhase === 2) {
+        h1.classList.add('hidden');
+        h2.classList.remove('hidden');
+        h3.classList.add('hidden');
+        h4.classList.add('hidden');
+      } else { // Phase 3
+        h1.classList.add('hidden');
+        h2.classList.add('hidden');
+        h3.classList.add('hidden');
+        h4.classList.remove('hidden');
+      }
+
+      body.innerHTML = '';
+
+      if (rows.length === 0) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="11" class="py-12 text-center text-slate-400">
+              ไม่มีข้อมูลผู้สมัครที่ตรงตามเงื่อนไขในแท็บนี้
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Check if all are selected to set check-all
+      const allSelected = rows.every(r => selectedIds.has(r.id));
+      document.getElementById('check-all').checked = allSelected;
+
+      rows.forEach((a, index) => {
+        const isChecked = selectedIds.has(a.id);
+        const options = window.PHASE_OPTIONS[currentPhase];
+        
+        let selectOptionsHtml = '';
+        options.forEach(statusKey => {
+          selectOptionsHtml += `<option value="${statusKey}" ${a.status === statusKey ? 'selected' : ''}>${window.STATUS_LABEL[statusKey]}</option>`;
+        });
+
+        // Dynamic Columns HTML
+        let dynamicCols = '';
+        if (currentPhase === 1) {
+          // Documents
+          dynamicCols += `
+            <td class="p-3">
+              <button onclick="viewDocuments('${a.id}')" class="inline-flex items-center gap-1.5 hover:underline font-medium text-slate-700">
+                ${a.documentsComplete 
+                  ? `<i data-lucide="file-check-2" class="h-4 w-4 text-emerald-500"></i> ครบ`
+                  : `<i data-lucide="file-x-2" class="h-4 w-4 text-rose-500"></i> ไม่ครบ`
+                }
+              </button>
+            </td>
+          `;
+          // Exam room
+          dynamicCols += `<td class="p-3 text-slate-500">${a.examRoom ? `${a.examRoom} / ${a.seatNumber}` : '—'}</td>`;
+        } 
+        else if (currentPhase === 2) {
+          // Exam room
+          dynamicCols += `<td class="p-3 text-slate-500">${a.examRoom ? `${a.examRoom} / ${a.seatNumber}` : '—'}</td>`;
+        } 
+        else if (currentPhase === 3) {
+          // Class
+          dynamicCols += `<td class="p-3 font-semibold text-slate-700">${window.effectiveClassroom(a)}</td>`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = `border-b border-slate-100 hover:bg-slate-50/50 transition-colors ${isChecked ? 'bg-indigo-50/20' : ''}`;
+        
+        let rowContent = `
+          <td class="p-3 text-center">
+            <input type="checkbox" data-id="${a.id}" ${isChecked ? 'checked' : ''} onchange="toggleSelectOne('${a.id}', this.checked, event)" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300">
+          </td>
+          <td class="p-3 text-slate-400 font-medium">${index + 1}</td>
+          <td class="p-3">
+            <div class="text-[11px] text-slate-400 font-medium">${a.studentId ?? a.applicantCode}</div>
+            <a href="profile.html?id=${a.id}" class="font-semibold text-slate-800 hover:text-primary hover:underline transition-colors">${a.firstName} ${a.lastName}</a>
+          </td>
+          <td class="p-3 whitespace-nowrap text-slate-500 text-xs">${formatDate(a.appliedAt)}</td>
+          <td class="p-3">
+            <div class="font-medium text-slate-700">${a.gradeLevel}</div>
+            <div class="text-[11px] text-slate-400">${a.studyPlan}</div>
+          </td>
+          
+          ${dynamicCols}
+          
+          <td class="p-3">
+            ${currentPhase === 2 ? `
+              <div class="mb-1.5">
+                <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getBadgeClass(a.status)}">
+                  ${window.STATUS_LABEL[a.status]} ${a.reserveRank ? `#${a.reserveRank}` : ''}
+                </span>
+              </div>
+              ${a.examScore ? `<div class="text-[11px] text-slate-400 font-semibold">คะแนน ${a.examScore.raw} / GPA ${a.examScore.gpa}</div>` : '<div class="text-[11px] text-slate-300 italic">ไม่มีข้อมูลคะแนน</div>'}
+            ` : `
+              <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getBadgeClass(a.status)}">
+                ${window.STATUS_LABEL[a.status]}
+              </span>
+            `}
+          </td>
+          <td class="p-3">
+            <select onchange="requestStatusChange('${a.id}', this.value, '${a.status}')" class="h-8 w-44 rounded-md border border-slate-200 bg-card px-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary">
+              ${selectOptionsHtml}
+            </select>
+          </td>
+          <td class="p-3 text-right">
+            <button onclick="toggleDropdown('${a.id}', this, event)" class="dropdown-trigger p-1.5 text-slate-400 hover:bg-slate-100 rounded-md transition-colors">
+              <i data-lucide="more-horizontal" class="h-4.5 w-4.5"></i>
+            </button>
+          </td>
+        `;
+
+        tr.innerHTML = rowContent;
+        body.appendChild(tr);
+      });
+
+      // Initialize newly added icons
+      lucide.createIcons();
+    }
+
+    // Dropdown for Row Actions
+    function toggleDropdown(id, trigger, e) {
+      if (e) e.stopPropagation();
+      const dropdown = document.getElementById('dropdown-menu');
+      const rect = trigger.getBoundingClientRect();
+      const a = window.AdmitifyStore.getById(id);
+
+      let menuItemsHtml = '';
+      if (currentPhase === 1) {
+        menuItemsHtml += `
+          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-400"></i> ดูโปรไฟล์นักเรียน</a>
+          <button onclick="viewDocuments('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="eye" class="h-3.5 w-3.5 text-slate-400"></i> ดูเอกสารที่อัปโหลด</button>
+          <a href="edit.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="pencil" class="h-3.5 w-3.5 text-slate-400"></i> แก้ไขข้อมูลนักเรียน</a>
+          <button onclick="openPrintPreviewSingle('${a.id}', 'app')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="printer" class="h-3.5 w-3.5 text-slate-400"></i> พิมพ์ใบสมัคร</button>
+          <hr class="my-1 border-slate-100">
+          <button onclick="confirmDelete('${a.id}', '${a.firstName} ${a.lastName}')" class="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2"><i data-lucide="trash-2" class="h-3.5 w-3.5 text-rose-400"></i> ลบข้อมูลนักเรียน</button>
+        `;
+      } else if (currentPhase === 2) {
+        menuItemsHtml += `
+          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-400"></i> ดูโปรไฟล์นักเรียน</a>
+          <button onclick="openScoreModal('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="clipboard-edit" class="h-3.5 w-3.5 text-slate-400"></i> กรอก/แก้ไขคะแนนสอบ</button>
+          <a href="notify.html?to=${encodeURIComponent(a.parentEmail)}&template=passed" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="mail" class="h-3.5 w-3.5 text-slate-400"></i> ส่งอีเมลแจ้งผลเดี่ยว</a>
+        `;
+      } else { // Phase 3
+        menuItemsHtml += `
+          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-400"></i> ดูโปรไฟล์นักเรียน</a>
+          <button onclick="openPrintPreviewSingle('${a.id}', 'enroll')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="printer" class="h-3.5 w-3.5 text-slate-400"></i> พิมพ์ใบมอบตัว</button>
+          <button onclick="mockFinanceCheck('${a.firstName}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="receipt" class="h-3.5 w-3.5 text-slate-400"></i> ตรวจสอบประวัติการเงิน</button>
+        `;
+      }
+
+      dropdown.innerHTML = menuItemsHtml;
+      lucide.createIcons({ attrs: { class: 'h-3.5 w-3.5 text-slate-400' } });
+
+      // Positioning Dropdown
+      dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+      dropdown.style.left = `${rect.right - 208 + window.scrollX}px`; // width is 52 (208px)
+      
+      dropdown.classList.remove('hidden');
+    }
+
+    // Select Checkbox logic
+    function toggleSelectAll(checked) {
+      const rows = getFilteredApplicants();
+      if (checked) {
+        rows.forEach(r => selectedIds.add(r.id));
+      } else {
+        rows.forEach(r => selectedIds.delete(r.id));
+      }
+      renderTable();
+      updateSelectedUI();
+    }
+
+    function toggleSelectOne(id, checked, event) {
+      if (event.shiftKey && lastCheckedId && lastCheckedId !== id) {
+        const rows = getFilteredApplicants();
+        const ids = rows.map(r => r.id);
+        const indexA = ids.indexOf(lastCheckedId);
+        const indexB = ids.indexOf(id);
+        if (indexA !== -1 && indexB !== -1) {
+          const start = Math.min(indexA, indexB);
+          const end = Math.max(indexA, indexB);
+          for (let i = start; i <= end; i++) {
+            if (checked) {
+              selectedIds.add(ids[i]);
+            } else {
+              selectedIds.delete(ids[i]);
+            }
+          }
+        }
+      } else {
+        if (checked) {
+          selectedIds.add(id);
+        } else {
+          selectedIds.delete(id);
+        }
+      }
+      
+      lastCheckedId = id;
+      renderTable();
+      updateSelectedUI();
+    }
+
+    function clearAllSelections() {
+      selectedIds.clear();
+      lastCheckedId = null;
+      document.getElementById('check-all').checked = false;
+      renderTable();
+      updateSelectedUI();
+    }
+
+    function updateSelectedUI() {
+      const count = selectedIds.size;
+      const bar = document.getElementById('bulk-action-bar');
+      const btnNotify = document.getElementById('btn-notify');
+      const btnPrint = document.getElementById('btn-print');
+      
+      document.getElementById('bulk-selected-count').innerText = count;
+      document.getElementById('notify-count').innerText = count;
+      document.getElementById('print-count').innerText = count;
+
+      if (count > 0) {
+        bar.classList.remove('hidden');
+        btnNotify.removeAttribute('disabled');
+        btnPrint.removeAttribute('disabled');
+        
+        // Dynamically load status options into bulk select dropdown
+        const select = document.getElementById('bulk-status-select');
+        select.innerHTML = '<option value="">เปลี่ยนสถานะเป็น...</option>';
+        const options = window.PHASE_OPTIONS[currentPhase];
+        options.forEach(statusKey => {
+          select.innerHTML += `<option value="${statusKey}">${window.STATUS_LABEL[statusKey]}</option>`;
+        });
+      } else {
+        bar.classList.add('hidden');
+        btnNotify.setAttribute('disabled', 'true');
+        btnPrint.setAttribute('disabled', 'true');
+      }
+    }
+
+    // Single Status Change Action
+    function requestStatusChange(id, newStatus, oldStatus) {
+      const applicant = window.AdmitifyStore.getById(id);
+      
+      const modal = document.getElementById('modal-status');
+      document.getElementById('modal-status-name').innerText = `${applicant.firstName} ${applicant.lastName}`;
+      document.getElementById('modal-status-old').innerText = window.STATUS_LABEL[oldStatus];
+      document.getElementById('modal-status-new').innerText = window.STATUS_LABEL[newStatus];
+
+      const targetPhase = window.phaseForStatus(newStatus);
+      const warn = document.getElementById('modal-status-move-warning');
+      if (targetPhase !== currentPhase) {
+        warn.classList.remove('hidden');
+        document.getElementById('modal-status-target-phase').innerText = window.PHASE_LABEL[targetPhase];
+      } else {
+        warn.classList.add('hidden');
+      }
+
+      // Configure Confirm Handler
+      document.getElementById('modal-status-confirm-btn').onclick = () => {
+        window.AdmitifyStore.updateStatus(id, newStatus);
+        closeModal('modal-status');
+        
+        // Success notification + Undo callback
+        const targetPhase = window.phaseForStatus(newStatus);
+        const moved = targetPhase !== currentPhase;
+        
+        showToast(
+          moved ? `ย้าย ${applicant.firstName} สำเร็จ` : 'อัปเดตสถานะสำเร็จ',
+          moved ? `ย้ายไปยัง "${window.PHASE_LABEL[targetPhase]}" เรียบร้อยแล้ว` : `เปลี่ยนสถานะเป็น "${window.STATUS_LABEL[newStatus]}" แล้ว`,
+          'success',
+          () => {
+            // Undo logic
+            window.AdmitifyStore.updateStatus(id, oldStatus);
+            renderTable();
+            updateSelectedUI();
+            showToast('ย้อนกลับการทำรายการแล้ว', `ย้อนกลับสถานะของ ${applicant.firstName} เป็น "${window.STATUS_LABEL[oldStatus]}"`, 'info');
+          }
+        );
+        
+        renderTable();
+        updateSelectedUI();
+      };
+
+      openModal('modal-status');
+      // Reset select element inside table row visually to the previous value if they close the dialog
+      // (we render table to clean up visual state)
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          closeModal('modal-status');
+          renderTable();
+        }
+      }
+    }
+
+    // Bulk Status Select Action
+    function handleBulkStatusSelect(newStatus) {
+      if (!newStatus) return;
+      const count = selectedIds.size;
+      const items = Array.from(selectedIds).map(id => window.AdmitifyStore.getById(id));
+
+      const modal = document.getElementById('modal-bulk-status');
+      document.getElementById('modal-bulk-status-count').innerText = `${count} รายการ`;
+      document.getElementById('modal-bulk-status-new').innerText = window.STATUS_LABEL[newStatus];
+
+      const targetPhase = window.phaseForStatus(newStatus);
+      const warn = document.getElementById('modal-bulk-status-move-warning');
+      if (targetPhase !== currentPhase) {
+        warn.classList.remove('hidden');
+        document.getElementById('modal-bulk-status-target-phase').innerText = window.PHASE_LABEL[targetPhase];
+      } else {
+        warn.classList.add('hidden');
+      }
+
+      // List of names preview
+      const list = document.getElementById('modal-bulk-status-list');
+      list.innerHTML = '';
+      items.slice(0, 5).forEach(item => {
+        list.innerHTML += `
+          <li class="py-1 flex justify-between">
+            <span class="font-medium">${item.firstName} ${item.lastName}</span>
+            <span class="text-[10px] text-slate-400 font-mono">${item.applicantCode}</span>
+          </li>
+        `;
+      });
+      if (count > 5) {
+        list.innerHTML += `<li class="py-1 text-slate-400 italic">และอีก ${count - 5} รายการ...</li>`;
+      }
+
+      // Confirm button
+      document.getElementById('modal-bulk-status-confirm-btn').onclick = () => {
+        // Capture snapshot for undo
+        const snapshot = items.map(item => ({ id: item.id, status: item.status }));
+        
+        // Update all statuses
+        items.forEach(item => window.AdmitifyStore.updateStatus(item.id, newStatus));
+        
+        closeModal('modal-bulk-status');
+        clearAllSelections();
+        
+        const moved = targetPhase !== currentPhase;
+        showToast(
+          `อัปเดต ${count} รายการสำเร็จ`,
+          moved ? `ย้ายรายการไปที่แท็บ "${window.PHASE_LABEL[targetPhase]}" แล้ว` : `เปลี่ยนเป็น "${window.STATUS_LABEL[newStatus]}" แล้ว`,
+          'success',
+          () => {
+            // Bulk Undo logic
+            snapshot.forEach(snap => window.AdmitifyStore.updateStatus(snap.id, snap.status));
+            renderTable();
+            updateSelectedUI();
+            showToast('ย้อนกลับการกระทำกลุ่มแล้ว', `คืนค่าสถานะเดิมของนักเรียนทั้ง ${snapshot.length} คน เรียบร้อยแล้ว`, 'info');
+          }
+        );
+      };
+
+      openModal('modal-bulk-status');
+      
+      // Reset select visual indicator if cancel
+      document.getElementById('bulk-status-select').value = '';
+    }
+
+    // Single Actions drop functions
+    function viewDocuments(id) {
+      const a = window.AdmitifyStore.getById(id);
+      document.getElementById('modal-docs-subtitle').innerText = `${a.firstName} ${a.lastName} — ${a.applicantCode}`;
+      openModal('modal-docs');
+    }
+
+    function openScoreModal(id) {
+      const a = window.AdmitifyStore.getById(id);
+      document.getElementById('modal-score-subtitle').innerText = `${a.firstName} ${a.lastName} — ${a.applicantCode}`;
+      
+      // Load current scores
+      const rawInput = document.getElementById('score-raw');
+      const gpaInput = document.getElementById('score-gpa');
+      
+      rawInput.value = a.examScore ? a.examScore.raw : '';
+      gpaInput.value = a.examScore ? a.examScore.gpa : '';
+
+      document.getElementById('modal-score-save-btn').onclick = () => {
+        const raw = rawInput.value.trim();
+        const gpa = gpaInput.value.trim();
+        if (raw === '' || gpa === '') {
+          alert('กรุณากรอกคะแนนดิบและ GPA');
+          return;
+        }
+
+        window.AdmitifyStore.updateScore(id, raw, gpa);
+        closeModal('modal-score');
+        renderTable();
+        showToast('บันทึกคะแนนสอบเรียบร้อย', `บันทึกคะแนนสอบของ ${a.firstName} สำเร็จ`, 'success');
+      };
+
+      openModal('modal-score');
+    }
+
+    function confirmDelete(id, name) {
+      document.getElementById('modal-delete-name').innerText = name;
+      document.getElementById('modal-delete-confirm-btn').onclick = () => {
+        window.AdmitifyStore.deleteApplicant(id);
+        closeModal('modal-delete');
+        selectedIds.delete(id);
+        renderTable();
+        updateSelectedUI();
+        showToast('ลบข้อมูลเรียบร้อย', `ลบข้อมูลผู้สมัคร ${name} ออกจากระบบแล้ว`, 'success');
+      };
+      openModal('modal-delete');
+    }
+
+    // Global Print Variables
+    let printTargetIds = [];
+
+    function triggerBulkPrint() {
+      if (selectedIds.size === 0) {
+        showToast('กรุณาเลือกนักเรียน', 'กรุณาเลือกนักเรียนที่ต้องการพิมพ์เอกสารอย่างน้อย 1 คน', 'warning');
+        return;
+      }
+      printTargetIds = Array.from(selectedIds);
+      
+      document.getElementById('print-select-count').innerText = printTargetIds.length;
+      
+      // Auto toggle checks based on Phase
+      document.getElementById('print-doc-app').checked = currentPhase === 1;
+      document.getElementById('print-doc-receipt').checked = currentPhase === 1;
+      document.getElementById('print-doc-enroll').checked = currentPhase === 3;
+
+      openModal('modal-print-select');
+    }
+
+    function openPrintPreviewSingle(id, docType) {
+      printTargetIds = [id];
+      
+      const renderApp = docType === 'app';
+      const renderReceipt = docType === 'receipt';
+      const renderEnroll = docType === 'enroll';
+      
+      renderPrintSheets(printTargetIds, renderApp, renderReceipt, renderEnroll);
+    }
+
+    function confirmPrintSelect() {
+      const renderApp = document.getElementById('print-doc-app').checked;
+      const renderReceipt = document.getElementById('print-doc-receipt').checked;
+      const renderEnroll = document.getElementById('print-doc-enroll').checked;
+      
+      if (!renderApp && !renderReceipt && !renderEnroll) {
+        alert('กรุณาเลือกประเภทเอกสารอย่างน้อย 1 รายการ');
+        return;
+      }
+      
+      closeModal('modal-print-select');
+      renderPrintSheets(printTargetIds, renderApp, renderReceipt, renderEnroll);
+    }
+
+    function renderPrintSheets(ids, renderApp, renderReceipt, renderEnroll) {
+      const container = document.getElementById('print-preview-sheets-container');
+      container.innerHTML = '';
+      
+      let totalSheets = 0;
+
+      ids.forEach(id => {
+        const applicant = window.AdmitifyStore.getById(id);
+        if (!applicant) return;
+
+        // 1. Application Form Sheet
+        if (renderApp) {
+          totalSheets++;
+          container.innerHTML += `
+            <div class="w-[210mm] min-h-[297mm] bg-white border border-slate-300 shadow-lg p-[20mm] relative font-sans text-xs text-slate-800 leading-relaxed max-w-full text-left">
+              <!-- Watermark -->
+              <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+                <i data-lucide="graduation-cap" class="w-64 h-64"></i>
+              </div>
+              <!-- Header -->
+              <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4 mb-6">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 bg-primary text-white rounded-lg flex items-center justify-center font-bold text-xl">
+                    <i data-lucide="graduation-cap" class="h-8 w-8"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-bold text-slate-900">โรงเรียนแอดมิทิฟายวิทยา (จำลอง)</h4>
+                    <p class="text-[9px] text-slate-500">Admitify Academy — Official Document</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <h4 class="text-xs font-bold text-slate-900 font-mono">${applicant.applicantCode}</h4>
+                  <p class="text-[8px] text-slate-400">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
+                </div>
+              </div>
+              
+              <div class="text-center my-6">
+                <h3 class="text-base font-bold text-slate-900 uppercase tracking-wide underline decoration-double">ใบสมัครเข้าเรียนและการแสดงความจำนง</h3>
+                <p class="text-[10px] text-slate-500 mt-1">ปีการศึกษา 2568 (รอบโควตาและสอบคัดเลือก)</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 border p-4 rounded-lg bg-slate-50/50 mb-6">
+                <div><span class="text-slate-400 font-medium block">รหัสผู้สมัคร:</span> <span class="font-bold text-slate-800 text-sm font-mono">${applicant.applicantCode}</span></div>
+                <div><span class="text-slate-400 font-medium block">ระดับชั้น:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
+                <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${applicant.firstName} ${applicant.lastName}</span></div>
+                <div><span class="text-slate-400 font-medium block">แผนการเรียนอันดับ 1:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
+                <div><span class="text-slate-400 font-medium block">ห้องสอบจำลอง:</span> <span class="font-bold text-slate-800 font-mono">${applicant.examRoom || '—'} / ที่นั่ง ${applicant.seatNumber || '—'}</span></div>
+              </div>
+
+              <div class="space-y-4">
+                <h4 class="font-bold border-b pb-1 text-slate-900 text-[10px] uppercase tracking-wider">เอกสารประกอบการสมัครที่ได้ตรวจสอบ</h4>
+                <table class="w-full text-left">
+                  <thead>
+                    <tr class="border-b text-[9px] text-slate-400 uppercase">
+                      <th class="py-1">รายการหลักฐาน</th>
+                      <th class="py-1">สถานะ</th>
+                      <th class="py-1 text-right">ผู้ตรวจสอบ</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-[10px]">
+                    <tr>
+                      <td class="py-2 font-medium">สำเนาบัตรประชาชนนักเรียน/ผู้ปกครอง</td>
+                      <td class="py-2 text-emerald-600 font-semibold">✓ ครบถ้วนถูกต้อง</td>
+                      <td class="py-2 text-right text-slate-500">ระบบอัตโนมัติ (OCR Verified)</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 font-medium">สำเนาทะเบียนบ้านนักเรียน</td>
+                      <td class="py-2 text-emerald-600 font-semibold">✓ ครบถ้วนถูกต้อง</td>
+                      <td class="py-2 text-right text-slate-500">Admin_Pongsak</td>
+                    </tr>
+                    <tr>
+                      <td class="py-2 font-medium">ใบ ปพ.1 ระเบียนสะสมเกรดเฉลี่ย</td>
+                      <td class="py-2 text-emerald-600 font-semibold">✓ ครบถ้วนถูกต้อง (GPAX: ${applicant.examScore ? applicant.examScore.gpa : '3.50'})</td>
+                      <td class="py-2 text-right text-slate-500">Admin_Pongsak</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="mt-24 flex justify-between items-end">
+                <div class="text-left font-mono text-[8px] text-slate-400">
+                  <div>SECURITY IDENTIFIER:</div>
+                  <div>HASH_APP_${applicant.id.toUpperCase()}_2568</div>
+                </div>
+                <div class="text-center space-y-1.5">
+                  <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
+                  <div class="text-[9px] font-bold text-slate-700">ลงชื่อเจ้าหน้าที่ตรวจสอบประวัติ</div>
+                  <div class="text-[8px] text-slate-400">ฝ่ายรับสมัครและวัดผลการศึกษา</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // 2. Receipt Sheet
+        if (renderReceipt) {
+          totalSheets++;
+          container.innerHTML += `
+            <div class="w-[210mm] min-h-[297mm] bg-white border border-slate-300 shadow-lg p-[20mm] relative font-sans text-xs text-slate-800 leading-relaxed max-w-full text-left">
+              <!-- Header -->
+              <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4 mb-6">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 bg-primary text-white rounded-lg flex items-center justify-center font-bold text-xl">
+                    <i data-lucide="receipt" class="h-8 w-8"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-bold text-slate-900">ใบเสร็จรับเงินค่าสมัครสอบ (จำลอง)</h4>
+                    <p class="text-[9px] text-slate-500">Admitify Academy — Payment Invoice Receipt</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <h4 class="text-xs font-bold text-slate-900 font-mono">REC-2568-${applicant.applicantCode.substring(9)}</h4>
+                  <p class="text-[8px] text-slate-400">วันที่ออกใบเสร็จ: ${new Date(applicant.appliedAt).toLocaleDateString('th-TH')}</p>
+                </div>
+              </div>
+              
+              <div class="my-6">
+                <div class="text-slate-500">ได้รับชำระเงินจาก:</div>
+                <div class="text-sm font-bold text-slate-900 mt-1">${applicant.firstName} ${applicant.lastName} (${applicant.applicantCode})</div>
+                <div class="text-xs text-slate-500">ผู้สมัครระดับชั้น ${applicant.gradeLevel} แผนการเรียน ${applicant.studyPlan}</div>
+              </div>
+
+              <div class="border rounded-lg overflow-hidden my-6">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 text-[9px] text-slate-400 uppercase border-b">
+                      <th class="p-3">รายการชำระ</th>
+                      <th class="p-3 text-right">จำนวนเงิน (บาท)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-[10px] divide-y divide-slate-100">
+                    <tr>
+                      <td class="p-3 font-semibold">ค่าลงทะเบียนสอบคัดเลือกนักเรียนใหม่ ปีการศึกษา 2568</td>
+                      <td class="p-3 text-right font-mono">500.00</td>
+                    </tr>
+                    <tr class="bg-slate-50 font-bold text-slate-900">
+                      <td class="p-3 text-right">ยอดเงินรวมสุทธิ (Total):</td>
+                      <td class="p-3 text-right font-mono text-xs">500.00</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="p-4 rounded-xl border border-emerald-100 bg-emerald-50/50 flex items-center justify-between">
+                <div>
+                  <div class="text-[10px] text-emerald-800 font-bold">ช่องทางชำระเงิน: โอนผ่านธนาคาร (QR PromptPay)</div>
+                  <div class="text-[9px] text-emerald-600 font-medium">รหัสอ้างอิงธุรกรรม: TXN_QR_${applicant.id.toUpperCase()}_89201</div>
+                </div>
+                <div class="px-3 py-1 bg-emerald-600 text-white rounded-md text-[10px] font-bold">ชำระแล้ว</div>
+              </div>
+
+              <div class="mt-32 flex justify-between items-end">
+                <div class="text-left text-[9px] text-slate-400 font-mono">
+                  <div>* ใบชำระเงินนี้เป็นการจำลองสถานะ</div>
+                  <div>ระบบ Admitify Spark Demo</div>
+                </div>
+                <div class="text-center space-y-1.5">
+                  <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
+                  <div class="text-[9px] font-bold text-slate-700">นายสมชาย ปัญญาไว</div>
+                  <div class="text-[8px] text-slate-400">ฝ่ายการเงินโรงเรียนแอดมิทิฟายวิทยา</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // 3. Enrollment Sheet
+        if (renderEnroll) {
+          totalSheets++;
+          container.innerHTML += `
+            <div class="w-[210mm] min-h-[297mm] bg-white border border-slate-300 shadow-lg p-[20mm] relative font-sans text-xs text-slate-800 leading-relaxed max-w-full text-left">
+              <!-- Header -->
+              <div class="flex justify-between items-start border-b-2 border-slate-900 pb-4 mb-6">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 bg-emerald-600 text-white rounded-lg flex items-center justify-center font-bold text-xl">
+                    <i data-lucide="award" class="h-8 w-8"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-bold text-slate-900">ใบรายงานตัวและยืนยันสิทธิ์มอบตัว (จำลอง)</h4>
+                    <p class="text-[9px] text-slate-500">Admitify Academy — Student Enrollment Confirmation</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <h4 class="text-xs font-bold text-slate-900 font-mono">${applicant.studentId || 'STD-2568-PENDING'}</h4>
+                  <p class="text-[8px] text-slate-400">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
+                </div>
+              </div>
+              
+              <div class="text-center my-6">
+                <h3 class="text-base font-bold text-slate-900 uppercase tracking-wide underline decoration-double">ใบรับมอบตัวและจัดชั้นเรียน</h3>
+                <p class="text-[10px] text-slate-500 mt-1">ประจำปีการศึกษา 2568 (รอบโควตาและสอบคัดเลือก)</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 border p-4 rounded-lg bg-emerald-50/20 mb-6 border-emerald-100">
+                <div><span class="text-slate-400 font-medium block">รหัสนักเรียนใหม่:</span> <span class="font-bold text-emerald-800 text-sm font-mono">${applicant.studentId || 'STD-2568-XXXX'}</span></div>
+                <div><span class="text-slate-400 font-medium block">ระดับชั้นเรียน:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
+                <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${applicant.firstName} ${applicant.lastName}</span></div>
+                <div><span class="text-slate-400 font-medium block">แผนการเรียนจัดสรร:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
+                <div><span class="text-slate-400 font-medium block">ห้องเรียนที่จัดได้:</span> <span class="font-bold text-emerald-700 font-mono text-sm">${window.effectiveClassroom(applicant)}</span></div>
+              </div>
+
+              <div class="space-y-4">
+                <h4 class="font-bold border-b pb-1 text-slate-900 text-[10px] uppercase tracking-wider">ข้อตกลงและหลักประกันการเข้าเรียน</h4>
+                <div class="text-[10px] text-slate-600 space-y-2">
+                  <p>1. ผู้ปกครองและนักเรียนในชื่อข้างต้นได้ลงนามรายงานตัว ยืนยันสิทธิ์เข้าศึกษาต่อที่สถาบันแห่งนี้โดยสมบูรณ์</p>
+                  <p>2. สถาบันได้ทำการจัดสรรห้องเรียนให้เรียบร้อยแล้วตามรายละเอียดแผนการเรียนข้างต้น</p>
+                  <p>3. เอกสารนี้ถือเป็นหลักประกันสิ้นสุดการมอบตัว เพื่อนำส่งรายชื่อต่อกระทรวงศึกษาธิการต่อไป</p>
+                </div>
+              </div>
+
+              <div class="mt-40 flex justify-between items-end">
+                <div class="text-left text-[9px] text-slate-400 font-mono">
+                  <div>* ข้อมูลจำลองสถานะการรายงานตัว</div>
+                  <div>ระบบจัดการ Admitify Spark</div>
+                </div>
+                <div class="text-center space-y-1.5">
+                  <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
+                  <div class="text-[9px] font-bold text-slate-700">นายสมชาย ปัญญาไว</div>
+                  <div class="text-[8px] text-slate-400">นายทะเบียนฝ่ายรับเข้าศึกษาต่อ</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      document.getElementById('print-preview-sheets-count').innerText = totalSheets;
+      openModal('modal-print-preview');
+      lucide.createIcons();
+    }
+
+    function mockDownloadPrintFiles() {
+      showToast('ดาวน์โหลดเอกสารสำเร็จ', 'ดาวน์โหลดไฟล์ภาพเอกสาร (จำลอง) ความละเอียดสูงเรียบร้อย', 'success');
+    }
+
+    function mockSendToPrinter() {
+      showToast('สั่งพิมพ์สำเร็จ', 'ส่งคำสั่งพิมพ์ไปยังเครื่องพิมพ์เครือข่ายเรียบร้อย (จำลอง)', 'success');
+    }
+
+    function mockFinanceCheck(name) {
+      showToast('ตรวจสอบบัญชีการเงิน', `ไม่พบยอดค้างชำระค่าธรรมเนียมมอบตัวของ ${name}`, 'info');
+    }
+
+    // Bulk Page Redirections
+    const btnNotify = document.getElementById('btn-notify');
+    btnNotify.onclick = triggerBulkNotify;
+    
+    function triggerBulkNotify() {
+      const ids = Array.from(selectedIds).join(',');
+      window.location.href = `notify.html?ids=${ids}`;
+    }
+
+    function triggerBulkExport() {
+      triggerBulkPrint();
+    }
+
+    // Modal Helpers
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.remove('hidden');
+    }
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    // Toast Notifications Engine
+    function showToast(title, description, type = 'success', undoCallback = null) {
+      const container = document.getElementById('toast-container');
+      const toastId = 'toast_' + Math.random().toString(36).substr(2, 9);
+      
+      let borderClass = 'border-slate-100 bg-white';
+      let iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-500"></i>';
+      
+      if (type === 'success') {
+        borderClass = 'border-emerald-100 bg-emerald-50/90 backdrop-blur-sm';
+        iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
+      } else if (type === 'info') {
+        borderClass = 'border-sky-100 bg-sky-50/90 backdrop-blur-sm';
+        iconHtml = '<i data-lucide="info" class="h-5 w-5 text-sky-600"></i>';
+      } else if (type === 'warning') {
+        borderClass = 'border-amber-100 bg-amber-50/90 backdrop-blur-sm';
+        iconHtml = '<i data-lucide="alert-triangle" class="h-5 w-5 text-amber-600"></i>';
+      }
+
+      const toast = document.createElement('div');
+      toast.id = toastId;
+      toast.className = `p-4 rounded-lg border shadow-lg flex gap-3 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 max-w-sm ${borderClass}`;
+      
+      let undoBtnHtml = '';
+      if (undoCallback) {
+        undoBtnHtml = `
+          <button id="${toastId}_undo" class="text-xs text-primary font-bold hover:underline shrink-0 ml-auto select-none">
+            ย้อนกลับ
+          </button>
+        `;
+      }
+
+      toast.innerHTML = `
+        <div class="shrink-0">${iconHtml}</div>
+        <div class="space-y-0.5 w-full">
+          <div class="text-xs font-bold text-slate-800">${title}</div>
+          <div class="text-[11px] text-slate-500">${description}</div>
+        </div>
+        ${undoBtnHtml}
+      `;
+
+      container.appendChild(toast);
+      
+      // Initialize icons
+      lucide.createIcons();
+
+      // Trigger animation entry
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
+      // Event listener for Undo button
+      if (undoCallback) {
+        document.getElementById(`${toastId}_undo`).onclick = () => {
+          undoCallback();
+          dismissToast(toastId);
+        };
+      }
+
+      // Auto dismiss after 8 seconds
+      const timeout = setTimeout(() => {
+        dismissToast(toastId);
+      }, 8000);
+
+      toast.setAttribute('data-timeout', timeout);
+    }
+
+    function dismissToast(toastId) {
+      const toast = document.getElementById(toastId);
+      if (!toast) return;
+      
+      clearTimeout(Number(toast.getAttribute('data-timeout')));
+      
+      toast.classList.add('translate-y-2', 'opacity-0');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตั้งค่าคอลัมน์ตารางนักเรียน — Admitify Spark</title>
+
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Tailwind Config to match theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3e63dd',
+              foreground: '#ffffff',
+              hover: '#2f51c7'
+            },
+            secondary: {
+              DEFAULT: '#f1f3f9',
+              foreground: '#1e293b'
+            },
+            success: {
+              DEFAULT: '#10b981',
+              foreground: '#ffffff'
+            },
+            warning: {
+              DEFAULT: '#f59e0b',
+              foreground: '#78350f'
+            },
+            info: {
+              DEFAULT: '#0284c7',
+              foreground: '#ffffff'
+            },
+            destructive: {
+              DEFAULT: '#ef4444',
+              foreground: '#ffffff'
+            },
+            muted: {
+              DEFAULT: '#f8fafc',
+              foreground: '#64748b'
+            },
+            card: {
+              DEFAULT: '#ffffff',
+              foreground: '#0f172a'
+            },
+            border: '#e2e8f0'
+          },
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+    }
+    .custom-card {
+      background-color: #ffffff;
+      border-color: #e2e8f0;
+      color: #0f172a;
+    }
+    .custom-input {
+      background-color: #ffffff;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .custom-input:focus {
+      border-color: #3e63dd;
+      outline: none;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-card-foreground">
+
+  <!-- Header (Consistent Layout) -->
+  <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
+    <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-6 py-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
+          <i data-lucide="graduation-cap" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight text-slate-900">ระบบบริหารจัดการผู้สมัครเรียน</h1>
+          <p class="text-xs text-slate-500">Student Admission &amp; Information System</p>
+        </div>
+        <!-- Tab navigation inside header -->
+        <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2">
+          <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
+          </a>
+          <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="users" class="h-3.5 w-3.5"></i> ข้อมูลนักเรียน
+          </a>
+          <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold bg-primary text-primary-foreground transition-colors shadow">
+            <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
+          </a>
+        </div>
+      </div>
+
+      <div class="ml-auto flex items-center gap-2">
+        <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-full px-3 py-1 text-[11px] text-emerald-600 font-mono">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          ONLINE
+        </div>
+        <a href="status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
+          <i data-lucide="search" class="h-3.5 w-3.5"></i> ตรวจสอบสถานะ
+        </a>
+        <a href="apply.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+          <i data-lucide="user-plus" class="h-3.5 w-3.5"></i> ลงทะเบียนนักเรียนใหม่
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="mx-auto max-w-[1400px] px-6 py-6 pb-24">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
+      <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">ข้อมูลบุคคล</span>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <span class="hover:underline cursor-pointer" onclick="location.href='students.html'">นักเรียน</span>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <span class="text-slate-700 font-medium">ตั้งค่าคอลัมน์ตาราง</span>
+    </div>
+
+    <!-- Title Area -->
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-600 text-white shadow-md">
+          <i data-lucide="columns-3" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900">ตั้งค่าคอลัมน์ตารางข้อมูลนักเรียน</h2>
+          <p class="text-xs text-slate-500">เพิ่ม/ลด/แก้ไขคอลัมน์ที่แสดงในตารางข้อมูลนักเรียน และกำหนดคอลัมน์หลักของตาราง</p>
+        </div>
+      </div>
+
+      <button onclick="openColModal()" class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-4.5 py-2.5 text-sm font-semibold transition-all shadow-md cursor-pointer active:scale-95">
+        <i data-lucide="plus-circle" class="h-4.5 w-4.5"></i> เพิ่มคอลัมน์ใหม่
+      </button>
+    </div>
+
+    <!-- Secondary Sub-navigation Tabs -->
+    <div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl max-w-2xl mb-8">
+      <a href="settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าฟิลด์รับสมัคร
+      </a>
+      <a href="course_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าแผนหลักสูตร
+      </a>
+      <a href="room_exam_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าห้องสอบ
+      </a>
+      <a href="student_field_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-bold bg-[#3e63dd] text-white shadow-sm transition-all">
+        ตั้งค่าคอลัมน์นักเรียน
+      </a>
+    </div>
+
+    <!-- Column List Table Card -->
+    <div class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-w-6xl">
+      <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center gap-3 flex-wrap">
+        <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+          <i data-lucide="list" class="h-4 w-4 text-primary"></i> คอลัมน์ทั้งหมดในตารางข้อมูลนักเรียน
+        </h3>
+        <div class="flex items-center gap-2">
+          <span id="col-count-badge" class="px-2.5 py-0.5 rounded-full text-xs bg-slate-50 border border-slate-200 text-slate-500 font-mono"></span>
+          <button onclick="resetToDefaults()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors text-xs font-semibold">
+            <i data-lucide="rotate-ccw" class="h-3.5 w-3.5"></i> คืนค่าเริ่มต้น
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-bold uppercase">
+              <th class="p-4 w-20 text-center">ลำดับ</th>
+              <th class="p-4">ชื่อคอลัมน์</th>
+              <th class="p-4 w-36 text-center">แสดงในตาราง</th>
+              <th class="p-4 w-32 text-center">คอลัมน์หลัก</th>
+              <th class="p-4 w-28 text-center">การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="cols-table-body" class="divide-y divide-slate-200">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add/Edit Column Modal -->
+  <div id="col-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200 p-4">
+    <div class="custom-card border rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 id="col-modal-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="plus-circle" class="h-5 w-5 text-primary"></i> เพิ่มคอลัมน์ใหม่
+        </h3>
+        <button onclick="closeColModal()" class="p-1 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <form id="col-form" onsubmit="saveCol(event)" class="p-6 space-y-5">
+        <input type="hidden" id="edit-col-id">
+
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1.5">ชื่อคอลัมน์ที่แสดง *</label>
+          <input type="text" id="col-label" required placeholder="เช่น เกรดเฉลี่ย" class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+        </div>
+
+        <!-- locked-column notice: แสดงเฉพาะตอนแก้ไขคอลัมน์มาตรฐานของระบบ -->
+        <div id="col-locked-notice" class="hidden flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 p-3 text-[11px] text-amber-700">
+          <i data-lucide="info" class="h-4 w-4 shrink-0 mt-0.5"></i>
+          <span>คอลัมน์นี้เป็นคอลัมน์มาตรฐานของระบบ แก้ไขได้เฉพาะชื่อที่แสดงเท่านั้น</span>
+        </div>
+
+        <!-- field/align: แสดงเฉพาะตอนเพิ่มคอลัมน์ใหม่ หรือแก้ไขคอลัมน์ที่ไม่ใช่คอลัมน์มาตรฐาน -->
+        <div id="col-field-group">
+          <label class="block text-xs font-bold text-slate-500 mb-1.5">ข้อมูลที่จะแสดง (field) *</label>
+          <select id="col-field" required class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary"></select>
+        </div>
+
+        <div id="col-align-group">
+          <label class="block text-xs font-bold text-slate-500 mb-1.5">การจัดวางข้อความ</label>
+          <select id="col-align" class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+            <option value="left">ชิดซ้าย</option>
+            <option value="center">กึ่งกลาง</option>
+            <option value="right">ชิดขวา</option>
+          </select>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="border-t border-slate-200 pt-6 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeColModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-transparent text-slate-700 hover:bg-slate-100 transition-colors text-xs font-bold cursor-pointer">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white transition-colors text-xs font-bold cursor-pointer">
+            บันทึกคอลัมน์
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200">
+    <div class="custom-card border rounded-2xl p-6 shadow-2xl max-w-sm w-full space-y-4 text-center">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-600">
+        <i data-lucide="alert-triangle" class="h-6 w-6"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-slate-900">ยืนยันการลบคอลัมน์?</h3>
+        <p class="text-xs text-slate-500 mt-1">คอลัมน์นี้จะหายไปจากตารางข้อมูลนักเรียนทันที ข้อมูลของนักเรียนแต่ละคนจะไม่ถูกลบ เฉพาะคอลัมน์ในตารางเท่านั้น</p>
+      </div>
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button onclick="closeDeleteModal()" class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors text-xs font-bold cursor-pointer">
+          ยกเลิก
+        </button>
+        <button id="confirm-delete-btn" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white transition-colors text-xs font-bold cursor-pointer">
+          ยืนยันการลบ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50">
+    <div id="toast-icon"></div>
+    <p id="toast-message" class="text-sm font-semibold text-slate-700"></p>
+  </div>
+
+  <!-- Store Logic Integration -->
+  <script src="js/store.js"></script>
+  <script>
+    // รายการ field ในเรคคอร์ดนักเรียนที่เลือกผูกกับคอลัมน์ใหม่ได้ (ดู js/store.js seedApplicants + IMPORT_TEMPLATE_COLUMNS ใน students.html)
+    const AVAILABLE_STUDENT_FIELDS = [
+      { field: 'seatNumber',      label: 'เลขที่ (seatNumber)' },
+      { field: 'studentId',       label: 'รหัสนักเรียน (studentId)' },
+      { field: 'applicantCode',   label: 'รหัสผู้สมัคร (applicantCode)' },
+      { field: 'prefix',          label: 'คำนำหน้า (prefix)' },
+      { field: 'firstName',       label: 'ชื่อ (firstName)' },
+      { field: 'lastName',        label: 'นามสกุล (lastName)' },
+      { field: 'classroom',       label: 'ชั้นเรียน (classroom)' },
+      { field: 'gradeLevel',      label: 'ระดับชั้น (gradeLevel)' },
+      { field: 'status',          label: 'สถานะ (status)' },
+      { field: 'appliedAt',       label: 'วันที่เข้าเรียน (appliedAt)' },
+      { field: 'studyPlan',       label: 'แผนการเรียน (studyPlan)' },
+      { field: 'citizenId',       label: 'เลขประจำตัวประชาชน (citizenId)' },
+      { field: 'parentEmail',     label: 'อีเมลผู้ปกครอง (parentEmail)' },
+      { field: 'examScore.gpa',   label: 'เกรดเฉลี่ย GPAX (examScore.gpa)' },
+      { field: 'examRoom',        label: 'ห้องสอบ (examRoom)' }
+    ];
+
+    // State
+    let columnsList = [];
+    let deleteColId = null;
+
+    function loadCols() {
+      columnsList = AdmitifyStore.getStudentColumns();
+      document.getElementById('col-count-badge').innerText = `${columnsList.filter(c => c.visible).length}/${columnsList.length} คอลัมน์`;
+    }
+
+    // Render column rows
+    function renderCols() {
+      const tbody = document.getElementById('cols-table-body');
+      tbody.innerHTML = '';
+
+      if (columnsList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="p-8 text-center text-xs text-slate-400">
+              <i data-lucide="folder-open" class="h-8 w-8 mx-auto mb-2 text-slate-400 block"></i>
+              ไม่มีคอลัมน์ในระบบ กดปุ่ม "คืนค่าเริ่มต้น" เพื่อเริ่มใหม่
+            </td>
+          </tr>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      columnsList.forEach((col, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-100 transition-colors';
+
+        const fieldMeta = AVAILABLE_STUDENT_FIELDS.find(f => f.field === col.field);
+        const fieldLabel = col.field === '__seq__' ? 'ลำดับอัตโนมัติ' : (fieldMeta ? fieldMeta.label : col.field);
+
+        tr.innerHTML = `
+          <td class="p-4 text-center">
+            <div class="inline-flex flex-col gap-0.5">
+              <button type="button" onclick="moveColumn('${col.id}', -1)" ${idx === 0 ? 'disabled' : ''} class="p-0.5 rounded text-slate-400 hover:text-primary hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors" title="เลื่อนขึ้น">
+                <i data-lucide="chevron-up" class="h-3.5 w-3.5"></i>
+              </button>
+              <button type="button" onclick="moveColumn('${col.id}', 1)" ${idx === columnsList.length - 1 ? 'disabled' : ''} class="p-0.5 rounded text-slate-400 hover:text-primary hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors" title="เลื่อนลง">
+                <i data-lucide="chevron-down" class="h-3.5 w-3.5"></i>
+              </button>
+            </div>
+          </td>
+          <td class="p-4">
+            <div class="font-bold text-slate-900 text-sm">${col.labelTh}</div>
+            <div class="text-[11px] text-slate-400 font-mono mt-0.5">${fieldLabel}</div>
+          </td>
+          <td class="p-4 text-center">
+            <button type="button" onclick="toggleVisible('${col.id}')" ${col.primary ? 'disabled title="คอลัมน์หลักซ่อนไม่ได้"' : ''}
+              class="relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${col.visible ? 'bg-emerald-500' : 'bg-slate-300'} ${col.primary ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}">
+              <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${col.visible ? 'translate-x-5' : 'translate-x-0'}"></span>
+            </button>
+          </td>
+          <td class="p-4 text-center">
+            ${col.primary
+              ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-600 border border-amber-200"><i data-lucide="star" class="h-3 w-3"></i> คอลัมน์หลัก</span>`
+              : `<button type="button" onclick="setPrimaryColumn('${col.id}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border border-slate-200 text-slate-500 hover:border-amber-300 hover:text-amber-600 hover:bg-amber-50 transition-colors">
+                  <i data-lucide="star" class="h-3 w-3"></i> ตั้งเป็นหลัก
+                </button>`}
+          </td>
+          <td class="p-4">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openColModal('${col.id}')" class="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all hover:text-indigo-600" title="แก้ไขคอลัมน์">
+                <i data-lucide="edit-3" class="h-3.5 w-3.5"></i>
+              </button>
+              ${col.locked ? '' : `
+              <button onclick="confirmDelete('${col.id}')" class="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all hover:text-rose-600" title="ลบคอลัมน์">
+                <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+              </button>`}
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
+    }
+
+    // ปิด/เปิดการแสดงคอลัมน์ในตาราง — คอลัมน์หลักซ่อนไม่ได้ (ปุ่มถูก disable ไว้แล้วในมาร์กอัป แต่กันซ้ำไว้ที่นี่ด้วย)
+    function toggleVisible(colId) {
+      const col = columnsList.find(c => c.id === colId);
+      if (!col || col.primary) return;
+      col.visible = !col.visible;
+      AdmitifyStore.saveStudentColumns(columnsList);
+      loadCols();
+      renderCols();
+    }
+
+    // ตั้งคอลัมน์หลัก — มีได้ทีละ 1 คอลัมน์ เคลียร์ของเดิมก่อนเสมอ + บังคับ visible:true
+    function setPrimaryColumn(colId) {
+      columnsList.forEach(c => { c.primary = (c.id === colId); if (c.id === colId) c.visible = true; });
+      AdmitifyStore.saveStudentColumns(columnsList);
+      loadCols();
+      renderCols();
+      showToast('ตั้งคอลัมน์หลักเรียบร้อยแล้ว', 'success');
+    }
+
+    // เลื่อนลำดับคอลัมน์ขึ้น/ลง — ลำดับนี้คือลำดับซ้าย-ขวาจริงในตารางข้อมูลนักเรียน
+    function moveColumn(colId, direction) {
+      const idx = columnsList.findIndex(c => c.id === colId);
+      const swapWith = idx + direction;
+      if (idx === -1 || swapWith < 0 || swapWith >= columnsList.length) return;
+      [columnsList[idx], columnsList[swapWith]] = [columnsList[swapWith], columnsList[idx]];
+      AdmitifyStore.saveStudentColumns(columnsList);
+      renderCols();
+    }
+
+    function populateFieldSelect() {
+      const select = document.getElementById('col-field');
+      select.innerHTML = AVAILABLE_STUDENT_FIELDS.map(f => `<option value="${f.field}">${f.label}</option>`).join('');
+    }
+
+    // เปิดโมดัลเพิ่ม/แก้ไขคอลัมน์ — colId ว่าง = โหมดเพิ่มใหม่ (เป็นคอลัมน์ custom เสมอ), มีค่า = โหมดแก้ไข
+    function openColModal(colId = null) {
+      const form = document.getElementById('col-form');
+      form.reset();
+      populateFieldSelect();
+
+      const title = document.getElementById('col-modal-title');
+      const lockedNotice = document.getElementById('col-locked-notice');
+      const fieldGroup = document.getElementById('col-field-group');
+      const alignGroup = document.getElementById('col-align-group');
+
+      if (colId) {
+        const col = columnsList.find(c => c.id === colId);
+        if (!col) return;
+        document.getElementById('edit-col-id').value = col.id;
+        document.getElementById('col-label').value = col.labelTh;
+        title.innerHTML = '<i data-lucide="edit-3" class="h-5 w-5 text-primary"></i> แก้ไขคอลัมน์';
+
+        if (col.locked) {
+          // คอลัมน์มาตรฐานของระบบ — field/align ไม่มีผลกับการแสดงผล (ดู buildColumnCell() ใน students.html
+          // ที่ switch ตาม column.id ตรงๆ) จึงซ่อนไว้ไม่ให้สับสน แก้ได้แค่ชื่อที่แสดง
+          lockedNotice.classList.remove('hidden');
+          fieldGroup.classList.add('hidden');
+          alignGroup.classList.add('hidden');
+          document.getElementById('col-field').required = false;
+        } else {
+          lockedNotice.classList.add('hidden');
+          fieldGroup.classList.remove('hidden');
+          alignGroup.classList.remove('hidden');
+          document.getElementById('col-field').required = true;
+          document.getElementById('col-field').value = col.field;
+          document.getElementById('col-align').value = col.align || 'left';
+        }
+      } else {
+        document.getElementById('edit-col-id').value = '';
+        title.innerHTML = '<i data-lucide="plus-circle" class="h-5 w-5 text-primary"></i> เพิ่มคอลัมน์ใหม่';
+        lockedNotice.classList.add('hidden');
+        fieldGroup.classList.remove('hidden');
+        alignGroup.classList.remove('hidden');
+        document.getElementById('col-field').required = true;
+      }
+
+      document.getElementById('col-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeColModal() {
+      document.getElementById('col-modal').classList.add('hidden');
+    }
+
+    function saveCol(e) {
+      e.preventDefault();
+      const editId = document.getElementById('edit-col-id').value;
+      const labelTh = document.getElementById('col-label').value.trim();
+
+      if (!labelTh) {
+        showToast('กรุณากรอกชื่อคอลัมน์', 'error');
+        return;
+      }
+
+      if (editId) {
+        const col = columnsList.find(c => c.id === editId);
+        if (!col) return;
+        col.labelTh = labelTh;
+        if (!col.locked) {
+          col.field = document.getElementById('col-field').value;
+          col.align = document.getElementById('col-align').value;
+        }
+        AdmitifyStore.saveStudentColumns(columnsList);
+        showToast(`ปรับปรุงคอลัมน์ "${labelTh}" สำเร็จเรียบร้อยแล้ว`, 'success');
+      } else {
+        const field = document.getElementById('col-field').value;
+        const align = document.getElementById('col-align').value;
+        const newCol = {
+          id: 'custom_' + Date.now(),
+          labelTh, field, align,
+          visible: true, primary: false, locked: false
+        };
+        columnsList.push(newCol);
+        AdmitifyStore.saveStudentColumns(columnsList);
+        showToast(`เพิ่มคอลัมน์ "${labelTh}" สำเร็จเรียบร้อยแล้ว`, 'success');
+      }
+
+      loadCols();
+      renderCols();
+      closeColModal();
+    }
+
+    function confirmDelete(colId) {
+      deleteColId = colId;
+      document.getElementById('delete-modal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('delete-modal').classList.add('hidden');
+      deleteColId = null;
+    }
+
+    document.getElementById('confirm-delete-btn').addEventListener('click', () => {
+      if (!deleteColId) return;
+      const col = columnsList.find(c => c.id === deleteColId);
+      columnsList = columnsList.filter(c => c.id !== deleteColId);
+      AdmitifyStore.saveStudentColumns(columnsList);
+      showToast(`ลบคอลัมน์ "${col ? col.labelTh : ''}" เรียบร้อยแล้ว`, 'success');
+      closeDeleteModal();
+      loadCols();
+      renderCols();
+    });
+
+    function resetToDefaults() {
+      AdmitifyStore.resetStudentColumns();
+      loadCols();
+      renderCols();
+      showToast('คืนค่าคอลัมน์เริ่มต้นเรียบร้อยแล้ว', 'success');
+    }
+
+    // Toast helper (เหมือน course_settings.html — success/error เท่านั้น)
+    let toastTimeout;
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      const msg = document.getElementById('toast-message');
+
+      icon.innerHTML = type === 'success'
+        ? '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>'
+        : '<i data-lucide="alert-circle" class="h-5 w-5 text-rose-600"></i>';
+      msg.innerText = message;
+
+      toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+      lucide.createIcons();
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCols();
+      renderCols();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

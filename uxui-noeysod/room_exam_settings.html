@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตั้งค่าห้องสอบ — Admitify Spark</title>
+  
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Tailwind Config to match theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3e63dd',
+              foreground: '#ffffff',
+              hover: '#2f51c7'
+            },
+            secondary: {
+              DEFAULT: '#f1f3f9',
+              foreground: '#1e293b'
+            },
+            success: {
+              DEFAULT: '#10b981',
+              foreground: '#ffffff'
+            },
+            warning: {
+              DEFAULT: '#f59e0b',
+              foreground: '#78350f'
+            },
+            info: {
+              DEFAULT: '#0284c7',
+              foreground: '#ffffff'
+            },
+            destructive: {
+              DEFAULT: '#ef4444',
+              foreground: '#ffffff'
+            },
+            muted: {
+              DEFAULT: '#f8fafc',
+              foreground: '#64748b'
+            },
+            card: {
+              DEFAULT: '#ffffff',
+              foreground: '#0f172a'
+            },
+            border: '#e2e8f0'
+          },
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    body {
+      background-color: #f8fafc;
+    }
+    .custom-card {
+      background-color: #ffffff;
+      border-color: #e2e8f0;
+      color: #0f172a;
+    }
+    .custom-input {
+      background-color: #ffffff;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .custom-input:focus {
+      border-color: #3e63dd;
+      outline: none;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-card-foreground">
+
+  <!-- Header (Consistent Layout) -->
+  <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
+    <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-6 py-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
+          <i data-lucide="graduation-cap" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight text-slate-900">ระบบบริหารจัดการผู้สมัครเรียน</h1>
+          <p class="text-xs text-slate-500">Student Admission & Information System</p>
+        </div>
+        <!-- Tab navigation inside header -->
+        <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2">
+          <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
+          </a>
+          <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="users" class="h-3.5 w-3.5"></i> ข้อมูลนักเรียน
+          </a>
+          <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold bg-primary text-primary-foreground transition-colors shadow">
+            <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
+          </a>
+        </div>
+      </div>
+      
+      <div class="ml-auto flex items-center gap-2">
+        <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-full px-3 py-1 text-[11px] text-emerald-600 font-mono">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          ONLINE
+        </div>
+        <a href="status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
+          <i data-lucide="search" class="h-3.5 w-3.5"></i> ตรวจสอบสถานะ
+        </a>
+        <a href="apply.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+          <i data-lucide="user-plus" class="h-3.5 w-3.5"></i> ลงทะเบียนนักเรียนใหม่
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="mx-auto max-w-[1400px] px-6 py-6 pb-24">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
+      <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">ข้อมูลบุคคล</span>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">รับสมัครนักเรียนออนไลน์</span>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <span class="text-slate-700 font-medium">ตั้งค่าห้องสอบ</span>
+    </div>
+
+    <!-- Title Area -->
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-600 text-white shadow-md">
+          <i data-lucide="layout" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900">ตั้งค่าการจัดห้องสอบคัดเลือก</h2>
+          <p class="text-xs text-slate-500">สร้างห้องสอบเพื่อจัดสรรผู้สมัครสอบ กำหนดจำนวนที่นั่ง และระบุสถานที่สอบทางกายภาพในสถานศึกษา</p>
+        </div>
+      </div>
+      
+      <button onclick="openRoomModal()" class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-4.5 py-2.5 text-sm font-semibold transition-all shadow-md cursor-pointer active:scale-95">
+        <i data-lucide="plus-circle" class="h-4.5 w-4.5"></i> เพิ่มห้องสอบใหม่
+      </button>
+    </div>
+
+    <!-- Secondary Sub-navigation Tabs -->
+    <div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl max-w-2xl mb-8">
+      <a href="settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าฟิลด์รับสมัคร
+      </a>
+      <a href="course_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าแผนหลักสูตร
+      </a>
+      <a href="room_exam_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-bold bg-[#3e63dd] text-white shadow-sm transition-all">
+        ตั้งค่าห้องสอบ
+      </a>
+      <a href="student_field_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าคอลัมน์นักเรียน
+      </a>
+    </div>
+
+    <!-- Exam Rooms List -->
+    <div class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-w-6xl">
+      <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+        <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+          <i data-lucide="door-open" class="h-4 w-4 text-purple-600"></i> รายการห้องสอบคัดเลือกในระบบ
+        </h3>
+        <span id="room-count-badge" class="px-2.5 py-0.5 rounded-full text-xs bg-slate-50 border border-slate-200 text-slate-500 font-mono"></span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-bold uppercase">
+              <th class="p-4">ชื่อห้องสอบ</th>
+              <th class="p-4">แผนการเรียนที่สอบ</th>
+              <th class="p-4">ห้องเรียนกายภาพ</th>
+              <th class="p-4 w-40 text-center">จำนวนที่นั่งสอบ (คน)</th>
+              <th class="p-4 w-40 text-center">ผู้สอบที่จัดสรรแล้ว</th>
+              <th class="p-4 w-28 text-center">การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="rooms-table-body" class="divide-y divide-slate-200">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add/Edit Exam Room Modal -->
+  <div id="room-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200 p-4">
+    <div class="custom-card border rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 id="modal-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="plus-circle" class="h-5 w-5 text-purple-600"></i> เพิ่มห้องสอบใหม่
+        </h3>
+        <button onclick="closeRoomModal()" class="p-1 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <form id="room-form" onsubmit="saveRoom(event)" class="p-6 space-y-5">
+        <input type="hidden" id="edit-room-id">
+        
+        <!-- Step 1: แผนการเรียนที่สอบ และ จำนวนนักเรียน -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1.5">แผนการเรียนที่สอบ *</label>
+            <select id="room-plan" required onchange="handlePlanChange()" class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1.5">จำนวนนักเรียนทั้งหมดในแผนที่จะสอบ (อิงจากหน้าสมัครเรียน)</label>
+            <div class="flex items-center gap-2">
+              <input type="number" id="plan-total-students" value="50" disabled class="flex-1 rounded-xl custom-input p-3 text-sm border border-slate-200 bg-white text-slate-500 font-mono opacity-80">
+              <button type="button" onclick="navigateToAdmission()" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all active:scale-95 cursor-pointer flex items-center justify-center shadow-sm" title="ดูหน้าข้อมูลสมัครเรียน (Admission Board)">
+                <i data-lucide="users" class="h-4.5 w-4.5"></i>
+              </button>
+            </div>
+            <div class="mt-2 text-xs text-slate-500 flex items-center gap-1.5">
+              <i data-lucide="info" class="h-3.5 w-3.5 text-slate-400"></i>
+              <span id="mock-rooms-calculation">ห้องเรียนที่ต้องใช้: 2 ห้อง (เลขห้องเรียน: ห้อง 321, ห้อง 322)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: คำแนะนำแผนห้องเรียนที่เหมาะสม -->
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <div class="text-xs font-bold text-slate-500 flex items-center gap-1 mb-2.5">
+            <i data-lucide="sparkles" class="h-4 w-4 text-amber-600"></i> คำแนะนำแผนห้องเรียนที่เหมาะสม (จัดกลุ่มให้ลงตัว)
+          </div>
+          <div id="room-suggestions" class="grid grid-cols-1 gap-2">
+            <!-- Suggested plans will be loaded here dynamically -->
+          </div>
+        </div>
+
+        <!-- Step 3: ห้องเรียนกายภาพ (เลือกได้หลายห้อง) -->
+        <div>
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <label class="block text-xs font-bold text-slate-500">ห้องเรียนกายภาพ (เลือกได้หลายห้อง) *</label>
+              <button type="button" onclick="navigateToCoursePlans()" class="p-1 rounded bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all active:scale-95 cursor-pointer flex items-center justify-center shadow-sm" title="ตั้งค่าหลักสูตร">
+                <i data-lucide="settings" class="h-3 w-3"></i>
+              </button>
+            </div>
+            <div class="flex items-center gap-2">
+              <!-- Name Filter -->
+              <div class="relative w-32">
+                <input type="text" id="classroom-search" oninput="filterClassrooms()" placeholder="ค้นหาด้วยชื่อ..." class="w-full rounded-lg custom-input py-1.5 pl-7 pr-2.5 text-[11px] border border-slate-200 bg-slate-50 focus:ring-1 focus:ring-primary">
+                <i data-lucide="search" class="absolute left-2 top-2 text-slate-550 h-3 w-3"></i>
+              </div>
+              <!-- Capacity Filter Dropdown Popup -->
+              <div class="relative inline-block text-left">
+                <button type="button" id="cap-filter-btn" onclick="toggleCapFilterPopup(event)" class="px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-all active:scale-95 cursor-pointer flex items-center gap-1 text-[11px] font-semibold">
+                  <i data-lucide="filter" class="h-3 w-3"></i> ความจุ
+                </button>
+                <div id="cap-filter-popup" class="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-2xl p-3 z-50 hidden flex flex-col gap-2">
+                  <div class="text-[10px] font-bold text-slate-500">เงื่อนไขความจุ</div>
+                  <label class="flex items-center gap-2 text-[10px] text-slate-700 cursor-pointer hover:text-slate-900">
+                    <input type="checkbox" id="cap-cond-gt" onchange="filterClassrooms()" class="rounded text-primary focus:ring-0">
+                    มากกว่า (>)
+                  </label>
+                  <label class="flex items-center gap-2 text-[10px] text-slate-700 cursor-pointer hover:text-slate-900">
+                    <input type="checkbox" id="cap-cond-eq" onchange="filterClassrooms()" class="rounded text-primary focus:ring-0">
+                    เท่ากับ (=)
+                  </label>
+                  <label class="flex items-center gap-2 text-[10px] text-slate-700 cursor-pointer hover:text-slate-900">
+                    <input type="checkbox" id="cap-cond-lt" onchange="filterClassrooms()" class="rounded text-primary focus:ring-0">
+                    น้อยกว่า (<)
+                  </label>
+                  <div class="mt-1">
+                    <input type="number" id="cap-filter-val" oninput="filterClassrooms()" placeholder="ระบุตัวเลข..." class="w-full rounded-lg custom-input py-1 px-2 text-[10px] border border-slate-200 bg-slate-50 focus:ring-1 focus:ring-primary text-slate-700">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="physical-rooms-list" class="grid grid-cols-1 md:grid-cols-2 gap-2 border border-slate-200 rounded-xl p-3 bg-slate-905 max-h-36 overflow-y-auto">
+            <!-- Checkboxes will be populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Step 4: ชื่อห้องสอบ -->
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1.5">ชื่อห้องสอบ *</label>
+          <input type="text" id="room-name" required placeholder="เช่น ห้องสอบที่ 1" class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="border-t border-slate-200 pt-5 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeRoomModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-transparent text-slate-700 hover:bg-slate-100 transition-colors text-xs font-bold cursor-pointer">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white transition-colors text-xs font-bold cursor-pointer">
+            บันทึกห้องสอบ
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200">
+    <div class="custom-card border rounded-2xl p-6 shadow-2xl max-w-sm w-full space-y-4 text-center">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-600">
+        <i data-lucide="alert-triangle" class="h-6 w-6"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-slate-900">ยืนยันการลบห้องสอบ?</h3>
+        <p class="text-xs text-slate-500 mt-1">ข้อมูลห้องสอบนี้จะถูกลบออกจากระบบ ผู้สมัครเรียนที่ถูกจัดสรรไว้ในห้องนี้จะไม่มีเลขห้องสอบชั่วคราว</p>
+      </div>
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button onclick="closeDeleteModal()" class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors text-xs font-bold cursor-pointer">
+          ยกเลิก
+        </button>
+        <button id="confirm-delete-btn" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white transition-colors text-xs font-bold cursor-pointer">
+          ยืนยันการลบ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50">
+    <div id="toast-icon"></div>
+    <p id="toast-message" class="text-sm font-semibold text-slate-700"></p>
+  </div>
+
+  <!-- Store Logic Integration -->
+  <script src="js/store.js"></script>
+  <script>
+    // State
+    let roomsList = [];
+    let plansList = [];
+    let deleteRoomId = null;
+
+    // Load data from AdmitifyStore
+    function loadData() {
+      roomsList = AdmitifyStore.getExamRooms();
+      plansList = AdmitifyStore.getCoursePlans();
+      document.getElementById("room-count-badge").innerText = `${roomsList.length} ห้องสอบ`;
+    }
+
+    // Render list table
+    function renderRooms() {
+      const tbody = document.getElementById("rooms-table-body");
+      tbody.innerHTML = "";
+
+      if (roomsList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-8 text-center text-xs text-slate-400">
+              <i data-lucide="folder-open" class="h-8 w-8 mx-auto mb-2 text-slate-400 block"></i>
+              ไม่มีห้องสอบที่กำหนดในระบบในขณะนี้ กดปุ่มด้านบนเพื่อจัดห้องสอบใหม่
+            </td>
+          </tr>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // Count allocated students in mock applicants database
+      const applicants = AdmitifyStore.getApplicants();
+
+      roomsList.forEach(room => {
+        const plan = plansList.find(p => p.id === room.planId);
+        const planName = plan ? `${plan.name} (${plan.level})` : "ไม่พบแผนการเรียน";
+        
+        // Count matching applicants
+        const allocatedCount = applicants.filter(a => a.examRoom === room.name || a.examRoom === `ห้อง ${room.name.replace("ห้องสอบที่ ", "")}`).length;
+        const fillPercentage = Math.min(100, Math.round((allocatedCount / room.capacity) * 100));
+
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-100 transition-colors";
+        
+        tr.innerHTML = `
+          <td class="p-4 font-bold text-slate-100">${room.name}</td>
+          <td class="p-4">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-50 border border-slate-200 px-2.5 py-0.5 text-xs text-slate-700">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+              ${planName}
+            </span>
+          </td>
+          <td class="p-4 text-xs text-slate-700 font-medium">
+            <div class="flex items-center gap-1">
+              <i data-lucide="building-2" class="h-3.5 w-3.5 text-slate-400"></i>
+              ${room.roomName}
+            </div>
+          </td>
+          <td class="p-4 text-center font-mono font-bold text-slate-700">${room.capacity}</td>
+          <td class="p-4">
+            <div class="flex flex-col items-center justify-center space-y-1">
+              <div class="text-xs font-mono font-bold text-slate-700">${allocatedCount} / ${room.capacity} คน</div>
+              <!-- Mini progress bar -->
+              <div class="w-24 bg-slate-50 rounded-full h-1.5 overflow-hidden border border-slate-200">
+                <div class="bg-purple-500 h-1.5 rounded-full transition-all duration-300" style="width: ${fillPercentage}%"></div>
+              </div>
+            </div>
+          </td>
+          <td class="p-4 text-center">
+            <div class="flex items-center justify-center gap-2">
+              <button onclick="openRoomModal('${room.id}')" class="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-sky-600 border border-slate-200 transition-all active:scale-90 cursor-pointer" title="แก้ไข">
+                <i data-lucide="edit-3" class="h-4 w-4"></i>
+              </button>
+              <button onclick="confirmDelete('${room.id}')" class="p-2 rounded-lg bg-slate-50 hover:bg-rose-100 text-rose-600 border border-slate-200 transition-all active:scale-90 cursor-pointer" title="ลบ">
+                <i data-lucide="trash-2" class="h-4 w-4"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
+    }
+
+    // Modal Control: Prep drop-downs and suggest rooms
+    function populateDropdowns() {
+      // 1. Study Plans Dropdown
+      const planSelect = document.getElementById("room-plan");
+      planSelect.innerHTML = plansList.map(p => `<option value="${p.id}">${p.name} (${p.level})</option>`).join("");
+      
+      // 2. Physical Classrooms Checkboxes
+      const container = document.getElementById("physical-rooms-list");
+      container.innerHTML = window.schoolRooms.map((room, idx) => `
+        <label class="flex items-center gap-2.5 text-xs text-slate-700 font-medium cursor-pointer hover:bg-slate-100 p-2 rounded-lg transition-all border border-slate-200 hover:border-slate-300">
+          <input type="checkbox" name="physical-rooms-checked" value="${room.name}" data-capacity="${room.capacity}" onchange="handleRoomCheckboxChange()" class="rounded text-primary focus:ring-0">
+          <div class="flex flex-col min-w-0">
+            <span class="font-semibold text-slate-700 truncate">${room.name}</span>
+            <span class="text-[10px] text-slate-550 mt-0.5">ความจุ: ${room.capacity} ที่นั่ง</span>
+          </div>
+        </label>
+      `).join("");
+    }
+
+    function openRoomModal(roomId = null) {
+      const modal = document.getElementById("room-modal");
+      const form = document.getElementById("room-form");
+      form.reset();
+      
+      const titleEl = document.getElementById("modal-title");
+      const editIdInput = document.getElementById("edit-room-id");
+
+      populateDropdowns();
+
+      if (roomId) {
+        // Edit Mode
+        const room = roomsList.find(r => r.id === roomId);
+        if (!room) return;
+        
+        editIdInput.value = room.id;
+        titleEl.innerHTML = `<i data-lucide="edit" class="h-5 w-5 text-sky-600"></i> แก้ไขห้องสอบ`;
+        
+        document.getElementById("room-plan").value = room.planId;
+        document.getElementById("room-name").value = room.name;
+
+        // Check selected room checkboxes
+        const selectedRooms = room.roomName.split(", ");
+        document.querySelectorAll('input[name="physical-rooms-checked"]').forEach(cb => {
+          cb.checked = selectedRooms.includes(cb.value);
+        });
+
+      } else {
+        // Add Mode
+        editIdInput.value = "";
+        titleEl.innerHTML = `<i data-lucide="plus-circle" class="h-5 w-5 text-purple-600"></i> เพิ่มห้องสอบใหม่`;
+        
+        // Default capacity from active plan
+        handlePlanChange();
+        
+        // Suggest automatic room name
+        const nextNum = roomsList.length + 1;
+        document.getElementById("room-name").value = `ห้องสอบที่ ${nextNum}`;
+      }
+      
+      // Initialize dynamic total students count for the plan
+      const activePlanId = document.getElementById("room-plan").value;
+      const plan = plansList.find(p => p.id === activePlanId);
+      if (plan) {
+        const applicants = AdmitifyStore.getApplicants();
+        let studentCount = applicants.filter(a => a.studyPlan === plan.name).length;
+        if (plan.name.includes("วิทย์-คณิต") || plan.name.includes("วิทยาศาสตร์-คณิตศาสตร์")) {
+          studentCount = 120;
+        }
+        document.getElementById("plan-total-students").value = studentCount;
+      } else {
+        document.getElementById("plan-total-students").value = 0;
+      }
+      updateMockRequiredRooms();
+      updateSuggestions();
+      
+      modal.classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeRoomModal() {
+      document.getElementById("room-modal").classList.add("hidden");
+    }
+
+    // Auto update capacity value when plan select changes
+    function handlePlanChange() {
+      const activePlanId = document.getElementById("room-plan").value;
+      const plan = plansList.find(p => p.id === activePlanId);
+      
+      // Update plan total students count
+      if (plan) {
+        const applicants = AdmitifyStore.getApplicants();
+        let studentCount = applicants.filter(a => a.studyPlan === plan.name).length;
+        if (plan.name.includes("วิทย์-คณิต") || plan.name.includes("วิทยาศาสตร์-คณิตศาสตร์")) {
+          studentCount = 120;
+        }
+        document.getElementById("plan-total-students").value = studentCount;
+      } else {
+        document.getElementById("plan-total-students").value = 0;
+      }
+      updateMockRequiredRooms();
+      
+      // Update suggestions
+      handleRoomCheckboxChange();
+    }
+
+    // Classroom checkbox selection event handler
+    function handleRoomCheckboxChange() {
+      updateSuggestions();
+    }
+
+    // Dynamic suggestions algorithms matching combinations of physical capacities close to target
+    function updateSuggestions() {
+      const targetCapacity = parseInt(document.getElementById("plan-total-students").value) || 30;
+      const suggestionsDiv = document.getElementById("room-suggestions");
+      suggestionsDiv.innerHTML = "";
+
+      const plans = [];
+
+      if (targetCapacity === 120) {
+        // Option 1: ห้องประชุม
+        const hallRoom = window.schoolRooms.find(r => r.name.includes("หอประชุม"));
+        if (hallRoom) {
+          plans.push({
+            name: "ตัวเลือกที่ 1: ห้องประชุม",
+            rooms: [hallRoom],
+            total: 120,
+            desc: "จัดสอบใน หอประชุมใหญ่อาคาร 1 (120 ที่นั่ง)"
+          });
+        }
+        
+        // Option 2: 3 ห้องเรียน (40 คน/ห้อง)
+        const r541 = window.schoolRooms.find(r => r.name.includes("541"));
+        const r542 = window.schoolRooms.find(r => r.name.includes("542"));
+        const r543 = window.schoolRooms.find(r => r.name.includes("543"));
+        if (r541 && r542 && r543) {
+          plans.push({
+            name: "ตัวเลือกที่ 2: 3 ห้องเรียน (ห้อง 541, 542, 543)",
+            rooms: [r541, r542, r543],
+            total: 120,
+            desc: "ห้องเรียนขนาด 40 ที่นั่ง/ห้อง: ห้อง 541 + ห้อง 542 + ห้อง 543"
+          });
+        }
+
+        // Option 3: 4 ห้องเรียน (30 คน/ห้อง)
+        const r321 = window.schoolRooms.find(r => r.name.includes("321"));
+        const r322 = window.schoolRooms.find(r => r.name.includes("322"));
+        const r323 = window.schoolRooms.find(r => r.name.includes("323"));
+        const r431 = window.schoolRooms.find(r => r.name.includes("431"));
+        if (r321 && r322 && r323 && r431) {
+          plans.push({
+            name: "ตัวเลือกที่ 3: 4 ห้องเรียน (ห้อง 321, 322, 323, 431)",
+            rooms: [r321, r322, r323, r431],
+            total: 120,
+            desc: "ห้องเรียนขนาด 30 ที่นั่ง/ห้อง: ห้อง 321 + ห้อง 322 + ห้อง 323 + ห้อง 431"
+          });
+        }
+      } else {
+        const rooms = [...window.schoolRooms].sort((a, b) => b.capacity - a.capacity);
+        
+        // Plan 1: Large halls / maximum capacity rooms first
+        let sum1 = 0;
+        const selected1 = [];
+        for (const r of rooms) {
+          if (sum1 < targetCapacity) {
+            selected1.push(r);
+            sum1 += r.capacity;
+          }
+        }
+        if (selected1.length > 0) {
+          plans.push({
+            name: "แผนจัดห้องสอบ 1 (เน้นห้องเรียนขนาดใหญ่)",
+            rooms: selected1,
+            total: sum1,
+            desc: selected1.map(r => `${r.name.split(" ")[0]} (${r.capacity} ที่นั่ง)`).join(" + ")
+          });
+        }
+        
+        // Plan 2: Standard classrooms (30-40 seats)
+        const stdRooms = [...window.schoolRooms].filter(r => r.capacity >= 30 && r.capacity <= 40).sort((a, b) => b.capacity - a.capacity);
+        let sum2 = 0;
+        const selected2 = [];
+        for (const r of stdRooms) {
+          if (sum2 < targetCapacity) {
+            selected2.push(r);
+            sum2 += r.capacity;
+          }
+        }
+        if (selected2.length > 0 && sum2 >= targetCapacity) {
+          plans.push({
+            name: "แผนจัดห้องสอบ 2 (ใช้ห้องเรียนมาตรฐาน 30-40 ที่นั่ง)",
+            rooms: selected2,
+            total: sum2,
+            desc: selected2.map(r => `${r.name.split(" ")[0]} (${r.capacity} ที่นั่ง)`).join(" + ")
+          });
+        }
+        
+        // Plan 3: Standard classrooms of exactly 30 seats
+        const smallRooms = [...window.schoolRooms].filter(r => r.capacity === 30);
+        let sum3 = 0;
+        const selected3 = [];
+        for (const r of smallRooms) {
+          if (sum3 < targetCapacity) {
+            selected3.push(r);
+            sum3 += r.capacity;
+          }
+        }
+        if (selected3.length > 0 && sum3 >= targetCapacity) {
+          plans.push({
+            name: "แผนจัดห้องสอบ 3 (ใช้ห้องเรียนทั่วไป 30 ที่นั่ง)",
+            rooms: selected3,
+            total: sum3,
+            desc: selected3.map(r => `${r.name.split(" ")[0]} (${r.capacity} ที่นั่ง)`).join(" + ")
+          });
+        }
+      }
+
+      plans.forEach(plan => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "w-full text-left bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-650 p-3 rounded-xl transition-all cursor-pointer flex flex-col gap-1 active:scale-[0.99]";
+        
+        btn.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-indigo-600 flex items-center gap-1">
+              <i data-lucide="check-circle-2" class="h-3.5 w-3.5 text-emerald-600"></i> ${plan.name}
+            </span>
+            <span class="bg-emerald-50 text-emerald-600 text-[10px] font-mono px-2 py-0.5 rounded-md font-bold">ที่นั่งรวม: ${plan.total} คน</span>
+          </div>
+          <div class="text-[11px] text-slate-700 font-medium truncate">${plan.desc}</div>
+        `;
+        
+        btn.addEventListener("click", () => {
+          // Uncheck all room checkboxes
+          document.querySelectorAll('input[name="physical-rooms-checked"]').forEach(cb => {
+            cb.checked = false;
+          });
+          
+          // Check the classrooms in the plan
+          const planRoomNames = plan.rooms.map(r => r.name);
+          document.querySelectorAll('input[name="physical-rooms-checked"]').forEach(cb => {
+            if (planRoomNames.includes(cb.value)) {
+              cb.checked = true;
+            }
+          });
+          
+          handleRoomCheckboxChange();
+          showToast(`เลือก ${plan.name} สำเร็จ!`, "success");
+        });
+        
+        suggestionsDiv.appendChild(btn);
+      });
+      
+      lucide.createIcons();
+    }
+
+    // Save Exam Room
+    function saveRoom(e) {
+      e.preventDefault();
+      
+      const editId = document.getElementById("edit-room-id").value;
+      const planId = document.getElementById("room-plan").value;
+      const nameBase = document.getElementById("room-name").value.trim();
+
+      const checkedBoxes = document.querySelectorAll('input[name="physical-rooms-checked"]:checked');
+      if (checkedBoxes.length === 0) {
+        showToast("กรุณาเลือกห้องเรียนกายภาพอย่างน้อย 1 ห้อง", "error");
+        return;
+      }
+
+      if (!nameBase) {
+        showToast("กรุณากรอกชื่อห้องสอบ", "error");
+        return;
+      }
+
+      // Remove the old edited exam room to replace it (could be split)
+      if (editId) {
+        roomsList = roomsList.filter(r => r.id !== editId);
+      }
+
+      // Save each checked physical room as a separate room entry row
+      checkedBoxes.forEach((cb, index) => {
+        let roomCapacity = parseInt(cb.getAttribute("data-capacity")) || 0;
+        const roomNamePhysical = cb.value;
+
+        // Generate names sequentially if multiple rooms selected, e.g. ห้องสอบที่ 3, ห้องสอบที่ 4...
+        let finalName = nameBase;
+        if (checkedBoxes.length > 1) {
+          const match = nameBase.match(/^(.*?)(\d+)$/);
+          if (match) {
+            const baseText = match[1]; // e.g. "ห้องสอบที่ "
+            const baseNum = parseInt(match[2]); // e.g. 3
+            finalName = `${baseText}${baseNum + index}`;
+          } else {
+            finalName = `${nameBase} (${roomNamePhysical.split(" ")[0]})`;
+          }
+        }
+
+        const newId = "er" + (Date.now() + index);
+        roomsList.push({
+          id: newId,
+          name: finalName,
+          planId: planId,
+          roomName: roomNamePhysical,
+          capacity: roomCapacity
+        });
+      });
+
+      AdmitifyStore.saveExamRooms(roomsList);
+      showToast(`บันทึกข้อมูลห้องสอบสำเร็จเรียบร้อยแล้ว`, "success");
+
+      loadData();
+      renderRooms();
+      closeRoomModal();
+    }
+
+    // Delete Operations
+    function confirmDelete(roomId) {
+      deleteRoomId = roomId;
+      document.getElementById("delete-modal").classList.remove("hidden");
+    }
+
+    function closeDeleteModal() {
+      document.getElementById("delete-modal").classList.add("hidden");
+      deleteRoomId = null;
+    }
+
+    document.getElementById("confirm-delete-btn").addEventListener("click", () => {
+      if (deleteRoomId) {
+        const room = roomsList.find(r => r.id === deleteRoomId);
+        const name = room ? room.name : "";
+        
+        roomsList = roomsList.filter(r => r.id !== deleteRoomId);
+        AdmitifyStore.saveExamRooms(roomsList);
+        
+        showToast(`ลบข้อมูลห้องสอบ "${name}" เรียบร้อยแล้ว`, "success");
+        loadData();
+        renderRooms();
+      }
+      closeDeleteModal();
+    });
+
+    // Toast Utility
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toast-message");
+      const toastIcon = document.getElementById("toast-icon");
+      
+      toastMsg.innerText = message;
+      
+      if (type === 'success') {
+        toastIcon.innerHTML = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
+        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-emerald-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
+      } else {
+        toastIcon.innerHTML = '<i data-lucide="alert-circle" class="h-5 w-5 text-rose-600"></i>';
+        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-rose-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
+      }
+      
+      lucide.createIcons();
+      
+      setTimeout(() => {
+        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50';
+      }, 3500);
+    }
+
+    // Mock Navigation to classroom settings page
+    function mockNavigateToPlans() {
+      alert("ระบบจำลองการนำทางไปยังหน้าตั้งค่าห้องเรียน (Classroom Settings)...");
+    }
+
+    // Redirect to course plans settings page
+    function navigateToCoursePlans() {
+      location.href = "course_settings.html";
+    }
+
+    // Redirect to Admission Page (Dashboard index.html)
+    function navigateToAdmission() {
+      location.href = "index.html";
+    }
+
+    // Filter physical classrooms list dynamically using name search and popup capacity condition filters
+    function filterClassrooms() {
+      const query = document.getElementById("classroom-search").value.toLowerCase().trim();
+      const gt = document.getElementById("cap-cond-gt").checked;
+      const eq = document.getElementById("cap-cond-eq").checked;
+      const lt = document.getElementById("cap-cond-lt").checked;
+      const valStr = document.getElementById("cap-filter-val").value.trim();
+
+      const labels = document.querySelectorAll('#physical-rooms-list label');
+      labels.forEach(label => {
+        const name = label.querySelector('span.font-semibold').innerText.toLowerCase();
+        const checkbox = label.querySelector('input[type="checkbox"]');
+        const capacity = parseInt(checkbox.getAttribute("data-capacity")) || 0;
+
+        const matchesName = name.includes(query);
+        
+        let matchesCap = true;
+        if (valStr !== "") {
+          const val = parseInt(valStr);
+          if (gt || eq || lt) {
+            matchesCap = false;
+            if (gt && capacity > val) matchesCap = true;
+            if (eq && capacity === val) matchesCap = true;
+            if (lt && capacity < val) matchesCap = true;
+          }
+        }
+
+        if (matchesName && matchesCap) {
+          label.style.display = "flex";
+        } else {
+          label.style.display = "none";
+        }
+      });
+    }
+
+    // Toggle Capacity conditions filter popup
+    function toggleCapFilterPopup(event) {
+      event.stopPropagation();
+      const popup = document.getElementById("cap-filter-popup");
+      popup.classList.toggle("hidden");
+    }
+
+    // Close the popup when clicking anywhere outside
+    document.addEventListener("click", (e) => {
+      const popup = document.getElementById("cap-filter-popup");
+      const btn = document.getElementById("cap-filter-btn");
+      if (popup && !popup.classList.contains("hidden") && !popup.contains(e.target) && e.target !== btn) {
+        popup.classList.add("hidden");
+      }
+    });
+
+    // Dynamic mock required classrooms calculator based on candidate student counts
+    function updateMockRequiredRooms() {
+      const count = parseInt(document.getElementById("plan-total-students").value) || 0;
+      const calcSpan = document.getElementById("mock-rooms-calculation");
+      
+      if (count <= 0) {
+        calcSpan.innerText = "กรุณาระบุจำนวนนักเรียนคัดเลือก";
+        return;
+      }
+      
+      if (count === 120) {
+        calcSpan.innerText = "ห้องเรียนที่ต้องใช้: 3 ห้อง (เลขห้องเรียน: ห้อง 541, ห้อง 542, ห้อง 543)";
+        return;
+      }
+      
+      // Calculate required rooms assuming 30 seats per room
+      const roomsNeeded = Math.ceil(count / 30);
+      let roomNumbers = [];
+      if (roomsNeeded >= 1) roomNumbers.push("ห้อง 321");
+      if (roomsNeeded >= 2) roomNumbers.push("ห้อง 322");
+      if (roomsNeeded >= 3) roomNumbers.push("ห้อง 323");
+      if (roomsNeeded > 3) {
+        for (let i = 4; i <= roomsNeeded; i++) {
+          roomNumbers.push(`ห้อง ${320 + i}`);
+        }
+      }
+      
+      calcSpan.innerText = `ห้องเรียนที่ต้องใช้: ${roomsNeeded} ห้อง (เลขห้องเรียน: ${roomNumbers.join(", ")})`;
+    }
+
+    // Initialize Page
+    window.addEventListener("DOMContentLoaded", () => {
+      loadData();
+      renderRooms();
+    });
+  </script>
+</body>
+</html>

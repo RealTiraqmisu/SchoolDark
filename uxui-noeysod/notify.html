@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ส่งอีเมลแจ้งเตือนนักเรียน</title>
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Tailwind Config to match original OKLCH theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3e63dd',
+              foreground: '#ffffff',
+              hover: '#2f51c7'
+            },
+            secondary: {
+              DEFAULT: '#f1f3f9',
+              foreground: '#1e293b'
+            },
+            success: {
+              DEFAULT: '#10b981',
+              foreground: '#ffffff'
+            },
+            warning: {
+              DEFAULT: '#f59e0b',
+              foreground: '#78350f'
+            },
+            info: {
+              DEFAULT: '#0284c7',
+              foreground: '#ffffff'
+            },
+            destructive: {
+              DEFAULT: '#ef4444',
+              foreground: '#ffffff'
+            },
+            muted: {
+              DEFAULT: '#f8fafc',
+              foreground: '#64748b'
+            },
+            card: {
+              DEFAULT: '#ffffff',
+              foreground: '#0f172a'
+            },
+            border: '#e2e8f0'
+          },
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    body {
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-card-foreground">
+
+  <header class="border-b bg-card shadow-sm">
+    <div class="mx-auto flex max-w-[1300px] items-center gap-3 px-6 py-4">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+        <i data-lucide="graduation-cap" class="h-5 w-5"></i>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold leading-tight">ระบบบริหารจัดการผู้สมัครเรียน</h1>
+        <p class="text-xs text-muted-foreground">Admin Console — Notifications</p>
+      </div>
+      <!-- Tab navigation inside header -->
+      <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2">
+        <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+          <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
+        </a>
+        <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+          <i data-lucide="users" class="h-3.5 w-3.5"></i> ข้อมูลนักเรียน
+        </a>
+        <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+          <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="mx-auto max-w-[1300px] px-6 py-6">
+    <!-- Breadcrumb -->
+    <nav class="mb-4 flex items-center gap-1.5 text-xs text-slate-500">
+      <a href="index.html" class="hover:text-primary transition-colors">หน้าหลัก</a>
+      <i data-lucide="chevron-right" class="h-3 w-3"></i>
+      <span class="text-slate-700">ส่งอีเมลแจ้งเตือน</span>
+    </nav>
+
+    <!-- Title Row -->
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div class="flex items-start gap-3">
+        <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <i data-lucide="mail" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold leading-tight text-slate-800">ส่งอีเมลแจ้งเตือนนักเรียน</h2>
+          <p class="text-sm text-slate-400">
+            เครื่องมือสื่อสารประกาศผลสอบและติดตามเอกสารการสมัครเรียนสำหรับฝ่ายประชาสัมพันธ์
+          </p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-2 rounded-lg border bg-card px-4 py-2 shadow-sm">
+        <i data-lucide="users" class="h-4 w-4 text-primary"></i>
+        <div class="text-sm">
+          <span class="text-slate-400">ผู้รับทั้งหมด</span>
+          <span id="recipient-count" class="font-bold text-slate-800">0 ราย</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error View if no recipients found -->
+    <div id="no-recipients-view" class="bg-amber-50 border border-amber-200 text-amber-800 rounded-lg p-5 mb-6 text-sm flex gap-3 hidden">
+      <i data-lucide="alert-triangle" class="h-5 w-5 shrink-0"></i>
+      <div>
+        <span class="font-bold">ไม่มีรายชื่อผู้รับปลายทาง:</span> กรุณากลับหน้าหลักเพื่อเลือกนักเรียนที่ต้องการส่งข้อความแจ้งเตือนอย่างน้อย 1 คน
+      </div>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1fr_360px]">
+      
+      <!-- Email Composer Section -->
+      <section class="rounded-lg border border-border bg-card shadow-sm overflow-hidden">
+        <header class="flex items-center gap-2 border-b border-border bg-slate-50/50 px-5 py-4">
+          <i data-lucide="settings" class="h-5 w-5 text-primary"></i>
+          <h3 class="font-semibold text-slate-800 text-sm">รายละเอียดการส่ง</h3>
+        </header>
+
+        <div class="space-y-5 p-5">
+          <!-- Template selector -->
+          <div>
+            <label for="template-select" class="block text-xs font-semibold text-slate-500 mb-1.5">เลือกเทมเพลตอีเมล (Email Template)</label>
+            <select id="template-select" onchange="handleTemplateChange(this.value)" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+              <option value="">-- เขียนเนื้อหาอีเมลอิสระ (Custom Email) --</option>
+              <!-- Injected dynamically -->
+            </select>
+          </div>
+
+          <!-- Subject -->
+          <div>
+            <label for="email-subject" class="block text-xs font-semibold text-slate-500 mb-1.5">หัวข้ออีเมล (Subject)</label>
+            <input type="text" id="email-subject" placeholder="ระบุหัวข้อข้อความ..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+          </div>
+
+          <!-- Placeholder insert tag helper -->
+          <div>
+            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">แท็กแทนที่ข้อมูลผู้สมัครอัตโนมัติ (Placeholder Tags)</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="insertPlaceholder('[ชื่อนักเรียน]')" class="px-2.5 py-1 text-xs rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors font-medium text-slate-600">[ชื่อนักเรียน]</button>
+              <button onclick="insertPlaceholder('[แผนการเรียน]')" class="px-2.5 py-1 text-xs rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors font-medium text-slate-600">[แผนการเรียน]</button>
+              <button onclick="insertPlaceholder('[คะแนนรวม]')" class="px-2.5 py-1 text-xs rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors font-medium text-slate-600">[คะแนนรวม]</button>
+              <button onclick="insertPlaceholder('[ห้องเรียน]')" class="px-2.5 py-1 text-xs rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors font-medium text-slate-600">[ห้องเรียน]</button>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1.5">ⓘ เมื่อส่งอีเมลจริง ระบบจะนำข้อมูลจริงของนักเรียนแต่ละคนไปใส่แทนที่ข้อความแท็กเหล่านี้ตามผู้รับ</p>
+          </div>
+
+          <!-- Body -->
+          <div>
+            <label for="email-body" class="block text-xs font-semibold text-slate-500 mb-1.5">เนื้อหาจดหมาย (Email Body)</label>
+            <textarea id="email-body" rows="8" placeholder="เขียนรายละเอียดเนื้อหาที่นี่..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary font-sans"></textarea>
+          </div>
+
+          <!-- Mock Attachments -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1.5">ไฟล์แนบเพิ่มเติม</label>
+            <div class="flex flex-wrap gap-2">
+              <div id="attachment-1" class="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50/50 px-3 py-1.5 text-xs text-slate-600 shadow-sm">
+                <i data-lucide="paperclip" class="h-3.5 w-3.5 text-primary"></i>
+                <span class="font-medium text-slate-700">ประกาศผลการสอบคัดเลือก_2568.pdf</span>
+                <span class="text-slate-400 text-[10px] font-semibold">(1.2 MB)</span>
+                <button onclick="removeAttachment('attachment-1')" class="ml-1 text-slate-400 hover:text-slate-600 focus:outline-none">
+                  <i data-lucide="x" class="h-3 w-3"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="px-5 py-4 border-t border-border flex justify-end gap-2 bg-slate-50">
+          <a href="index.html" class="px-5 py-2 text-sm font-semibold rounded-md border bg-card hover:bg-slate-50 border-slate-200 transition-colors">ยกเลิก</a>
+          <button onclick="sendEmailSimulation()" class="px-5 py-2 text-sm font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm transition-colors inline-flex items-center gap-1.5">
+            <i data-lucide="send" class="h-4 w-4"></i> ส่งอีเมลแจ้งเตือน
+          </button>
+        </div>
+      </section>
+
+      <!-- Sidebar Recipient Preview Section -->
+      <section class="space-y-6">
+        
+        <!-- Recipient details -->
+        <div class="rounded-lg border border-border bg-card p-5 shadow-sm space-y-4">
+          <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider">รายชื่อผู้ปกครองผู้รับสิทธิ์</h4>
+          
+          <div id="recipients-list" class="space-y-3 max-h-[400px] overflow-y-auto pr-1 divide-y divide-slate-100">
+            <!-- List injected dynamically -->
+          </div>
+        </div>
+
+        <!-- PDPA Privacy guidelines warning -->
+        <div class="rounded-lg border border-indigo-100 bg-indigo-50/50 p-4 text-xs text-indigo-800 flex gap-2">
+          <i data-lucide="info" class="h-4 w-4 shrink-0 text-indigo-500 mt-0.5"></i>
+          <div>
+            <span class="font-bold block mb-1">มาตรฐานความปลอดภัย PDPA</span>
+            ระมัดระวังการส่งเมลหาผู้ปกครองแบบกลุ่ม (Bulk Email) เสมอ โดยในหน้าจอจำลองนี้ ระบบจะทำการซ่อนหรือ Mask ตัวเลขบัตรประชาชนและข้อมูลส่วนตัวที่ละเอียดอ่อนบางส่วนไว้ เพื่อป้องกันข้อมูลรั่วไหลระหว่างพรีวิว
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Simulation Toast Notify screen overlay -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- Load script -->
+  <script src="js/store.js"></script>
+
+  <script>
+    let recipients = [];
+    let activeTemplateId = '';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Parse query string parameters
+      const params = new URLSearchParams(window.location.search);
+      const toEmail = params.get('to');
+      const ids = params.get('ids');
+      const template = params.get('template');
+
+      const all = window.AdmitifyStore.getApplicants();
+      
+      if (toEmail) {
+        recipients = all.filter(a => a.parentEmail === toEmail);
+      } else if (ids) {
+        const idSet = new Set(ids.split(','));
+        recipients = all.filter(a => idSet.has(a.id));
+      } else {
+        // Fallback or select all
+        recipients = all;
+      }
+
+      // Display recipient details
+      document.getElementById('recipient-count').innerText = `${recipients.length} ราย`;
+      
+      if (recipients.length === 0) {
+        document.getElementById('no-recipients-view').classList.remove('hidden');
+      }
+
+      // Initialize Template options dropdown list
+      initializeTemplateOptions();
+
+      // Render recipients lists
+      renderRecipients();
+
+      // Pre-apply templates if parameter matches
+      if (template && window.EMAIL_TEMPLATES[template]) {
+        applyTemplate(template);
+      }
+
+      lucide.createIcons();
+    });
+
+    function initializeTemplateOptions() {
+      const select = document.getElementById('template-select');
+      const templates = window.EMAIL_TEMPLATES;
+      
+      Object.keys(templates).forEach(key => {
+        select.innerHTML += `<option value="${key}">${templates[key].label}</option>`;
+      });
+    }
+
+    function handleTemplateChange(templateKey) {
+      applyTemplate(templateKey);
+    }
+
+    function applyTemplate(key) {
+      const select = document.getElementById('template-select');
+      select.value = key;
+      
+      activeTemplateId = key;
+
+      if (!key) {
+        document.getElementById('email-subject').value = '';
+        document.getElementById('email-body').value = '';
+        return;
+      }
+
+      const t = window.EMAIL_TEMPLATES[key];
+      document.getElementById('email-subject').value = t.subject;
+      document.getElementById('email-body').value = t.body;
+    }
+
+    function insertPlaceholder(p) {
+      const textarea = document.getElementById('email-body');
+      const bodyText = textarea.value;
+      const endingSpacing = (bodyText.endsWith(' ') || bodyText.length === 0) ? '' : ' ';
+      textarea.value = bodyText + endingSpacing + p;
+    }
+
+    function removeAttachment(id) {
+      document.getElementById(id).remove();
+    }
+
+    function maskCid(cid) {
+      if (!cid) return "1-1002-XXXXX-XX-1";
+      const c = cid.replace(/\D/g, "");
+      if (c.length < 5) return cid;
+      return `${c.slice(0, 1)}-${c.slice(1, 5)}-XXXXX-XX-${c.slice(-1)}`;
+    }
+
+    function renderRecipients() {
+      const list = document.getElementById('recipients-list');
+      list.innerHTML = '';
+
+      if (recipients.length === 0) {
+        list.innerHTML = `<div class="text-slate-400 italic text-xs py-4 text-center">ไม่มีข้อมูลผู้รับจดหมาย</div>`;
+        return;
+      }
+
+      recipients.forEach(item => {
+        const rawScore = item.examScore ? `${item.examScore.raw} คะแนน` : "ยังไม่ได้กรอก";
+        list.innerHTML += `
+          <div class="py-2.5 space-y-1">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-800">
+              <span>ผู้ปกครองของ ${item.firstName} ${item.lastName}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${item.applicantCode}</span>
+            </div>
+            <div class="text-[11px] text-slate-500 font-mono break-all">${item.parentEmail}</div>
+            <div class="grid grid-cols-2 gap-1 mt-1 text-[10px] bg-slate-50 p-1.5 rounded border border-slate-100">
+              <div><span class="text-slate-400 font-medium">แผน:</span> <span class="font-semibold text-slate-600">${item.studyPlan}</span></div>
+              <div><span class="text-slate-400 font-medium">คะแนน:</span> <span class="font-semibold text-slate-600">${rawScore}</span></div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function sendEmailSimulation() {
+      const subject = document.getElementById('email-subject').value.trim();
+      const body = document.getElementById('email-body').value.trim();
+      
+      if (!subject || !body) {
+        alert('กรุณากรอกหัวข้อจดหมายและเนื้อหาก่อนการจำลองส่งข้อความ');
+        return;
+      }
+      
+      if (recipients.length === 0) {
+        alert('ไม่มีผู้รับอีเมลปลายทาง');
+        return;
+      }
+
+      const templateLabel = activeTemplateId ? window.EMAIL_TEMPLATES[activeTemplateId].label : "เทมเพลตอิสระ (Custom)";
+      
+      // Simulate toast
+      showSimulationToast(
+        `จำลองการส่งอีเมลสำเร็จ!`,
+        `ส่งอีเมลหาผู้ปกครองนักเรียนจำนวน ${recipients.length} คน ผ่านเทมเพลต "${templateLabel}" เรียบร้อยแล้ว ระบบจะพากลับหน้าหลักใน 1.5 วินาที`
+      );
+
+      // Redirect back after delay
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 2000);
+    }
+
+    function showSimulationToast(title, description) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'p-4 rounded-lg border border-emerald-100 bg-emerald-50 text-emerald-800 shadow-lg flex gap-3 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 max-w-sm';
+      
+      toast.innerHTML = `
+        <div class="shrink-0"><i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i></div>
+        <div class="space-y-0.5">
+          <div class="text-xs font-bold">${title}</div>
+          <div class="text-[11px] text-emerald-700">${description}</div>
+        </div>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+    }
+  </script>
+</body>
+</html>

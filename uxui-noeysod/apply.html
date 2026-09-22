@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สมัครเรียนออนไลน์ - Student Application Portal</title>
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3e63dd',
+              foreground: '#ffffff',
+              hover: '#2f51c7'
+            },
+            secondary: {
+              DEFAULT: '#f1f3f9',
+              foreground: '#1e293b'
+            },
+            success: {
+              DEFAULT: '#10b981',
+              foreground: '#ffffff'
+            },
+            warning: {
+              DEFAULT: '#f59e0b',
+              foreground: '#78350f'
+            },
+            info: {
+              DEFAULT: '#0284c7',
+              foreground: '#ffffff'
+            },
+            destructive: {
+              DEFAULT: '#ef4444',
+              foreground: '#ffffff'
+            },
+            muted: {
+              DEFAULT: '#f8fafc',
+              foreground: '#64748b'
+            },
+            card: {
+              DEFAULT: '#ffffff',
+              foreground: '#0f172a'
+            },
+            border: '#e2e8f0'
+          },
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    body {
+      background-color: #f8fafc;
+    }
+    .step-content {
+      display: none;
+    }
+    .step-content.active {
+      display: block;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-card-foreground">
+
+  <!-- Header -->
+  <header class="border-b bg-card shadow-sm">
+    <div class="mx-auto flex max-w-[1100px] items-center justify-between px-6 py-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+          <i data-lucide="graduation-cap" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight">ระบบรับสมัครนักเรียนออนไลน์</h1>
+          <p class="text-xs text-muted-foreground">Admitify Student Registration Portal</p>
+        </div>
+        <!-- Tab navigation inside header -->
+        <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2">
+          <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
+          </a>
+          <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="users" class="h-3.5 w-3.5"></i> ข้อมูลนักเรียน
+          </a>
+          <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
+          </a>
+        </div>
+      </div>
+      <div>
+        <a href="index.html" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-primary transition-colors">
+          <i data-lucide="arrow-left" class="h-4 w-4"></i> กลับหน้าจัดการหลัก
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="mx-auto max-w-[1100px] px-6 py-8 pb-24">
+    
+    <!-- Stepper Container -->
+    <div class="mb-10 bg-white border border-border p-6 rounded-2xl shadow-sm relative overflow-hidden">
+      <!-- Stepper Connecting Line -->
+      <div class="absolute top-[48px] left-[8%] right-[8%] h-0.5 bg-slate-100 rounded-full -translate-y-1/2">
+        <div id="stepper-progress-bar" class="h-full bg-primary rounded-full transition-all duration-500 w-[0%]"></div>
+      </div>
+      
+      <!-- Stepper Circles -->
+      <div class="relative flex justify-between max-w-4xl mx-auto">
+        <!-- Step 1 -->
+        <div class="flex flex-col items-center" style="width: 100px;">
+          <div id="step-circle-1" class="w-11 h-11 rounded-full flex items-center justify-center border-2 border-primary bg-primary text-white shadow-sm font-bold text-sm transition-all duration-300">
+            1
+          </div>
+          <span class="mt-2 text-[10px] font-bold text-primary text-center" id="step-label-1">ข้อมูลส่วนตัว</span>
+        </div>
+        <!-- Step 2 -->
+        <div class="flex flex-col items-center" style="width: 100px;">
+          <div id="step-circle-2" class="w-11 h-11 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 font-bold text-sm transition-all duration-300">
+            2
+          </div>
+          <span class="mt-2 text-[10px] font-semibold text-slate-400 text-center" id="step-label-2">ข้อมูลที่อยู่</span>
+        </div>
+        <!-- Step 3 -->
+        <div class="flex flex-col items-center" style="width: 100px;">
+          <div id="step-circle-3" class="w-11 h-11 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 font-bold text-sm transition-all duration-300">
+            3
+          </div>
+          <span class="mt-2 text-[10px] font-semibold text-slate-400 text-center" id="step-label-3">ครอบครัว</span>
+        </div>
+        <!-- Step 4 -->
+        <div class="flex flex-col items-center" style="width: 100px;">
+          <div id="step-circle-4" class="w-11 h-11 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 font-bold text-sm transition-all duration-300">
+            4
+          </div>
+          <span class="mt-2 text-[10px] font-semibold text-slate-400 text-center" id="step-label-4">การศึกษาเดิม</span>
+        </div>
+        <!-- Step 5 -->
+        <div class="flex flex-col items-center" style="width: 100px;">
+          <div id="step-circle-5" class="w-11 h-11 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 font-bold text-sm transition-all duration-300">
+            5
+          </div>
+          <span class="mt-2 text-[10px] font-semibold text-slate-400 text-center" id="step-label-5">ข้อมูลสุขภาพ</span>
+        </div>
+        <!-- Step 6 -->
+        <div class="flex flex-col items-center" style="width: 100px;">
+          <div id="step-circle-6" class="w-11 h-11 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 font-bold text-sm transition-all duration-300">
+            6
+          </div>
+          <span class="mt-2 text-[10px] font-semibold text-slate-400 text-center" id="step-label-6">อัปโหลดไฟล์</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Form Card -->
+    <div id="form-container" class="bg-card rounded-2xl border border-border shadow-sm overflow-hidden mb-6">
+      
+      <!-- Wizard Steps Form -->
+      <form id="application-form" onsubmit="event.preventDefault();" class="p-6 md:p-8">
+        
+        <!-- STEP 1: Personal Info -->
+        <div id="step-content-1" class="step-content active space-y-6">
+          <div class="flex flex-wrap items-center justify-between border-b pb-4 gap-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="user" class="text-primary h-5 w-5"></i> ขั้นตอนที่ 1: ข้อมูลส่วนตัวผู้สมัคร
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">กรอกประวัติส่วนตัวและรายละเอียดเบื้องต้นของนักเรียนผู้สมัคร * (จำเป็นต้องกรอก)</p>
+            </div>
+            <!-- OCR Simulation Button -->
+            <button type="button" onclick="simulateOCR()" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 text-primary border border-indigo-200 px-3 py-1.5 text-xs font-semibold hover:bg-indigo-100 transition-colors shadow-sm">
+              <i data-lucide="scan" class="h-4 w-4"></i> จำลองสแกน OCR บัตรประชาชน
+            </button>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ระดับชั้นที่ต้องการสมัคร *</label>
+              <select id="grade-level" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+                <option value="ม.1">ชั้นมัธยมศึกษาปีที่ 1 (ม.1)</option>
+                <option value="ม.4">ชั้นมัธยมศึกษาปีที่ 4 (ม.4)</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">แผนการเรียนอันดับ 1 *</label>
+              <select id="study-plan" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+                <!-- Loaded from store options in JS -->
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">แผนการเรียนอันดับ 2</label>
+              <select id="study-plan-2" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+                <option value="">-- ไม่ประสงค์ระบุอันดับ 2 --</option>
+                <!-- Loaded in JS -->
+              </select>
+            </div>
+            
+            <div class="md:col-span-3"><hr class="border-slate-100 my-2"></div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">คำนำหน้าชื่อ *</label>
+              <select id="prefix" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+                <option value="เด็กชาย">เด็กชาย</option>
+                <option value="เด็กหญิง">เด็กหญิง</option>
+                <option value="นาย">นาย</option>
+                <option value="นางสาว">นางสาว</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ชื่อจริง (ภาษาไทย) *</label>
+              <input type="text" id="first-name" placeholder="ระบุชื่อภาษาไทย..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">นามสกุล (ภาษาไทย) *</label>
+              <input type="text" id="last-name" placeholder="ระบุนามสกุลภาษาไทย..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ชื่อ-นามสกุลจริง (ภาษาอังกฤษ) *</label>
+              <input type="text" id="full-name-en" placeholder="เช่น Natee Rakdee" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">วัน/เดือน/ปี เกิด *</label>
+              <input type="date" id="dob" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">เลขบัตรประจำตัวประชาชน *</label>
+              <div class="relative">
+                <input type="text" id="citizen-id" maxlength="13" placeholder="ระบุเลขบัตรประชาชน 13 หลัก..." class="block w-full pl-3 pr-10 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary font-mono">
+                <button type="button" onclick="toggleCitizenIdMask()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                  <i id="citizen-mask-icon" data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">เพศ *</label>
+              <select id="gender" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+                <option value="ชาย">ชาย</option>
+                <option value="หญิง">หญิง</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">สัญชาติ *</label>
+              <input type="text" id="nationality" value="ไทย" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ศาสนา *</label>
+              <input type="text" id="religion" value="พุทธ" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Address Info -->
+        <div id="step-content-2" class="step-content space-y-6">
+          <div class="flex flex-wrap items-center justify-between border-b pb-4 gap-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="map-pin" class="text-primary h-5 w-5"></i> ขั้นตอนที่ 2: ข้อมูลที่อยู่ผู้สมัคร
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">กรอกรายละเอียดที่อยู่ปัจจุบันสำหรับติดต่อของนักเรียน</p>
+            </div>
+            <button type="button" onclick="fillMockAddress()" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 text-primary border border-indigo-200 px-3 py-1.5 text-xs font-semibold hover:bg-indigo-100 transition-colors shadow-sm">
+              จำลองกรอกที่อยู่
+            </button>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">บ้านเลขที่ *</label>
+              <input type="text" id="address-house-no" placeholder="เช่น 123/45..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+            
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">หมู่ที่</label>
+              <input type="text" id="address-moo" placeholder="เช่น หมู่ 4..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ซอย</label>
+              <input type="text" id="address-soi" placeholder="ระบุซอย..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ถนน</label>
+              <input type="text" id="address-road" placeholder="ระบุถนน..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ตำบล / แขวง *</label>
+              <input type="text" id="address-subdistrict" placeholder="ตำบล..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">อำเภอ / เขต *</label>
+              <input type="text" id="address-district" placeholder="อำเภอ..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">จังหวัด *</label>
+              <input type="text" id="address-province" placeholder="จังหวัด..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">รหัสไปรษณีย์ *</label>
+              <input type="text" id="address-zip" maxlength="5" placeholder="รหัสไปรษณีย์..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary font-mono">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Family Info -->
+        <div id="step-content-3" class="step-content space-y-6">
+          <div class="flex flex-wrap items-center justify-between border-b pb-4 gap-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="users" class="text-primary h-5 w-5"></i> ขั้นตอนที่ 3: ข้อมูลครอบครัว <span id="family-sub-title" class="text-primary text-sm font-semibold">(1/3: ข้อมูลบิดา)</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1" id="family-sub-desc">กรอกประวัติและข้อมูลติดต่อของบิดาผู้สมัคร</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="family-sub-badge" class="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-md text-xs font-bold font-mono border">1 / 3</span>
+              <button type="button" onclick="fillMockFamily()" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 text-primary border border-indigo-200 px-3 py-1.5 text-xs font-semibold hover:bg-indigo-100 transition-colors shadow-sm">
+                จำลองกรอกข้อมูลครอบครัว
+              </button>
+            </div>
+          </div>
+
+          <!-- Father details -->
+          <div id="family-sub-1" class="family-sub-step space-y-3">
+            <h3 class="text-sm font-bold text-slate-700">ข้อมูลบิดา</h3>
+            <div class="grid gap-4 md:grid-cols-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">ชื่อ-นามสกุล บิดา *</label>
+                <input type="text" id="father-name" placeholder="ชื่อ-นามสกุล..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">เบอร์โทรศัพท์บิดา *</label>
+                <input type="tel" id="father-phone" placeholder="เบอร์โทรศัพท์..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary font-mono font-medium">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">อาชีพบิดา</label>
+                <input type="text" id="father-job" placeholder="อาชีพ..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+              </div>
+            </div>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="checkbox" id="father-addr-same" onchange="copyAddressToParent('father')" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300">
+              <label for="father-addr-same" class="text-xs font-medium text-slate-600">ที่อยู่เดียวกับที่อยู่นักเรียน</label>
+            </div>
+            <input type="text" id="father-address" placeholder="ที่อยู่บิดา..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary mt-1">
+          </div>
+
+          <!-- Mother details -->
+          <div id="family-sub-2" class="family-sub-step space-y-3 hidden">
+            <h3 class="text-sm font-bold text-slate-700">ข้อมูลมารดา</h3>
+            <div class="grid gap-4 md:grid-cols-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">ชื่อ-นามสกุล มารดา *</label>
+                <input type="text" id="mother-name" placeholder="ชื่อ-นามสกุล..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">เบอร์โทรศัพท์มารดา *</label>
+                <input type="tel" id="mother-phone" placeholder="เบอร์โทรศัพท์..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary font-mono font-medium">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">อาชีพมารดา</label>
+                <input type="text" id="mother-job" placeholder="อาชีพ..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-4 mt-1">
+              <div class="flex items-center gap-2">
+                <input type="checkbox" id="mother-addr-same" onchange="copyAddressToParent('mother')" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300">
+                <label for="mother-addr-same" class="text-xs font-medium text-slate-600">ที่อยู่เดียวกับที่อยู่นักเรียน</label>
+              </div>
+              <div class="flex items-center gap-2">
+                <input type="checkbox" id="mother-addr-same-father" onchange="copyFatherAddressToMother()" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300">
+                <label for="mother-addr-same-father" class="text-xs font-medium text-slate-600">ที่อยู่เดียวกับบิดา</label>
+              </div>
+            </div>
+            <input type="text" id="mother-address" placeholder="ที่อยู่มารดา..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary mt-1">
+          </div>
+
+          <!-- Guardian details -->
+          <div id="family-sub-3" class="family-sub-step space-y-3 hidden">
+            <h3 class="text-sm font-bold text-slate-700">ข้อมูลผู้ปกครองหลัก (ผู้ติดต่อประสานงาน)</h3>
+            <div class="grid gap-4 md:grid-cols-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">ผู้ปกครองคือใคร *</label>
+                <select id="guardian-relation" onchange="handleGuardianRelationChange(this.value)" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+                  <option value="บิดา">บิดา</option>
+                  <option value="มารดา">มารดา</option>
+                  <option value="บุคคลอื่น">บุคคลอื่น</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">ชื่อ-นามสกุล ผู้ปกครอง *</label>
+                <input type="text" id="guardian-name" placeholder="ชื่อ-นามสกุล..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">เบอร์โทรศัพท์ผู้ปกครอง *</label>
+                <input type="tel" id="guardian-phone" placeholder="เบอร์โทรศัพท์..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary font-mono font-medium">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">อีเมลผู้ปกครอง *</label>
+                <input type="email" id="guardian-email" placeholder="email@example.com" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary font-mono">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Previous School -->
+        <div id="step-content-4" class="step-content space-y-6">
+          <div class="flex flex-wrap items-center justify-between border-b pb-4 gap-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="book-open" class="text-primary h-5 w-5"></i> ขั้นตอนที่ 4: ข้อมูลสถานศึกษาเดิม
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">กรอกประวัติสถานศึกษาล่าสุดและผลการเรียนสะสม</p>
+            </div>
+            <button type="button" onclick="fillMockSchool()" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 text-primary border border-indigo-200 px-3 py-1.5 text-xs font-semibold hover:bg-indigo-100 transition-colors shadow-sm">
+              จำลองกรอกข้อมูลสถานศึกษา
+            </button>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ชื่อโรงเรียนเดิม *</label>
+              <input type="text" id="school-name" placeholder="ระบุโรงเรียนเดิม..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+            
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">จังหวัดของโรงเรียนเดิม *</label>
+              <input type="text" id="school-province" placeholder="จังหวัด..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">วุฒิการศึกษาสูงสุด *</label>
+              <select id="school-degree" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+                <option value="ประถมศึกษาปีที่ 6 (ป.6)">ประถมศึกษาปีที่ 6 (ป.6)</option>
+                <option value="มัธยมศึกษาปีที่ 3 (ม.3)">มัธยมศึกษาปีที่ 3 (ม.3)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">คะแนนเฉลี่ยสะสม (GPAX) *</label>
+              <input type="number" min="0" max="4.00" step="0.01" id="school-gpax" placeholder="เช่น 3.50..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: Health Info -->
+        <div id="step-content-5" class="step-content space-y-6">
+          <div class="flex flex-wrap items-center justify-between border-b pb-4 gap-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="heart" class="text-primary h-5 w-5"></i> ขั้นตอนที่ 5: ข้อมูลสุขภาพ
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">กรอกข้อมูลประวัติสุขภาพ โรคประจำตัว และประวัติการแพ้ยา/อาหาร</p>
+            </div>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">หมู่โลหิต *</label>
+              <select id="health-blood-type" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="AB">AB</option>
+                <option value="O">O</option>
+              </select>
+            </div>
+            
+            <div class="md:col-span-3">
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">โรคประจำตัว (ถ้ามี)</label>
+              <input type="text" id="health-disease" placeholder="ระบุโรคประจำตัว..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">ยาที่แพ้ (ถ้ามี)</label>
+              <input type="text" id="health-allergy-medicine" placeholder="ระบุตัวยาที่แพ้..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-500 mb-1.5">อาหารที่แพ้ (ถ้ามี)</label>
+              <input type="text" id="health-allergy-food" placeholder="ระบุอาหารที่แพ้..." class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:ring-1 focus:ring-primary focus:border-primary">
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 6: File Uploads -->
+        <div id="step-content-6" class="step-content space-y-6">
+          <div class="flex flex-wrap items-center justify-between border-b pb-4 gap-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="paperclip" class="text-primary h-5 w-5"></i> ขั้นตอนที่ 6: อัปโหลดเอกสารประกอบการสมัคร
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">อัปโหลดรูปภาพเอกสารหลักฐานจริงเข้าระบบ (รองรับนามสกุลไฟล์ PDF, PNG, JPG)</p>
+            </div>
+          </div>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <!-- Doc 1 -->
+            <div id="dropzone-1" onclick="simulateFileUpload(1, 'สำเนาบัตรประชาชนนักเรียน.pdf')" class="border-2 border-dashed border-slate-200 hover:border-primary rounded-xl p-5 text-center cursor-pointer hover:bg-slate-50/50 transition-all flex flex-col items-center justify-center min-h-[140px]">
+              <i data-lucide="file" id="dropzone-icon-1" class="h-8 w-8 text-slate-400 mb-2 animate-bounce-short"></i>
+              <span class="text-xs font-bold text-slate-700 block mb-1">1. สำเนาบัตรประชาชนนักเรียน *</span>
+              <span class="text-[10px] text-slate-400" id="dropzone-status-1">ลากไฟล์มาวาง หรือ คลิกเพื่ออัปโหลด</span>
+            </div>
+            
+            <!-- Doc 2 -->
+            <div id="dropzone-2" onclick="simulateFileUpload(2, 'สำเนาทะเบียนบ้าน.pdf')" class="border-2 border-dashed border-slate-200 hover:border-primary rounded-xl p-5 text-center cursor-pointer hover:bg-slate-50/50 transition-all flex flex-col items-center justify-center min-h-[140px]">
+              <i data-lucide="file" id="dropzone-icon-2" class="h-8 w-8 text-slate-400 mb-2 animate-bounce-short"></i>
+              <span class="text-xs font-bold text-slate-700 block mb-1">2. สำเนาทะเบียนบ้านนักเรียน *</span>
+              <span class="text-[10px] text-slate-400" id="dropzone-status-2">ลากไฟล์มาวาง หรือ คลิกเพื่ออัปโหลด</span>
+            </div>
+
+            <!-- Doc 3 -->
+            <div id="dropzone-3" onclick="simulateFileUpload(3, 'ใบปพ1_ระเบียนแสดงผลการเรียน.pdf')" class="border-2 border-dashed border-slate-200 hover:border-primary rounded-xl p-5 text-center cursor-pointer hover:bg-slate-50/50 transition-all flex flex-col items-center justify-center min-h-[140px]">
+              <i data-lucide="file" id="dropzone-icon-3" class="h-8 w-8 text-slate-400 mb-2 animate-bounce-short"></i>
+              <span class="text-xs font-bold text-slate-700 block mb-1">3. ใบแสดงเกรดเฉลี่ยสะสม ปพ.1 *</span>
+              <span class="text-[10px] text-slate-400" id="dropzone-status-3">ลากไฟล์มาวาง หรือ คลิกเพื่ออัปโหลด</span>
+            </div>
+
+            <!-- Doc 4 -->
+            <div id="dropzone-4" onclick="simulateFileUpload(4, 'รูปถ่ายหน้าตรง.jpg')" class="border-2 border-dashed border-slate-200 hover:border-primary rounded-xl p-5 text-center cursor-pointer hover:bg-slate-50/50 transition-all flex flex-col items-center justify-center min-h-[140px]">
+              <i data-lucide="file" id="dropzone-icon-4" class="h-8 w-8 text-slate-400 mb-2 animate-bounce-short"></i>
+              <span class="text-xs font-bold text-slate-700 block mb-1">4. รูปถ่ายหน้าตรงขนาด 1.5 นิ้ว *</span>
+              <span class="text-[10px] text-slate-400" id="dropzone-status-4">ลากไฟล์มาวาง หรือ คลิกเพื่ออัปโหลด</span>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Bottom Control Bar -->
+      <div class="px-6 py-4 border-t border-border flex justify-between bg-slate-50">
+        <button id="btn-prev" onclick="navigateStep(-1)" class="px-5 py-2 text-sm font-semibold rounded-md border bg-card hover:bg-slate-100 border-slate-200 transition-colors disabled:opacity-50 disabled:pointer-events-none" disabled>
+          ย้อนกลับ
+        </button>
+        
+        <button id="btn-next" onclick="navigateStep(1)" class="px-5 py-2 text-sm font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm transition-colors">
+          ถัดไป
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Simulation Spinner Loader Overlay -->
+  <div id="loading-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
+    <div class="bg-card px-6 py-5 rounded-lg shadow-xl border border-border flex flex-col items-center gap-3 w-80 max-w-[90%] animate-in fade-in zoom-in-95 duration-100">
+      <div class="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      <p class="text-sm font-bold text-slate-700" id="loading-text">กำลังประมวลผลข้อมูล...</p>
+    </div>
+  </div>
+
+  <!-- Success Confirmation View Modal -->
+  <div id="modal-success" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
+    <div class="bg-card w-full max-w-md rounded-2xl shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150 p-6 text-center space-y-4">
+      <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 border border-emerald-100 text-emerald-500 shadow-sm">
+        <i data-lucide="check" class="h-7 w-7"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-slate-800">ส่งใบสมัครเรียนสำเร็จ!</h3>
+        <p class="text-xs text-slate-400 mt-1">ข้อมูลใบสมัครได้ถูกนำส่งและบันทึกลงในระบบเรียบร้อยแล้ว</p>
+      </div>
+
+      <div class="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-2 text-left text-xs text-slate-700">
+        <div class="flex justify-between border-b pb-2"><span class="text-slate-400 font-medium">รหัสใบสมัคร:</span> <span class="font-bold font-mono text-slate-800" id="success-code">APP-2568-XXXX</span></div>
+        <div class="flex justify-between border-b pb-2"><span class="text-slate-400 font-medium">ชื่อผู้สมัคร:</span> <span class="font-bold text-slate-800" id="success-name">...</span></div>
+        <div class="flex justify-between border-b pb-2"><span class="text-slate-400 font-medium">ระดับชั้น:</span> <span class="font-bold text-slate-800" id="success-grade">...</span></div>
+        <div class="flex justify-between"><span class="text-slate-400 font-medium">แผนการเรียน:</span> <span class="font-bold text-slate-800" id="success-plan">...</span></div>
+      </div>
+      
+      <div class="rounded-md border border-sky-100 bg-sky-50 px-3 py-2 text-[10px] text-sky-700 text-left">
+        ⓘ สถานะแรกเริ่มของผู้สมัครคือ <strong>"ยังไม่ได้ชำระเงินค่าสอบ"</strong> คุณสามารถดูรายชื่อผู้สมัครและปรับปรุงสถานะได้ที่หน้าหลัก
+      </div>
+
+      <div class="flex flex-col gap-2 pt-2">
+        <button onclick="mockPrintSuccess()" class="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-indigo-50 border border-indigo-200 px-4 py-2 text-xs font-semibold hover:bg-indigo-100 transition-colors text-primary shadow-sm">
+          <i data-lucide="printer" class="h-4 w-4"></i> พิมพ์เอกสารใบสมัคร (จำลอง)
+        </button>
+        <a href="index.html" class="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-hover shadow-sm transition-colors">
+          กลับสู่ระบบหน้าหลัก
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Overlay -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- Load database script -->
+  <script src="js/store.js"></script>
+  
+  <!-- Controller Logic -->
+  <script>
+    let currentStep = 1;
+    const totalSteps = 6;
+    let familySubStep = 1;
+    let fileUploads = { 1: false, 2: false, 3: false, 4: false };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Prepopulate options
+      const planSelect = document.getElementById('study-plan');
+      const planSelect2 = document.getElementById('study-plan-2');
+      
+      if (window.STUDY_PLAN_OPTIONS) {
+        window.STUDY_PLAN_OPTIONS.forEach(p => {
+          planSelect.innerHTML += `<option value="${p}">${p}</option>`;
+          planSelect2.innerHTML += `<option value="${p}">${p}</option>`;
+        });
+      }
+      
+      lucide.createIcons();
+    });
+
+    // Stepper wizard navigation
+    function navigateStep(direction) {
+      // Perform validation for current step
+      if (direction === 1 && !validateCurrentStep()) {
+        return;
+      }
+
+      // Handle Family Sub-steps (Step 3)
+      if (currentStep === 3) {
+        if (direction === 1) { // Next
+          if (familySubStep < 3) {
+            familySubStep++;
+            updateFamilySubStepUI();
+            document.getElementById('form-container').scrollIntoView({ behavior: 'smooth' });
+            return;
+          }
+        } else { // Previous
+          if (familySubStep > 1) {
+            familySubStep--;
+            updateFamilySubStepUI();
+            document.getElementById('form-container').scrollIntoView({ behavior: 'smooth' });
+            return;
+          }
+        }
+      }
+
+      if (currentStep === 6 && direction === 1) {
+        submitApplicationForm();
+        return;
+      }
+
+      currentStep += direction;
+      if (currentStep < 1) currentStep = 1;
+      if (currentStep > totalSteps) currentStep = totalSteps;
+
+      // Adjust familySubStep state when stepping in
+      if (currentStep === 3) {
+        if (direction === 1) { // Coming from step 2
+          familySubStep = 1;
+        } else { // Coming from step 4
+          familySubStep = 3;
+        }
+        updateFamilySubStepUI();
+      }
+
+      updateStepperUI();
+    }
+
+    function updateFamilySubStepUI() {
+      // Toggle visibility of sub containers
+      for (let f = 1; f <= 3; f++) {
+        const elem = document.getElementById(`family-sub-${f}`);
+        if (elem) {
+          if (f === familySubStep) {
+            elem.classList.remove('hidden');
+          } else {
+            elem.classList.add('hidden');
+          }
+        }
+      }
+
+      // Update indicators
+      const badge = document.getElementById('family-sub-badge');
+      if (badge) badge.innerText = `${familySubStep} / 3`;
+
+      const titleSpan = document.getElementById('family-sub-title');
+      const descP = document.getElementById('family-sub-desc');
+
+      if (familySubStep === 1) {
+        if (titleSpan) titleSpan.innerText = '(1/3: ข้อมูลบิดา)';
+        if (descP) descP.innerText = 'กรอกประวัติและข้อมูลติดต่อของบิดาผู้สมัคร';
+      } else if (familySubStep === 2) {
+        if (titleSpan) titleSpan.innerText = '(2/3: ข้อมูลมารดา)';
+        if (descP) descP.innerText = 'กรอกประวัติและข้อมูลติดต่อของมารดาผู้สมัคร';
+      } else if (familySubStep === 3) {
+        if (titleSpan) titleSpan.innerText = '(3/3: ข้อมูลผู้ปกครอง)';
+        if (descP) descP.innerText = 'กรอกประวัติและข้อมูลติดต่อของผู้ปกครองหลัก (ผู้รับเอกสารและชำระค่าธรรมเนียม)';
+      }
+    }
+
+    function updateStepperUI() {
+      // Show/Hide steps
+      for (let s = 1; s <= totalSteps; s++) {
+        const content = document.getElementById(`step-content-${s}`);
+        if (content) {
+          if (s === currentStep) {
+            content.classList.add('active');
+          } else {
+            content.classList.remove('active');
+          }
+        }
+      }
+
+      // Update progress bar
+      const progressPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+      document.getElementById('stepper-progress-bar').style.width = `${progressPercent}%`;
+
+      // Update stepper circles
+      for (let s = 1; s <= totalSteps; s++) {
+        const circle = document.getElementById(`step-circle-${s}`);
+        const label = document.getElementById(`step-label-${s}`);
+        if (!circle || !label) continue;
+
+        if (s === currentStep) {
+          circle.className = "w-11 h-11 rounded-full flex items-center justify-center border-2 border-primary bg-primary text-white shadow-sm font-bold text-sm ring-4 ring-primary/20 transition-all duration-300";
+          label.className = "mt-2 text-[10px] font-bold text-primary text-center";
+        } else if (s < currentStep) {
+          circle.className = "w-11 h-11 rounded-full flex items-center justify-center border-2 border-emerald-500 bg-emerald-50 text-emerald-600 font-bold text-sm transition-all duration-300";
+          label.className = "mt-2 text-[10px] font-bold text-emerald-600 text-center";
+        } else {
+          circle.className = "w-11 h-11 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 font-bold text-sm transition-all duration-300";
+          label.className = "mt-2 text-[10px] font-semibold text-slate-400 text-center";
+        }
+      }
+
+      // Update bottom buttons
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+
+      // Previous button should be active unless it's Step 1
+      btnPrev.disabled = currentStep === 1;
+      
+      if (currentStep === totalSteps) {
+        btnNext.innerHTML = 'ยืนยันและส่งใบสมัคร';
+        btnNext.className = "px-5 py-2 text-sm font-semibold rounded-md bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-colors";
+      } else {
+        btnNext.innerHTML = 'ถัดไป';
+        btnNext.className = "px-5 py-2 text-sm font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm transition-colors";
+      }
+
+      // Scroll form to top
+      document.getElementById('form-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Validation mock helper
+    function validateCurrentStep() {
+      if (currentStep === 1) {
+        const first = document.getElementById('first-name').value.trim();
+        const last = document.getElementById('last-name').value.trim();
+        const fullEn = document.getElementById('full-name-en').value.trim();
+        const dob = document.getElementById('dob').value;
+        const cid = document.getElementById('citizen-id').value.trim();
+        
+        if (!first || !last || !fullEn || !dob || !cid) {
+          alert('กรุณากรอกข้อมูลที่มีเครื่องหมาย * ทั้งหมด');
+          return false;
+        }
+        if (cid.length !== 13 || isNaN(cid)) {
+          alert('เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลัก');
+          return false;
+        }
+      }
+      else if (currentStep === 2) {
+        const house = document.getElementById('address-house-no').value.trim();
+        const sub = document.getElementById('address-subdistrict').value.trim();
+        const dist = document.getElementById('address-district').value.trim();
+        const prov = document.getElementById('address-province').value.trim();
+        const zip = document.getElementById('address-zip').value.trim();
+
+        if (!house || !sub || !dist || !prov || !zip) {
+          alert('กรุณากรอกรายละเอียดที่อยู่ให้ครบถ้วน');
+          return false;
+        }
+      }
+      else if (currentStep === 3) {
+        if (familySubStep === 1) {
+          const fatherName = document.getElementById('father-name').value.trim();
+          const fatherPhone = document.getElementById('father-phone').value.trim();
+          if (!fatherName || !fatherPhone) {
+            alert('กรุณากรอกชื่อและเบอร์โทรศัพท์ของบิดา');
+            return false;
+          }
+        }
+        else if (familySubStep === 2) {
+          const motherName = document.getElementById('mother-name').value.trim();
+          const motherPhone = document.getElementById('mother-phone').value.trim();
+          if (!motherName || !motherPhone) {
+            alert('กรุณากรอกชื่อและเบอร์โทรศัพท์ของมารดา');
+            return false;
+          }
+        }
+        else if (familySubStep === 3) {
+          const guarName = document.getElementById('guardian-name').value.trim();
+          const guarPhone = document.getElementById('guardian-phone').value.trim();
+          const guarEmail = document.getElementById('guardian-email').value.trim();
+
+          if (!guarName || !guarPhone || !guarEmail) {
+            alert('กรุณากรอกข้อมูลผู้ปกครองหลักและเบอร์โทรศัพท์/อีเมลให้ครบถ้วน');
+            return false;
+          }
+        }
+      }
+      else if (currentStep === 4) {
+        const sch = document.getElementById('school-name').value.trim();
+        const schProv = document.getElementById('school-province').value.trim();
+        const gpax = document.getElementById('school-gpax').value.trim();
+
+        if (!sch || !schProv || !gpax) {
+          alert('กรุณากรอกข้อมูลสถานศึกษาเดิม');
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // Citizen mask show/hide
+    let isCidMasked = false;
+    function toggleCitizenIdMask() {
+      const input = document.getElementById('citizen-id');
+      const icon = document.getElementById('citizen-mask-icon');
+      isCidMasked = !isCidMasked;
+
+      if (isCidMasked) {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    // OCR Simulation
+    function simulateOCR() {
+      showLoading(true, 'กำลังสแกนวิเคราะห์ภาพบัตรประชาชน...');
+      setTimeout(() => {
+        showLoading(false);
+        document.getElementById('prefix').value = 'เด็กชาย';
+        document.getElementById('first-name').value = 'นที';
+        document.getElementById('last-name').value = 'รักดี';
+        document.getElementById('full-name-en').value = 'Natee Rakdee';
+        document.getElementById('dob').value = '2013-05-15';
+        document.getElementById('citizen-id').value = '1200100987654';
+        document.getElementById('gender').value = 'ชาย';
+        
+        showToast('สแกนบัตรประชาชนสำเร็จ', 'ดึงข้อมูลและกรอกฟอร์มอัตโนมัติแล้ว', 'success');
+      }, 1200);
+    }
+
+    // Auto-fill Helpers
+    function fillMockAddress() {
+      document.getElementById('address-house-no').value = '99/182';
+      document.getElementById('address-moo').value = '12';
+      document.getElementById('address-soi').value = 'พหลโยธิน 48';
+      document.getElementById('address-road').value = 'พหลโยธิน';
+      document.getElementById('address-subdistrict').value = 'อนุสาวรีย์';
+      document.getElementById('address-district').value = 'บางเขน';
+      document.getElementById('address-province').value = 'กรุงเทพมหานคร';
+      document.getElementById('address-zip').value = '10220';
+      showToast('กรอกข้อมูลที่อยู่จำลองแล้ว', 'แก้ไขตามจริงได้หากต้องการ', 'info');
+    }
+
+    function fillMockFamily() {
+      document.getElementById('father-name').value = 'นายมานะ รักดี';
+      document.getElementById('father-phone').value = '089-112-2334';
+      document.getElementById('father-job').value = 'วิศวกร';
+      document.getElementById('father-address').value = '99/182 ม.12 ซ.พหลโยธิน 48 ถ.พหลโยธิน แขวงอนุสาวรีย์ เขตบางเขน กรุงเทพมหานคร 10220';
+      
+      document.getElementById('mother-name').value = 'นางพรพิมล รักดี';
+      document.getElementById('mother-phone').value = '081-445-5667';
+      document.getElementById('mother-job').value = 'พนักงานบริษัท';
+      document.getElementById('mother-address').value = '99/182 ม.12 ซ.พหลโยธิน 48 ถ.พหลโยธิน แขวงอนุสาวรีย์ เขตบางเขน กรุงเทพมหานคร 10220';
+      
+      document.getElementById('guardian-relation').value = 'บิดา';
+      document.getElementById('guardian-name').value = 'นายมานะ รักดี';
+      document.getElementById('guardian-phone').value = '089-112-2334';
+      document.getElementById('guardian-email').value = 'mana.rakdee@example.com';
+      showToast('กรอกข้อมูลครอบครัวจำลองแล้ว', 'บิดาถูกเลือกเป็นผู้ปกครองติดต่อหลัก', 'info');
+    }
+
+    function fillMockSchool() {
+      document.getElementById('school-name').value = 'อนุบาลสามเสน';
+      document.getElementById('school-province').value = 'กรุงเทพมหานคร';
+      document.getElementById('school-degree').value = 'ประถมศึกษาปีที่ 6 (ป.6)';
+      document.getElementById('school-gpax').value = '3.85';
+      showToast('กรอกข้อมูลการศึกษาเดิมแล้ว', 'วุฒิ ป.6 มีเกรดเฉลี่ยสะสม 3.85', 'info');
+    }
+
+    // Copy Address Logic
+    function copyAddressToParent(parentType) {
+      const isChecked = document.getElementById(`${parentType}-addr-same`).checked;
+      const targetInput = document.getElementById(`${parentType}-address`);
+      
+      if (isChecked) {
+        const house = document.getElementById('address-house-no').value.trim();
+        const moo = document.getElementById('address-moo').value.trim();
+        const soi = document.getElementById('address-soi').value.trim();
+        const road = document.getElementById('address-road').value.trim();
+        const sub = document.getElementById('address-subdistrict').value.trim();
+        const dist = document.getElementById('address-district').value.trim();
+        const prov = document.getElementById('address-province').value.trim();
+        const zip = document.getElementById('address-zip').value.trim();
+
+        let address = '';
+        if (house) address += house;
+        if (moo) address += ` ม.${moo}`;
+        if (soi) address += ` ซ.${soi}`;
+        if (road) address += ` ถ.${road}`;
+        if (sub) address += ` ต.${sub}`;
+        if (dist) address += ` อ.${dist}`;
+        if (prov) address += ` จ.${prov}`;
+        if (zip) address += ` ${zip}`;
+
+        targetInput.value = address;
+      } else {
+        targetInput.value = '';
+      }
+    }
+
+    function copyFatherAddressToMother() {
+      const isChecked = document.getElementById('mother-addr-same-father').checked;
+      const target = document.getElementById('mother-address');
+      const father = document.getElementById('father-address').value;
+      if (isChecked && father) {
+        target.value = father;
+      } else {
+        target.value = '';
+      }
+    }
+
+    function handleGuardianRelationChange(val) {
+      if (val === 'บิดา') {
+        document.getElementById('guardian-name').value = document.getElementById('father-name').value;
+        document.getElementById('guardian-phone').value = document.getElementById('father-phone').value;
+      } else if (val === 'มารดา') {
+        document.getElementById('guardian-name').value = document.getElementById('mother-name').value;
+        document.getElementById('guardian-phone').value = document.getElementById('mother-phone').value;
+      } else {
+        document.getElementById('guardian-name').value = '';
+        document.getElementById('guardian-phone').value = '';
+      }
+    }
+
+    // Document File Upload mock
+    function simulateFileUpload(id, filename) {
+      const dropzone = document.getElementById(`dropzone-${id}`);
+      const status = document.getElementById(`dropzone-status-${id}`);
+      const icon = document.getElementById(`dropzone-icon-${id}`);
+
+      fileUploads[id] = true;
+      
+      dropzone.className = "border-2 border-dashed border-emerald-500 bg-emerald-50/50 rounded-xl p-5 text-center cursor-pointer flex flex-col items-center justify-center min-h-[140px] transition-all";
+      status.innerText = `อัปโหลดเสร็จสมบูรณ์: ${filename}`;
+      status.className = "text-[10px] text-emerald-600 font-bold mt-1";
+      icon.setAttribute('data-lucide', 'file-check-2');
+      icon.className = "h-8 w-8 text-emerald-500 mb-2";
+
+      lucide.createIcons();
+      showToast('จำลองอัปโหลดสำเร็จ', `อัปโหลดไฟล์ "${filename}" แล้ว`, 'success');
+    }
+
+    // Submit Action
+    function submitApplicationForm() {
+      // Validate files have been uploaded (at least one for simulation, but check if we require all)
+      const missing = Object.values(fileUploads).some(uploaded => !uploaded);
+      if (missing) {
+        alert('กรุณาอัปโหลดไฟล์เอกสารหลักฐานให้ครบถ้วนทั้ง 4 รายการ');
+        return;
+      }
+
+      showLoading(true, 'กำลังบันทึกข้อมูลใบสมัครเข้าสู่ระบบ...');
+      
+      setTimeout(() => {
+        showLoading(false);
+
+        // Gather data
+        const gradeLevel = document.getElementById('grade-level').value;
+        const studyPlan = document.getElementById('study-plan').value;
+        const studyPlanPriority2 = document.getElementById('study-plan-2').value || undefined;
+        const prefix = document.getElementById('prefix').value;
+        const firstName = document.getElementById('first-name').value.trim();
+        const lastName = document.getElementById('last-name').value.trim();
+        const fullNameEn = document.getElementById('full-name-en').value.trim();
+        const parentEmail = document.getElementById('guardian-email').value.trim();
+        const dateOfBirth = document.getElementById('dob').value;
+        const phone = document.getElementById('guardian-phone').value.trim();
+        const citizenId = document.getElementById('citizen-id').value.trim();
+        
+        // Format complete address
+        const house = document.getElementById('address-house-no').value.trim();
+        const moo = document.getElementById('address-moo').value.trim();
+        const soi = document.getElementById('address-soi').value.trim();
+        const road = document.getElementById('address-road').value.trim();
+        const sub = document.getElementById('address-subdistrict').value.trim();
+        const dist = document.getElementById('address-district').value.trim();
+        const prov = document.getElementById('address-province').value.trim();
+        const zip = document.getElementById('address-zip').value.trim();
+        
+        let addressStr = house;
+        if (moo) addressStr += ` ม.${moo}`;
+        if (soi) addressStr += ` ซ.${soi}`;
+        if (road) addressStr += ` ถ.${road}`;
+        if (sub) addressStr += ` ต.${sub}`;
+        if (dist) addressStr += ` อ.${dist}`;
+        if (prov) addressStr += ` จ.${prov}`;
+        if (zip) addressStr += ` ${zip}`;
+
+        const newApplicantData = {
+          firstName,
+          lastName,
+          fullNameEn,
+          parentEmail,
+          gradeLevel,
+          studyPlan,
+          studyPlanPriority2,
+          dateOfBirth,
+          citizenId,
+          phone,
+          address: addressStr,
+          documentsComplete: true
+        };
+
+        const result = window.AdmitifyStore.addApplicant(newApplicantData);
+
+        // Show Success modal
+        document.getElementById('success-code').innerText = result.applicantCode;
+        document.getElementById('success-name').innerText = `${prefix} ${firstName} ${lastName}`;
+        document.getElementById('success-grade').innerText = gradeLevel;
+        document.getElementById('success-plan').innerText = studyPlan;
+
+        document.getElementById('modal-success').classList.remove('hidden');
+      }, 1000);
+    }
+
+    // Modal and Loading Spinner helpers
+    function showLoading(show, text = 'กำลังบันทึกข้อมูล...') {
+      const overlay = document.getElementById('loading-overlay');
+      const textElem = document.getElementById('loading-text');
+      
+      textElem.innerText = text;
+      if (show) {
+        overlay.classList.remove('hidden');
+      } else {
+        overlay.classList.add('hidden');
+      }
+    }
+
+    function mockPrintSuccess() {
+      showToast('สั่งพิมพ์ใบสมัคร (จำลอง)', 'เตรียมข้อมูลสำหรับพิมพ์ใบสมัครสอบเรียบร้อย', 'success');
+    }
+
+    // Toast Notifications Engine
+    function showToast(title, description, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toastId = 'toast_' + Math.random().toString(36).substr(2, 9);
+      
+      let borderClass = 'border-slate-100 bg-white';
+      let iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-500"></i>';
+      
+      if (type === 'success') {
+        borderClass = 'border-emerald-100 bg-emerald-50/90 backdrop-blur-sm';
+        iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
+      } else if (type === 'info') {
+        borderClass = 'border-sky-100 bg-sky-50/90 backdrop-blur-sm';
+        iconHtml = '<i data-lucide="info" class="h-5 w-5 text-sky-600"></i>';
+      }
+
+      const toast = document.createElement('div');
+      toast.id = toastId;
+      toast.className = `p-4 rounded-lg border shadow-lg flex gap-3 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 max-w-sm ${borderClass}`;
+      
+      toast.innerHTML = `
+        <div class="shrink-0">${iconHtml}</div>
+        <div class="space-y-0.5">
+          <div class="text-xs font-bold text-slate-800">${title}</div>
+          <div class="text-[11px] text-slate-500">${description}</div>
+        </div>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => { toast.remove(); }, 300);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>

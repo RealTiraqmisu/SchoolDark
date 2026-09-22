@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตั้งค่าแผนหลักสูตร — Admitify Spark</title>
+  
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Tailwind Config to match theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3e63dd',
+              foreground: '#ffffff',
+              hover: '#2f51c7'
+            },
+            secondary: {
+              DEFAULT: '#f1f3f9',
+              foreground: '#1e293b'
+            },
+            success: {
+              DEFAULT: '#10b981',
+              foreground: '#ffffff'
+            },
+            warning: {
+              DEFAULT: '#f59e0b',
+              foreground: '#78350f'
+            },
+            info: {
+              DEFAULT: '#0284c7',
+              foreground: '#ffffff'
+            },
+            destructive: {
+              DEFAULT: '#ef4444',
+              foreground: '#ffffff'
+            },
+            muted: {
+              DEFAULT: '#f8fafc',
+              foreground: '#64748b'
+            },
+            card: {
+              DEFAULT: '#ffffff',
+              foreground: '#0f172a'
+            },
+            border: '#e2e8f0'
+          },
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    body {
+      background-color: #f8fafc;
+    }
+    .custom-card {
+      background-color: #ffffff;
+      border-color: #e2e8f0;
+      color: #0f172a;
+    }
+    .custom-input {
+      background-color: #ffffff;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .custom-input:focus {
+      border-color: #3e63dd;
+      outline: none;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-card-foreground">
+
+  <!-- Header (Consistent Layout) -->
+  <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
+    <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-6 py-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
+          <i data-lucide="graduation-cap" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight text-slate-900">ระบบบริหารจัดการผู้สมัครเรียน</h1>
+          <p class="text-xs text-slate-500">Student Admission & Information System</p>
+        </div>
+        <!-- Tab navigation inside header -->
+        <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2">
+          <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
+          </a>
+          <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="users" class="h-3.5 w-3.5"></i> ข้อมูลนักเรียน
+          </a>
+          <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold bg-primary text-primary-foreground transition-colors shadow">
+            <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
+          </a>
+        </div>
+      </div>
+      
+      <div class="ml-auto flex items-center gap-2">
+        <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-full px-3 py-1 text-[11px] text-emerald-600 font-mono">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          ONLINE
+        </div>
+        <a href="status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
+          <i data-lucide="search" class="h-3.5 w-3.5"></i> ตรวจสอบสถานะ
+        </a>
+        <a href="apply.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+          <i data-lucide="user-plus" class="h-3.5 w-3.5"></i> ลงทะเบียนนักเรียนใหม่
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="mx-auto max-w-[1400px] px-6 py-6 pb-24">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
+      <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">ข้อมูลบุคคล</span>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">รับสมัครนักเรียนออนไลน์</span>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <span class="text-slate-700 font-medium">ตั้งค่าแผนการเรียน</span>
+    </div>
+
+    <!-- Title Area -->
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
+          <i data-lucide="book-open" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900">ตั้งค่าแผนการเรียน & กำหนดการรับสมัคร</h2>
+          <p class="text-xs text-slate-500">สร้างและปรับปรุงรายชื่อแผนการเรียน กำหนดการสอบคัดเลือก และระเบียบการรับสมัครของโรงเรียน</p>
+        </div>
+      </div>
+      
+      <button onclick="openPlanModal()" class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-4.5 py-2.5 text-sm font-semibold transition-all shadow-md cursor-pointer active:scale-95">
+        <i data-lucide="plus-circle" class="h-4.5 w-4.5"></i> เพิ่มแผนการเรียนใหม่
+      </button>
+    </div>
+
+    <!-- Secondary Sub-navigation Tabs -->
+    <div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl max-w-2xl mb-8">
+      <a href="settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าฟิลด์รับสมัคร
+      </a>
+      <a href="course_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-bold bg-[#3e63dd] text-white shadow-sm transition-all">
+        ตั้งค่าแผนหลักสูตร
+      </a>
+      <a href="room_exam_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าห้องสอบ
+      </a>
+      <a href="student_field_settings.html" class="flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+        ตั้งค่าคอลัมน์นักเรียน
+      </a>
+    </div>
+
+    <!-- Plan List Table Card -->
+    <div class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-w-6xl">
+      <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+        <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+          <i data-lucide="list" class="h-4 w-4 text-primary"></i> แผนการเรียนทั้งหมดที่โรงเรียนมี
+        </h3>
+        <span id="plan-count-badge" class="px-2.5 py-0.5 rounded-full text-xs bg-slate-50 border border-slate-200 text-slate-500 font-mono"></span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-bold uppercase">
+              <th class="p-4 w-24">ระดับชั้น</th>
+              <th class="p-4">ชื่อแผนการเรียน</th>
+              <th class="p-4 w-32 text-center">จำนวนรับ (คน)</th>
+              <th class="p-4">วันรับสมัครสอบ</th>
+              <th class="p-4 w-32">วันสอบคัดเลือก</th>
+              <th class="p-4 w-28 text-center">การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="plans-table-body" class="divide-y divide-slate-200">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add/Edit Plan Modal -->
+  <div id="plan-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200 p-4">
+    <div class="custom-card border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 id="modal-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="plus-circle" class="h-5 w-5 text-primary"></i> เพิ่มแผนการเรียนใหม่
+        </h3>
+        <button onclick="closePlanModal()" class="p-1 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <form id="plan-form" onsubmit="savePlan(event)" class="p-6 space-y-6">
+        <input type="hidden" id="edit-plan-id">
+        
+        <!-- Form Section 1: Basic Info -->
+        <div>
+          <h4 class="text-xs font-bold text-primary uppercase tracking-wider mb-3">ข้อมูลพื้นฐานหลักสูตร</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1.5">ระดับชั้น *</label>
+              <select id="plan-level" required class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+                <option value="ม.1">มัธยมศึกษาปีที่ 1 (ม.1)</option>
+                <option value="ม.4">มัธยมศึกษาปีที่ 4 (ม.4)</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-bold text-slate-500 mb-1.5">ชื่อแผนการเรียน *</label>
+              <input type="text" id="plan-name" required placeholder="เช่น วิทยาศาสตร์-คณิตศาสตร์" class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="block text-xs font-bold text-slate-500 mb-1.5">จำนวนที่รับสมัครสอบ (คน) *</label>
+            <input type="number" id="plan-capacity" required min="1" placeholder="เช่น 40" class="w-full md:w-1/3 rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+          </div>
+          <div class="mt-4">
+            <label class="block text-xs font-bold text-slate-500 mb-1.5">รายละเอียดหลักสูตร / เกณฑ์การรับสมัคร</label>
+            <textarea id="plan-regulations" rows="3" placeholder="ระบุเกณฑ์คะแนนเฉลี่ย เกรดกลุ่มสาระ หรือรายละเอียดระเบียบการเพิ่มเติม..." class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary resize-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Form Section 2: Dates Schedule -->
+        <div class="border-t border-slate-200 pt-6">
+          <h4 class="text-xs font-bold text-primary uppercase tracking-wider mb-3">กำหนดการรับสมัครคัดเลือก</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1.5">วันเปิดรับสมัครออนไลน์ *</label>
+              <input type="date" id="date-apply-start" required class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1.5">วันปิดรับสมัครออนไลน์ *</label>
+              <input type="date" id="date-apply-end" required class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1.5">วันสอบคัดเลือก *</label>
+              <input type="date" id="date-exam" required class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1.5">วันประกาศผลสอบคัดเลือก *</label>
+              <input type="date" id="date-announce" required class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1.5">วันรายงานตัว *</label>
+              <input type="date" id="date-report" required class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1.5">วันมอบตัวผู้สมัครเรียน *</label>
+              <input type="date" id="date-enroll" required class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="border-t border-slate-200 pt-6 flex items-center justify-end gap-3">
+          <button type="button" onclick="closePlanModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-transparent text-slate-700 hover:bg-slate-100 transition-colors text-xs font-bold cursor-pointer">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white transition-colors text-xs font-bold cursor-pointer">
+            บันทึกแผนการเรียน
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200">
+    <div class="custom-card border rounded-2xl p-6 shadow-2xl max-w-sm w-full space-y-4 text-center">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-600">
+        <i data-lucide="alert-triangle" class="h-6 w-6"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-slate-900">ยืนยันการลบแผนการเรียน?</h3>
+        <p class="text-xs text-slate-500 mt-1">การลบข้อมูลแผนการเรียนจะส่งผลต่อการเชื่อมโยงห้องสอบที่เชื่อมอยู่ด้วย ข้อมูลนี้ไม่สามารถกู้คืนได้</p>
+      </div>
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button onclick="closeDeleteModal()" class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors text-xs font-bold cursor-pointer">
+          ยกเลิก
+        </button>
+        <button id="confirm-delete-btn" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white transition-colors text-xs font-bold cursor-pointer">
+          ยืนยันการลบ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50">
+    <div id="toast-icon"></div>
+    <p id="toast-message" class="text-sm font-semibold text-slate-700"></p>
+  </div>
+
+  <!-- Store Logic Integration -->
+  <script src="js/store.js"></script>
+  <script>
+    // State
+    let plansList = [];
+    let deletePlanId = null;
+
+    // Load dynamic data on initiation
+    function loadPlans() {
+      plansList = AdmitifyStore.getCoursePlans();
+      document.getElementById("plan-count-badge").innerText = `${plansList.length} แผนการเรียน`;
+    }
+
+    // Render study plans table rows
+    function renderPlans() {
+      const tbody = document.getElementById("plans-table-body");
+      tbody.innerHTML = "";
+
+      if (plansList.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-8 text-center text-xs text-slate-400">
+              <i data-lucide="folder-open" class="h-8 w-8 mx-auto mb-2 text-slate-400 block"></i>
+              ไม่มีแผนการเรียนที่ระบุในระบบ กดปุ่มด้านบนเพื่อเพิ่มแผนใหม่
+            </td>
+          </tr>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      plansList.forEach(plan => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-100 transition-colors";
+        
+        // Date formatting helpers
+        const formatDate = (dateStr) => {
+          if (!dateStr) return "-";
+          const d = new Date(dateStr);
+          return d.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" });
+        };
+
+        tr.innerHTML = `
+          <td class="p-4 font-mono font-bold text-xs text-slate-700">${plan.level}</td>
+          <td class="p-4">
+            <div class="font-bold text-slate-100">${plan.name}</div>
+            <div class="text-[11px] text-slate-400 truncate max-w-sm mt-0.5">${plan.regulations || 'ไม่มีเกณฑ์การรับสมัครระบุ'}</div>
+          </td>
+          <td class="p-4 text-center font-mono font-bold text-indigo-600">${plan.capacity}</td>
+          <td class="p-4 text-xs text-slate-700">
+            <div class="flex items-center gap-1">
+              <i data-lucide="calendar" class="h-3 w-3 text-slate-400"></i>
+              ${formatDate(plan.regDates.applyStart)} - ${formatDate(plan.regDates.applyEnd)}
+            </div>
+          </td>
+          <td class="p-4 text-xs text-slate-700">
+            <div class="flex items-center gap-1 font-semibold text-amber-600">
+              <i data-lucide="clock" class="h-3 w-3 text-amber-600"></i>
+              ${formatDate(plan.regDates.exam)}
+            </div>
+          </td>
+          <td class="p-4 text-center">
+            <div class="flex items-center justify-center gap-2">
+              <button onclick="openPlanModal('${plan.id}')" class="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-sky-600 border border-slate-200 transition-all active:scale-90 cursor-pointer" title="แก้ไข">
+                <i data-lucide="edit-3" class="h-4 w-4"></i>
+              </button>
+              <button onclick="confirmDelete('${plan.id}')" class="p-2 rounded-lg bg-slate-50 hover:bg-rose-100 text-rose-600 border border-slate-200 transition-all active:scale-90 cursor-pointer" title="ลบ">
+                <i data-lucide="trash-2" class="h-4 w-4"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      
+      lucide.createIcons();
+    }
+
+    // Modal Control: Open modal for Add or Edit
+    function openPlanModal(planId = null) {
+      const modal = document.getElementById("plan-modal");
+      const form = document.getElementById("plan-form");
+      form.reset();
+      
+      const titleEl = document.getElementById("modal-title");
+      const editIdInput = document.getElementById("edit-plan-id");
+
+      if (planId) {
+        // Edit Mode
+        const plan = plansList.find(p => p.id === planId);
+        if (!plan) return;
+        
+        editIdInput.value = plan.id;
+        titleEl.innerHTML = `<i data-lucide="edit" class="h-5 w-5 text-sky-600"></i> แก้ไขข้อมูลแผนการเรียน`;
+        
+        document.getElementById("plan-level").value = plan.level;
+        document.getElementById("plan-name").value = plan.name;
+        document.getElementById("plan-capacity").value = plan.capacity;
+        document.getElementById("plan-regulations").value = plan.regulations || "";
+        
+        document.getElementById("date-apply-start").value = plan.regDates.applyStart || "";
+        document.getElementById("date-apply-end").value = plan.regDates.applyEnd || "";
+        document.getElementById("date-exam").value = plan.regDates.exam || "";
+        document.getElementById("date-announce").value = plan.regDates.announce || "";
+        document.getElementById("date-report").value = plan.regDates.report || "";
+        document.getElementById("date-enroll").value = plan.regDates.enroll || "";
+      } else {
+        // Add Mode
+        editIdInput.value = "";
+        titleEl.innerHTML = `<i data-lucide="plus-circle" class="h-5 w-5 text-primary"></i> เพิ่มแผนการเรียนใหม่`;
+        
+        // Auto pre-populate dummy future dates for convenience
+        const today = new Date();
+        const futureDate = (days) => {
+          const d = new Date(today);
+          d.setDate(today.getDate() + days);
+          return d.toISOString().split('T')[0];
+        };
+
+        document.getElementById("date-apply-start").value = futureDate(1);
+        document.getElementById("date-apply-end").value = futureDate(15);
+        document.getElementById("date-exam").value = futureDate(20);
+        document.getElementById("date-announce").value = futureDate(25);
+        document.getElementById("date-report").value = futureDate(28);
+        document.getElementById("date-enroll").value = futureDate(30);
+      }
+      
+      modal.classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    // Modal Control: Close modal
+    function closePlanModal() {
+      document.getElementById("plan-modal").classList.add("hidden");
+    }
+
+    // Save plan event handler (Add or Update)
+    function savePlan(e) {
+      e.preventDefault();
+      
+      const editId = document.getElementById("edit-plan-id").value;
+      const level = document.getElementById("plan-level").value;
+      const name = document.getElementById("plan-name").value.trim();
+      const capacity = parseInt(document.getElementById("plan-capacity").value);
+      const regulations = document.getElementById("plan-regulations").value.trim();
+      
+      const regDates = {
+        applyStart: document.getElementById("date-apply-start").value,
+        applyEnd: document.getElementById("date-apply-end").value,
+        exam: document.getElementById("date-exam").value,
+        announce: document.getElementById("date-announce").value,
+        report: document.getElementById("date-report").value,
+        enroll: document.getElementById("date-enroll").value
+      };
+
+      if (!name) {
+        showToast("กรุณากรอกชื่อแผนการเรียน", "error");
+        return;
+      }
+      if (isNaN(capacity) || capacity <= 0) {
+        showToast("จำนวนที่นั่งรับสมัครต้องมากกว่า 0", "error");
+        return;
+      }
+
+      if (editId) {
+        // Edit Operation
+        const idx = plansList.findIndex(p => p.id === editId);
+        if (idx !== -1) {
+          plansList[idx] = { id: editId, level, name, capacity, regulations, regDates };
+          AdmitifyStore.saveCoursePlans(plansList);
+          showToast(`ปรับปรุงแผนการเรียน "${name}" สำเร็จเรียบร้อยแล้ว`, "success");
+        }
+      } else {
+        // Create Operation
+        const newId = "p" + (Date.now());
+        plansList.push({ id: newId, level, name, capacity, regulations, regDates });
+        AdmitifyStore.saveCoursePlans(plansList);
+        showToast(`สร้างแผนการเรียน "${name}" สำเร็จเรียบร้อยแล้ว`, "success");
+      }
+
+      loadPlans();
+      renderPlans();
+      closePlanModal();
+    }
+
+    // Delete Operations
+    function confirmDelete(planId) {
+      deletePlanId = planId;
+      document.getElementById("delete-modal").classList.remove("hidden");
+    }
+
+    function closeDeleteModal() {
+      document.getElementById("delete-modal").classList.add("hidden");
+      deletePlanId = null;
+    }
+
+    document.getElementById("confirm-delete-btn").addEventListener("click", () => {
+      if (deletePlanId) {
+        const plan = plansList.find(p => p.id === deletePlanId);
+        const name = plan ? plan.name : "";
+        
+        plansList = plansList.filter(p => p.id !== deletePlanId);
+        AdmitifyStore.saveCoursePlans(plansList);
+        
+        // Also clean up any associated exam rooms that refer to this plan
+        let rooms = AdmitifyStore.getExamRooms();
+        const initialCount = rooms.length;
+        rooms = rooms.filter(r => r.planId !== deletePlanId);
+        if (rooms.length !== initialCount) {
+          AdmitifyStore.saveExamRooms(rooms);
+        }
+        
+        showToast(`ลบแผนการเรียน "${name}" เรียบร้อยแล้ว`, "success");
+        loadPlans();
+        renderPlans();
+      }
+      closeDeleteModal();
+    });
+
+    // Toast Utility
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toast-message");
+      const toastIcon = document.getElementById("toast-icon");
+      
+      toastMsg.innerText = message;
+      
+      if (type === 'success') {
+        toastIcon.innerHTML = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
+        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-emerald-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
+      } else {
+        toastIcon.innerHTML = '<i data-lucide="alert-circle" class="h-5 w-5 text-rose-600"></i>';
+        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-rose-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
+      }
+      
+      lucide.createIcons();
+      
+      setTimeout(() => {
+        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50';
+      }, 3500);
+    }
+
+    // Initialize Page
+    window.addEventListener("DOMContentLoaded", () => {
+      loadPlans();
+      renderPlans();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบตรวจสอบสถานะผู้สมัครเรียน — Admitify Spark</title>
+  
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Tailwind Config to match theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#3e63dd',
+              foreground: '#ffffff',
+              hover: '#2f51c7'
+            },
+            secondary: {
+              DEFAULT: '#f1f3f9',
+              foreground: '#1e293b'
+            },
+            success: {
+              DEFAULT: '#10b981',
+              foreground: '#ffffff'
+            },
+            warning: {
+              DEFAULT: '#f59e0b',
+              foreground: '#78350f'
+            },
+            info: {
+              DEFAULT: '#0284c7',
+              foreground: '#ffffff'
+            },
+            destructive: {
+              DEFAULT: '#ef4444',
+              foreground: '#ffffff'
+            },
+            muted: {
+              DEFAULT: '#f8fafc',
+              foreground: '#64748b'
+            },
+            card: {
+              DEFAULT: '#ffffff',
+              foreground: '#0f172a'
+            },
+            border: '#e2e8f0'
+          },
+          fontFamily: {
+            sans: ['Sarabun', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    body {
+      background-color: #f8fafc;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-card-foreground">
+
+  <header class="border-b bg-card shadow-sm">
+    <div class="mx-auto flex max-w-[1000px] items-center justify-between px-6 py-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+          <i data-lucide="graduation-cap" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold leading-tight">ระบบตรวจสอบสถานะผู้สมัครเรียน</h1>
+          <p class="text-xs text-muted-foreground">Student Portal & Registration Tracking</p>
+        </div>
+        <!-- Tab navigation inside header -->
+        <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2">
+          <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
+          </a>
+          <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="users" class="h-3.5 w-3.5"></i> ข้อมูลนักเรียน
+          </a>
+          <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
+          </a>
+        </div>
+      </div>
+      <a href="index.html" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold hover:bg-slate-50 transition-colors">
+        กลับสู่หน้าหลักครู
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="mx-auto max-w-[720px] px-6 py-8 pb-24">
+    
+    <!-- Search Card -->
+    <div class="bg-card border border-border rounded-2xl shadow-sm p-6 space-y-4">
+      <div class="text-center max-w-md mx-auto space-y-1">
+        <h2 class="text-base font-bold text-slate-800">ตรวจสอบสถานะการสมัครสอบและประกาศผล</h2>
+        <p class="text-xs text-slate-400">กรอกเลขบัตรประชาชน 13 หลัก หรือรหัสใบสมัครเพื่อเช็คความคืบหน้าการรับสมัคร</p>
+      </div>
+
+      <form onsubmit="handleSearch(event)" class="flex gap-2">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4.5 w-4.5"></i>
+          <input type="text" id="search-input" placeholder="กรอกเลขบัตรประชาชน หรือ รหัสใบสมัคร (เช่น APP-2568-0001)..." class="block w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-sans font-medium">
+        </div>
+        <button type="submit" class="inline-flex items-center gap-1.5 rounded-xl bg-primary text-white px-5 py-2.5 text-sm font-bold hover:bg-primary-hover shadow-sm transition-colors shrink-0">
+          ค้นหาข้อมูล
+        </button>
+      </form>
+
+      <!-- Quick Test Links -->
+      <div class="pt-2 border-t flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11px] text-slate-400">
+        <span class="font-bold">บัญชีทดสอบเดโม:</span>
+        <button onclick="quickSearch('1100101234567')" class="text-primary hover:underline font-semibold">1. ยังไม่จ่ายเงิน (สมชาย)</button>
+        <span class="text-slate-200">|</span>
+        <button onclick="quickSearch('1100301234569')" class="text-primary hover:underline font-semibold">2. สอบผ่าน (ณัฐภัทร)</button>
+        <span class="text-slate-200">|</span>
+        <button onclick="quickSearch('1100401234570')" class="text-primary hover:underline font-semibold">3. มอบตัวสำเร็จ (ณิชา)</button>
+      </div>
+    </div>
+
+    <!-- Error/Not Found Alert -->
+    <div id="status-not-found" class="mt-6 bg-rose-50 border border-rose-100 rounded-xl p-4 flex gap-3 text-rose-700 hidden">
+      <i data-lucide="alert-circle" class="h-5 w-5 shrink-0 mt-0.5"></i>
+      <div>
+        <h4 class="text-xs font-bold">ไม่พบข้อมูลการสมัครเรียน</h4>
+        <p class="text-[11px] text-rose-600 mt-0.5 leading-relaxed">กรุณาตรวจสอบความถูกต้องของหมายเลขบัตรประชาชน หรือหากเพิ่งสมัครใหม่ ระบบอาจใช้เวลา 1-2 นาทีเพื่ออัปเดตข้อมูล</p>
+      </div>
+    </div>
+
+    <!-- Tracking Results Panel -->
+    <div id="status-results" class="mt-6 space-y-6 hidden">
+      
+      <!-- Student Header Card -->
+      <div class="bg-card border border-border rounded-2xl shadow-sm p-5 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <i data-lucide="user" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-800" id="student-name">...</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">
+              รหัสผู้สมัคร: <span class="font-mono font-bold text-slate-700" id="student-code">APP-XXXX</span>
+              <span id="student-std-span" class="hidden"> | รหัสนักเรียน: <span class="font-mono font-bold text-emerald-600" id="student-std-code">STD-XXXX</span></span>
+            </p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-[10px] font-bold text-slate-400 block uppercase">ระดับชั้นและแผนการเรียน</span>
+          <span class="text-xs font-bold text-slate-700 mt-1 block" id="student-plan-grade">ม.1 | วิทย์-คณิต</span>
+        </div>
+      </div>
+
+      <!-- Admission Timeline Tracker -->
+      <div class="bg-card border border-border rounded-2xl shadow-sm p-6">
+        <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-6 text-center">สถานะการคัดเลือกปัจจุบัน (Lifecycle Status)</h4>
+        
+        <div class="flex justify-between items-center relative px-2">
+          <!-- Connect Lines -->
+          <div class="absolute left-1/10 right-1/10 top-4 h-0.5 bg-slate-100 -z-10">
+            <div id="status-timeline-line" class="h-full bg-primary transition-all duration-500 w-[0%]"></div>
+          </div>
+
+          <!-- Step 1 -->
+          <div class="flex flex-col items-center text-center space-y-1.5 flex-1 relative">
+            <div id="step-circle-1" class="w-8 h-8 rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold border border-emerald-500 text-xs shadow-sm z-10">
+              <i data-lucide="check" class="h-4.5 w-4.5"></i>
+            </div>
+            <span class="text-[10px] font-bold text-slate-700">ส่งใบสมัครแล้ว</span>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="flex flex-col items-center text-center space-y-1.5 flex-1 relative">
+            <div id="step-circle-2" class="w-8 h-8 rounded-full flex items-center justify-center text-xs shadow-sm z-10">
+              <i data-lucide="credit-card" class="h-4.5 w-4.5"></i>
+            </div>
+            <span class="text-[10px] font-bold text-slate-700">ชำระเงินค่าสอบ</span>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="flex flex-col items-center text-center space-y-1.5 flex-1 relative">
+            <div id="step-circle-3" class="w-8 h-8 rounded-full flex items-center justify-center text-xs shadow-sm z-10">
+              <i data-lucide="award" class="h-4.5 w-4.5"></i>
+            </div>
+            <span class="text-[10px] font-bold text-slate-700">ประกาศผลสอบ</span>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="flex flex-col items-center text-center space-y-1.5 flex-1 relative">
+            <div id="step-circle-4" class="w-8 h-8 rounded-full flex items-center justify-center text-xs shadow-sm z-10">
+              <i data-lucide="school" class="h-4.5 w-4.5"></i>
+            </div>
+            <span class="text-[10px] font-bold text-slate-700">มอบตัวเสร็จสมบูรณ์</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contextual Action Panel -->
+      <div id="status-context-card" class="overflow-hidden">
+        <!-- Injected dynamically based on status -->
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- PromptPay QR Code Mock Modal -->
+  <div id="modal-qr" class="fixed inset-0 z-50 flex items-center justify-center bg-black/45 hidden animate-in fade-in duration-200">
+    <div class="bg-card w-full max-w-sm rounded-2xl shadow-2xl border border-border overflow-hidden p-6 text-center space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <span class="text-sm font-bold text-slate-800">โอนเงินชำระค่าสอบผ่าน PromptPay</span>
+        <button onclick="closeQrModal()" class="p-1 rounded-lg text-slate-400 hover:bg-slate-50 transition-colors">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- QR Visual -->
+      <div class="bg-white border rounded-xl p-4 inline-block mx-auto relative">
+        <!-- Simulated QR code pattern -->
+        <div class="w-56 h-56 bg-slate-900 rounded-lg flex flex-col items-center justify-center text-white p-2">
+          <!-- Logo banner -->
+          <div class="bg-indigo-900 px-3 py-1.5 rounded-md text-[10px] font-bold tracking-widest text-sky-400 flex items-center gap-1.5 border border-sky-600 mb-4">
+            <i data-lucide="qr-code" class="h-4 w-4"></i> PROMPTPAY
+          </div>
+          <!-- Fake QR dots representation -->
+          <div class="flex-1 w-full grid grid-cols-6 grid-rows-6 gap-1 bg-white p-2 rounded-md">
+            <div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div>
+            <div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div>
+            <div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div>
+            <div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div>
+            <div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-100 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div>
+            <div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div><div class="bg-slate-900 rounded-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-1 text-slate-700">
+        <div class="text-[10px] text-slate-400 font-bold uppercase">ยอดเงินโอนสะสม</div>
+        <div class="text-2xl font-extrabold text-slate-900 font-mono">500.00 <span class="text-xs">THB</span></div>
+        <div class="text-[10px] text-slate-400 font-medium">สแกนชำระเงินคัดเลือกด้วยแอปธนาคารมือถือได้ทันที</div>
+      </div>
+
+      <div class="bg-slate-50 rounded-xl p-3 border text-left text-[10px] text-slate-500 font-mono space-y-1">
+        <div>Ref 1: <span id="qr-ref-1">APP-2568-XXXX</span></div>
+        <div>Ref 2: 1100301234569</div>
+        <div>ชื่อบัญชี: บจก. แอดมิทิฟาย เอ็ดดูเคชั่น (จำลอง)</div>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="closeQrModal()" class="flex-1 rounded-xl border border-slate-200 py-2.5 text-xs font-bold hover:bg-slate-50 transition-colors">
+          ปิดหน้าต่าง
+        </button>
+        <button onclick="confirmMockPayment()" class="flex-1 rounded-xl bg-primary text-white py-2.5 text-xs font-bold hover:bg-primary-hover shadow-sm transition-colors flex items-center justify-center gap-1.5">
+          <i data-lucide="check" class="h-4 w-4"></i> ยืนยันชำระเงินสำเร็จ (จำลอง)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- Load database script -->
+  <script src="js/store.js"></script>
+
+  <script>
+    let currentApplicant = null;
+
+    function handleSearch(event) {
+      if (event) event.preventDefault();
+      const val = document.getElementById('search-input').value.trim();
+      if (!val) {
+        alert('กรุณากรอกเลขบัตรประชาชน หรือ รหัสใบสมัคร');
+        return;
+      }
+
+      // Query database
+      const applicants = window.AdmitifyStore.getApplicants();
+      const found = applicants.find(a => a.citizenId === val || a.applicantCode === val);
+
+      if (!found) {
+        document.getElementById('status-not-found').classList.remove('hidden');
+        document.getElementById('status-results').classList.add('hidden');
+        lucide.createIcons();
+        return;
+      }
+
+      currentApplicant = found;
+      document.getElementById('status-not-found').classList.add('hidden');
+      renderApplicantStatus();
+    }
+
+    function quickSearch(cid) {
+      document.getElementById('search-input').value = cid;
+      handleSearch();
+    }
+
+    function renderApplicantStatus() {
+      // Set Header details
+      document.getElementById('student-name').innerText = `${currentApplicant.firstName} ${currentApplicant.lastName}`;
+      document.getElementById('student-code').innerText = currentApplicant.applicantCode;
+      document.getElementById('student-plan-grade').innerText = `${currentApplicant.gradeLevel} | ${currentApplicant.studyPlan}`;
+
+      if (currentApplicant.studentId) {
+        document.getElementById('student-std-code').innerText = currentApplicant.studentId;
+        document.getElementById('student-std-span').classList.remove('hidden');
+      } else {
+        document.getElementById('student-std-span').classList.add('hidden');
+      }
+
+      // Update Stepper Timeline
+      updateTimelineStepper();
+
+      // Render contextual panel card
+      renderContextCard();
+
+      // Show container
+      document.getElementById('status-results').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function updateTimelineStepper() {
+      const status = currentApplicant.status;
+      const timelineLine = document.getElementById('status-timeline-line');
+      
+      let isStep1 = true;
+      let isStep2 = status !== 'unpaid_exam_fee';
+      let isStep3 = ['passed', 'reserve', 'failed', 'reported', 'enrolled'].includes(status);
+      let isStep4 = status === 'enrolled';
+
+      // Width calculation
+      let width = '0%';
+      if (isStep4) width = '100%';
+      else if (isStep3) width = '66%';
+      else if (isStep2) width = '33%';
+
+      timelineLine.style.width = width;
+
+      // Circle Styles
+      setTimelineCircle(1, true);
+      setTimelineCircle(2, isStep2, 'credit-card');
+      setTimelineCircle(3, isStep3, 'award');
+      setTimelineCircle(4, isStep4, 'school');
+    }
+
+    function setTimelineCircle(stepNum, isCompleted, iconName) {
+      const circle = document.getElementById(`step-circle-${stepNum}`);
+      if (!circle) return;
+
+      if (isCompleted) {
+        circle.className = "w-8 h-8 rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold border border-emerald-500 text-xs shadow-sm z-10";
+        circle.innerHTML = `<i data-lucide="check" class="h-4.5 w-4.5"></i>`;
+      } else {
+        circle.className = "w-8 h-8 rounded-full flex items-center justify-center bg-white text-slate-400 font-bold border border-slate-200 text-xs shadow-sm z-10";
+        circle.innerHTML = `<i data-lucide="${iconName}" class="h-4.5 w-4.5"></i>`;
+      }
+    }
+
+    function renderContextCard() {
+      const status = currentApplicant.status;
+      const container = document.getElementById('status-context-card');
+      container.innerHTML = '';
+
+      if (status === 'unpaid_exam_fee') {
+        container.innerHTML = `
+          <div class="bg-card border border-slate-200 rounded-2xl shadow-sm overflow-hidden font-sans">
+            <div class="bg-rose-500 text-white px-5 py-4 flex items-center gap-3">
+              <i data-lucide="alert-triangle" class="h-6 w-6"></i>
+              <div>
+                <h4 class="text-sm font-bold">รอการชำระเงินค่าสมัครสอบคัดเลือก</h4>
+                <p class="text-[10px] opacity-90 mt-0.5">กรุณาชำระเงินจำนวน 500 บาท เพื่อยืนยันสิทธิ์ในการเข้าสอบและรับเลขที่นั่งสอบ</p>
+              </div>
+            </div>
+            
+            <div class="p-6 text-center space-y-4">
+              <div class="max-w-xs mx-auto border rounded-xl p-4 bg-slate-50 flex items-center justify-between text-left">
+                <div>
+                  <span class="text-[9px] text-slate-400 font-bold block uppercase font-mono">ค่าลงทะเบียน</span>
+                  <span class="text-lg font-extrabold text-slate-800 font-mono">500.00 บาท</span>
+                </div>
+                <button onclick="openQrModal()" class="inline-flex items-center gap-1.5 rounded-lg bg-primary text-white px-3.5 py-1.5 text-xs font-bold hover:bg-primary-hover shadow-sm transition-colors">
+                  <i data-lucide="qr-code" class="h-4 w-4"></i> สแกน QR โอนเงิน
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      else if (status === 'paid_exam_fee' || status === 'awaiting_results') {
+        container.innerHTML = `
+          <div class="bg-card border border-slate-200 rounded-2xl shadow-sm overflow-hidden font-sans">
+            <div class="bg-indigo-500 text-white px-5 py-4 flex items-center gap-3">
+              <i data-lucide="check-circle-2" class="h-6 w-6"></i>
+              <div>
+                <h4 class="text-sm font-bold">ชำระเงินสำเร็จแล้ว (รอประกาศผลสอบ)</h4>
+                <p class="text-[10px] opacity-90 mt-0.5">ระบบได้บันทึกการชำระเงินของคุณเรียบร้อยแล้ว กรุณาเข้าสอบตามรายละเอียดห้องสอบด้านล่าง</p>
+              </div>
+            </div>
+            
+            <div class="p-6 space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="border rounded-xl p-4 bg-slate-50/50">
+                  <span class="text-[9px] text-slate-400 font-bold block uppercase">ห้องสอบ / ที่นั่งสอบ</span>
+                  <span class="text-sm font-extrabold text-slate-800 block mt-1">${currentApplicant.examRoom || 'รอเจ้าหน้าที่ประกาศจัดห้องสอบ'}</span>
+                  <span class="text-[10px] text-slate-500 mt-0.5 block">ที่นั่งสอบ: ${currentApplicant.seatNumber || '—'}</span>
+                </div>
+                
+                <div class="border rounded-xl p-4 bg-slate-50/50">
+                  <span class="text-[9px] text-slate-400 font-bold block uppercase">กำหนดการสอบ</span>
+                  <span class="text-xs font-bold text-slate-800 block mt-1">วันอาทิตย์ที่ 15 กุมภาพันธ์ 2568</span>
+                  <span class="text-[10px] text-slate-500 mt-0.5 block">เวลา 09.00 - 12.00 น.</span>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t flex justify-end">
+                <button onclick="mockPrintReceipt()" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-1.5 text-xs font-bold hover:bg-slate-50 transition-colors shadow-sm">
+                  <i data-lucide="printer" class="h-3.5 w-3.5 text-slate-400"></i> พิมพ์หลักฐานใบเสร็จชำระเงิน (จำลอง)
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      else if (status === 'passed') {
+        container.innerHTML = `
+          <div class="bg-card border border-slate-200 rounded-2xl shadow-sm overflow-hidden font-sans">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-5 py-4 flex items-center gap-3">
+              <i data-lucide="award" class="h-6 w-6"></i>
+              <div>
+                <h4 class="text-sm font-bold">ขอแสดงความยินดีด้วย! คุณสอบผ่านคัดเลือก</h4>
+                <p class="text-[10px] opacity-90 mt-0.5">คุณมีสิทธิ์เข้าศึกษาต่อที่โรงเรียนวิทยาศาสตร์แอดมิทิฟาย (จำลอง)</p>
+              </div>
+            </div>
+            
+            <div class="p-6 space-y-4">
+              <div class="border rounded-xl p-4 bg-emerald-50/30 border-emerald-100 flex justify-between items-center">
+                <div>
+                  <span class="text-[9px] text-emerald-800 font-bold uppercase">ผลคะแนนสอบของคุณ</span>
+                  <span class="text-base font-extrabold text-emerald-700 block mt-1">คะแนนดิบ: ${currentApplicant.examScore ? currentApplicant.examScore.raw : '—'} / 100</span>
+                  <span class="text-[10px] text-slate-500">เกรดเฉลี่ยสะสม (GPAX): ${currentApplicant.examScore ? currentApplicant.examScore.gpa : '—'}</span>
+                </div>
+                <div class="h-10 w-10 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+                  ✓
+                </div>
+              </div>
+
+              <div class="rounded-xl border border-slate-100 p-4 bg-slate-50 text-[11px] text-slate-500 leading-relaxed space-y-1.5">
+                <p class="font-bold text-slate-700">คำชี้แจงสำหรับนักเรียนใหม่:</p>
+                <p>1. กรุณากดยืนยันการรายงานตัวและมอบตัวออนไลน์ผ่านปุ่มด้านล่างทันที</p>
+                <p>2. ระบบจะจัดตารางห้องเรียนและรหัสนักเรียนใหม่ให้ทันทีเมื่อส่งเอกสารมอบตัวเรียบร้อย</p>
+              </div>
+
+              <button onclick="confirmEnrollmentOnline()" class="w-full inline-flex justify-center items-center gap-1.5 rounded-xl bg-primary text-white py-3 text-xs font-bold hover:bg-primary-hover shadow-sm transition-colors">
+                <i data-lucide="user-check" class="h-4.5 w-4.5"></i> ยืนยันรายงานตัวและมอบตัวออนไลน์
+              </button>
+            </div>
+          </div>
+        `;
+      }
+      else if (status === 'reserve') {
+        container.innerHTML = `
+          <div class="bg-card border border-slate-200 rounded-2xl shadow-sm overflow-hidden font-sans">
+            <div class="bg-sky-500 text-white px-5 py-4 flex items-center gap-3">
+              <i data-lucide="info" class="h-6 w-6"></i>
+              <div>
+                <h4 class="text-sm font-bold">ประกาศผลสอบ: ตัวสำรองอันดับที่ ${currentApplicant.reserveRank || ''}</h4>
+                <p class="text-[10px] opacity-90 mt-0.5">คุณสอบผ่านคัดเลือกประเภทบัญชีสำรอง</p>
+              </div>
+            </div>
+            
+            <div class="p-6 text-center space-y-3">
+              <p class="text-xs text-slate-600 leading-relaxed">กรุณารอการเรียกรายงานตัวจากทางทะเบียนวัดผลการศึกษา หากมีผู้สมัครรอบตัวจริงสละสิทธิ์ ทางโรงเรียนจะแจ้งผ่านเบอร์โทรศัพท์และอีเมลของท่านโดยตรง</p>
+            </div>
+          </div>
+        `;
+      }
+      else if (status === 'failed') {
+        container.innerHTML = `
+          <div class="bg-card border border-slate-200 rounded-2xl shadow-sm overflow-hidden font-sans">
+            <div class="bg-slate-500 text-white px-5 py-4 flex items-center gap-3">
+              <i data-lucide="alert-circle" class="h-6 w-6"></i>
+              <div>
+                <h4 class="text-sm font-bold">ผลการคัดเลือก: ไม่ผ่านเกณฑ์การสอบคัดเลือก</h4>
+                <p class="text-[10px] opacity-90 mt-0.5">ขอบคุณที่ให้ความสนใจสมัครสอบคัดเลือกเข้าเรียนต่อกับโรงเรียนเรา</p>
+              </div>
+            </div>
+            
+            <div class="p-6 text-center space-y-3">
+              <p class="text-xs text-slate-600 leading-relaxed">ทางสถาบันขอเป็นกำลังใจให้ผู้สมัครในการสอบศึกษาต่อในโอกาสถัดไป</p>
+            </div>
+          </div>
+        `;
+      }
+      else if (status === 'enrolled' || status === 'reported') {
+        container.innerHTML = `
+          <div class="bg-card border border-slate-200 rounded-2xl shadow-sm overflow-hidden font-sans">
+            <div class="bg-gradient-to-r from-yellow-500 to-amber-500 text-white px-5 py-4 flex items-center gap-3">
+              <i data-lucide="sparkles" class="h-6 w-6"></i>
+              <div>
+                <h4 class="text-sm font-bold">ยินดีต้อนรับนักเรียนใหม่! มอบตัวเสร็จสมบูรณ์</h4>
+                <p class="text-[10px] opacity-90 mt-0.5">การลงทะเบียนรายงานตัวและจัดสรรชั้นเรียนเสร็จสิ้นสมบูรณ์แล้ว</p>
+              </div>
+            </div>
+            
+            <div class="p-6 space-y-4">
+              <div class="border rounded-2xl p-5 bg-gradient-to-b from-slate-50 to-slate-100 flex flex-col items-center text-center space-y-3 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 text-slate-200/50">
+                  <i data-lucide="graduation-cap" class="w-24 h-24"></i>
+                </div>
+                <div class="h-14 w-14 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xl font-bold shadow-sm">
+                  ✓
+                </div>
+                <div>
+                  <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">รหัสนักเรียนใหม่</span>
+                  <span class="text-xl font-extrabold text-slate-900 font-mono block mt-0.5">${currentApplicant.studentId}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-x-8 gap-y-1 w-full border-t pt-3 text-xs">
+                  <div class="text-right text-slate-400">ห้องเรียนจัดสรร:</div>
+                  <div class="text-left font-bold text-slate-800">${window.effectiveClassroom ? window.effectiveClassroom(currentApplicant) : 'ม.1/2'}</div>
+                  <div class="text-right text-slate-400">แผนการเรียน:</div>
+                  <div class="text-left font-bold text-slate-800">${currentApplicant.studyPlan}</div>
+                </div>
+              </div>
+
+              <div class="pt-2 flex justify-end">
+                <button onclick="mockPrintEnrollment()" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-1.5 text-xs font-bold hover:bg-slate-50 transition-colors shadow-sm">
+                  <i data-lucide="printer" class="h-3.5 w-3.5 text-slate-400"></i> พิมพ์หลักฐานมอบตัว (จำลอง)
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Promtpay modal control
+    function openQrModal() {
+      if (!currentApplicant) return;
+      document.getElementById('qr-ref-1').innerText = currentApplicant.applicantCode;
+      document.getElementById('modal-qr').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeQrModal() {
+      document.getElementById('modal-qr').classList.add('hidden');
+    }
+
+    function confirmMockPayment() {
+      closeQrModal();
+      window.AdmitifyStore.updateStatus(currentApplicant.id, 'paid_exam_fee');
+      
+      // Update local object
+      currentApplicant.status = 'paid_exam_fee';
+      
+      renderApplicantStatus();
+      showToast('ชำระเงินสำเร็จ (จำลอง)', 'ชำระค่าธรรมเนียมสมัครสอบ 500 บาท เรียบร้อยแล้ว', 'success');
+    }
+
+    // Enrollment Simulation
+    function confirmEnrollmentOnline() {
+      if (!currentApplicant) return;
+      window.AdmitifyStore.updateStatus(currentApplicant.id, 'enrolled');
+      
+      // Fetch latest to get stdID
+      const latest = window.AdmitifyStore.getById(currentApplicant.id);
+      currentApplicant = latest;
+      
+      renderApplicantStatus();
+      showToast('รายงานตัวสำเร็จ (จำลอง)', 'ระบบสุ่มรหัสนักเรียนใหม่และจัดห้องเรียนให้เรียบร้อย', 'success');
+    }
+
+    // Print Mocks
+    function mockPrintReceipt() {
+      showToast('พิมพ์หลักฐานสำเร็จ', 'ระบบดาวน์โหลดไฟล์ใบเสร็จค่าธรรมเนียมสมัครสอบ (จำลอง) แล้ว', 'success');
+    }
+
+    function mockPrintEnrollment() {
+      showToast('พิมพ์หลักฐานมอบตัวสำเร็จ', 'ระบบจัดทำไฟล์ PDF ใบรายงานตัวนักเรียนใหม่เรียบร้อย', 'success');
+    }
+
+    // Toast Engine
+    function showToast(title, description, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toastId = 'toast_' + Math.random().toString(36).substr(2, 9);
+      
+      let borderClass = 'border-slate-100 bg-white';
+      let iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-500"></i>';
+      
+      if (type === 'success') {
+        borderClass = 'border-emerald-100 bg-emerald-50/90 backdrop-blur-sm';
+        iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
+      } else if (type === 'info') {
+        borderClass = 'border-sky-100 bg-sky-50/90 backdrop-blur-sm';
+        iconHtml = '<i data-lucide="info" class="h-5 w-5 text-sky-600"></i>';
+      } else if (type === 'warning') {
+        borderClass = 'border-amber-100 bg-amber-50/90 backdrop-blur-sm';
+        iconHtml = '<i data-lucide="alert-triangle" class="h-5 w-5 text-amber-600"></i>';
+      }
+
+      const toast = document.createElement('div');
+      toast.id = toastId;
+      toast.className = `p-4 rounded-lg border shadow-lg flex gap-3 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 max-w-sm ${borderClass}`;
+      
+      toast.innerHTML = `
+        <div class="shrink-0">${iconHtml}</div>
+        <div class="space-y-0.5 w-full">
+          <div class="text-xs font-bold text-slate-800">${title}</div>
+          <div class="text-[11px] text-slate-500">${description}</div>
+        </div>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

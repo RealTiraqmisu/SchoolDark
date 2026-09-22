@@ -1,0 +1,428 @@
+<mxfile host="65bd71144e" pages="2">
+    <diagram id="ucd-admission" name="1 · ฝั่งงานรับสมัครนักเรียน">
+        <mxGraphModel dx="977" dy="843" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1800" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="ucd-admission-assoc1" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-applicant" target="p1-app01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc2" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-applicant" target="p1-app02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc3" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-payment" target="p1-app02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc4" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-mail" target="p1-adm04" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc5" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-print" target="p1-adm05" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc6" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-adm01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc7" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-adm01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc8" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-adm02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc9" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-adm02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc10" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-adm03" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc11" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-adm03" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc12" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-adm04" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc13" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-adm04" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc14" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-adm05" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc15" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-adm05" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc16" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-set01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc17" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-set01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc18" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-set02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc19" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-set02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc20" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-set03" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc21" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-set03" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc22" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-admin" target="p1-set04" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-assoc23" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p1-a-registrar" target="p1-set04" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-inc24" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.2;entryDx=0;entryDy=0;" parent="1" source="p1-adm02" target="p1-adm01" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="830" y="655"/>
+                            <mxPoint x="830" y="466"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-admission-inc25" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.4;entryDx=0;entryDy=0;" parent="1" source="p1-adm03" target="p1-adm01" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="870" y="785"/>
+                            <mxPoint x="870" y="492"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-admission-inc26" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.6;entryDx=0;entryDy=0;" parent="1" source="p1-adm04" target="p1-adm01" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="910" y="915"/>
+                            <mxPoint x="910" y="518"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-admission-inc27" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.8;entryDx=0;entryDy=0;" parent="1" source="p1-adm05" target="p1-adm01" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="950" y="1045"/>
+                            <mxPoint x="950" y="544"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-admission-ext28" value="&lt;&lt;extend&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;" parent="1" source="p1-app02" target="p1-app01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-admission-ext29" value="&lt;&lt;extend&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.85;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="p1-app02" target="p1-adm03" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="990" y="360"/>
+                            <mxPoint x="990" y="785"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-admission-ext30" value="&lt;&lt;extend&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0;exitY=0.4;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="p1-adm04" target="p1-adm02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="430" y="906"/>
+                            <mxPoint x="430" y="655"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-admission-ext31" value="&lt;&lt;extend&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.4;entryDx=0;entryDy=0;" parent="1" source="p1-adm04" target="p1-adm03" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="465" y="933"/>
+                            <mxPoint x="465" y="785"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p1-boundary" value="ระบบรับสมัครนักเรียนออนไลน์ — Admitify Spark" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#2D3142;verticalAlign=top;align=center;fontSize=13;fontStyle=1;fontFamily=Tahoma;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="60" width="720" height="1680" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-g1" value="งานฝั่งผู้สมัครและผู้ปกครอง" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9AA0AC;dashed=1;verticalAlign=top;align=left;spacingLeft=8;fontSize=11;fontColor=#6B7280;fontFamily=Tahoma;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="100" width="640" height="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-g2" value="งานรับสมัครนักเรียน" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9AA0AC;dashed=1;verticalAlign=top;align=left;spacingLeft=8;fontSize=11;fontColor=#6B7280;fontFamily=Tahoma;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="410" width="640" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-g3" value="การตั้งค่างานรับสมัครนักเรียน" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9AA0AC;dashed=1;verticalAlign=top;align=left;spacingLeft=8;fontSize=11;fontColor=#6B7280;fontFamily=Tahoma;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="1140" width="640" height="560" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-a-applicant" value="ผู้สมัคร / ผู้ปกครอง" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="215" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-a-admin" value="ผู้ดูแลระบบ" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="725" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-a-registrar" value="เจ้าหน้าที่ทะเบียน" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="1305" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-a-payment" value="ระบบชำระเงิน" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="280" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-a-mail" value="ระบบอีเมล" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="880" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-a-print" value="ระบบพิมพ์เอกสาร" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="1010" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-app01" value="UC-APP-01&#xa;ยื่นใบสมัครเรียนออนไลน์" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FDF0EA;strokeColor=#EB6C36;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="140" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-app02" value="UC-APP-02&#xa;ตรวจสอบสถานะและยืนยันสิทธิ์การเข้าศึกษา" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FDF0EA;strokeColor=#EB6C36;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="270" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-adm01" value="UC-ADM-01&#xa;จัดการข้อมูลผู้สมัคร" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="440" width="280" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-adm02" value="UC-ADM-02&#xa;พิจารณาเอกสารผู้สมัคร" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="610" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-adm03" value="UC-ADM-03&#xa;จัดการสถานะผู้สมัคร" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="740" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-adm04" value="UC-ADM-04&#xa;ส่งอีเมลถึงผู้สมัคร" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="870" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-adm05" value="UC-ADM-05&#xa;ส่งออกใบสมัคร" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1000" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-set01" value="UC-SET-ADM-01&#xa;ตั้งค่าฟอร์มรับสมัครนักเรียน" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1180" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-set02" value="UC-SET-ADM-02&#xa;ตั้งค่าห้องสอบผู้สมัคร" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1310" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-set03" value="UC-SET-ADM-03&#xa;ตั้งค่าและจัดการกำหนดการรับสมัคร" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1440" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p1-set04" value="UC-SET-ADM-04&#xa;ตั้งค่าข้อมูลอาคารและห้อง" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1570" width="280" height="90" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="ucd-registration" name="2 · ฝั่งงานทะเบียนนักเรียน">
+        <mxGraphModel dx="684" dy="590" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1800" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="ucd-registration-assoc1" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-reg01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc2" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-reg01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc3" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc4" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc5" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-reg03" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc6" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-reg03" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc7" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-reg04" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc8" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-reg04" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc9" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-reg05" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc10" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-reg05" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc11" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-reg06" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc12" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-reg06" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc13" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-reg07" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc14" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-reg07" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc15" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-reg08" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc16" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-reg08" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc17" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-sreg01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc18" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-sreg01" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc19" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-admin" target="p2-sreg02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc20" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-registrar" target="p2-sreg02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc21" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-teacher" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc22" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-teacher" target="p2-reg06" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc23" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-teacher" target="p2-reg07" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc24" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-homeroom" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc25" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-homeroom" target="p2-reg03" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc26" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-print" target="p2-reg06" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc27" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-print" target="p2-reg07" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc28" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-print" target="p2-reg08" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-assoc29" value="" style="endArrow=none;html=1;edgeStyle=none;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;" parent="1" source="p2-a-regis" target="p2-reg06" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-gen30" value="" style="endArrow=block;endFill=0;endSize=12;html=1;edgeStyle=none;strokeColor=#2D3142;" parent="1" source="p2-a-homeroom" target="p2-a-teacher" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ucd-registration-inc31" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.12;entryDx=0;entryDy=0;" parent="1" source="p2-reg01" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="820" y="465"/>
+                            <mxPoint x="820" y="169"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-registration-inc32" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.22;entryDx=0;entryDy=0;" parent="1" source="p2-reg03" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="856" y="595"/>
+                            <mxPoint x="856" y="193"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-registration-inc33" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.32;entryDx=0;entryDy=0;" parent="1" source="p2-reg04" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="892" y="725"/>
+                            <mxPoint x="892" y="217"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-registration-inc34" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.42;entryDx=0;entryDy=0;" parent="1" source="p2-reg05" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="928" y="855"/>
+                            <mxPoint x="928" y="241"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-registration-inc35" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.52;entryDx=0;entryDy=0;" parent="1" source="p2-reg06" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="964" y="985"/>
+                            <mxPoint x="964" y="265"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-registration-inc36" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.62;entryDx=0;entryDy=0;" parent="1" source="p2-reg07" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1000" y="1115"/>
+                            <mxPoint x="1000" y="289"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-registration-inc37" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.72;entryDx=0;entryDy=0;" parent="1" source="p2-reg08" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1036" y="1245"/>
+                            <mxPoint x="1036" y="313"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-registration-inc38" value="&lt;&lt;include&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.82;entryDx=0;entryDy=0;" parent="1" source="p2-sreg02" target="p2-reg02" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1072" y="1565"/>
+                            <mxPoint x="1072" y="337"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ucd-registration-ext39" value="&lt;&lt;extend&gt;&gt;" style="endArrow=open;endSize=12;dashed=1;html=1;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="p2-reg08" target="p2-reg04" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="440" y="1245"/>
+                            <mxPoint x="440" y="725"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p2-boundary" value="ระบบทะเบียนนักเรียน — Admitify Spark" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#2D3142;verticalAlign=top;align=center;fontSize=13;fontStyle=1;fontFamily=Tahoma;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="60" width="720" height="1630" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-g1" value="งานทะเบียนนักเรียน" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9AA0AC;dashed=1;verticalAlign=top;align=left;spacingLeft=8;fontSize=11;fontColor=#6B7280;fontFamily=Tahoma;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="100" width="640" height="1230" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-g2" value="การตั้งค่างานทะเบียนนักเรียน" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9AA0AC;dashed=1;verticalAlign=top;align=left;spacingLeft=8;fontSize=11;fontColor=#6B7280;fontFamily=Tahoma;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="1360" width="640" height="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-a-teacher" value="ครู" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="205" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-a-homeroom" value="ครูประจำชั้น" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="345" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-a-admin" value="ผู้ดูแลระบบ" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="565" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-a-registrar" value="เจ้าหน้าที่ทะเบียน" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="965" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-a-regis" value="ระบบ REGIS สช." style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="830" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-a-print" value="ระบบพิมพ์เอกสาร" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="1080" width="40" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-reg02" value="UC-REG-02&#xa;ดูข้อมูลนักเรียนและศิษย์เก่า" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="140" width="280" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-reg01" value="UC-REG-01&#xa;จัดการข้อมูลนักเรียนและศิษย์เก่า" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="420" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-reg03" value="UC-REG-03&#xa;แก้ไขข้อมูลนักเรียน" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="550" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-reg04" value="UC-REG-04&#xa;ย้ายห้องเรียน เลื่อนชั้นนักเรียน" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="680" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-reg05" value="UC-REG-05&#xa;จัดการนักเรียนลาออก" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="810" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-reg06" value="UC-REG-06&#xa;ส่งออกรายชื่อนักเรียน" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="940" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-reg07" value="UC-REG-07&#xa;ส่งออกรายงานและสถิติ" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1070" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-reg08" value="UC-REG-08&#xa;ส่งออก ปพ.1 และ ปพ.2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1200" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-sreg01" value="UC-SET-REG-01&#xa;ตั้งค่าฟอร์มนักเรียน" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1400" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="p2-sreg02" value="UC-SET-REG-02&#xa;ตั้งค่าคอลัมน์นักเรียน" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2D3142;fontFamily=Tahoma;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="1520" width="280" height="90" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
