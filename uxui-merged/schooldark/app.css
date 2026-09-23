@@ -2116,3 +2116,10 @@ table.premium-table tbody tr:hover { background-color: rgba(0, 0, 0, 0.01); }
     transform: scale(1.03);
 }
 
+.note-leave-link {
+  color: inherit;
+  text-decoration: underline;
+}
+.note-leave-link:hover {
+  color: var(--primary);
+}

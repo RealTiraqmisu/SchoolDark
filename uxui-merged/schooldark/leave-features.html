@@ -230,6 +230,29 @@
       .leave-type-grid { grid-template-columns: 1fr 1fr; }
       .sidebar { display: none; }
     }
+
+    /* ---------- การมาเรียนของนักเรียน (เช็คชื่อ / รายงาน / ตั้งค่าเวลา) ---------- */
+    .badge.muted { color: var(--text-muted); background: rgba(0,0,0,.05); }
+    .att-table td { vertical-align: middle; }
+    .att-row-locked td { background: var(--info-bg); }
+    .att-seg { display: inline-flex; border: 1px solid var(--border-color); border-radius: 999px; overflow: hidden; }
+    .att-seg-btn { border: 0; background: transparent; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--text-secondary); cursor: pointer; font-family: inherit; }
+    .att-seg-btn + .att-seg-btn { border-left: 1px solid var(--border-color); }
+    .att-seg-btn:hover { background: rgba(0,0,0,.04); }
+    .att-seg-btn.on.ontime { background: var(--success-bg); color: var(--success); }
+    .att-seg-btn.on.late { background: var(--warning-bg); color: var(--warning); }
+    .att-seg-btn.on.absent { background: var(--danger-bg); color: var(--danger); }
+    .att-time { width: 110px; padding: 6px 8px; font-size: 13px; }
+    .att-time:disabled, .att-out:disabled { opacity: .45; }
+    .att-out { width: 130px; padding: 6px 8px; font-size: 13px; }
+    .att-note { min-width: 140px; padding: 6px 8px; font-size: 13px; }
+    .att-summary-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); }
+    .att-time-hint, .att-saved-note { font-size: 12px; color: var(--text-muted); }
+    .att-rep-kpi-btn { border: 0; cursor: pointer; font-family: inherit; }
+    .att-rep-kpi-btn:hover { filter: brightness(0.95); }
+    .att-rep-kpi-btn.on { box-shadow: 0 0 0 2px currentColor inset; }
+    .att-pager { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap; }
+    .att-pager span { margin-right: auto; }
   </style>
 </head>
 
@@ -1381,6 +1404,145 @@
 
       </section>
 
+
+      <!-- ================================================================
+           VIEW: เช็คชื่อนักเรียน (ครูประจำชั้นบันทึกการมาเรียน — ยังไม่มีเครื่องสแกน)
+           ค่าเริ่มต้นทุกคน "มา" ครูเปลี่ยนเฉพาะคนที่สาย/ขาด/กลับก่อน แล้วกดบันทึกครั้งเดียว
+           คนที่มีใบลาอนุมัติแล้วระบบตั้งสถานะให้เองและล็อกไว้
+      ================================================================= -->
+      <section id="view-attendance-check" class="module-view">
+        <div class="glass-card" style="padding: 24px;">
+          <div class="card-header" style="margin-bottom: 16px;flex-wrap:wrap;gap:12px;">
+            <h3><svg class="icon" style="stroke: var(--primary);"><use href="#i-check"/></svg> เช็คชื่อนักเรียน</h3>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span class="att-saved-note" id="att-check-saved-note"></span>
+              <button class="btn btn-secondary btn-sm" onclick="attCheckAllPresent()"><svg class="icon"><use href="#i-refresh"/></svg> ทุกคนมาเรียน</button>
+              <button class="btn btn-primary btn-sm" onclick="saveAttendanceCheck()"><svg class="icon"><use href="#i-check"/></svg> บันทึกการเช็คชื่อ</button>
+            </div>
+          </div>
+          <div class="toolbar" style="margin-bottom: 16px;gap:10px;flex-wrap:wrap;">
+            <select class="glass-select" id="att-check-grade" style="width:120px;" onchange="onAttCheckGradeChange()"></select>
+            <select class="glass-select" id="att-check-room" style="width:110px;" onchange="renderAttendanceCheck()"></select>
+            <input type="date" class="glass-input" id="att-check-date" style="width:170px;" onchange="renderAttendanceCheck()">
+            <span class="att-time-hint" id="att-check-hint"></span>
+          </div>
+          <div class="att-summary-row" id="att-check-summary"></div>
+          <div class="data-table-wrap">
+            <table class="data-table att-table">
+              <thead>
+                <tr>
+                  <th style="width:60px;text-align:center;">เลขที่</th><th>รหัสนักเรียน</th><th>ชื่อ-นามสกุล</th>
+                  <th>สถานะการเข้าเรียน</th><th style="width:120px;">เวลาเข้า</th>
+                  <th>สถานะการเลิกเรียน</th><th style="width:120px;">เวลาออก</th><th>หมายเหตุ</th>
+                </tr>
+              </thead>
+              <tbody id="att-check-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW: รายงานการมาเรียน — ค้นหาจากระดับชั้น, ห้องเรียน, ช่วงวันที่, ชื่อ/รหัสนักเรียน
+      ================================================================= -->
+      <section id="view-attendance-report" class="module-view">
+        <div class="att-summary-row" id="att-report-kpis"></div>
+        <div class="glass-card" style="padding: 24px;">
+          <div class="card-header" style="margin-bottom: 16px;flex-wrap:wrap;gap:12px;">
+            <h3><svg class="icon" style="stroke: var(--primary);"><use href="#i-table"/></svg> รายงานการมาโรงเรียนของนักเรียน</h3>
+            <button class="btn btn-secondary btn-sm" onclick="exportExcel('attendance')"><svg class="icon"><use href="#i-download"/></svg> Export</button>
+          </div>
+          <div class="toolbar" style="margin-bottom: 12px;gap:10px;flex-wrap:wrap;">
+            <div class="search-box">
+              <svg><use href="#i-search"/></svg>
+              <input class="glass-input" id="att-rep-search" placeholder="ค้นหาชื่อหรือรหัสนักเรียน..." oninput="attReportPage=1;renderAttendanceReport()">
+            </div>
+            <select class="glass-select" id="att-rep-grade" style="width:120px;" onchange="onAttRepGradeChange()"></select>
+            <select class="glass-select" id="att-rep-room" style="width:110px;" onchange="attReportPage=1;renderAttendanceReport()"></select>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <input type="date" class="glass-input" id="att-rep-from" style="width:160px;" onchange="attReportPage=1;renderAttendanceReport()">
+              <span style="color:var(--text-muted);font-size:13px;">ถึง</span>
+              <input type="date" class="glass-input" id="att-rep-to" style="width:160px;" onchange="attReportPage=1;renderAttendanceReport()">
+            </div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table att-table">
+              <thead>
+                <tr>
+                  <th>วันที่</th><th>ชั้น/ห้อง</th><th>ชื่อ-นามสกุล</th><th>รหัสนักเรียน</th>
+                  <th>สถานะการเข้าเรียน</th><th>เวลาเข้า</th><th>สถานะการเลิกเรียน</th><th>เวลาออก</th>
+                  <th>บันทึกโดย</th><th>หมายเหตุ</th>
+                </tr>
+              </thead>
+              <tbody id="att-rep-tbody"></tbody>
+            </table>
+          </div>
+          <div class="att-pager" id="att-rep-pager"></div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VIEW: ตั้งค่าเวลาเข้า-เลิกเรียนของนักเรียน (แบบเดียวกับ "วันเวลาเข้าออก" ของบุคลากร
+           ใน app.html view-schedule) — ใช้คำนวณสถานะ ตรงเวลา/สาย/ขาด/ออกก่อนเวลา
+      ================================================================= -->
+      <section id="view-attendance-settings" class="module-view">
+        <div class="shift-cards-row">
+          <div class="shift-stat-card">
+            <div class="shift-stat-icon" style="background:var(--primary-glow);color:var(--primary);"><svg class="icon"><use href="#i-clock"/></svg></div>
+            <div><div class="shift-stat-label">เวลาเข้าเรียน</div><div class="shift-stat-value" id="att-disp-start">-</div></div>
+          </div>
+          <div class="shift-stat-card">
+            <div class="shift-stat-icon" style="background:var(--success-bg);color:var(--success);"><svg class="icon"><use href="#i-clock"/></svg></div>
+            <div><div class="shift-stat-label">เวลาเลิกเรียน</div><div class="shift-stat-value" id="att-disp-end">-</div></div>
+          </div>
+          <div class="shift-stat-card">
+            <div class="shift-stat-icon" style="background:var(--warning-bg);color:var(--warning);"><svg class="icon"><use href="#i-history"/></svg></div>
+            <div><div class="shift-stat-label">ขีดจำกัดสาย</div><div class="shift-stat-value" id="att-disp-late">-</div></div>
+          </div>
+          <div class="shift-stat-card">
+            <div class="shift-stat-icon" style="background:var(--info-bg);color:var(--info);"><svg class="icon"><use href="#i-calendar"/></svg></div>
+            <div><div class="shift-stat-label">วันเรียน</div><div class="shift-stat-value" id="att-disp-days">-</div></div>
+          </div>
+        </div>
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><svg class="icon"><use href="#i-clock"/></svg> เวลาเรียนหลัก</h3>
+            <button class="btn btn-primary btn-sm" onclick="saveAttendanceSettings()">บันทึก</button>
+          </div>
+          <div class="form-grid-4">
+            <div class="form-group"><label for="att-set-start">เวลาเข้าเรียน <span class="req">*</span></label><input type="time" id="att-set-start" class="glass-input"></div>
+            <div class="form-group"><label for="att-set-end">เวลาเลิกเรียน <span class="req">*</span></label><input type="time" id="att-set-end" class="glass-input"></div>
+            <div class="form-group"><label for="att-set-absent">เวลาที่ถือว่า "ขาดเรียน"</label><input type="time" id="att-set-absent" class="glass-input"></div>
+            <div class="form-group"><label for="att-set-gate-open">เวลาเปิดประตู (เริ่มบันทึกเวลาเข้า)</label><input type="time" id="att-set-gate-open" class="glass-input"></div>
+          </div>
+          <div class="section-divider"></div>
+          <div class="form-grid-3">
+            <div class="form-group"><label for="att-set-late">นาทีที่ถือว่า "มาสาย" (หลังเวลาเข้าเรียน)</label>
+              <div class="input-with-unit"><input type="number" id="att-set-late" class="glass-input" min="0" max="120"><span class="unit-label">นาที</span></div>
+            </div>
+            <div class="form-group"><label for="att-set-early">นาทีที่ถือว่า "ออกก่อนเวลา" (ก่อนเวลาเลิกเรียน)</label>
+              <div class="input-with-unit"><input type="number" id="att-set-early" class="glass-input" min="0" max="120"><span class="unit-label">นาที</span></div>
+            </div>
+          </div>
+          <p class="card-desc" style="margin-top:12px;">ตัวอย่าง: เข้าเรียน 08:00 และขีดจำกัดสาย 0 นาที → มาถึง 08:01 ขึ้นไปถือว่า "สาย" ถ้ามาถึงหลังเวลาที่ถือว่าขาดเรียน (หรือไม่มาเลย) → "ขาด"</p>
+        </div>
+        <div class="glass-card">
+          <div class="card-header">
+            <h3><svg class="icon"><use href="#i-calendar"/></svg> กำหนดวันเรียนประจำสัปดาห์</h3>
+          </div>
+          <p class="card-desc">เลือกวันที่มีการเรียนการสอน (วันที่ไม่ได้เลือกจะไม่แสดงในการเช็คชื่อและรายงาน)</p>
+          <div class="weekday-selector" id="att-set-days">
+            <label class="day-btn"><input type="checkbox" value="0"><span>อา</span></label>
+            <label class="day-btn"><input type="checkbox" value="1"><span>จ</span></label>
+            <label class="day-btn"><input type="checkbox" value="2"><span>อ</span></label>
+            <label class="day-btn"><input type="checkbox" value="3"><span>พ</span></label>
+            <label class="day-btn"><input type="checkbox" value="4"><span>พฤ</span></label>
+            <label class="day-btn"><input type="checkbox" value="5"><span>ศ</span></label>
+            <label class="day-btn"><input type="checkbox" value="6"><span>ส</span></label>
+          </div>
+        </div>
+      </section>
+
     </div><!-- /content-body -->
   </main>
 </div><!-- /app-container -->
@@ -1672,6 +1834,59 @@ const STUDENTS = [
   { id:'S-1001', name:'มาลี ชนะภัย',     cls:'ม.1/1', no: 3 },
   { id:'S-5001', name:'ภัทรวดี ไชยวงค์', cls:'ม.5/1', no:11 },
 ];
+
+// ----------------------------------------------------------------------
+// รายชื่อนักเรียนตัวอย่างเพิ่มเติม (สำหรับเช็คชื่อ/รายงานการมาเรียน) — สร้างแบบ deterministic
+// (seed คงที่) ให้ได้ชื่อชุดเดิมทุกครั้งที่โหลดหน้า เติมห้องละ ATT_ROOM_SIZE คนโดยไม่ทับเลขที่
+// ของ 8 คนเดิมด้านบน รหัสใหม่เป็น S-<ชั้น><ห้อง><เลขที่ 2 หลัก> จึงไม่ชนกับรหัสเดิม (S-x0xx)
+// gender ใช้เลือกคำนำหน้า (เด็กชาย/เด็กหญิง ม.1-3, นาย/นางสาว ม.4-6) ดู studentFullName()
+// ----------------------------------------------------------------------
+const ATT_ROOM_SIZE = 25;
+const ATT_ROOMS = ['ม.1/1', 'ม.1/2', 'ม.2/3', 'ม.3/1', 'ม.4/2', 'ม.5/1', 'ม.6/1'];
+const STUDENT_GENDER_SEED = { 'S-3001': 'M', 'S-3002': 'F', 'S-2001': 'F', 'S-2002': 'F', 'S-4001': 'M', 'S-4002': 'M', 'S-1001': 'F', 'S-5001': 'F' };
+
+function seededRandom(seedText) {
+  // mulberry32 จาก hash ของข้อความ — ได้ลำดับสุ่มเดิมเสมอสำหรับ seed เดิม
+  let h = 1779033703 ^ seedText.length;
+  for (let i = 0; i < seedText.length; i++) {
+    h = Math.imul(h ^ seedText.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  let a = h >>> 0;
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+(function generateStudentRoster() {
+  const male = ['ปุณณ์', 'ธนภัทร', 'กิตติพัศ', 'ภูมิพัฒน์', 'ณัฐวุฒิ', 'ศุภกร', 'พีรพัฒน์', 'ธีรเดช', 'วรเมธ', 'ชยพล', 'อชิรวิทย์', 'ภาคิน', 'ธนกฤต', 'ปกรณ์', 'รัชชานนท์', 'สิรวิชญ์', 'กฤษดา', 'ณภัทร'];
+  const female = ['ปุณยวีร์', 'ณิชาภัทร', 'พิมพ์ชนก', 'กัญญาณัฐ', 'ชนิดา', 'อรปรียา', 'ธัญชนก', 'ศิริกานดา', 'พรรษชล', 'ปาณิสรา', 'วรัญญา', 'สุชานันท์', 'ภัทรธิดา', 'กมลชนก', 'ญาณิศา', 'เบญญาภา', 'นันทิชา', 'ปริยากร'];
+  const last = ['จันทร์ประโคน', 'ศรีสุข', 'บุญมา', 'แก้วมณี', 'ทองดี', 'สายสุวรรณ', 'พรหมวงศ์', 'รุ่งเรือง', 'ใจงาม', 'มั่นคง', 'วงศ์ไทย', 'ประเสริฐ', 'สมบูรณ์', 'ชัยมงคล', 'พูลสวัสดิ์', 'อินทรสุวรรณ', 'เพชรรัตน์', 'บุญเรือง', 'ศักดิ์ดี', 'คำภา'];
+  STUDENTS.forEach(s => { s.gender = STUDENT_GENDER_SEED[s.id] || 'M'; });
+  ATT_ROOMS.forEach(cls => {
+    const rand = seededRandom('roster|' + cls);
+    const used = new Set(STUDENTS.filter(s => s.cls === cls).map(s => s.no));
+    const [g, rm] = cls.replace('ม.', '').split('/');
+    for (let no = 1; no <= ATT_ROOM_SIZE; no++) {
+      if (used.has(no)) continue;
+      const gender = rand() < 0.5 ? 'M' : 'F';
+      const pool = gender === 'M' ? male : female;
+      const name = pool[Math.floor(rand() * pool.length)] + ' ' + last[Math.floor(rand() * last.length)];
+      STUDENTS.push({ id: 'S-' + g + rm + String(no).padStart(2, '0'), name, cls, no, gender });
+    }
+  });
+})();
+
+// ชื่อเต็มพร้อมคำนำหน้า เช่น "เด็กชาย ปุณณ์ จันทร์ประโคน" (ม.1-3) / "นาย ..." (ม.4-6)
+function studentFullName(s) {
+  const grade = parseInt(String(s.cls || '').replace('ม.', ''), 10) || 0;
+  const prefix = grade >= 4 ? (s.gender === 'F' ? 'นางสาว' : 'นาย') : (s.gender === 'F' ? 'เด็กหญิง' : 'เด็กชาย');
+  return prefix + ' ' + s.name;
+}
+
 
 const EMPLOYEES = [
   {
@@ -1997,6 +2212,9 @@ const STUDENT_LEAVE_REQUESTS = [
   { id:'SL-0003', studentId:'S-4001', name:'ธนากร ทองคำ',     cls:'ม.4/2', type:'ลาป่วย',  submitDate:'2026-08-20', startDate:'2026-08-21', endDate:'2026-08-22', days:2, reason:'ผ่าตัดไส้ติ่ง',                  attachment:{ name:'ใบรับรองแพทย์-SL-0003.pdf', size:'198 KB' }, status:'อนุมัติ', comment:'อนุมัติในระบบ' },
   { id:'SL-0004', studentId:'S-1001', name:'มาลี ชนะภัย',     cls:'ม.1/1', type:'ลาอื่น ๆ', submitDate:'2026-08-18', startDate:'2026-08-19', endDate:'2026-08-19', days:1, reason:'เข้าร่วมแข่งขันกีฬาระดับจังหวัด', attachment:null, status:'อนุมัติ', comment:'อนุมัติในระบบ' },
   { id:'SL-0005', studentId:'S-5001', name:'ภัทรวดี ไชยวงค์', cls:'ม.5/1', type:'ลากิจ',   submitDate:'2026-08-15', startDate:'2026-08-16', endDate:'2026-08-16', days:1, reason:'ไปทำบัตรประชาชน',               attachment:null, status:'ไม่อนุมัติ', comment:'เอกสารไม่ครบถ้วน' },
+  // ลาป่วยระยะยาว (ทดสอบใบลาที่กินเวลาหลายสัปดาห์ ครอบคลุมทั้งวันนี้และอนาคต) — ล็อกแถวใน
+  // "เช็คชื่อนักเรียน" และขึ้นสถานะ "ลาป่วย" ใน "รายงานการมาเรียน" ทุกวันเรียนตลอดช่วงนี้
+  { id:'SL-0006', studentId:'S-1001', name:'มาลี ชนะภัย',     cls:'ม.1/1', type:'ลาป่วย',  submitDate:'2026-09-22', startDate:'2026-09-23', endDate:'2026-10-31', days:39, reason:'ป่วยเป็นไข้เลือดออก แพทย์ให้พักฟื้นระยะยาว', attachment:{ name:'ใบรับรองแพทย์-SL-0006.pdf', size:'312 KB' }, status:'อนุมัติ', comment:'อนุมัติในระบบ' },
 ];
 
 const TICKET_TYPES = ['เข้าห้องเรียนช้า', 'ออกนอกห้องเรียน', 'ออกนอกบริเวณโรงเรียน', 'อนุญาตอื่น ๆ', 'ผู้ปกครองมารับก่อนกำหนด'];
@@ -2019,7 +2237,10 @@ const VIEW_TITLES = {
   'ticket-calendar': 'รายการบัตรขออนุญาต',
   'employees':   'รายชื่อบุคลากรและอาจารย์',
   'sl-submit': 'ยื่นขอลาของนักเรียน',
-  'student-leave-settings': 'ตั้งค่าการลาเรียน'
+  'student-leave-settings': 'ตั้งค่าการลาเรียน',
+  'attendance-check': 'เช็คชื่อนักเรียน',
+  'attendance-report': 'รายงานการมาเรียน',
+  'attendance-settings': 'เวลาเข้า-เลิกเรียนของนักเรียน'
 };
 
 // ======================================================================
@@ -2090,13 +2311,13 @@ function showModuleView(view, activeItem = null) {
   targetView.classList.add('active');
   document.getElementById('current-title').textContent = VIEW_TITLES[view];
 
-  if (view === 'student-leave-settings' || view === 'sl-submit') {
-    document.getElementById('breadcrumb').textContent = 'SchoolDark / การลาเรียนของนักเรียน / ' + VIEW_TITLES[view];
-  } else if (view === 'approve') {
-    document.getElementById('breadcrumb').textContent = 'SchoolDark / การอนุมัติ / ' + VIEW_TITLES[view];
-  } else {
-    document.getElementById('breadcrumb').textContent = 'SchoolDark / รายงาน & บัตรอนุญาต / ' + VIEW_TITLES[view];
-  }
+  // หมวดตรงกับกลุ่มใน sidebar (NAV_GROUPS ใน ../shared/cross-nav.js)
+  const BREADCRUMB_GROUP = {
+    'sl-submit': 'การลาเรียนของนักเรียน', 'approve': 'การลาเรียนของนักเรียน',
+    'attendance-check': 'การมาเรียนของนักเรียน', 'attendance-report': 'การมาเรียนของนักเรียน',
+    'student-leave-settings': 'การตั้งค่า', 'attendance-settings': 'การตั้งค่า'
+  };
+  document.getElementById('breadcrumb').textContent = 'SchoolDark / ' + (BREADCRUMB_GROUP[view] || 'บัตรขออนุญาตนักเรียน') + ' / ' + VIEW_TITLES[view];
 
   if (view === 'history') {
     renderHistKpi();
@@ -2106,6 +2327,9 @@ function showModuleView(view, activeItem = null) {
   if (view === 'student-leave-settings') renderStudentLeaveSettings();
   if (view === 'sl-submit') renderSLSubmitPending();
   if (view === 'approve') renderApprovals();
+  if (view === 'attendance-check') renderAttendanceCheckView();
+  if (view === 'attendance-report') renderAttendanceReportView();
+  if (view === 'attendance-settings') renderAttendanceSettings();
   if (view === 'ticket-calendar') { renderTicketApprovals(); renderStudentList(); renderSummary(); }
 }
 
@@ -4835,6 +5059,10 @@ function exportExcel(type) {
     headers = ['รหัส','ชื่อ-สกุล','ชั้น','ประเภท','วันที่','ช่วงเวลา','เหตุผล','สถานะ'];
     data = HISTORY.map(r => [r.id, r.name, r.cls, r.type, thaiDate(r.date), r.time, r.reason, r.status]);
     filename = 'รายการบัตรขออนุญาตของนักเรียน.xlsx';
+  } else if (type === 'attendance') {
+    headers = ['วันที่','ชั้น/ห้อง','ชื่อ-นามสกุล','รหัสนักเรียน','สถานะการเข้าเรียน','เวลาเข้า','สถานะการเลิกเรียน','เวลาออก','บันทึกโดย','หมายเหตุ'];
+    data = attReportRows.map(({ date, s, rec }) => [thaiDate(date), s.cls, studentFullName(s), s.id, rec.statusIn, rec.timeIn || '-', rec.statusOut || '-', rec.timeOut || '-', rec.recordedBy || '-', rec.note || '-']);
+    filename = 'รายงานการมาเรียนของนักเรียน.xlsx';
   } else if (type === 'sl-requests') {
     headers = ['วันที่ยื่น','ชื่อนักเรียน','ชั้น','ประเภทการลา','วันที่เริ่มลา','วันที่สิ้นสุด','จำนวนวัน','เหตุผล','สถานะ'];
     data = STUDENT_LEAVE_REQUESTS.map(r => [thaiDate(r.submitDate), r.name, r.cls, r.type, thaiDate(r.startDate), thaiDate(r.endDate), r.days, r.reason, r.status]);
@@ -5493,6 +5721,458 @@ window.saveAllSettings = saveAllSettings;
 window.handleApproverRoleChange = handleApproverRoleChange;
 window.handleApproverCountChange = handleApproverCountChange;
 window.syncApproverRoleCards = syncApproverRoleCards;
+
+
+// ======================================================================
+//  การมาเรียนของนักเรียน — เช็คชื่อ / รายงาน / ตั้งค่าเวลาเข้า-เลิกเรียน
+//  ยังไม่มีเครื่องสแกน: ข้อมูลมาจาก (1) ครูเช็คชื่อ (2) ใบลาที่อนุมัติแล้ว (3) บัตรขออนุญาต
+//  ออกนอกโรงเรียน/ผู้ปกครองมารับ — source 'scan'/'import' เผื่อไว้สำหรับเครื่องสแกนในอนาคต
+//  ที่เก็บ: localStorage sd_student_attendance (เฉพาะที่ครูบันทึก) และ
+//           sd_student_attendance_settings (เวลาเข้า-เลิกเรียน) — วันที่ผ่านมาแล้วที่ครูยังไม่ได้
+//  บันทึกจะใช้ข้อมูลตัวอย่างที่สุ่มแบบ deterministic (ดู attMockRecord) เพื่อให้รายงานมีข้อมูลดู
+// ======================================================================
+const ATT_SETTINGS_KEY = 'sd_student_attendance_settings';
+const ATT_RECORDS_KEY = 'sd_student_attendance';
+const ATT_DEFAULT_SETTINGS = { start: '08:00', end: '16:30', absentAfter: '10:00', gateOpen: '06:30', lateMin: 0, earlyMin: 0, days: [1, 2, 3, 4, 5] };
+const ATT_EXIT_TICKET_TYPES = ['ออกนอกบริเวณโรงเรียน', 'ผู้ปกครองมารับก่อนกำหนด'];
+const ATT_DAY_LABELS = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+const ATT_SOURCE_NOTE = { teacher: 'เช็คชื่อโดยครู', scan: 'สแกนด้วยบัตร', import: 'นำเข้าจากไฟล์', leave: 'อ้างอิงใบลา' };
+const ATT_REPORT_PAGE_SIZE = 50;
+const ATT_REPORT_MAX_DAYS = 62;
+
+let attSettings = attLoad(ATT_SETTINGS_KEY, null) || { ...ATT_DEFAULT_SETTINGS };
+let attRecords = attLoad(ATT_RECORDS_KEY, {}) || {};
+let attCheckDraft = {};
+let attReportFilter = 'all';
+let attReportPage = 1;
+let attReportRows = [];
+
+function attLoad(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+}
+function attStore(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+}
+function attToast(message) {
+  let box = document.getElementById('toast-container');
+  if (!box) { box = document.createElement('div'); box.id = 'toast-container'; document.body.appendChild(box); }
+  const t = document.createElement('div');
+  t.className = 'toast toast-success';
+  t.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span></span>';
+  t.querySelector('span').textContent = message;
+  box.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+// ---- วันที่ / เวลา ----
+function attToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function attAddDays(dateStr, n) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d + n);
+  return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+}
+function attWeekday(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d).getDay();
+}
+function attIsSchoolDay(dateStr) { return attSettings.days.includes(attWeekday(dateStr)); }
+function attMin(t) { if (!t || t === '-') return null; const [h, m] = t.split(':').map(Number); return h * 60 + m; }
+function attHHMM(mins) { return String(Math.floor(mins / 60)).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'); }
+
+// ---- คำนวณสถานะจากเวลา ตามหน้าตั้งค่า ----
+function attStatusInFromTime(timeIn) {
+  const t = attMin(timeIn);
+  if (t === null) return 'ตรงเวลา';
+  if (t > attMin(attSettings.absentAfter)) return 'ขาด';
+  if (t > attMin(attSettings.start) + Number(attSettings.lateMin || 0)) return 'สาย';
+  return 'ตรงเวลา';
+}
+function attStatusOutFromTime(timeOut) {
+  const t = attMin(timeOut);
+  if (t === null) return 'ตรงเวลา';
+  return t < attMin(attSettings.end) - Number(attSettings.earlyMin || 0) ? 'ออกก่อนเวลา' : 'ตรงเวลา';
+}
+// หมวดของสถานะเข้า ใช้กับ badge / KPI / ชิปกรอง
+function attCategory(statusIn) {
+  if (statusIn === 'ตรงเวลา') return 'ontime';
+  if (statusIn === 'สาย') return 'late';
+  if (statusIn === 'ขาด') return 'absent';
+  if (statusIn === 'ยังไม่เช็คชื่อ') return 'none';
+  return 'leave'; // ลาป่วย / ลากิจ / ประเภทการลาอื่นจาก STUDENT_LEAVE_TYPES
+}
+function attBadgeIn(statusIn) {
+  const cls = { ontime: 'success', late: 'warning', absent: 'danger', leave: 'info', none: 'muted' }[attCategory(statusIn)];
+  return `<span class="badge ${cls}">${statusIn}</span>`;
+}
+function attBadgeOut(statusOut) {
+  if (!statusOut || statusOut === '-') return '<span style="color:var(--text-muted);">-</span>';
+  const cls = statusOut === 'ตรงเวลา' ? 'success' : statusOut === 'ออกก่อนเวลา' ? 'warning' : 'muted';
+  return `<span class="badge ${cls}">${statusOut}</span>`;
+}
+
+function homeroomTeacherName(cls) {
+  const t = (typeof EMPLOYEES !== 'undefined' ? EMPLOYEES : []).find(e => (e.pos || '').includes('ครูประจำชั้น ' + cls));
+  return t ? t.name : 'ครูประจำชั้น ' + cls;
+}
+function attApprovedLeave(studentId, dateStr) {
+  return STUDENT_LEAVE_REQUESTS.find(r => r.studentId === studentId && r.status === 'อนุมัติ' && r.startDate <= dateStr && dateStr <= r.endDate);
+}
+function attExitTicket(studentId, dateStr) {
+  return HISTORY.find(h => h.id === studentId && h.date === dateStr && h.status === 'อนุมัติ' && ATT_EXIT_TICKET_TYPES.includes(h.type));
+}
+
+// ข้อมูลตัวอย่างของวันที่ผ่านมาแล้ว (เหมือนครูเช็คชื่อไว้): ส่วนใหญ่มาตรงเวลา (ไม่มีเวลาจริง),
+// บางคนสาย (มีเวลามาถึง → สถานะคิดจากหน้าตั้งค่า), ขาดบ้าง, กลับก่อนบ้าง
+function attMockRecord(s, dateStr) {
+  const rand = seededRandom('att|' + s.id + '|' + dateStr);
+  const r = rand();
+  const rec = { statusIn: 'ตรงเวลา', timeIn: '-', statusOut: 'ตรงเวลา', timeOut: '-', note: '', source: 'teacher', recordedBy: homeroomTeacherName(s.cls) };
+  if (r < 0.035) {
+    rec.statusIn = 'ขาด'; rec.statusOut = '-';
+    rec.note = rand() < 0.5 ? 'ไม่ได้แจ้ง' : 'ผู้ปกครองโทรแจ้ง ไม่สบาย';
+  } else if (r < 0.11) {
+    rec.timeIn = attHHMM(attMin(attSettings.start) - 10 + Math.floor(rand() * 55));
+    rec.statusIn = attStatusInFromTime(rec.timeIn);
+    const lateReason = ['รถติด', 'ตื่นสาย', 'ฝนตก', 'ไปทำธุระกับผู้ปกครอง'][Math.floor(rand() * 4)];
+    if (rec.statusIn === 'สาย') rec.note = lateReason; // ถึงก่อนเกณฑ์สาย (ตามหน้าตั้งค่า) → ไม่ต้องมีเหตุผล
+  }
+  if (rec.statusIn !== 'ขาด' && rand() < 0.025) {
+    rec.timeOut = attHHMM(attMin(attSettings.end) - 30 - Math.floor(rand() * 150));
+    rec.statusOut = attStatusOutFromTime(rec.timeOut);
+    rec.note = (rec.note ? rec.note + ', ' : '') + 'ผู้ปกครองมารับ';
+  }
+  return rec;
+}
+
+// สถานะการมาเรียนที่ใช้แสดงจริงของนักเรียน 1 คนใน 1 วัน (ลำดับความสำคัญ: ใบลาที่อนุมัติ →
+// ที่ครูบันทึก → ข้อมูลตัวอย่างของวันที่ผ่านมาแล้ว → "ยังไม่เช็คชื่อ") แล้วเติมบัตรขออนุญาตออก
+// นอกโรงเรียนลงช่องเลิกเรียนถ้ายังเป็น "ตรงเวลา" อยู่
+function getAttendance(s, dateStr) {
+  const leave = attApprovedLeave(s.id, dateStr);
+  if (leave) {
+    return { statusIn: leave.type, timeIn: '-', statusOut: '-', timeOut: '-', source: 'leave', locked: true, reqId: leave.id,
+             recordedBy: 'ระบบ (ใบลา)', note: 'ใบลา ' + leave.id + (leave.reason ? ' — ' + leave.reason : '') };
+  }
+  let rec = attRecords[dateStr + '|' + s.id];
+  if (rec) rec = { ...rec };
+  else if (dateStr < attToday()) rec = attMockRecord(s, dateStr);
+  else rec = { statusIn: 'ยังไม่เช็คชื่อ', timeIn: '-', statusOut: '-', timeOut: '-', note: '', source: '', recordedBy: '' };
+
+  const ticket = attExitTicket(s.id, dateStr);
+  if (ticket && rec.statusOut === 'ตรงเวลา' && rec.statusIn !== 'ขาด') {
+    rec.statusOut = 'ออกก่อนเวลา';
+    rec.timeOut = (ticket.time || '').split('-')[0] || '-';
+    rec.note = (rec.note ? rec.note + ', ' : '') + 'บัตรขออนุญาต: ' + ticket.type;
+  }
+  if (!rec.note && rec.source) rec.note = ATT_SOURCE_NOTE[rec.source] || '';
+  return rec;
+}
+
+function attRoomsOfGrade(grade) {
+  return [...new Set(STUDENTS.filter(s => !grade || s.cls.split('/')[0] === grade).map(s => s.cls.split('/')[1]))]
+    .sort((a, b) => Number(a) - Number(b));
+}
+function attStudentsOf(grade, room) {
+  return STUDENTS.filter(s => studentMatchesGradeRoom(s.cls, grade, room))
+    .sort((a, b) => a.cls.localeCompare(b.cls, 'th', { numeric: true }) || a.no - b.no);
+}
+
+// ======================================================================
+//  เช็คชื่อนักเรียน
+// ======================================================================
+function renderAttendanceCheckView() {
+  const gradeSel = document.getElementById('att-check-grade');
+  const dateInp = document.getElementById('att-check-date');
+  if (!gradeSel.options.length) {
+    const grades = studentGradeOptions();
+    gradeSel.innerHTML = grades.map(g => `<option value="${g}">${g}</option>`).join('');
+    onAttCheckGradeChange(true);
+  }
+  if (!dateInp.value) dateInp.value = attToday();
+  dateInp.max = attToday();
+  renderAttendanceCheck();
+}
+function onAttCheckGradeChange(silent) {
+  const grade = document.getElementById('att-check-grade').value;
+  const roomSel = document.getElementById('att-check-room');
+  roomSel.innerHTML = attRoomsOfGrade(grade).map(r => `<option value="${r}">ห้อง ${r}</option>`).join('');
+  if (!silent) renderAttendanceCheck();
+}
+
+function renderAttendanceCheck() {
+  const grade = document.getElementById('att-check-grade').value;
+  const room = document.getElementById('att-check-room').value;
+  let dateStr = document.getElementById('att-check-date').value || attToday();
+  if (dateStr > attToday()) { dateStr = attToday(); document.getElementById('att-check-date').value = dateStr; }
+  const tbody = document.getElementById('att-check-tbody');
+  const hint = document.getElementById('att-check-hint');
+  const savedNote = document.getElementById('att-check-saved-note');
+  hint.textContent = `เข้าเรียน ${attSettings.start} น. · สายหลัง ${attHHMM(attMin(attSettings.start) + Number(attSettings.lateMin || 0))} น. · เลิกเรียน ${attSettings.end} น.`;
+
+  if (!attIsSchoolDay(dateStr)) {
+    attCheckDraft = {};
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted);">วันที่เลือกไม่ใช่วันเรียน (ตั้งค่าวันเรียนได้ที่ "เวลาเข้า-เลิกเรียนของนักเรียน")</td></tr>`;
+    document.getElementById('att-check-summary').innerHTML = '';
+    savedNote.textContent = '';
+    return;
+  }
+
+  const list = attStudentsOf(grade, room);
+  attCheckDraft = {};
+  let lastSaved = null;
+  list.forEach(s => {
+    const rec = getAttendance(s, dateStr);
+    const saved = attRecords[dateStr + '|' + s.id];
+    if (saved && (!lastSaved || saved.savedAt > lastSaved.savedAt)) lastSaved = saved;
+    attCheckDraft[s.id] = rec.locked ? { ...rec } : {
+      statusIn: rec.statusIn === 'ยังไม่เช็คชื่อ' ? 'ตรงเวลา' : rec.statusIn,
+      timeIn: rec.timeIn, statusOut: rec.statusIn === 'ยังไม่เช็คชื่อ' ? 'ตรงเวลา' : rec.statusOut,
+      timeOut: rec.timeOut, note: saved ? (saved.note || '') : (rec.source === 'teacher' ? '' : rec.note)
+    };
+    // บัตรขออนุญาตออกนอกโรงเรียนของวันนี้ → ตั้ง "ออกก่อนเวลา" ให้เลย
+    if (!rec.locked && !saved) {
+      const ticket = attExitTicket(s.id, dateStr);
+      if (ticket && attCheckDraft[s.id].statusIn !== 'ขาด') {
+        attCheckDraft[s.id].statusOut = 'ออกก่อนเวลา';
+        attCheckDraft[s.id].timeOut = (ticket.time || '').split('-')[0] || '-';
+        attCheckDraft[s.id].note = 'บัตรขออนุญาต: ' + ticket.type;
+      }
+    }
+  });
+  savedNote.textContent = lastSaved
+    ? `บันทึกล่าสุดโดย ${lastSaved.recordedBy} · ${new Date(lastSaved.savedAt).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}`
+    : (dateStr < attToday() ? 'ข้อมูลตัวอย่าง (ยังไม่มีการบันทึกจริง)' : 'ยังไม่ได้เช็คชื่อ');
+
+  tbody.innerHTML = list.map(s => attCheckRowHTML(s)).join('') ||
+    `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted);">ไม่มีนักเรียนในห้องนี้</td></tr>`;
+  renderAttendanceCheckSummary();
+}
+
+function attCheckRowHTML(s) {
+  const d = attCheckDraft[s.id];
+  if (d.locked) {
+    const noteHtml = d.reqId
+      ? `<a href="#" style="color:inherit;text-decoration:underline;" onclick="viewSLRequestDetails('${d.reqId}');return false;" title="ดูรายละเอียดใบลา">${d.note}</a>`
+      : d.note;
+    return `<tr class="att-row-locked">
+      <td style="text-align:center;">${s.no}</td><td>${s.id}</td><td><strong>${studentFullName(s)}</strong></td>
+      <td>${attBadgeIn(d.statusIn)}</td><td>-</td><td>-</td><td>-</td>
+      <td style="color:var(--text-muted);font-size:12px;">${noteHtml}</td></tr>`;
+  }
+  const seg = ['ตรงเวลา', 'สาย', 'ขาด'].map(v =>
+    `<button type="button" class="att-seg-btn ${d.statusIn === v ? 'on ' + attCategory(v) : ''}" onclick="setAttDraft('${s.id}','statusIn','${v}')">${v === 'ตรงเวลา' ? 'มา' : v}</button>`).join('');
+  const absent = d.statusIn === 'ขาด';
+  const early = d.statusOut === 'ออกก่อนเวลา';
+  return `<tr>
+    <td style="text-align:center;">${s.no}</td><td>${s.id}</td><td><strong>${studentFullName(s)}</strong></td>
+    <td><div class="att-seg">${seg}</div></td>
+    <td><input type="time" class="glass-input att-time" value="${d.timeIn !== '-' ? d.timeIn : ''}" ${d.statusIn === 'สาย' ? '' : 'disabled'} onchange="setAttDraft('${s.id}','timeIn',this.value)"></td>
+    <td>${absent ? '<select class="glass-select att-out" disabled><option>-</option></select>' : `<select class="glass-select att-out" onchange="setAttDraft('${s.id}','statusOut',this.value)">
+      <option value="ตรงเวลา" ${!early ? 'selected' : ''}>ตรงเวลา</option>
+      <option value="ออกก่อนเวลา" ${early ? 'selected' : ''}>ออกก่อนเวลา</option></select>`}</td>
+    <td><input type="time" class="glass-input att-time" value="${d.timeOut !== '-' ? d.timeOut : ''}" ${early && !absent ? '' : 'disabled'} onchange="setAttDraft('${s.id}','timeOut',this.value)"></td>
+    <td><input class="glass-input att-note" value="${(d.note || '').replace(/"/g, '&quot;')}" placeholder="-" oninput="setAttDraft('${s.id}','note',this.value,true)"></td>
+  </tr>`;
+}
+
+function setAttDraft(id, field, value, noRerender) {
+  const d = attCheckDraft[id];
+  if (!d || d.locked) return;
+  d[field] = value || (field === 'note' ? '' : '-');
+  if (field === 'statusIn') {
+    if (value !== 'สาย') d.timeIn = '-';
+    if (value === 'ขาด') { d.statusOut = '-'; d.timeOut = '-'; }
+    else if (d.statusOut === '-') d.statusOut = 'ตรงเวลา';
+  }
+  if (field === 'statusOut' && value !== 'ออกก่อนเวลา') d.timeOut = '-';
+  if (noRerender) return;
+  const s = STUDENTS.find(x => x.id === id);
+  const rows = document.getElementById('att-check-tbody').children;
+  const idx = attStudentsOf(document.getElementById('att-check-grade').value, document.getElementById('att-check-room').value).findIndex(x => x.id === id);
+  if (rows[idx]) rows[idx].outerHTML = attCheckRowHTML(s);
+  renderAttendanceCheckSummary();
+}
+
+function attCheckAllPresent() {
+  Object.values(attCheckDraft).forEach(d => {
+    if (d.locked) return;
+    d.statusIn = 'ตรงเวลา'; d.timeIn = '-'; d.statusOut = 'ตรงเวลา'; d.timeOut = '-';
+  });
+  const grade = document.getElementById('att-check-grade').value;
+  const room = document.getElementById('att-check-room').value;
+  document.getElementById('att-check-tbody').innerHTML = attStudentsOf(grade, room).map(s => attCheckRowHTML(s)).join('');
+  renderAttendanceCheckSummary();
+}
+
+function renderAttendanceCheckSummary() {
+  const c = { ontime: 0, late: 0, absent: 0, leave: 0, early: 0 };
+  const all = Object.values(attCheckDraft);
+  all.forEach(d => { c[attCategory(d.statusIn)] = (c[attCategory(d.statusIn)] || 0) + 1; if (d.statusOut === 'ออกก่อนเวลา') c.early++; });
+  document.getElementById('att-check-summary').innerHTML =
+    `<span>ทั้งหมด <strong>${all.length}</strong> คน</span>` +
+    `<span class="badge success">มา ${c.ontime}</span><span class="badge warning">สาย ${c.late}</span>` +
+    `<span class="badge danger">ขาด ${c.absent}</span><span class="badge info">ลา ${c.leave}</span>` +
+    `<span class="badge warning">ออกก่อนเวลา ${c.early}</span>`;
+}
+
+function saveAttendanceCheck() {
+  const dateStr = document.getElementById('att-check-date').value || attToday();
+  if (!attIsSchoolDay(dateStr)) return;
+  const now = Date.now();
+  let n = 0;
+  Object.entries(attCheckDraft).forEach(([id, d]) => {
+    if (d.locked) return;
+    attRecords[dateStr + '|' + id] = {
+      statusIn: d.statusIn, timeIn: d.statusIn === 'สาย' ? (d.timeIn || '-') : '-',
+      statusOut: d.statusIn === 'ขาด' ? '-' : d.statusOut, timeOut: d.statusOut === 'ออกก่อนเวลา' ? (d.timeOut || '-') : '-',
+      note: (d.note || '').trim(), source: 'teacher', recordedBy: CURRENT_APPROVER_NAME, savedAt: now
+    };
+    n++;
+  });
+  attStore(ATT_RECORDS_KEY, attRecords);
+  renderAttendanceCheck();
+  const room = document.getElementById('att-check-grade').value + '/' + document.getElementById('att-check-room').value;
+  attToast(`บันทึกการเช็คชื่อ ${room} วันที่ ${thaiDate(dateStr)} แล้ว (${n} คน)`);
+}
+
+// ======================================================================
+//  รายงานการมาเรียน
+// ======================================================================
+function renderAttendanceReportView() {
+  const gradeSel = document.getElementById('att-rep-grade');
+  if (!gradeSel.options.length) {
+    gradeSel.innerHTML = '<option value="">ทุกระดับชั้น</option>' + studentGradeOptions().map(g => `<option value="${g}">${g}</option>`).join('');
+    onAttRepGradeChange(true);
+    const today = attToday();
+    document.getElementById('att-rep-from').value = today;
+    document.getElementById('att-rep-to').value = today;
+  }
+  document.getElementById('att-rep-from').max = attToday();
+  document.getElementById('att-rep-to').max = attToday();
+  renderAttendanceReport();
+}
+function onAttRepGradeChange(silent) {
+  const grade = document.getElementById('att-rep-grade').value;
+  const roomSel = document.getElementById('att-rep-room');
+  roomSel.innerHTML = '<option value="">ทุกห้อง</option>' + attRoomsOfGrade(grade).map(r => `<option value="${r}">ห้อง ${r}</option>`).join('');
+  attReportPage = 1;
+  if (!silent) renderAttendanceReport();
+}
+function setAttReportFilter(f) { attReportFilter = f; attReportPage = 1; renderAttendanceReport(); }
+function setAttReportPage(p) { attReportPage = p; renderAttendanceReport(); }
+
+function renderAttendanceReport() {
+  const grade = document.getElementById('att-rep-grade').value;
+  const room = document.getElementById('att-rep-room').value;
+  const q = document.getElementById('att-rep-search').value.trim().toLowerCase();
+  const today = attToday();
+  let from = document.getElementById('att-rep-from').value || today;
+  let to = document.getElementById('att-rep-to').value || today;
+  if (to > today) to = today;
+  if (from > to) [from, to] = [to, from];
+  let capped = false;
+  if (attAddDays(from, ATT_REPORT_MAX_DAYS - 1) < to) { from = attAddDays(to, -(ATT_REPORT_MAX_DAYS - 1)); capped = true; }
+
+  const students = attStudentsOf(grade, room).filter(s =>
+    !q || s.name.toLowerCase().includes(q) || studentFullName(s).toLowerCase().includes(q) || s.id.toLowerCase().includes(q));
+
+  const rows = [];
+  for (let d = to; d >= from; d = attAddDays(d, -1)) {
+    if (!attIsSchoolDay(d)) continue;
+    students.forEach(s => rows.push({ date: d, s, rec: getAttendance(s, d) }));
+  }
+
+  // KPI (นับทุกแถวตามตัวกรองชั้น/ห้อง/วันที่/ชื่อ ยังไม่กรองสถานะ)
+  const c = { all: rows.length, ontime: 0, late: 0, absent: 0, leave: 0, none: 0, early: 0 };
+  rows.forEach(r => { c[attCategory(r.rec.statusIn)]++; if (r.rec.statusOut === 'ออกก่อนเวลา') c.early++; });
+  const kpis = [
+    ['all', 'รายการทั้งหมด', c.all, 'var(--primary)'], ['ontime', 'มาตรงเวลา', c.ontime, 'var(--success)'],
+    ['late', 'มาสาย', c.late, 'var(--warning)'], ['absent', 'ขาดเรียน', c.absent, 'var(--danger)'],
+    ['leave', 'ลา', c.leave, 'var(--info)'], ['early', 'ออกก่อนเวลา', c.early, 'var(--warning)'],
+    ['none', 'ยังไม่เช็คชื่อ', c.none, 'var(--text-muted)']
+  ];
+  document.getElementById('att-report-kpis').innerHTML = kpis.map(([k, label, v, color]) =>
+    `<button type="button" class="att-kpi ${attReportFilter === k ? 'on' : ''}" style="--kpi-color:${color};" onclick="setAttReportFilter('${k}')">
+      <span class="att-kpi-label">${label}</span><span class="att-kpi-value">${v.toLocaleString('th-TH')}</span></button>`).join('');
+  document.getElementById('att-rep-chips').innerHTML = kpis.map(([k, label]) =>
+    `<button class="btn btn-secondary btn-sm ${attReportFilter === k ? 'btn-active' : ''}" onclick="setAttReportFilter('${k}')">${k === 'all' ? 'ทั้งหมด' : label}</button>`).join('') +
+    (capped ? `<span class="att-time-hint">แสดงสูงสุด ${ATT_REPORT_MAX_DAYS} วันย้อนหลังจากวันที่สิ้นสุด</span>` : '');
+
+  attReportRows = rows.filter(r => attReportFilter === 'all' ||
+    (attReportFilter === 'early' ? r.rec.statusOut === 'ออกก่อนเวลา' : attCategory(r.rec.statusIn) === attReportFilter));
+
+  const pages = Math.max(1, Math.ceil(attReportRows.length / ATT_REPORT_PAGE_SIZE));
+  if (attReportPage > pages) attReportPage = pages;
+  const pageRows = attReportRows.slice((attReportPage - 1) * ATT_REPORT_PAGE_SIZE, attReportPage * ATT_REPORT_PAGE_SIZE);
+  document.getElementById('att-rep-tbody').innerHTML = pageRows.map(({ date, s, rec }) => {
+    const noteHtml = rec.reqId
+      ? `<a href="#" class="note-leave-link" onclick="viewSLRequestDetails('${rec.reqId}');return false;" title="ดูรายละเอียดใบลา">${rec.note}</a>`
+      : (rec.note || '-');
+    return `<tr>
+      <td>${thaiDate(date)}</td><td>${s.cls}</td><td><strong>${studentFullName(s)}</strong></td><td>${s.id}</td>
+      <td>${attBadgeIn(rec.statusIn)}</td><td>${rec.timeIn || '-'}</td>
+      <td>${attBadgeOut(rec.statusOut)}</td><td>${rec.timeOut || '-'}</td>
+      <td>${rec.recordedBy || '-'}</td><td style="color:var(--text-muted);font-size:12px;">${noteHtml}</td></tr>`;
+  }).join('') ||
+    `<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--text-muted);">ไม่พบข้อมูลตามเงื่อนไขที่ค้นหา</td></tr>`;
+
+  const pager = document.getElementById('att-rep-pager');
+  if (pages <= 1) { pager.innerHTML = attReportRows.length ? `<span>${attReportRows.length} รายการ</span>` : ''; return; }
+  const btn = (p, label, dis) => `<button class="btn btn-secondary btn-sm" ${dis ? 'disabled' : ''} onclick="setAttReportPage(${p})">${label}</button>`;
+  pager.innerHTML = `<span>${attReportRows.length.toLocaleString('th-TH')} รายการ · หน้า ${attReportPage}/${pages}</span>` +
+    btn(1, '«', attReportPage === 1) + btn(attReportPage - 1, '‹ ก่อนหน้า', attReportPage === 1) +
+    btn(attReportPage + 1, 'ถัดไป ›', attReportPage === pages) + btn(pages, '»', attReportPage === pages);
+}
+
+// ======================================================================
+//  ตั้งค่าเวลาเข้า-เลิกเรียนของนักเรียน
+// ======================================================================
+function attDaysLabel(days) {
+  const sorted = [...days].sort((a, b) => a - b);
+  if (sorted.join(',') === '1,2,3,4,5') return 'จ–ศ';
+  if (sorted.join(',') === '1,2,3,4,5,6') return 'จ–ส';
+  return sorted.map(d => ATT_DAY_LABELS[d]).join(', ') || '-';
+}
+function renderAttendanceSettings() {
+  const s = attSettings;
+  document.getElementById('att-set-start').value = s.start;
+  document.getElementById('att-set-end').value = s.end;
+  document.getElementById('att-set-absent').value = s.absentAfter;
+  document.getElementById('att-set-gate-open').value = s.gateOpen;
+  document.getElementById('att-set-late').value = s.lateMin;
+  document.getElementById('att-set-early').value = s.earlyMin;
+  document.querySelectorAll('#att-set-days input').forEach(cb => { cb.checked = s.days.includes(Number(cb.value)); });
+  document.getElementById('att-disp-start').textContent = s.start + ' น.';
+  document.getElementById('att-disp-end').textContent = s.end + ' น.';
+  document.getElementById('att-disp-late').textContent = s.lateMin + ' นาที';
+  document.getElementById('att-disp-days').textContent = attDaysLabel(s.days);
+}
+function saveAttendanceSettings() {
+  const next = {
+    start: document.getElementById('att-set-start').value,
+    end: document.getElementById('att-set-end').value,
+    absentAfter: document.getElementById('att-set-absent').value,
+    gateOpen: document.getElementById('att-set-gate-open').value,
+    lateMin: Math.max(0, parseInt(document.getElementById('att-set-late').value, 10) || 0),
+    earlyMin: Math.max(0, parseInt(document.getElementById('att-set-early').value, 10) || 0),
+    days: [...document.querySelectorAll('#att-set-days input:checked')].map(cb => Number(cb.value))
+  };
+  const problems = [];
+  if (!next.start || !next.end) problems.push('กรุณากรอกเวลาเข้าเรียนและเวลาเลิกเรียน');
+  else if (attMin(next.end) <= attMin(next.start)) problems.push('เวลาเลิกเรียนต้องหลังเวลาเข้าเรียน');
+  if (next.absentAfter && next.start && attMin(next.absentAfter) <= attMin(next.start) + next.lateMin) problems.push('เวลาที่ถือว่าขาดเรียนต้องหลังเวลาที่เริ่มนับว่าสาย');
+  if (next.gateOpen && next.start && attMin(next.gateOpen) > attMin(next.start)) problems.push('เวลาเปิดประตูต้องไม่หลังเวลาเข้าเรียน');
+  if (!next.days.length) problems.push('เลือกวันเรียนอย่างน้อย 1 วัน');
+  if (problems.length) { alert(problems.join('\n')); return; }
+  if (!next.absentAfter) next.absentAfter = attHHMM(attMin(next.start) + 120);
+  attSettings = next;
+  attStore(ATT_SETTINGS_KEY, attSettings);
+  renderAttendanceSettings();
+  attToast('บันทึกเวลาเข้า-เลิกเรียนของนักเรียนแล้ว');
+}
 
 // Initial populate on load
 syncApproverRoleCards();

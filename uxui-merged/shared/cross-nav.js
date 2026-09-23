@@ -108,6 +108,7 @@
     clipboardList: '<rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/>',
     table: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="12" y1="3" x2="12" y2="21"/>',
     doorOpen: '<path d="M13 4v16"/><path d="M13 4l6 2v14"/><path d="M19 20H5V6l8-4"/>',
+    check: '<polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
     chevron: '<polyline points="6 9 12 15 18 9"/>'
   };
   function svg(name, cls) {
@@ -194,6 +195,13 @@
       ]
     },
     {
+      label: 'การมาเรียนของนักเรียน',
+      items: [
+        { icon: 'check', label: 'เช็คชื่อนักเรียน', page: SD_LEAVE, view: 'attendance-check', keywords: 'เช็คชื่อ มาเรียน ขาด สาย ครูประจำชั้น' },
+        { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย' }
+      ]
+    },
+    {
       label: 'การลาเรียนของนักเรียน',
       items: [
         {
@@ -255,7 +263,8 @@
             { label: 'ข้อมูลสาขางาน-สาขาวิชา', page: 'settings/school.html', hash: 'tab=majors', desc: 'แผนการเรียน สาขาวิชา สาขางาน' },
             { label: 'ข้อมูลห้องเรียน', page: 'settings/school.html', hash: 'tab=classrooms', desc: 'ห้องเรียน อาคาร ความจุ' },
             { label: 'ปฏิทินโรงเรียน', page: 'settings/school.html', hash: 'tab=calendar', desc: 'วันหยุด กิจกรรม วันสอบ' },
-            { label: 'ข้อมูลครูประจำชั้น', page: SD_APP, module: 'settings', view: 'homeroom', desc: 'ครูประจำชั้น/ที่ปรึกษาแต่ละห้อง' }
+            { label: 'ข้อมูลครูประจำชั้น', page: SD_APP, module: 'settings', view: 'homeroom', desc: 'ครูประจำชั้น/ที่ปรึกษาแต่ละห้อง' },
+            { label: 'เวลาเข้า-เลิกเรียนของนักเรียน', page: SD_LEAVE, view: 'attendance-settings', desc: 'เวลาเข้าเรียน เลิกเรียน เกณฑ์มาสาย วันเรียน' }
           ]
         },
         {
