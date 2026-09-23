@@ -1815,77 +1815,6 @@ function formatThaiDate(dateString) {
     return `${day} ${monthNames[month]} ${String(year).substring(2)}`;
 }
 
-// Attach Theme Toggler Events (Matching original files logic)
-function initThemeToggle() {
-    const themeToggleBtn = document.getElementById("theme-toggle");
-    const body = document.body;
-
-    // Load theme setting
-    const savedTheme = "light";
-    if (savedTheme === "light") {
-        body.classList.add("light-mode");
-        body.classList.remove("dark-mode");
-        updateThemeIcon("light");
-    } else {
-        body.classList.add("dark-mode");
-        body.classList.remove("light-mode");
-        updateThemeIcon("dark");
-    }
-
-    themeToggleBtn.addEventListener("click", () => {
-        if (body.classList.contains("light-mode")) {
-            body.classList.add("dark-mode");
-            body.classList.remove("light-mode");
-            localStorage.setItem("sd_theme", "dark");
-            updateThemeIcon("dark");
-            showToast("สลับเป็นโหมดมืด (Dark Mode)", "info");
-        } else {
-            body.classList.add("light-mode");
-            body.classList.remove("dark-mode");
-            localStorage.setItem("sd_theme", "light");
-            updateThemeIcon("light");
-            showToast("สลับเป็นโหมดสว่าง (Light Mode)", "info");
-        }
-    });
-}
-
-function updateThemeIcon(mode) {
-    const themeIcon = document.getElementById("theme-icon");
-    if (!themeIcon) return;
-    
-    if (mode === "light") {
-        themeIcon.innerHTML = `
-            <!-- Sun Icon -->
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        `;
-    } else {
-        themeIcon.innerHTML = `
-            <!-- Moon Icon -->
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        `;
-    }
-}
-
-// Sidebar toggle button collapse
-function initSidebarToggle() {
-    const btn = document.getElementById("sidebar-toggle-btn");
-    const sidebar = document.getElementById("sidebar");
-    
-    if (btn && sidebar) {
-        btn.addEventListener("click", () => {
-            sidebar.classList.toggle("collapsed");
-        });
-    }
-}
-
 // Quick navigation triggers from dashboard
 function initQuickNav() {
     document.querySelectorAll(".quick-nav-card").forEach(card => {
@@ -2028,8 +1957,7 @@ function setupSettingsOutlines() {
 // Document Initial Load
 document.addEventListener("DOMContentLoaded", () => {
     initSettingsDatabase();
-    initThemeToggle();
-    initSidebarToggle();
+    // theme / sidebar toggle ผูกไว้ที่ app.js ที่เดียว
     initQuickNav();
     setupSettingsOutlines();
 

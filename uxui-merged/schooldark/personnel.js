@@ -2354,43 +2354,11 @@ function showToast(message, type = 'primary') {
 document.addEventListener('DOMContentLoaded', () => {
     initDB();
     
-    // Sidebar Collapse
-    const sidebar = document.getElementById('app-sidebar');
-    const sidebarToggle = document.getElementById('sidebar-toggle');
-    if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            setTimeout(drawFlowchartLines, 305); // Wait for transit CSS animation to draw correct line endpoints
-        });
-    }
-    
-    // Theme toggle
-    const themeBtn = document.getElementById('theme-toggle');
-    if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            const icon = document.getElementById('theme-icon');
-            if (document.body.classList.contains('light-mode')) {
-                icon.innerHTML = `
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                `;
-                showToast("เปลี่ยนเป็นโหมดสว่าง", "info");
-            } else {
-                icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
-                showToast("เปลี่ยนเป็นโหมดมืด", "info");
-            }
-            setTimeout(drawFlowchartLines, 50);
-        });
-    }
-    
+    // Sidebar Collapse — การย่อ/ขยายอยู่ที่ app.js ที่เดียว ที่นี่แค่วาดเส้น flowchart ใหม่หลัง transition จบ
+    document.getElementById('sidebar-toggle-btn')?.addEventListener('click', () => {
+        setTimeout(drawFlowchartLines, 305);
+    });
+
     // Shortcut headers btn
     document.getElementById('header-shortcut-btn')?.addEventListener('click', () => {
         createNewBlankForm();

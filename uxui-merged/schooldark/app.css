@@ -13,67 +13,7 @@
     --font-heading: 'Outfit', 'Sarabun', sans-serif;
     --font-body: 'Sarabun', 'Outfit', sans-serif;
 
-    /* Dark Mode (Default) */
-    --bg-app:      hsl(222, 47%, 6%);
-    --bg-main:     hsl(222, 47%, 10%);
-    --bg-sidebar:  hsl(222, 47%, 4%);
-    --bg-card:     #1e293b;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --border-focus: hsla(250, 85%, 65%, 0.5);
-    --text-primary:    hsl(210, 40%, 98%);
-    --text-secondary:  hsl(215, 20%, 70%);
-    --text-muted:      hsl(215, 15%, 50%);
-
-    /* Brand Colors */
-    --primary:       hsl(250, 85%, 65%);
-    --primary-hover: hsl(250, 95%, 72%);
-    --primary-glow:  hsla(250, 85%, 65%, 0.15);
-
-    --success:     hsl(142, 72%, 45%);
-    --success-bg:  rgba(16, 185, 129, 0.15);
-    --success-glow: rgba(16, 185, 129, 0.25);
-
-    --warning:     hsl(38, 92%, 50%);
-    --warning-bg:  rgba(245, 158, 11, 0.15);
-
-    --danger:      hsl(350, 84%, 55%);
-    --danger-bg:   rgba(239, 68, 68, 0.15);
-    --danger-glow: rgba(239, 68, 68, 0.25);
-
-    --info:        hsl(199, 89%, 48%);
-    --info-bg:     rgba(14, 165, 233, 0.15);
-
-    /* Flow Colors (from personnel.css) */
-    --flow-red:  hsl(355, 78%, 65%);
-    --flow-red-glow: hsla(355, 78%, 65%, 0.2);
-    --flow-blue: hsl(205, 85%, 60%);
-    --flow-blue-glow: hsla(205, 85%, 60%, 0.2);
-    --flow-yellow: hsl(42, 85%, 60%);
-    --flow-yellow-glow: hsla(42, 85%, 60%, 0.2);
-
-    /* Shadows & Effects */
-    --shadow-sm:  0 2px 8px -2px rgba(0, 0, 0, 0.5);
-    --shadow-md:  0 8px 30px -4px rgba(0, 0, 0, 0.5);
-    --shadow-lg:  0 16px 40px -6px rgba(0, 0, 0, 0.7);
-    --glass-blur: blur(16px);
-
-    /* Transitions */
-    --transition-speed: 0.3s;
-    --transition-fast: 0.15s;
-    --transition-normal: 0.3s;
-
-    /* Border Radius (unified — index.css naming) */
-    --border-radius-sm: 8px;
-    --border-radius-md: 14px;
-    --border-radius-lg: 20px;
-    /* Aliases used in settings.css */
-    --br-sm: 8px;
-    --br-md: 14px;
-    --br-lg: 20px;
-    --speed: 0.3s;
-}
-
-.light-mode {
+    /* Light Mode (only mode — dark mode removed) */
     --bg-app:      hsl(210, 40%, 94%);
     --bg-main:     hsl(0, 0%, 100%);
     --bg-sidebar:  hsl(210, 30%, 97%);
@@ -84,6 +24,7 @@
     --text-secondary: hsl(215, 25%, 35%);
     --text-muted:     hsl(215, 15%, 55%);
 
+    /* Brand Colors */
     --primary:       hsl(250, 75%, 55%);
     --primary-hover: hsl(250, 85%, 48%);
     --primary-glow:  hsla(250, 75%, 55%, 0.1);
@@ -102,13 +43,35 @@
     --info:        hsl(199, 89%, 40%);
     --info-bg:     rgba(14, 165, 233, 0.08);
 
+    /* Flow Colors (from personnel.css) */
     --flow-red:  hsl(355, 70%, 55%);
+    --flow-red-glow: hsla(355, 78%, 65%, 0.2);
     --flow-blue: hsl(205, 80%, 50%);
+    --flow-blue-glow: hsla(205, 85%, 60%, 0.2);
     --flow-yellow: hsl(42, 80%, 48%);
+    --flow-yellow-glow: hsla(42, 85%, 60%, 0.2);
 
+    /* Shadows & Effects */
     --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.08);
     --shadow-md: 0 8px 30px -4px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 16px 40px -6px rgba(0, 0, 0, 0.12);
+    /* ปิด blur: การ์ดทุกใบพื้นทึบ (--bg-card) blur จึงมองไม่เห็น แต่กิน GPU ทุกเฟรมตอนเลื่อนหน้า */
+    --glass-blur: none;
+
+    /* Transitions */
+    --transition-speed: 0.3s;
+    --transition-fast: 0.15s;
+    --transition-normal: 0.3s;
+
+    /* Border Radius (unified — index.css naming) */
+    --border-radius-sm: 8px;
+    --border-radius-md: 14px;
+    --border-radius-lg: 20px;
+    /* Aliases used in settings.css */
+    --br-sm: 8px;
+    --br-md: 14px;
+    --br-lg: 20px;
+    --speed: 0.3s;
 }
 
 /* =============================================================
@@ -205,7 +168,7 @@ header.top-header {
     justify-content: center;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
 }
 .theme-toggle-btn:hover {
     color: var(--text-primary);
@@ -224,7 +187,7 @@ header.top-header {
     font-weight: 500;
     cursor: pointer;
     outline: none;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
 }
 .role-selector:focus {
     border-color: var(--primary);
@@ -245,7 +208,7 @@ header.top-header {
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 4px 10px var(--primary-glow);
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
     white-space: nowrap;
 }
 .header-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
@@ -308,8 +271,7 @@ header.top-header {
     margin-bottom: 24px;
     transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
-.glass-card:hover { border-color: rgba(255, 255, 255, 0.12); box-shadow: var(--shadow-lg); }
-.light-mode .glass-card:hover { border-color: rgba(0, 0, 0, 0.12); }
+.glass-card:hover { border-color: rgba(0, 0, 0, 0.12); box-shadow: var(--shadow-lg); }
 
 .card-header {
     display: flex;
@@ -350,7 +312,7 @@ header.top-header {
 .form-group label span.required, .req { color: var(--danger); margin-left: 2px; }
 
 .glass-input, .glass-select, .glass-textarea {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.5);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     padding: 10px 14px;
@@ -358,18 +320,12 @@ header.top-header {
     font-size: 14px;
     outline: none;
     width: 100%;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     font-family: var(--font-body);
-}
-.light-mode .glass-input, .light-mode .glass-select, .light-mode .glass-textarea {
-    background: rgba(255, 255, 255, 0.5);
 }
 .glass-input:focus, .glass-select:focus, .glass-textarea:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--border-focus);
-    background: rgba(0, 0, 0, 0.25);
-}
-.light-mode .glass-input:focus, .light-mode .glass-select:focus, .light-mode .glass-textarea:focus {
     background: rgba(255, 255, 255, 0.8);
 }
 .glass-textarea { resize: vertical; min-height: 80px; }
@@ -426,7 +382,7 @@ header.top-header {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     border: 1px solid transparent;
     outline: none;
     font-family: var(--font-body);
@@ -447,8 +403,7 @@ header.top-header {
     border-color: var(--border-color);
     color: var(--text-primary);
 }
-.btn-secondary:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--text-secondary); }
-.light-mode .btn-secondary:hover { background: rgba(0, 0, 0, 0.04); }
+.btn-secondary:hover { background: rgba(0, 0, 0, 0.04); border-color: var(--text-secondary); }
 .btn-secondary.btn-active {
     background: var(--primary);
     border-color: var(--primary);
@@ -490,7 +445,7 @@ header.top-header {
     justify-content: center;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
 }
 .btn-icon-only:hover { color: var(--danger); border-color: rgba(239, 68, 68, 0.2); background: var(--danger-bg); }
 
@@ -507,7 +462,7 @@ header.top-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
 }
 .icon-btn:hover { color: var(--text-primary); background: rgba(255, 255, 255, 0.08); }
 .icon-btn.danger:hover { color: var(--danger); background: var(--danger-bg); }
@@ -542,8 +497,8 @@ header.top-header {
     transition: .3s;
     border-radius: 24px;
     border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.1);
 }
-.light-mode .slider { background: rgba(0, 0, 0, 0.1); }
 .slider::before {
     content: '';
     position: absolute;
@@ -581,7 +536,7 @@ input:checked + .slider::before { transform: translateX(20px); }
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     text-align: center;
 }
 .checkbox-card:hover .checkbox-label { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); }
@@ -645,12 +600,10 @@ table.data-table th {
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: var(--text-muted);
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.03);
 }
-.light-mode table.data-table th { background: rgba(0, 0, 0, 0.03); }
 table.data-table tr:last-child td { border-bottom: none; }
-table.data-table tr:hover td { background: rgba(255, 255, 255, 0.025); }
-.light-mode table.data-table tr:hover td { background: rgba(0, 0, 0, 0.015); }
+table.data-table tr:hover td { background: rgba(0, 0, 0, 0.015); }
 
 /* Premium table (from index.css) */
 table.premium-table {
@@ -674,8 +627,7 @@ table.premium-table td {
     color: var(--text-secondary);
 }
 table.premium-table tbody tr { transition: background-color var(--transition-speed); }
-table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02); }
-.light-mode table.premium-table tbody tr:hover { background-color: rgba(0, 0, 0, 0.01); }
+table.premium-table tbody tr:hover { background-color: rgba(0, 0, 0, 0.01); }
 
 /* Approval table condensed */
 #view-approve table.premium-table { font-size: 11px; }
@@ -761,11 +713,11 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 .modal-overlay[style*="display: flex"] .modal-card {
     transform: translateY(0) scale(1);
 }
-.light-mode .modal-box,
-.light-mode .modal-content,
-.light-mode .modal-card {
-    background: #ffffff !important;
-    color: #0f172a !important;
+.modal-box,
+.modal-content,
+.modal-card {
+    background: #ffffff;
+    color: #0f172a;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
@@ -787,7 +739,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     color: var(--text-muted);
     padding: 4px;
     border-radius: var(--border-radius-sm);
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     display: flex;
     align-items: center;
     font-size: 22px;
@@ -865,9 +817,9 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 .toast.info, .toast-info { border-left-color: var(--info); color: var(--info); }
 .toast span { color: var(--text-primary); }
 
-.light-mode .toast {
-    background: #ffffff !important;
-    color: #0f172a !important;
+.toast {
+    background: #ffffff;
+    color: #0f172a;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
@@ -903,11 +855,10 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     text-align: center;
     cursor: pointer;
     background: rgba(0, 0, 0, 0.05);
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
     position: relative;
     overflow: hidden;
 }
-.light-mode .file-upload-zone, .light-mode .drag-drop-zone { background: rgba(0, 0, 0, 0.02); }
 .file-upload-zone:hover, .drag-drop-zone:hover,
 .file-upload-zone.dragover, .drag-drop-zone.dragover {
     border-color: var(--primary);
@@ -970,8 +921,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 /* Circular progress ring (Leave quota cards) */
 .progress-ring-container { position: relative; width: 70px; height: 70px; }
 .progress-ring { transform: rotate(-90deg); }
-.progress-ring-circle-bg { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 6; }
-.light-mode .progress-ring-circle-bg { stroke: rgba(0, 0, 0, 0.05); }
+.progress-ring-circle-bg { fill: none; stroke: rgba(0, 0, 0, 0.05); stroke-width: 6; }
 .progress-ring-circle { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset var(--transition-speed); }
 .quota-card-sick .progress-ring-circle { stroke: var(--primary); filter: drop-shadow(0 0 4px var(--primary-glow)); }
 .quota-card-vacation .progress-ring-circle { stroke: var(--success); filter: drop-shadow(0 0 4px var(--success-glow)); }
@@ -1026,7 +976,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     justify-content: center;
     font-weight: 600;
     font-size: 14px;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
 }
 .journey-step:hover .step-node { border-color: var(--text-secondary); color: var(--text-primary); }
 .journey-step.active .step-node { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 0 10px var(--primary-glow); }
@@ -1056,7 +1006,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
 }
 .form-tab-btn:hover { color: var(--text-primary); }
 .form-tab-btn.active { color: var(--primary); border-color: var(--primary); font-weight: 600; }
@@ -1125,17 +1075,13 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     position: relative;
     transition: background var(--transition-speed), border-color var(--transition-speed);
 }
-.light-mode .calendar-cell { background: rgba(0, 0, 0, 0.02); }
-.calendar-cell:hover { background: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.12); }
-.light-mode .calendar-cell:hover { background: rgba(0, 0, 0, 0.03); }
+.calendar-cell:hover { background: rgba(0, 0, 0, 0.03); border-color: rgba(255, 255, 255, 0.12); }
 .calendar-cell.inactive { opacity: 0.3; pointer-events: none; }
 .calendar-cell-date { font-size: 11px; font-weight: 600; color: var(--text-muted); align-self: flex-start; margin-bottom: 3px; }
 .calendar-cell.today .calendar-cell-date { color: var(--primary); background: var(--primary-glow); padding: 2px 6px; border-radius: 4px; }
-.calendar-cell.weekend { background: rgba(239, 68, 68, 0.04); }
-.light-mode .calendar-cell.weekend { background: rgba(239, 68, 68, 0.02); }
+.calendar-cell.weekend { background: rgba(239, 68, 68, 0.02); }
 .calendar-cell.weekend .calendar-cell-date { color: var(--danger); }
-.calendar-cell.holiday { background: rgba(16, 185, 129, 0.04); }
-.light-mode .calendar-cell.holiday { background: rgba(16, 185, 129, 0.02); }
+.calendar-cell.holiday { background: rgba(16, 185, 129, 0.02); }
 .calendar-cell.holiday .calendar-cell-date { color: var(--success); }
 .calendar-leave-pill {
     font-size: 11px;
@@ -1235,7 +1181,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     border: 1.5px solid var(--border-color);
     background: rgba(255, 255, 255, 0.02);
     color: var(--text-secondary);
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
 }
 .day-btn input:checked + span { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 0 12px var(--primary-glow); }
 .day-btn:hover span { background: rgba(255, 255, 255, 0.06); color: var(--text-primary); }
@@ -1302,12 +1248,10 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 
 .permission-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .permission-table th, .permission-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border-color); }
-.permission-table th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); background: rgba(0,0,0,0.05); }
-.light-mode .permission-table th { background: rgba(0,0,0,0.03); }
+.permission-table th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); background: rgba(0,0,0,0.03); }
 .perm-col { text-align: center; width: 80px; }
 .perm-feature { color: var(--text-secondary); }
-.perm-group-header td { font-size: 12px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.015); padding: 8px 14px; letter-spacing: 0.5px; }
-.light-mode .perm-group-header td { background: rgba(0,0,0,0.02); }
+.perm-group-header td { font-size: 12px; font-weight: 700; color: var(--text-muted); background: rgba(0,0,0,0.02); padding: 8px 14px; letter-spacing: 0.5px; }
 
 .perm-dot { width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
 .perm-dot.allow { background: var(--success-bg); color: var(--success); }
@@ -1344,7 +1288,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     cursor: pointer;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     box-shadow: var(--shadow-sm);
 }
 .quick-nav-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md), 0 0 0 1px var(--primary-glow); }
@@ -1362,7 +1306,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     border-radius: var(--border-radius-lg);
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border-color);
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     overflow: hidden;
 }
 .signatory-card:hover { border-color: var(--primary); background: var(--primary-glow); }
@@ -1373,8 +1317,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 .sign-position { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
 .sign-order-badge { display: inline-flex; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; background: var(--primary-glow); color: var(--primary); margin-bottom: 12px; }
 .sign-docs { display: flex; flex-wrap: wrap; gap: 6px; }
-.sign-doc-tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--border-color); }
-.light-mode .sign-doc-tag { background: rgba(0,0,0,0.04); }
+.sign-doc-tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; background: rgba(0,0,0,0.04); color: var(--text-muted); border: 1px solid var(--border-color); }
 .signatory-card-actions { position: absolute; top: 14px; right: 14px; display: flex; gap: 4px; }
 
 .doc-sign-list { display: flex; flex-direction: column; gap: 12px; }
@@ -1388,16 +1331,12 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 .flowchart-container {
     width: 100%;
     min-height: 650px;
-    background: radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.2), transparent 80%);
-    border: 1px dashed rgba(255, 255, 255, 0.1);
+    background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.02), transparent 80%);
+    border: 1px dashed rgba(0, 0, 0, 0.1);
     border-radius: var(--border-radius-lg);
     position: relative;
     padding: 40px;
     overflow-x: auto;
-}
-.light-mode .flowchart-container {
-    background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.02), transparent 80%);
-    border: 1px dashed rgba(0, 0, 0, 0.1);
 }
 .flowchart-wrapper { min-width: 1100px; display: flex; position: relative; gap: 40px; }
 .flow-column { display: flex; flex-direction: column; gap: 30px; justify-content: flex-start; position: relative; z-index: 2; }
@@ -1411,7 +1350,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     width: 240px;
     box-shadow: var(--shadow-md);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
 }
 .flow-node-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-color: var(--primary); }
@@ -1424,8 +1363,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
 
 .node-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
 .node-author { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
-.node-bullets { list-style: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px; }
-.light-mode .node-bullets { border-top: 1px solid rgba(0,0,0,0.05); }
+.node-bullets { list-style: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 4px; }
 .node-bullets li { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
 .node-bullets li::before { content: '•'; color: var(--primary); font-weight: bold; }
 
@@ -1555,7 +1493,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     display: flex;
     align-items: center;
     gap: 16px;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     box-shadow: var(--shadow-sm);
     cursor: default;
     position: relative;
@@ -1624,7 +1562,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border-color);
     cursor: pointer;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     text-align: center;
 }
 .quick-action-btn:hover {
@@ -1678,7 +1616,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     border-radius: var(--border-radius-md);
     border: 1px solid var(--border-color);
     font-size: 13px;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
 }
 .alert-item:hover { border-color: var(--card-accent, var(--primary)); }
 .alert-item.alert-warning { background: var(--warning-bg); border-color: rgba(245, 158, 11, 0.25); }
@@ -1770,7 +1708,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-lg);
     cursor: pointer;
-    transition: all var(--transition-speed);
+    transition: background-color var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed), transform var(--transition-speed), opacity var(--transition-speed);
     box-shadow: var(--shadow-sm);
 }
 .quick-nav-card:hover {
@@ -1859,15 +1797,12 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     font-size: 13px;
     color: var(--text-secondary);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
     border-left: 2px solid transparent;
 }
 .outline-link:hover {
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--primary);
-}
-.light-mode .outline-link:hover {
     background: rgba(0, 0, 0, 0.02);
+    color: var(--primary);
 }
 .outline-link.active {
     background: var(--primary-glow);
@@ -1893,7 +1828,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     padding: 8px 16px;
     cursor: pointer;
     border-radius: var(--border-radius-md);
-    transition: all var(--transition-fast);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
 }
 .approve-tab-btn:hover {
     background: rgba(255, 255, 255, 0.05);
@@ -2081,7 +2016,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     z-index: 100;
@@ -2096,7 +2031,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     border-top-color: var(--border-color);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease;
 }
 [data-tooltip]:hover::after,
 [data-tooltip]:hover::before {
@@ -2116,7 +2051,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     padding: 5px 12px;
     cursor: pointer;
     border-radius: var(--border-radius-sm);
-    transition: all var(--transition-fast);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
 }
 .cal-mode-btn:hover {
     color: var(--text-primary);
@@ -2173,7 +2108,7 @@ table.premium-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.02)
     margin-top: 2px;
     text-align: center;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
 }
 .calendar-more-badge:hover {
     background: var(--primary);

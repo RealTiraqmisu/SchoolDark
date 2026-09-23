@@ -262,7 +262,10 @@ function closeModal(id) {
 function updateSidebarVisibility() {
     const role = systemState.currentRole;
     const settingsMenu = document.getElementById("menu-leave-settings") || document.getElementById("sidebar-menu-settings");
-    const approveMenu = document.getElementById("menu-leave-approve") || document.getElementById("sidebar-menu-approve");
+    // ซ่อนทั้งกลุ่ม (<li class="menu-item-group">) ไม่ใช่แค่ลิงก์หลัก — ไม่งั้นเมนูย่อย
+    // "รายการคำขอ / ประวัติการลารายบุคคล" ยังโผล่ให้ครูกดเข้าหน้าอนุมัติได้
+    const approveLink = document.getElementById("menu-leave-approve") || document.getElementById("sidebar-menu-approve");
+    const approveMenu = approveLink ? (approveLink.closest(".menu-item-group") || approveLink) : null;
     
     if (role === "teacher") {
         if (settingsMenu) settingsMenu.style.display = "none";
@@ -1982,14 +1985,7 @@ function viewAttachmentMock(filename) {
 // -------------------------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
-    const sidebarToggle = document.getElementById("sidebar-toggle-btn");
-    const sidebar = document.getElementById("sidebar");
-    
-    if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("collapsed");
-        });
-    }
+    // sidebar / theme toggle ผูกไว้ที่ app.js ที่เดียว (ผูกซ้ำหลายไฟล์ทำให้ toggle หลายรอบต่อคลิก)
 
     // 1. Initialize databases
     initializeDatabase();
@@ -2028,27 +2024,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Dynamic sidebar updates and view navigation
         updateSidebarVisibility();
         navigateToView(systemState.activeView || "form");
-    });
-
-    // 5. Theme Toggle Switch
-    const themeBtn = document.getElementById("theme-toggle");
-    themeBtn.addEventListener("click", () => {
-        const body = document.body;
-        const iconSvg = document.getElementById("theme-icon");
-        
-        if (body.classList.contains("dark-mode")) {
-            body.classList.remove("dark-mode");
-            body.classList.add("light-mode");
-            // Switch SVG to sun
-            iconSvg.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
-            showToast("เปลี่ยนเป็น โหมดสว่าง", "info");
-        } else {
-            body.classList.remove("light-mode");
-            body.classList.add("dark-mode");
-            // Switch SVG to moon
-            iconSvg.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-            showToast("เปลี่ยนเป็น โหมดมืด", "info");
-        }
     });
 
     // 6. Settings interactions

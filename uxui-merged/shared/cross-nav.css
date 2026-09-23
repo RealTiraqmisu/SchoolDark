@@ -10,10 +10,10 @@
 
 /* ----------------------------------------------------------------------
    1) โทนสีของ sidebar เมื่อไม่ได้อยู่ในหน้า schooldark (ไม่มี --bg-sidebar ฯลฯ
-      ของ app.css ให้ใช้) — หน้า schooldark เองมี body.dark-mode/.light-mode
-      เสมอ (ตั้งค่าโดย app.js ตอน DOMContentLoaded) จึงใช้ attribute บน <html>
+      ของ app.css ให้ใช้) — หน้า schooldark เองมี body.light-mode เสมอ (ใส่ไว้
+      ตรง ๆ ใน markup, ไม่มีโหมดมืดอีกต่อไป) จึงใช้ attribute บน <html>
       (data-app="schooldark", ใส่ไว้ตรง ๆ ใน markup ไม่ใช่ทาง JS) เป็นตัวคัดแยก
-      เพื่อไม่ให้ค่า fallback พวกนี้ไปทับโทนมืด/สว่างจริงของฝั่ง schooldark
+      เพื่อไม่ให้ค่า fallback พวกนี้ไปทับโทนจริงของฝั่ง schooldark
       ---------------------------------------------------------------- */
 html:not([data-app="schooldark"]) {
     --bg-sidebar: #ffffff;
@@ -113,7 +113,6 @@ aside.sidebar {
     transition: color 150ms ease, background-color 150ms ease, opacity 150ms ease;
 }
 .sidebar-toggle-btn:hover { color: var(--text-primary); background: rgba(0, 0, 0, 0.06); opacity: 1; }
-html[data-app="schooldark"] body.dark-mode .sidebar-toggle-btn:hover { background: rgba(255, 255, 255, 0.08); }
 .sidebar-toggle-btn svg { transition: transform 150ms ease; }
 
 /* สถานะย่อ sidebar — สลับทันที ไม่ animate (แก้แลค 1/5 ต่อ) */
@@ -230,7 +229,6 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
    ถ้าเนื้อหาสูงกว่า 600px) → ใช้ grid-template-rows 0fr → 1fr แทน ซึ่งเนียนกว่า
    (animate เฉพาะ grid track ไม่บังคับ reflow ทั้งซับทรี) และพอดีความสูงจริงเสมอ */
 .submenu {
-    list-style: none;
     display: grid;
     grid-template-rows: 0fr;
     overflow: hidden;
@@ -238,7 +236,10 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     margin: 0;
     transition: grid-template-rows 180ms ease;
 }
+/* ลูกต้องมีตัวเดียว (.submenu-list) ไม่งั้นมีแค่ลูกตัวแรกที่อยู่ในแถว 0fr
+   ลูกตัวอื่นจะไปอยู่ implicit row ความสูง auto แล้วโผล่ค้างตอนพับเมนู */
 .submenu > * { overflow: hidden; min-height: 0; }
+.submenu-list { list-style: none; margin: 0; padding: 0; }
 .menu-item-group.expanded .submenu { grid-template-rows: 1fr; }
 .submenu-item, .submenu-link {
     display: block;
@@ -256,7 +257,56 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
 }
 .submenu-item:hover, .submenu-link:hover { color: var(--text-primary); background: var(--bg-card); }
 .submenu-item.active,
-.submenu-link.active { color: var(--primary); font-weight: 600; background: var(--primary-glow); }
+.submenu-link.active { color: var(--primary); font-weight: 600; }
+
+/* ช่องค้นหาเมนู (สร้างโดย cross-nav.js ใต้โลโก้) */
+.sidebar-search { position: relative; margin: -16px 0 12px; flex-shrink: 0; }
+.sidebar-search-icon {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; padding: 0; color: var(--text-muted); cursor: pointer;
+}
+.sidebar-search-icon svg { width: 15px; height: 15px; }
+.sidebar-search-input {
+    width: 100%;
+    padding: 9px 34px 9px 34px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.sidebar-search-input::placeholder { color: var(--text-muted); }
+.sidebar-search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+.sidebar-search-input::-webkit-search-cancel-button { cursor: pointer; }
+.sidebar-search-kbd {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-family: var(--font-body); font-size: 11px; line-height: 1;
+    padding: 3px 6px; border-radius: 4px;
+    border: 1px solid var(--border-color); color: var(--text-muted); background: transparent;
+    pointer-events: none;
+}
+.sidebar-search-input:focus ~ .sidebar-search-kbd,
+aside.sidebar.is-searching .sidebar-search-kbd { display: none; }
+.sidebar-search-empty { font-size: 12.5px; color: var(--text-muted); text-align: center; padding: 16px 8px; margin: 0; }
+.sidebar-search-empty[hidden],
+.sidebar-menu [hidden] { display: none !important; }
+
+/* ระหว่างค้นหา: กางกลุ่มที่มีเมนูย่อยตรงคำค้น, ไฮไลต์คำที่ตรง, และแถบเลือกด้วยคีย์บอร์ด */
+.menu-item-group.search-open .submenu { grid-template-rows: 1fr; }
+.menu-item-group.search-open .submenu-toggle svg { transform: rotate(180deg); }
+.sidebar-menu mark { background: var(--warning-bg, rgba(245, 158, 11, 0.18)); color: inherit; border-radius: 3px; padding: 0 1px; }
+.sidebar-menu a.xnav-kbd { outline: 2px solid var(--primary); outline-offset: -2px; }
+
+/* sidebar ย่อ: เหลือแค่ไอคอนแว่นขยายให้กด (กดแล้วขยาย sidebar + โฟกัสช่องค้นหา) */
+aside.sidebar.collapsed .sidebar-search { margin: -16px 0 8px; height: 40px; }
+aside.sidebar.collapsed .sidebar-search-input,
+aside.sidebar.collapsed .sidebar-search-kbd { display: none; }
+aside.sidebar.collapsed .sidebar-search-icon { width: 100%; border-radius: var(--border-radius-md); }
+aside.sidebar.collapsed .sidebar-search-icon:hover { background: var(--bg-card); color: var(--text-primary); }
 
 .sidebar-divider { height: 1px; background: var(--border-color); margin: 12px 0 4px; flex-shrink: 0; }
 
