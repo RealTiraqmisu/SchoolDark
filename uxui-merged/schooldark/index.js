@@ -42,14 +42,20 @@ const INITIAL_SETTINGS = {
     alertWorkpermit: 30,
     alertLicense: 60,
     recipients: ["หัวหน้าครูสมศรี", "ผอ.วิชัย"],
-    approvers: ["ครูวิชัย เรียนดี", "ครูสุดา สอนดี"]
+    approvers: ["ครูวิชัย เรียนดี", "ครูสุดา สอนดี"],
+    // โควตาวันลาแยกตามประเภทบุคลากร (settingsState.staffTypes ใน settings.js)
+    // ทุกประเภทมีค่าของตัวเองเสมอ (ไม่ใช่ "inherit" แบบ null) — เริ่มต้นคัดลอกมาจาก
+    // quotaSick/quotaVacation/quotaMaternity ด้านบน แล้วผู้ดูแลค่อยปรับแยกทีหลังได้
+    // โครง: { "<staffTypeId>": { sick, vacation, maternity } } — เติมอัตโนมัติด้วย
+    // ensureStaffTypeQuotaSeeded() เมื่อเข้าหน้าตั้งค่าขั้นตอนที่ 3 ครั้งแรก
+    staffTypeQuotaOverrides: {}
 };
 
 const INITIAL_TEACHERS = [
-    { id: "T001", name: "ครูสมชาย ใจดี", role: "ครูประจำชั้น ม.1/1", sickUsed: 4, vacationUsed: 2, maternityUsed: 0 },
-    { id: "T002", name: "ครูรุ่งทิพย์ ส่องแสง", role: "ครูวิชาภาษาไทย ม.2", sickUsed: 0, vacationUsed: 5, maternityUsed: 0 },
-    { id: "T003", name: "ครูดวงใจ งามจริง", role: "ครูวิชาวิทยาศาสตร์ ม.3", sickUsed: 3, vacationUsed: 1, maternityUsed: 0 },
-    { id: "T004", name: "ครูพิชิต ชัยชนะ", role: "ครูวิชาพละศึกษา", sickUsed: 1, vacationUsed: 8, maternityUsed: 0 }
+    { id: "T001", name: "ครูสมชาย ใจดี", role: "ครูประจำชั้น ม.1/1", staffTypeId: "ST01", sickUsed: 4, vacationUsed: 2, maternityUsed: 0 },
+    { id: "T002", name: "ครูรุ่งทิพย์ ส่องแสง", role: "ครูวิชาภาษาไทย ม.2", staffTypeId: "ST01", sickUsed: 0, vacationUsed: 5, maternityUsed: 0 },
+    { id: "T003", name: "ครูดวงใจ งามจริง", role: "ครูวิชาวิทยาศาสตร์ ม.3", staffTypeId: "ST01", sickUsed: 3, vacationUsed: 1, maternityUsed: 0 },
+    { id: "T004", name: "ครูพิชิต ชัยชนะ", role: "ครูวิชาพละศึกษา", staffTypeId: "ST02", sickUsed: 1, vacationUsed: 8, maternityUsed: 0 }
 ];
 
 const INITIAL_REQUESTS = [
@@ -423,7 +429,11 @@ function renderSettingsView() {
     document.getElementById("quota-sick").value = settings.quotaSick;
     document.getElementById("quota-vacation").value = settings.quotaVacation;
     document.getElementById("quota-maternity").value = settings.quotaMaternity;
-    
+
+    // โควตาแยกตามประเภทบุคลากร — เติมค่าเริ่มต้นให้ประเภทที่ยังไม่เคยตั้งก่อนแสดงตาราง
+    ensureStaffTypeQuotaSeeded();
+    renderStaffTypeQuotaTable();
+
     document.getElementById("rule-half-day").checked = settings.ruleHalfDay;
     document.getElementById("rule-sick-doc").checked = settings.ruleSickDoc;
     document.getElementById("rule-advance-days").value = settings.ruleAdvanceDays;
@@ -518,7 +528,23 @@ function saveSettingsFromDOM() {
     
     const quotaMaternityEl = document.getElementById("quota-maternity");
     if (quotaMaternityEl) settings.quotaMaternity = parseInt(quotaMaternityEl.value) || 0;
-    
+
+    // โควตาแยกตามประเภทบุคลากร — อ่านค่ากลับจากตารางถ้ามีแสดงอยู่ (ขั้นตอนที่ 3)
+    if (!settings.staffTypeQuotaOverrides) settings.staffTypeQuotaOverrides = {};
+    activeStaffTypesSafe().forEach(t => {
+        const sickEl = document.getElementById(`stq-${t.id}-sick`);
+        const vacationEl = document.getElementById(`stq-${t.id}-vacation`);
+        const maternityEl = document.getElementById(`stq-${t.id}-maternity`);
+        if (sickEl || vacationEl || maternityEl) {
+            const prev = settings.staffTypeQuotaOverrides[t.id] || {};
+            settings.staffTypeQuotaOverrides[t.id] = {
+                sick: sickEl ? (parseInt(sickEl.value) || 0) : (prev.sick ?? settings.quotaSick),
+                vacation: vacationEl ? (parseInt(vacationEl.value) || 0) : (prev.vacation ?? settings.quotaVacation),
+                maternity: maternityEl ? (parseInt(maternityEl.value) || 0) : (prev.maternity ?? settings.quotaMaternity)
+            };
+        }
+    });
+
     const ruleHalfDayEl = document.getElementById("rule-half-day");
     if (ruleHalfDayEl) settings.ruleHalfDay = ruleHalfDayEl.checked;
     
@@ -628,6 +654,80 @@ function prevSettingsStep() {
 }
 
 // -------------------------------------------------------------
+// STAFF-TYPE LEAVE QUOTAS (โควตาวันลาแยกตามประเภทบุคลากร)
+// -------------------------------------------------------------
+// ประเภทบุคลากร (settingsState.staffTypes) มาจาก settings.js — ทั้งสองไฟล์ถูกโหลด
+// ก่อน DOMContentLoaded เสมอ จึงอ้างอิงข้าม-ไฟล์ได้ตราบใดที่เรียกจากภายในฟังก์ชัน (ไม่ใช่ top-level)
+
+function activeStaffTypesSafe() {
+    return (typeof settingsState !== "undefined" && Array.isArray(settingsState.staffTypes))
+        ? settingsState.staffTypes.filter(t => t.active)
+        : [];
+}
+
+// เติมค่าเริ่มต้นให้ประเภทบุคลากรที่ยังไม่มี override เป็นของตัวเอง (คัดลอกจากค่ากลาง)
+// เรียกทุกครั้งที่เปิดขั้นตอนที่ 3 เพื่อให้ประเภทที่เพิ่มใหม่ภายหลังก็มีแถวโควตาแสดงด้วย
+function ensureStaffTypeQuotaSeeded() {
+    const settings = systemState.settings;
+    if (!settings.staffTypeQuotaOverrides) settings.staffTypeQuotaOverrides = {};
+
+    activeStaffTypesSafe().forEach(t => {
+        if (!settings.staffTypeQuotaOverrides[t.id]) {
+            settings.staffTypeQuotaOverrides[t.id] = {
+                sick: settings.quotaSick,
+                vacation: settings.quotaVacation,
+                maternity: settings.quotaMaternity
+            };
+        }
+    });
+}
+
+// โควตาที่แท้จริงของครูคนหนึ่ง สำหรับประเภทการลาหนึ่ง (sick / vacation / maternity)
+// ถ้าประเภทบุคลากรของครูคนนั้นยังไม่มี override (เช่น ยังไม่เคยเปิดขั้นตอนที่ 3 เลย)
+// จะ fallback ไปใช้ค่ากลาง quotaSick/quotaVacation/quotaMaternity แทน
+function getStaffQuota(teacher, leaveKey) {
+    const settings = systemState.settings;
+    const fallback = { sick: settings.quotaSick, vacation: settings.quotaVacation, maternity: settings.quotaMaternity }[leaveKey] || 0;
+    const override = settings.staffTypeQuotaOverrides && teacher && teacher.staffTypeId
+        ? settings.staffTypeQuotaOverrides[teacher.staffTypeId]
+        : null;
+    return (override && typeof override[leaveKey] === "number") ? override[leaveKey] : fallback;
+}
+
+function staffTypeNameSafe(staffTypeId) {
+    const t = activeStaffTypesSafe().find(x => x.id === staffTypeId);
+    return t ? t.name : "ไม่ระบุประเภทบุคลากร";
+}
+
+// วาดตารางโควตาต่อประเภทบุคลากรในขั้นตอนที่ 3 ของหน้าตั้งค่าการลา — ค่าที่กรอกในตาราง
+// นี้ยังไม่ถูกบันทึกจนกว่าจะเปลี่ยนขั้นตอนหรือกด "บันทึกการตั้งค่าทั้งหมด" (อ่านค่ากลับใน
+// saveSettingsFromDOM) เหมือนกับฟิลด์อื่นๆ ของ wizard นี้ทั้งหมด
+function renderStaffTypeQuotaTable() {
+    const tbody = document.getElementById("staff-type-quota-tbody");
+    if (!tbody) return;
+
+    const overrides = systemState.settings.staffTypeQuotaOverrides || {};
+    const staffTypes = activeStaffTypesSafe();
+
+    if (staffTypes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">ยังไม่มีประเภทบุคลากรในระบบ — ไปเพิ่มที่ ตั้งค่าระบบ &rarr; ตั้งค่าประเภทบุคลากร</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = staffTypes.map(t => {
+        const q = overrides[t.id] || { sick: systemState.settings.quotaSick, vacation: systemState.settings.quotaVacation, maternity: systemState.settings.quotaMaternity };
+        return `
+            <tr>
+                <td style="font-weight:600; color:var(--text-primary);">${t.name}</td>
+                <td><input type="number" min="0" class="glass-input" style="width:90px;" id="stq-${t.id}-sick" value="${q.sick}"></td>
+                <td><input type="number" min="0" class="glass-input" style="width:90px;" id="stq-${t.id}-vacation" value="${q.vacation}"></td>
+                <td><input type="number" min="0" class="glass-input" style="width:90px;" id="stq-${t.id}-maternity" value="${q.maternity}"></td>
+            </tr>
+        `;
+    }).join("");
+}
+
+// -------------------------------------------------------------
 // SECTION 2: LEAVE FORM & DASHBOARD VIEW LOGIC
 // -------------------------------------------------------------
 
@@ -644,10 +744,10 @@ function renderFormView() {
     
     const settings = systemState.settings || INITIAL_SETTINGS;
     
-    // 1. Update visual circular progress rings & quotas
-    updateQuotaCard("sick", settings.quotaSick, activeTeacher.sickUsed);
-    updateQuotaCard("vacation", settings.quotaVacation, activeTeacher.vacationUsed);
-    updateQuotaCard("maternity", settings.quotaMaternity, activeTeacher.maternityUsed);
+    // 1. Update visual circular progress rings & quotas (แยกตามประเภทบุคลากรของครูคนนี้)
+    updateQuotaCard("sick", getStaffQuota(activeTeacher, "sick"), activeTeacher.sickUsed);
+    updateQuotaCard("vacation", getStaffQuota(activeTeacher, "vacation"), activeTeacher.vacationUsed);
+    updateQuotaCard("maternity", getStaffQuota(activeTeacher, "maternity"), activeTeacher.maternityUsed);
     
     // 2. Hide or show half-day duration based on settings rule
     const morningOpt = document.getElementById("half-day-morning-option");
@@ -2141,9 +2241,9 @@ function openTeacherProfileModal(teacherId) {
     const vacationUsed = teacher.vacationUsed || 0;
     const maternityUsed = teacher.maternityUsed || 0;
 
-    const quotaSick = systemState.settings.quotaSick || 30;
-    const quotaVacation = systemState.settings.quotaVacation || 10;
-    const quotaMaternity = systemState.settings.quotaMaternity || 90;
+    const quotaSick = getStaffQuota(teacher, "sick");
+    const quotaVacation = getStaffQuota(teacher, "vacation");
+    const quotaMaternity = getStaffQuota(teacher, "maternity");
 
     const quotas = [
         { type: "sick", label: "ลาป่วย", used: sickUsed, total: quotaSick },

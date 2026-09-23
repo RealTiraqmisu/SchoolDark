@@ -25,7 +25,7 @@ const INITIAL_PERSONNEL_TEACHERS = [
             { year: "2567", topic: "ทักษะการให้คำปรึกษานักเรียนวัยรุ่น", agency: "กรมสุขภาพจิต" }
         ],
         toeic: { score: "780", date: "2024-05-10" },
-        job: { position: "ครูเชี่ยวชาญ (คศ.4)", department: "วิทยาศาสตร์และเทคโนโลยี", hireDate: "2555-08-01", salary: "58000", status: "ปฏิบัติราชการปกติ" },
+        job: { staffTypeId: "ST01", positionId: "POS05", position: "ครูเชี่ยวชาญ (คศ.4)", departmentId: "DEP03", department: "วิทยาศาสตร์และเทคโนโลยี", hireDate: "2555-08-01", salary: "58000", status: "ปฏิบัติราชการปกติ" },
         license: { number: "63109000123456", type: "ใบอนุญาตประกอบวิชาชีพควบคุม (ครู)", issueDate: "2020-05-15", expireDate: "2025-05-14" },
         royals: ["ทวีติยาภรณ์มงกุฎไทย (ท.ม.) - 2563", "ทวีติยาภรณ์ช้างเผือก (ท.ช.) - 2566"],
         status: "ครบถ้วน",
@@ -53,7 +53,7 @@ const INITIAL_PERSONNEL_TEACHERS = [
             { year: "2566", topic: "การสร้างบอร์ดเกมคณิตศาสตร์เพื่อการเรียนรู้", agency: "มหาวิทยาลัยศรีนครินทรวิโรฒ" }
         ],
         toeic: { score: "690", date: "2023-11-12" },
-        job: { position: "ครูชำนาญการพิเศษ (คศ.3)", department: "คณิตศาสตร์", hireDate: "2560-05-16", salary: "42000", status: "ปฏิบัติราชการปกติ" },
+        job: { staffTypeId: "ST01", positionId: "POS04", position: "ครูชำนาญการพิเศษ (คศ.3)", departmentId: "DEP02", department: "คณิตศาสตร์", hireDate: "2560-05-16", salary: "42000", status: "ปฏิบัติราชการปกติ" },
         license: { number: "64109000554433", type: "ใบอนุญาตประกอบวิชาชีพควบคุม (ครู)", issueDate: "2021-06-01", expireDate: "2026-05-31" },
         royals: ["ตริตาภรณ์มงกุฎไทย (ต.ม.) - 2564"],
         status: "ครบถ้วน",
@@ -79,7 +79,7 @@ const INITIAL_PERSONNEL_TEACHERS = [
         honors: [],
         trainings: [],
         toeic: { score: "", date: "" },
-        job: { position: "ครูผู้ช่วย", department: "ภาษาไทย", hireDate: "2565-10-01", salary: "15800", status: "ปฏิบัติราชการปกติ" },
+        job: { staffTypeId: "ST01", positionId: "POS01", position: "ครูผู้ช่วย", departmentId: "DEP01", department: "ภาษาไทย", hireDate: "2565-10-01", salary: "15800", status: "ปฏิบัติราชการปกติ" },
         license: { number: "", type: "ไม่มี", issueDate: "", expireDate: "" },
         royals: [],
         status: "ไม่ครบถ้วน", // Missing training / licenses
@@ -107,7 +107,7 @@ const INITIAL_PERSONNEL_TEACHERS = [
             { year: "2565", topic: "การสอนประวัติศาสตร์ท้องถิ่นแบบ Active Learning", agency: "กระทรวงศึกษาธิการ" }
         ],
         toeic: { score: "550", date: "2022-08-18" },
-        job: { position: "ครู (คศ.1)", department: "สังคมศึกษา ศาสนา และวัฒนธรรม", hireDate: "2550-06-01", salary: "34000", status: "ปฏิบัติราชการปกติ" },
+        job: { staffTypeId: "ST01", positionId: "POS02", position: "ครู (คศ.1)", departmentId: "DEP04", department: "สังคมศึกษา ศาสนา และวัฒนธรรม", hireDate: "2550-06-01", salary: "34000", status: "ปฏิบัติราชการปกติ" },
         license: { number: "59109000998877", type: "ใบอนุญาตประกอบวิชาชีพควบคุม (ครู)", issueDate: "2016-06-15", expireDate: "2026-06-14" },
         royals: ["จัตุรถาภรณ์มงกุฎไทย (จ.ม.) - 2558"],
         status: "ครบถ้วน",
@@ -133,7 +133,7 @@ const INITIAL_PERSONNEL_TEACHERS = [
         honors: [],
         trainings: [],
         toeic: { score: "", date: "" }, // Missing TOEIC score
-        job: { position: "อาจารย์อัตราจ้าง", department: "ภาษาต่างประเทศ", hireDate: "2566-02-01", salary: "18000", status: "ปฏิบัติราชการปกติ" },
+        job: { staffTypeId: "ST02", positionId: "POS06", position: "อาจารย์อัตราจ้าง", departmentId: "DEP05", department: "ภาษาต่างประเทศ", hireDate: "2566-02-01", salary: "18000", status: "ปฏิบัติราชการปกติ" },
         license: { number: "66209000112233", type: "ใบอนุญาตปฏิบัติการสอน", issueDate: "2023-03-01", expireDate: "2025-02-28" },
         royals: [],
         status: "ไม่ครบถ้วน",
@@ -304,7 +304,7 @@ function populateDirectoryTable(filterText = '', statusFilter = 'all') {
             <td style="font-weight: 500;">${t.prefix || ''}${t.firstname || ''} ${t.lastname || ''}</td>
             <td>
                 <div style="font-weight: 500;">${t.job?.position || '-'}</div>
-                <div style="font-size: 11px; color: var(--text-muted);">กลุ่มสาระฯ${t.job?.department || '-'}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">กลุ่มสาระฯ${t.job?.department || '-'}${staffTypeNameForDisplay(t.job?.staffTypeId) ? ` · ${staffTypeNameForDisplay(t.job.staffTypeId)}` : ''}</div>
             </td>
             <td style="font-family: var(--font-heading);">${t.phone || '-'}</td>
             <td>${statusBadge}</td>
@@ -780,6 +780,84 @@ function appendRoyalRow(royalText = '') {
     list.appendChild(div);
 }
 
+// ---- Staff Type / Position selects (ข้อมูลตำแหน่งงาน) ----
+// ทั้งสอง select นี้ผูกกันทางเดียว: #job-position จะแสดงเฉพาะตำแหน่งที่สังกัด
+// ประเภทบุคลากรที่เลือกใน #job-staff-type เท่านั้น (ข้อมูลมาจาก settingsState ใน settings.js
+// ซึ่งโหลดหลัง personnel.js เสมอ แต่ฟังก์ชันพวกนี้ถูกเรียกหลัง DOMContentLoaded ทั้งหมดแล้วเท่านั้น)
+function activeStaffTypesForForm() {
+    return (typeof settingsState !== "undefined" && Array.isArray(settingsState.staffTypes))
+        ? [...settingsState.staffTypes].filter(t => t.active).sort((a, b) => (a.order || 0) - (b.order || 0))
+        : [];
+}
+
+// ใช้แสดงผล (เช่น ป้ายในตารางรายชื่อ) — ต่างจาก activeStaffTypesForForm() ตรงที่หาได้แม้ประเภทนั้นถูกปิดใช้งานไปแล้ว
+function staffTypeNameForDisplay(staffTypeId) {
+    const t = (typeof settingsState !== "undefined" && Array.isArray(settingsState.staffTypes))
+        ? settingsState.staffTypes.find(x => x.id === staffTypeId)
+        : null;
+    return t ? t.name : "";
+}
+
+function activePositionsForStaffType(staffTypeId) {
+    const positions = (typeof settingsState !== "undefined" && Array.isArray(settingsState.positions)) ? settingsState.positions : [];
+    return [...positions]
+        .filter(p => p.active && (!staffTypeId || (p.typeIds || []).includes(staffTypeId)))
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
+}
+
+function populateJobStaffTypeSelect(selectedId) {
+    const select = document.getElementById('job-staff-type');
+    if (!select) return;
+    const types = activeStaffTypesForForm();
+    select.innerHTML = types.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+    if (selectedId && types.some(t => t.id === selectedId)) select.value = selectedId;
+}
+
+// เติม #job-position ใหม่ตามประเภทบุคลากรที่เลือกอยู่ — ถ้า positionId ที่ระบุมายังอยู่ใน
+// รายการที่กรองได้ก็เลือกไว้ ไม่งั้นจะ fallback ไปตัวแรกของประเภทนั้น (กันค่าค้างจากตำแหน่งเดิม)
+function populateJobPositionSelect(staffTypeId, selectedPositionId) {
+    const select = document.getElementById('job-position');
+    if (!select) return;
+    const positions = activePositionsForStaffType(staffTypeId);
+    select.innerHTML = positions.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+    if (selectedPositionId && positions.some(p => p.id === selectedPositionId)) {
+        select.value = selectedPositionId;
+    } else if (positions.length > 0) {
+        select.value = positions[0].id;
+    }
+}
+
+// ---- Departments / Learning Areas (แผนก/กลุ่มสาระการเรียนรู้) ----
+// รายการแบนธรรมดา ไม่ผูกกับประเภทบุคลากร/ตำแหน่ง จึงไม่ต้องกรองแบบเดียวกับ #job-position
+function activeDepartmentsForForm() {
+    return (typeof settingsState !== "undefined" && Array.isArray(settingsState.departments))
+        ? [...settingsState.departments].filter(d => d.active).sort((a, b) => (a.order || 0) - (b.order || 0))
+        : [];
+}
+
+function departmentNameForDisplay(departmentId) {
+    const d = (typeof settingsState !== "undefined" && Array.isArray(settingsState.departments))
+        ? settingsState.departments.find(x => x.id === departmentId)
+        : null;
+    return d ? d.name : "";
+}
+
+function populateJobDepartmentSelect(selectedId) {
+    const select = document.getElementById('job-department');
+    if (!select) return;
+    const departments = activeDepartmentsForForm();
+    select.innerHTML = departments.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+    if (selectedId && departments.some(d => d.id === selectedId)) {
+        select.value = selectedId;
+    } else if (departments.length > 0) {
+        select.value = departments[0].id;
+    }
+}
+
+document.getElementById('job-staff-type')?.addEventListener('change', (e) => {
+    populateJobPositionSelect(e.target.value, null);
+});
+
 // Edit Mode Load Details
 function editTeacherProfile(teacherId) {
     selectedTeacherId = teacherId;
@@ -876,8 +954,10 @@ function editTeacherProfile(teacherId) {
     document.getElementById('toeic-file').value = t.toeic?.score ? "toeic_cert_verified.pdf" : "ยังไม่ได้อัพโหลดไฟล์";
     
     // Load Form 3: Job Position
-    document.getElementById('job-position').value = t.job?.position || 'ครูผู้ช่วย';
-    document.getElementById('job-department').value = t.job?.department || 'วิทยาศาสตร์และเทคโนโลยี';
+    // ประเภทบุคลากรก่อน แล้วค่อยกรองตำแหน่งตามประเภทนั้น (ผูกทางเดียว: ตำแหน่ง -> ประเภท)
+    populateJobStaffTypeSelect(t.job?.staffTypeId);
+    populateJobPositionSelect(document.getElementById('job-staff-type').value, t.job?.positionId);
+    populateJobDepartmentSelect(t.job?.departmentId);
     document.getElementById('job-hire-date').value = t.job?.hireDate || '';
     document.getElementById('job-salary').value = t.job?.salary || '';
     document.getElementById('job-status').value = t.job?.status || 'ปฏิบัติราชการปกติ';
@@ -914,7 +994,13 @@ function createNewBlankForm() {
     document.getElementById('form-basic-info-body').reset();
     document.getElementById('form-education-body').reset();
     document.getElementById('form-job-license-body').reset();
-    
+
+    // ประเภทบุคลากร/ตำแหน่ง/แผนก เป็น select ที่เติม option ด้วย JS เอง — .reset() ด้านบนไม่ช่วยอะไร
+    // ต้องเติมใหม่แล้วเลือกตัวแรกที่ยังเปิดใช้งานอยู่เป็นค่าเริ่มต้นเสมอ
+    populateJobStaffTypeSelect(null);
+    populateJobPositionSelect(document.getElementById('job-staff-type').value, null);
+    populateJobDepartmentSelect(null);
+
     // Auto generate next code
     const ids = teachers.map(t => parseInt(t.id.replace('T-', '')));
     const maxId = ids.length > 0 ? Math.max(...ids) : 0;
@@ -1070,7 +1156,18 @@ function handleBasicFormSubmit(e) {
         teacher.honors = [];
         teacher.trainings = [];
         teacher.toeic = { score: '', date: '' };
-        teacher.job = { position: 'ครูผู้ช่วย', department: 'วิทยาศาสตร์และเทคโนโลยี', hireDate: '', salary: '', status: 'ปฏิบัติราชการปกติ' };
+        // ค่าตั้งต้นชั่วคราว — ผู้ใช้จะกำหนดจริงในขั้นตอน "ข้อมูลตำแหน่งงาน" (handleJobLicenseFormSubmit) ต่อไป
+        const defaultStaffType = activeStaffTypesForForm()[0];
+        const defaultPosition = activePositionsForStaffType(defaultStaffType?.id)[0];
+        const defaultDepartment = activeDepartmentsForForm()[0];
+        teacher.job = {
+            staffTypeId: defaultStaffType?.id || '',
+            positionId: defaultPosition?.id || '',
+            position: defaultPosition?.name || 'ครูผู้ช่วย',
+            departmentId: defaultDepartment?.id || '',
+            department: defaultDepartment?.name || 'วิทยาศาสตร์และเทคโนโลยี',
+            hireDate: '', salary: '', status: 'ปฏิบัติราชการปกติ'
+        };
         teacher.license = { number: '', type: 'ไม่มี', issueDate: '', expireDate: '' };
         teacher.royals = [];
         teachers.push(teacher);
@@ -1151,9 +1248,18 @@ function handleJobLicenseFormSubmit(e) {
     const teacher = teachers.find(item => item.id === selectedTeacherId);
     if (!teacher) return;
     
+    const staffTypeId = document.getElementById('job-staff-type').value;
+    const positionId = document.getElementById('job-position').value;
+    const positionOption = document.getElementById('job-position').selectedOptions[0];
+    const departmentId = document.getElementById('job-department').value;
+    const departmentOption = document.getElementById('job-department').selectedOptions[0];
+
     teacher.job = {
-        position: document.getElementById('job-position').value,
-        department: document.getElementById('job-department').value,
+        staffTypeId: staffTypeId,
+        positionId: positionId,
+        position: positionOption ? positionOption.textContent : '', // เก็บชื่อไว้ใช้แสดงผลที่เดิม (ตาราง/พิมพ์เอกสาร) โดยไม่ต้อง join ทุกจุด
+        departmentId: departmentId,
+        department: departmentOption ? departmentOption.textContent : '', // เก็บชื่อไว้ใช้แสดงผลที่เดิมเช่นกัน
         hireDate: document.getElementById('job-hire-date').value,
         salary: document.getElementById('job-salary').value,
         status: document.getElementById('job-status').value
@@ -1456,13 +1562,31 @@ function setupExcelImport() {
                         honors: [],
                         trainings: [],
                         toeic: { score: "", date: "" },
-                        job: { 
-                            position: row["ตำแหน่ง"] || "ครูผู้ช่วย", 
-                            department: row["กลุ่มสาระฯ"] || row["แผนก"] || "วิทยาศาสตร์และเทคโนโลยี", 
-                            hireDate: row["วันที่เริ่มทำงาน"] || "", 
-                            salary: row["เงินเดือน"] || "", 
-                            status: "ปฏิบัติราชการปกติ" 
-                        },
+                        job: (() => {
+                            // จับคู่ชื่อตำแหน่ง/แผนกในไฟล์ Excel กับที่ตั้งค่าไว้ในระบบ (ไม่สนตัวพิมพ์เล็ก/ใหญ่ หรือช่องว่างหัวท้าย)
+                            // ถ้าหาไม่เจอ (เช่น พิมพ์ชื่อไม่ตรง) จะ fallback ไปตัวแรกที่เปิดใช้งานอยู่ แต่ยังคงชื่อดิบจากไฟล์ไว้แสดงผล
+                            const rawPosition = String(row["ตำแหน่ง"] || "").trim();
+                            const matched = (typeof settingsState !== "undefined" ? settingsState.positions || [] : [])
+                                .find(p => p.active && p.name.trim().toLowerCase() === rawPosition.toLowerCase());
+                            const fallbackType = activeStaffTypesForForm()[0];
+                            const fallbackPosition = activePositionsForStaffType(fallbackType?.id)[0];
+
+                            const rawDepartment = String(row["กลุ่มสาระฯ"] || row["แผนก"] || "").trim();
+                            const matchedDepartment = (typeof settingsState !== "undefined" ? settingsState.departments || [] : [])
+                                .find(d => d.active && d.name.trim().toLowerCase() === rawDepartment.toLowerCase());
+                            const fallbackDepartment = activeDepartmentsForForm()[0];
+
+                            return {
+                                staffTypeId: matched ? (matched.typeIds || [])[0] || "" : (fallbackType?.id || ""),
+                                positionId: matched ? matched.id : (fallbackPosition?.id || ""),
+                                position: rawPosition || fallbackPosition?.name || "ครูผู้ช่วย",
+                                departmentId: matchedDepartment ? matchedDepartment.id : (fallbackDepartment?.id || ""),
+                                department: rawDepartment || fallbackDepartment?.name || "วิทยาศาสตร์และเทคโนโลยี",
+                                hireDate: row["วันที่เริ่มทำงาน"] || "",
+                                salary: row["เงินเดือน"] || "",
+                                status: "ปฏิบัติราชการปกติ"
+                            };
+                        })(),
                         license: {
                             number: row["เลขใบอนุญาตวิชาชีพ"] || "",
                             type: row["ประเภทใบอนุญาต"] || "ไม่มี",

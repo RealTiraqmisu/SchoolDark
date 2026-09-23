@@ -276,6 +276,35 @@
                         <span>ผู้ลงนามเอกสาร</span>
                     </a>
                 </li>
+                <li>
+                    <a class="menu-item" data-module="settings" data-view="staff-types" id="menu-staff-types">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 7h-9" />
+                            <path d="M14 17H5" />
+                            <circle cx="17" cy="17" r="3" />
+                            <circle cx="7" cy="7" r="3" />
+                        </svg>
+                        <span>ตั้งค่าประเภทบุคลากร</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-module="settings" data-view="positions" id="menu-positions">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="7" />
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+                        </svg>
+                        <span>ตั้งค่าตำแหน่ง</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-module="settings" data-view="departments" id="menu-departments">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                        </svg>
+                        <span>ตั้งค่าแผนก/กลุ่มสาระฯ</span>
+                    </a>
+                </li>
 
                 <!-- เมนูข้ามระบบ: สร้างจาก ../shared/cross-nav.js (แหล่งข้อมูลเมนูจุดเดียว) -->
                 <li id="cross-nav-sidebar"></li>
@@ -797,6 +826,34 @@
                                             <div class="form-group"><label for="quota-maternity">ลาคลอดบุตร</label><input
                                                     type="number" id="quota-maternity" class="glass-input" value="90" min="0">
                                             </div>
+                                        </div>
+                                        <span
+                                            style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">ค่าเริ่มต้นนี้จะถูกใช้กับทุกประเภทบุคลากรที่ยังไม่ได้ปรับแยกไว้ด้านล่าง</span>
+                                    </div>
+                                    <div class="glass-card">
+                                        <div class="card-header">
+                                            <h3><svg viewBox="0 0 24 24">
+                                                    <path d="M20 7h-9" />
+                                                    <path d="M14 17H5" />
+                                                    <circle cx="17" cy="17" r="3" />
+                                                    <circle cx="7" cy="7" r="3" />
+                                                </svg>โควตาแยกตามประเภทบุคลากร</h3>
+                                        </div>
+                                        <p class="card-desc">ปรับจำนวนวันลาให้ต่างจากค่าเริ่มต้นด้านบนได้ต่อประเภทบุคลากร
+                                            เช่น ครูอัตราจ้างอาจได้โควตาน้อยกว่าข้าราชการ (จัดการรายชื่อประเภทบุคลากรที่
+                                            ตั้งค่าระบบ &rarr; ตั้งค่าประเภทบุคลากร)</p>
+                                        <div class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ประเภทบุคลากร</th>
+                                                        <th>ลาป่วย</th>
+                                                        <th>ลาพักผ่อน / ลากิจ</th>
+                                                        <th>ลาคลอดบุตร</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="staff-type-quota-tbody"></tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -1612,27 +1669,20 @@
                             <form id="form-job-license-body">
                                 <div class="sub-tab-panel active" id="subtab-job-position-tab">
                                     <div class="form-grid">
+                                        <div class="col-4 form-group"><label for="job-staff-type">ประเภทบุคลากร <span
+                                                    style="color:var(--danger)">*</span></label><select
+                                                id="job-staff-type" class="glass-select" required>
+                                                <!-- Rendered dynamically from settingsState.staffTypes (active only) -->
+                                            </select></div>
                                         <div class="col-4 form-group"><label for="job-position">ตำแหน่งปัจจุบัน <span
                                                     style="color:var(--danger)">*</span></label><select
                                                 id="job-position" class="glass-select" required>
-                                                <option>ครูผู้ช่วย</option>
-                                                <option>ครู (คศ.1)</option>
-                                                <option>ครูชำนาญการ (คศ.2)</option>
-                                                <option>ครูชำนาญการพิเศษ (คศ.3)</option>
-                                                <option>ครูเชี่ยวชาญ (คศ.4)</option>
-                                                <option>อาจารย์อัตราจ้าง</option>
+                                                <!-- Rendered dynamically from settingsState.positions, filtered by #job-staff-type -->
                                             </select></div>
                                         <div class="col-4 form-group"><label for="job-department">กลุ่มสาระการเรียนรู้
                                                 <span style="color:var(--danger)">*</span></label><select
                                                 id="job-department" class="glass-select" required>
-                                                <option>ภาษาไทย</option>
-                                                <option>คณิตศาสตร์</option>
-                                                <option>วิทยาศาสตร์และเทคโนโลยี</option>
-                                                <option>สังคมศึกษา ศาสนา และวัฒนธรรม</option>
-                                                <option>ภาษาต่างประเทศ</option>
-                                                <option>สุขศึกษาและพลศึกษา</option>
-                                                <option>ศิลปะ / ดนตรี</option>
-                                                <option>การงานอาชีพ</option>
+                                                <!-- Rendered dynamically from settingsState.departments (active only) -->
                                             </select></div>
                                         <div class="col-4 form-group"><label
                                                 for="job-hire-date">วันที่เริ่มปฏิบัติงาน</label><input type="date"
@@ -1921,6 +1971,50 @@
                                 <div class="qnc-text">
                                     <h3>ผู้ลงนาม</h3>
                                     <p>จัดการรายชื่อผู้มีอำนาจลงนามในเอกสาร</p>
+                                </div><svg class="qnc-arrow" viewBox="0 0 24 24">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                            </div>
+                            <div class="quick-nav-card" data-goto-module="settings" data-goto-view="staff-types">
+                                <div class="qnc-icon"
+                                    style="background:linear-gradient(135deg,hsl(280,80%,60%),hsl(250,85%,50%));"><svg
+                                        viewBox="0 0 24 24">
+                                        <path d="M20 7h-9" />
+                                        <path d="M14 17H5" />
+                                        <circle cx="17" cy="17" r="3" />
+                                        <circle cx="7" cy="7" r="3" />
+                                    </svg></div>
+                                <div class="qnc-text">
+                                    <h3>ประเภทบุคลากร</h3>
+                                    <p>กำหนดกลุ่มบุคลากร เช่น ข้าราชการ, อัตราจ้าง</p>
+                                </div><svg class="qnc-arrow" viewBox="0 0 24 24">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                            </div>
+                            <div class="quick-nav-card" data-goto-module="settings" data-goto-view="positions">
+                                <div class="qnc-icon"
+                                    style="background:linear-gradient(135deg,hsl(199,89%,48%),hsl(280,80%,60%));"><svg
+                                        viewBox="0 0 24 24">
+                                        <circle cx="12" cy="8" r="7" />
+                                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+                                    </svg></div>
+                                <div class="qnc-text">
+                                    <h3>ตำแหน่ง</h3>
+                                    <p>จัดการรายชื่อตำแหน่งและผูกกับประเภทบุคลากร</p>
+                                </div><svg class="qnc-arrow" viewBox="0 0 24 24">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                            </div>
+                            <div class="quick-nav-card" data-goto-module="settings" data-goto-view="departments">
+                                <div class="qnc-icon"
+                                    style="background:linear-gradient(135deg,hsl(142,72%,45%),hsl(38,92%,50%));"><svg
+                                        viewBox="0 0 24 24">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                    </svg></div>
+                                <div class="qnc-text">
+                                    <h3>แผนก/กลุ่มสาระฯ</h3>
+                                    <p>จัดการรายชื่อแผนกและกลุ่มสาระการเรียนรู้</p>
                                 </div><svg class="qnc-arrow" viewBox="0 0 24 24">
                                     <polyline points="9 18 15 12 9 6" />
                                 </svg>
@@ -2479,6 +2573,327 @@
                         </div>
                     </div>
 
+                    <!-- ===== VIEW: STAFF TYPES (ประเภทบุคลากร) ===== -->
+                    <div class="view-section" id="view-staff-types">
+                        <div class="info-banner">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                            </svg>
+                            <div><strong>ประเภทบุคลากร</strong><span> — ใช้จัดกลุ่มบุคลากร (เช่น ข้าราชการ, อัตราจ้าง)
+                                    เพื่อกำหนดว่า "ตำแหน่ง" ใดสังกัดประเภทใด และตั้งโควตาวันลาประจำปีแยกตามประเภทได้ที่
+                                    ระบบบริหารการลา → ตั้งค่าการลา → ขั้นตอนที่ 3</span></div>
+                        </div>
+                        <div class="shift-cards-row">
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon"
+                                    style="background:var(--primary-glow);color:var(--primary);"><svg viewBox="0 0 24 24">
+                                        <path d="M20 7h-9" />
+                                        <path d="M14 17H5" />
+                                        <circle cx="17" cy="17" r="3" />
+                                        <circle cx="7" cy="7" r="3" />
+                                    </svg></div>
+                                <div>
+                                    <div class="shift-stat-label">ประเภทบุคลากรทั้งหมด</div>
+                                    <div class="shift-stat-value" id="stt-count-total">0</div>
+                                </div>
+                            </div>
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon" style="background:var(--success-bg);color:var(--success);">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M20 6 9 17l-5-5" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shift-stat-label">เปิดใช้งานอยู่</div>
+                                    <div class="shift-stat-value" id="stt-count-active">0</div>
+                                </div>
+                            </div>
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon" style="background:var(--danger-bg);color:var(--danger);">
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="15" y1="9" x2="9" y2="15" />
+                                        <line x1="9" y1="9" x2="15" y2="15" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shift-stat-label">ปิดใช้งานอยู่</div>
+                                    <div class="shift-stat-value" id="stt-count-inactive">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h3><svg viewBox="0 0 24 24">
+                                        <path d="M20 7h-9" />
+                                        <path d="M14 17H5" />
+                                        <circle cx="17" cy="17" r="3" />
+                                        <circle cx="7" cy="7" r="3" />
+                                    </svg>รายการประเภทบุคลากร</h3>
+                                <div style="display:flex;gap:8px;">
+                                    <button class="btn btn-secondary btn-sm" id="btn-save-staff-types">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                                            <polyline points="17 21 17 13 7 13 7 21" />
+                                            <polyline points="7 3 7 8 15 8" />
+                                        </svg>บันทึก
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" id="btn-add-staff-type">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19" />
+                                            <line x1="5" y1="12" x2="19" y2="12" />
+                                        </svg>เพิ่มประเภทบุคลากร
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-controls">
+                                <div class="search-box-wrapper"><svg viewBox="0 0 24 24">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg><input type="text" class="glass-input search-input" id="staff-type-search"
+                                        placeholder="ค้นหาชื่อ หรือรหัสประเภทบุคลากร..."></div>
+                                <div style="display:flex;gap:10px;">
+                                    <select class="glass-select" style="width:150px;" id="staff-type-filter-status">
+                                        <option value="all">ทุกสถานะ</option>
+                                        <option value="active">เปิดใช้งาน</option>
+                                        <option value="inactive">ปิดใช้งาน</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:56px;"></th>
+                                            <th>ชื่อประเภทบุคลากร</th>
+                                            <th>รหัส</th>
+                                            <th style="text-align:center;">ตำแหน่งที่สังกัด</th>
+                                            <th style="text-align:center;">บุคลากรที่ใช้</th>
+                                            <th style="text-align:center;width:140px;">สถานะ / จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="staff-types-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== VIEW: POSITIONS (ตำแหน่ง) ===== -->
+                    <div class="view-section" id="view-positions">
+                        <div class="info-banner">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                            </svg>
+                            <div><strong>ตำแหน่ง</strong><span> — รายการตำแหน่งที่ใช้ในฟอร์มข้อมูลตำแหน่งงานของบุคลากร
+                                    แต่ละตำแหน่งต้องผูกกับประเภทบุคลากรอย่างน้อย 1 ประเภท เพื่อให้ระบบกรองตัวเลือกในฟอร์มให้ตรงกัน</span>
+                            </div>
+                        </div>
+                        <div class="shift-cards-row">
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon"
+                                    style="background:var(--primary-glow);color:var(--primary);"><svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="8" r="7" />
+                                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+                                    </svg></div>
+                                <div>
+                                    <div class="shift-stat-label">ตำแหน่งทั้งหมด</div>
+                                    <div class="shift-stat-value" id="pos-count-total">0</div>
+                                </div>
+                            </div>
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon" style="background:var(--success-bg);color:var(--success);">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M20 6 9 17l-5-5" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shift-stat-label">เปิดใช้งานอยู่</div>
+                                    <div class="shift-stat-value" id="pos-count-active">0</div>
+                                </div>
+                            </div>
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon" style="background:var(--danger-bg);color:var(--danger);">
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="15" y1="9" x2="9" y2="15" />
+                                        <line x1="9" y1="9" x2="15" y2="15" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shift-stat-label">ปิดใช้งานอยู่</div>
+                                    <div class="shift-stat-value" id="pos-count-inactive">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h3><svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="8" r="7" />
+                                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+                                    </svg>รายการตำแหน่ง</h3>
+                                <div style="display:flex;gap:8px;">
+                                    <button class="btn btn-secondary btn-sm" id="btn-save-positions">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                                            <polyline points="17 21 17 13 7 13 7 21" />
+                                            <polyline points="7 3 7 8 15 8" />
+                                        </svg>บันทึก
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" id="btn-add-position">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19" />
+                                            <line x1="5" y1="12" x2="19" y2="12" />
+                                        </svg>เพิ่มตำแหน่ง
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-controls">
+                                <div class="search-box-wrapper"><svg viewBox="0 0 24 24">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg><input type="text" class="glass-input search-input" id="position-search"
+                                        placeholder="ค้นหาชื่อ หรือรหัสตำแหน่ง..."></div>
+                                <div style="display:flex;gap:10px;">
+                                    <select class="glass-select" style="width:190px;" id="position-filter-type">
+                                        <option value="">ทุกประเภทบุคลากร</option>
+                                    </select>
+                                    <select class="glass-select" style="width:150px;" id="position-filter-status">
+                                        <option value="all">ทุกสถานะ</option>
+                                        <option value="active">เปิดใช้งาน</option>
+                                        <option value="inactive">ปิดใช้งาน</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:56px;"></th>
+                                            <th>ชื่อตำแหน่ง</th>
+                                            <th>รหัส</th>
+                                            <th>สังกัดประเภทบุคลากร</th>
+                                            <th style="text-align:center;">บุคลากรที่ใช้</th>
+                                            <th style="text-align:center;width:140px;">สถานะ / จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="positions-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== VIEW: DEPARTMENTS / LEARNING AREAS (แผนก/กลุ่มสาระการเรียนรู้) ===== -->
+                    <div class="view-section" id="view-departments">
+                        <div class="info-banner">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                            </svg>
+                            <div><strong>แผนก / กลุ่มสาระการเรียนรู้</strong><span> — ใช้เป็นตัวเลือก "กลุ่มสาระการเรียนรู้"
+                                    ในฟอร์มข้อมูลตำแหน่งงานของบุคลากร (ไม่ผูกกับประเภทบุคลากรหรือตำแหน่ง)</span></div>
+                        </div>
+                        <div class="shift-cards-row">
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon"
+                                    style="background:var(--primary-glow);color:var(--primary);"><svg viewBox="0 0 24 24">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                    </svg></div>
+                                <div>
+                                    <div class="shift-stat-label">แผนก/กลุ่มสาระฯ ทั้งหมด</div>
+                                    <div class="shift-stat-value" id="dep-count-total">0</div>
+                                </div>
+                            </div>
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon" style="background:var(--success-bg);color:var(--success);">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M20 6 9 17l-5-5" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shift-stat-label">เปิดใช้งานอยู่</div>
+                                    <div class="shift-stat-value" id="dep-count-active">0</div>
+                                </div>
+                            </div>
+                            <div class="shift-stat-card">
+                                <div class="shift-stat-icon" style="background:var(--danger-bg);color:var(--danger);">
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="15" y1="9" x2="9" y2="15" />
+                                        <line x1="9" y1="9" x2="15" y2="15" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="shift-stat-label">ปิดใช้งานอยู่</div>
+                                    <div class="shift-stat-value" id="dep-count-inactive">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header">
+                                <h3><svg viewBox="0 0 24 24">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                    </svg>รายการแผนก/กลุ่มสาระการเรียนรู้</h3>
+                                <div style="display:flex;gap:8px;">
+                                    <button class="btn btn-secondary btn-sm" id="btn-save-departments">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                                            <polyline points="17 21 17 13 7 13 7 21" />
+                                            <polyline points="7 3 7 8 15 8" />
+                                        </svg>บันทึก
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" id="btn-add-department">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                            stroke-width="2">
+                                            <line x1="12" y1="5" x2="12" y2="19" />
+                                            <line x1="5" y1="12" x2="19" y2="12" />
+                                        </svg>เพิ่มแผนก/กลุ่มสาระฯ
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-controls">
+                                <div class="search-box-wrapper"><svg viewBox="0 0 24 24">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg><input type="text" class="glass-input search-input" id="department-search"
+                                        placeholder="ค้นหาชื่อ หรือรหัสแผนก/กลุ่มสาระฯ..."></div>
+                                <div style="display:flex;gap:10px;">
+                                    <select class="glass-select" style="width:150px;" id="department-filter-status">
+                                        <option value="all">ทุกสถานะ</option>
+                                        <option value="active">เปิดใช้งาน</option>
+                                        <option value="inactive">ปิดใช้งาน</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:56px;"></th>
+                                            <th>ชื่อแผนก/กลุ่มสาระการเรียนรู้</th>
+                                            <th>รหัส</th>
+                                            <th>หัวหน้าแผนก</th>
+                                            <th style="text-align:center;">บุคลากรที่ใช้</th>
+                                            <th style="text-align:center;width:140px;">สถานะ / จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="departments-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                 </section><!-- end module-settings -->
 
             </div><!-- end content-body -->
@@ -2761,6 +3176,102 @@
             <div class="modal-actions"><button class="btn btn-secondary"
                     data-close="modal-signatory">ยกเลิก</button><button class="btn btn-primary"
                     id="btn-confirm-signatory">บันทึก</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Staff Type (Settings) -->
+    <div class="modal-overlay" id="modal-staff-type">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-staff-type-title">เพิ่มประเภทบุคลากร</h3><button class="modal-close"
+                    data-close="modal-staff-type"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg></button>
+            </div>
+            <div class="form-group"><label for="stt-modal-name">ชื่อประเภทบุคลากร <span class="req">*</span></label>
+                <input type="text" id="stt-modal-name" class="glass-input" placeholder="เช่น ครูอัตราจ้าง"></div>
+            <div class="form-grid-2" style="margin-top:0;">
+                <div class="form-group"><label for="stt-modal-code">รหัส</label><input type="text" id="stt-modal-code"
+                        class="glass-input" placeholder="เช่น HIRE" style="text-transform:uppercase;"></div>
+                <div class="form-group"><label for="stt-modal-color">สีประจำประเภท</label><select id="stt-modal-color"
+                        class="glass-select">
+                        <option value="primary">น้ำเงิน (Primary)</option>
+                        <option value="success">เขียว (Success)</option>
+                        <option value="warning">ส้ม (Warning)</option>
+                        <option value="danger">แดง (Danger)</option>
+                        <option value="info">ฟ้า (Info)</option>
+                    </select></div>
+            </div>
+            <div class="form-group"><label for="stt-modal-desc">คำอธิบาย</label><textarea id="stt-modal-desc"
+                    class="glass-input" rows="2" placeholder="อธิบายลักษณะของบุคลากรกลุ่มนี้"></textarea></div>
+            <div class="modal-actions"><button class="btn btn-secondary"
+                    data-close="modal-staff-type">ยกเลิก</button><button class="btn btn-primary"
+                    id="btn-confirm-staff-type">บันทึก</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Position (Settings) -->
+    <div class="modal-overlay" id="modal-position">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-position-title">เพิ่มตำแหน่ง</h3><button class="modal-close" data-close="modal-position">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg></button>
+            </div>
+            <div class="form-group"><label for="pos-modal-name">ชื่อตำแหน่ง <span class="req">*</span></label><input
+                    type="text" id="pos-modal-name" class="glass-input" placeholder="เช่น ครู (คศ.1)"></div>
+            <div class="form-group"><label for="pos-modal-code">รหัส</label><input type="text" id="pos-modal-code"
+                    class="glass-input" placeholder="เช่น T1" style="text-transform:uppercase;"></div>
+            <div class="form-group"><label>สังกัดประเภทบุคลากร <span class="req">*</span></label>
+                <div id="pos-modal-types-list" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+            </div>
+            <div class="modal-actions"><button class="btn btn-secondary"
+                    data-close="modal-position">ยกเลิก</button><button class="btn btn-primary"
+                    id="btn-confirm-position">บันทึก</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit Department / Learning Area (Settings) -->
+    <div class="modal-overlay" id="modal-department">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-department-title">เพิ่มแผนก/กลุ่มสาระการเรียนรู้</h3><button class="modal-close"
+                    data-close="modal-department"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg></button>
+            </div>
+            <div class="form-group"><label for="dep-modal-name">ชื่อแผนก/กลุ่มสาระการเรียนรู้ <span
+                        class="req">*</span></label>
+                <input type="text" id="dep-modal-name" class="glass-input" placeholder="เช่น วิทยาศาสตร์และเทคโนโลยี"></div>
+            <div class="form-grid-2" style="margin-top:0;">
+                <div class="form-group"><label for="dep-modal-code">รหัส</label><input type="text" id="dep-modal-code"
+                        class="glass-input" placeholder="เช่น SCI" style="text-transform:uppercase;"></div>
+                <div class="form-group"><label for="dep-modal-color">สีประจำแผนก</label><select id="dep-modal-color"
+                        class="glass-select">
+                        <option value="primary">น้ำเงิน (Primary)</option>
+                        <option value="success">เขียว (Success)</option>
+                        <option value="warning">ส้ม (Warning)</option>
+                        <option value="danger">แดง (Danger)</option>
+                        <option value="info">ฟ้า (Info)</option>
+                    </select></div>
+            </div>
+            <div class="form-group"><label for="dep-modal-head">หัวหน้าแผนก</label><select id="dep-modal-head"
+                    class="glass-select">
+                    <option value="">-- ไม่ระบุ --</option>
+                </select>
+                <span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">เลือกจากรายชื่อบุคลากรที่มีอยู่ในระบบ (ไม่บังคับ)</span>
+            </div>
+            <div class="form-group"><label for="dep-modal-desc">คำอธิบาย</label><textarea id="dep-modal-desc"
+                    class="glass-input" rows="2" placeholder="อธิบายลักษณะของแผนก/กลุ่มสาระฯ นี้"></textarea></div>
+            <div class="modal-actions"><button class="btn btn-secondary"
+                    data-close="modal-department">ยกเลิก</button><button class="btn btn-primary"
+                    id="btn-confirm-department">บันทึก</button></div>
         </div>
     </div>
 

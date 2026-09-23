@@ -50,6 +50,44 @@ const INITIAL_DOC_SIGNATORIES = [
     { docType: "หนังสือขอความอนุเคราะห์", signatoryId: "SIG002" }
 ];
 
+// Initial Staff Type Seed Data (ประเภทบุคลากร)
+// ใช้เป็นทั้งตัวจัดกลุ่มตำแหน่ง (positions.typeIds) และคีย์อ้างอิงโควตาวันลาแยกตามประเภท
+// (settings.staffTypeQuotaOverrides ใน index.js — ดู INITIAL_SETTINGS ที่นั่น)
+const INITIAL_STAFF_TYPES = [
+    { id: "ST01", name: "ข้าราชการครู / ครูเทศบาล", code: "GOV", desc: "บรรจุประจำ สังกัดราชการหรือเทศบาล", color: "primary", active: true, order: 1 },
+    { id: "ST02", name: "ครูอัตราจ้าง", code: "HIRE", desc: "จ้างเป็นรายปีหรือรายเดือน ไม่ใช่ข้าราชการ", color: "warning", active: true, order: 2 },
+    { id: "ST03", name: "ผู้บริหารสถานศึกษา", code: "MGT", desc: "ผู้อำนวยการ / รองผู้อำนวยการ", color: "success", active: true, order: 3 },
+    { id: "ST04", name: "เจ้าหน้าที่ทั่วไป", code: "STAFF", desc: "เจ้าหน้าที่ธุรการ การเงิน พัสดุ และสนับสนุนอื่นๆ", color: "info", active: true, order: 4 }
+];
+
+// Initial Position Seed Data (ตำแหน่ง) — ผูกกับประเภทบุคลากรผ่าน typeIds (เลือกได้หลายประเภท)
+const INITIAL_POSITIONS = [
+    { id: "POS01", name: "ครูผู้ช่วย", code: "T0", typeIds: ["ST01"], active: true, order: 1 },
+    { id: "POS02", name: "ครู (คศ.1)", code: "T1", typeIds: ["ST01"], active: true, order: 2 },
+    { id: "POS03", name: "ครูชำนาญการ (คศ.2)", code: "T2", typeIds: ["ST01"], active: true, order: 3 },
+    { id: "POS04", name: "ครูชำนาญการพิเศษ (คศ.3)", code: "T3", typeIds: ["ST01"], active: true, order: 4 },
+    { id: "POS05", name: "ครูเชี่ยวชาญ (คศ.4)", code: "T4", typeIds: ["ST01"], active: true, order: 5 },
+    { id: "POS06", name: "อาจารย์อัตราจ้าง", code: "THIRE", typeIds: ["ST02"], active: true, order: 6 },
+    { id: "POS07", name: "ผู้อำนวยการ", code: "DIR", typeIds: ["ST03"], active: true, order: 7 },
+    { id: "POS08", name: "รองผู้อำนวยการ", code: "VDIR", typeIds: ["ST03"], active: true, order: 8 },
+    { id: "POS09", name: "เจ้าหน้าที่ธุรการ", code: "ADM", typeIds: ["ST04"], active: true, order: 9 }
+];
+
+// Initial Department / Learning Area Seed Data (แผนก / กลุ่มสาระการเรียนรู้)
+// เป็นรายการแบนธรรมดา ไม่ผูกกับประเภทบุคลากรหรือตำแหน่ง (ต่างจาก positions.typeIds) —
+// ใช้แค่กรอง/แสดงผลในฟอร์มข้อมูลตำแหน่งงานของบุคลากรเท่านั้น (job.departmentId)
+// headTeacherId อ้างอิงถึง id ของบุคลากรใน personnel.js (เช่น "T-001") — ไม่บังคับ เว้นว่างได้ (null)
+const INITIAL_DEPARTMENTS = [
+    { id: "DEP01", name: "ภาษาไทย", code: "TH", desc: "", color: "danger", active: true, order: 1, headTeacherId: "T-003" },
+    { id: "DEP02", name: "คณิตศาสตร์", code: "MATH", desc: "", color: "primary", active: true, order: 2, headTeacherId: "T-002" },
+    { id: "DEP03", name: "วิทยาศาสตร์และเทคโนโลยี", code: "SCI", desc: "", color: "success", active: true, order: 3, headTeacherId: "T-001" },
+    { id: "DEP04", name: "สังคมศึกษา ศาสนา และวัฒนธรรม", code: "SOC", desc: "", color: "warning", active: true, order: 4, headTeacherId: "T-004" },
+    { id: "DEP05", name: "ภาษาต่างประเทศ", code: "LANG", desc: "", color: "info", active: true, order: 5, headTeacherId: "T-005" },
+    { id: "DEP06", name: "สุขศึกษาและพลศึกษา", code: "PE", desc: "", color: "danger", active: true, order: 6, headTeacherId: null },
+    { id: "DEP07", name: "ศิลปะ / ดนตรี", code: "ART", desc: "", color: "warning", active: true, order: 7, headTeacherId: null },
+    { id: "DEP08", name: "การงานอาชีพ", code: "CAR", desc: "", color: "success", active: true, order: 8, headTeacherId: null }
+];
+
 // Initial Homeroom Teacher Seed Data (ครูประจำชั้น — แยกตามปีการศึกษา)
 // โครง: { "<ปีการศึกษา>": { "<ห้อง>": [ { teacherId, role } ] } }
 // role: "homeroom" = ครูประจำชั้น, "advisor" = ครูที่ปรึกษา / ร่วมประจำชั้น
@@ -91,10 +129,16 @@ let settingsState = {
     signatories: [],
     docSignatories: [],
     homeroom: {},
+    staffTypes: [],
+    positions: [],
+    departments: [],
     activeView: "general",
     editingShiftId: null,
     editingSignatoryId: null,
-    editingHomeroomClass: null
+    editingHomeroomClass: null,
+    editingStaffTypeId: null,
+    editingPositionId: null,
+    editingDepartmentId: null
 };
 
 // Settings state draft for uncommitted configurations (Task 4)
@@ -193,6 +237,24 @@ function initSettingsDatabase() {
         localStorage.setItem("sd_homeroom_v2", JSON.stringify(settingsState.homeroom));
     }
 
+    // 9. Staff Types (ประเภทบุคลากร)
+    if (!localStorage.getItem("sd_staff_types")) {
+        localStorage.setItem("sd_staff_types", JSON.stringify(INITIAL_STAFF_TYPES));
+    }
+    settingsState.staffTypes = JSON.parse(localStorage.getItem("sd_staff_types"));
+
+    // 10. Positions (ตำแหน่ง) — ผูกกับประเภทบุคลากรผ่าน typeIds
+    if (!localStorage.getItem("sd_positions")) {
+        localStorage.setItem("sd_positions", JSON.stringify(INITIAL_POSITIONS));
+    }
+    settingsState.positions = JSON.parse(localStorage.getItem("sd_positions"));
+
+    // 11. Departments / Learning Areas (แผนก / กลุ่มสาระการเรียนรู้)
+    if (!localStorage.getItem("sd_departments")) {
+        localStorage.setItem("sd_departments", JSON.stringify(INITIAL_DEPARTMENTS));
+    }
+    settingsState.departments = JSON.parse(localStorage.getItem("sd_departments"));
+
     // Load initial draft (Task 4)
     settingsStateDraft = JSON.parse(JSON.stringify(settingsState));
 }
@@ -220,6 +282,9 @@ function saveStateToLocalStorage() {
     localStorage.setItem("sd_signatories", JSON.stringify(settingsState.signatories));
     localStorage.setItem("sd_doc_signatories", JSON.stringify(settingsState.docSignatories));
     localStorage.setItem("sd_homeroom_v2", JSON.stringify(settingsState.homeroom));
+    localStorage.setItem("sd_staff_types", JSON.stringify(settingsState.staffTypes));
+    localStorage.setItem("sd_positions", JSON.stringify(settingsState.positions));
+    localStorage.setItem("sd_departments", JSON.stringify(settingsState.departments));
 }
 
 // -------------------------------------------------------------
@@ -264,6 +329,12 @@ function renderViewData(viewId) {
         renderPermissionsView();
     } else if (viewId === "signatories") {
         renderSignatoriesView();
+    } else if (viewId === "staff-types") {
+        renderStaffTypesView();
+    } else if (viewId === "positions") {
+        renderPositionsView();
+    } else if (viewId === "departments") {
+        renderDepartmentsView();
     }
 }
 
@@ -739,6 +810,642 @@ function renderSignatoriesView() {
 }
 
 // -------------------------------------------------------------
+// STAFF TYPES (ประเภทบุคลากร) & POSITIONS (ตำแหน่ง)
+// -------------------------------------------------------------
+// สองรายการนี้ผูกกันทางเดียว: ตำแหน่งหนึ่งเลือกได้ว่า "สังกัด" ประเภทบุคลากรใดบ้าง
+// (position.typeIds เป็น array — เลือกได้หลายประเภท) ส่วนประเภทบุคลากรเองไม่เก็บ
+// รายการตำแหน่งย้อนกลับ (derived ด้วย countPositionsForStaffType เสมอ กันข้อมูลไม่ตรงกัน)
+//
+// การลบ/ปิดใช้งาน: ถ้ามีบุคลากรจริง (teachers ใน personnel.js) หรือ — กรณีประเภทบุคลากร —
+// มีตำแหน่งที่ยังผูกอยู่ จะไม่ให้ลบตรงๆ แต่ชวนให้ "ปิดใช้งาน" แทน เพื่อไม่ให้ข้อมูลอ้างอิงเดิมหาย
+
+const STAFF_TYPE_COLOR_HEX = { danger: "#f87171", warning: "#fb923c", primary: "#60a5fa", success: "#4ade80", info: "#38bdf8" };
+
+function personnelListSafe() {
+    // teachers มาจาก personnel.js — โหลดก่อน settings.js เสมอ แต่กันไว้เผื่อสลับลำดับในอนาคต
+    return (typeof teachers !== "undefined" && Array.isArray(teachers)) ? teachers : [];
+}
+
+function countPersonnelForStaffType(staffTypeId) {
+    return personnelListSafe().filter(t => t.job?.staffTypeId === staffTypeId).length;
+}
+
+function countPersonnelForPosition(positionId) {
+    return personnelListSafe().filter(t => t.job?.positionId === positionId).length;
+}
+
+function countPositionsForStaffType(staffTypeId) {
+    return settingsStateDraft.positions.filter(p => p.typeIds && p.typeIds.includes(staffTypeId)).length;
+}
+
+function countPersonnelForDepartment(departmentId) {
+    return personnelListSafe().filter(t => t.job?.departmentId === departmentId).length;
+}
+
+// รายชื่อบุคลากรที่เลือกเป็น "หัวหน้าแผนก" ได้ — ใช้ personnelListSafe() ตัวเดียวกับที่นับจำนวนผู้ใช้งาน
+// (ต่างจาก getHomeroomTeacherPool() ของฝั่งครูประจำชั้น เพราะ field ชื่อ-สกุลเก็บคนละแบบ)
+function departmentHeadCandidates() {
+    return personnelListSafe().map(t => ({
+        id: t.id,
+        name: `${t.prefix || ""}${t.firstname || ""} ${t.lastname || ""}`.trim() || t.id
+    }));
+}
+
+function departmentHeadName(headTeacherId) {
+    if (!headTeacherId) return "";
+    const found = departmentHeadCandidates().find(t => t.id === headTeacherId);
+    return found ? found.name : `(ไม่พบบุคลากร ${headTeacherId})`;
+}
+
+// ---- Staff Types: render ----
+function renderStaffTypesView() {
+    const list = settingsStateDraft.staffTypes || [];
+    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    document.getElementById("stt-count-total").textContent = list.length;
+    document.getElementById("stt-count-active").textContent = list.filter(t => t.active).length;
+    document.getElementById("stt-count-inactive").textContent = list.filter(t => !t.active).length;
+
+    const searchVal = (document.getElementById("staff-type-search")?.value || "").trim().toLowerCase();
+    const statusVal = document.getElementById("staff-type-filter-status")?.value || "all";
+
+    const filtered = sorted.filter(t => {
+        const matchesSearch = !searchVal || t.name.toLowerCase().includes(searchVal) || (t.code || "").toLowerCase().includes(searchVal);
+        const matchesStatus = statusVal === "all" || (statusVal === "active" ? t.active : !t.active);
+        return matchesSearch && matchesStatus;
+    });
+
+    const tbody = document.getElementById("staff-types-table-body");
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบประเภทบุคลากรที่ค้นหา</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map((t) => {
+        const realIdx = sorted.findIndex(x => x.id === t.id);
+        const dot = STAFF_TYPE_COLOR_HEX[t.color] || "#9ca3af";
+        const usedCount = countPersonnelForStaffType(t.id);
+        const posCount = countPositionsForStaffType(t.id);
+        return `
+            <tr style="${t.active ? "" : "opacity:.55;"}">
+                <td style="text-align:center;white-space:nowrap;">
+                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนขึ้น" onclick="moveStaffType('${t.id}', -1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนลง" onclick="moveStaffType('${t.id}', 1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                </td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dot};flex-shrink:0;"></span>
+                        <div>
+                            <div style="font-weight:600;color:var(--text-primary);">${t.name}</div>
+                            <div style="font-size:11px;color:var(--text-muted);">${t.desc || "-"}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="font-family:var(--font-heading);color:var(--text-muted);">${t.code || "-"}</td>
+                <td style="text-align:center;">
+                    <span class="badge badge-admin" style="cursor:${posCount ? "pointer" : "default"};" ${posCount ? `onclick="App.navigate('settings','positions')"` : ""} title="ตำแหน่งที่สังกัดประเภทนี้">${posCount} ตำแหน่ง</span>
+                </td>
+                <td style="text-align:center;color:var(--text-secondary);">${usedCount} คน</td>
+                <td style="text-align:center;">
+                    <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                        <label class="switch" title="${t.active ? "ปิดใช้งาน" : "เปิดใช้งาน"}">
+                            <input type="checkbox" ${t.active ? "checked" : ""} onchange="toggleStaffTypeActive('${t.id}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                        <button class="icon-btn" title="แก้ไข" onclick="openEditStaffTypeModal('${t.id}')">
+                            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="icon-btn danger" title="ลบ" onclick="deleteStaffType('${t.id}')">
+                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function moveStaffType(id, dir) {
+    const list = settingsStateDraft.staffTypes;
+    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
+    const idx = sorted.findIndex(t => t.id === id);
+    const swapIdx = idx + dir;
+    if (idx === -1 || swapIdx < 0 || swapIdx >= sorted.length) return;
+
+    const a = sorted[idx], b = sorted[swapIdx];
+    const tmp = a.order;
+    a.order = b.order;
+    b.order = tmp;
+
+    renderStaffTypesView();
+}
+
+window.toggleStaffTypeActive = function (id, isActive) {
+    const t = settingsStateDraft.staffTypes.find(x => x.id === id);
+    if (!t) return;
+    t.active = isActive;
+    renderStaffTypesView();
+    showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${t.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+};
+
+function openAddStaffTypeModal() {
+    settingsStateDraft.editingStaffTypeId = null;
+    document.getElementById("modal-staff-type-title").textContent = "เพิ่มประเภทบุคลากร";
+    document.getElementById("stt-modal-name").value = "";
+    document.getElementById("stt-modal-code").value = "";
+    document.getElementById("stt-modal-desc").value = "";
+    document.getElementById("stt-modal-color").value = "primary";
+    openModal("modal-staff-type");
+}
+
+window.openEditStaffTypeModal = function (id) {
+    const t = settingsStateDraft.staffTypes.find(x => x.id === id);
+    if (!t) return;
+    settingsStateDraft.editingStaffTypeId = id;
+    document.getElementById("modal-staff-type-title").textContent = "แก้ไขประเภทบุคลากร";
+    document.getElementById("stt-modal-name").value = t.name;
+    document.getElementById("stt-modal-code").value = t.code || "";
+    document.getElementById("stt-modal-desc").value = t.desc || "";
+    document.getElementById("stt-modal-color").value = t.color || "primary";
+    openModal("modal-staff-type");
+};
+
+function saveStaffTypeFromModal() {
+    const name = document.getElementById("stt-modal-name").value.trim();
+    const code = document.getElementById("stt-modal-code").value.trim();
+    const desc = document.getElementById("stt-modal-desc").value.trim();
+    const color = document.getElementById("stt-modal-color").value;
+
+    if (!name) {
+        showToast("กรุณาระบุชื่อประเภทบุคลากร", "error");
+        return;
+    }
+
+    const dupe = settingsStateDraft.staffTypes.some(t =>
+        t.name.trim().toLowerCase() === name.toLowerCase() && t.id !== settingsStateDraft.editingStaffTypeId
+    );
+    if (dupe) {
+        showToast("มีประเภทบุคลากรชื่อนี้อยู่แล้ว", "error");
+        return;
+    }
+
+    if (settingsStateDraft.editingStaffTypeId) {
+        const t = settingsStateDraft.staffTypes.find(x => x.id === settingsStateDraft.editingStaffTypeId);
+        t.name = name; t.code = code; t.desc = desc; t.color = color;
+        showToast("แก้ไขแบบร่างประเภทบุคลากรแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+    } else {
+        const maxOrder = settingsStateDraft.staffTypes.reduce((m, t) => Math.max(m, t.order || 0), 0);
+        const newId = `ST${String(settingsStateDraft.staffTypes.length + 1).padStart(2, "0")}`;
+        settingsStateDraft.staffTypes.push({ id: newId, name, code, desc, color, active: true, order: maxOrder + 1 });
+        showToast("เพิ่มแบบร่างประเภทบุคลากรใหม่แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+    }
+
+    closeModal("modal-staff-type");
+    renderStaffTypesView();
+}
+
+window.deleteStaffType = function (id) {
+    const t = settingsStateDraft.staffTypes.find(x => x.id === id);
+    if (!t) return;
+
+    const usedCount = countPersonnelForStaffType(id);
+    const posCount = countPositionsForStaffType(id);
+
+    if (usedCount > 0 || posCount > 0) {
+        const reasons = [];
+        if (usedCount > 0) reasons.push(`มีบุคลากร ${usedCount} คน`);
+        if (posCount > 0) reasons.push(`มีตำแหน่ง ${posCount} ตำแหน่งสังกัดอยู่`);
+        App.showConfirm({
+            title: "ลบประเภทบุคลากรไม่ได้",
+            message: `"${t.name}" ${reasons.join(" และ ")} — กรุณาย้ายบุคลากร/ตำแหน่งเหล่านั้นไปประเภทอื่นก่อน หรือกด "ปิดใช้งาน" แทนการลบ`,
+            confirmLabel: "ปิดใช้งานแทน",
+            requireNote: false,
+            onConfirm: () => {
+                t.active = false;
+                renderStaffTypesView();
+                showToast(`ปิดใช้งาน "${t.name}" แทนการลบแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "warning");
+            }
+        });
+        return;
+    }
+
+    App.showConfirm({
+        title: "ยืนยันการลบ",
+        message: `ต้องการลบประเภทบุคลากร "${t.name}" ใช่หรือไม่?`,
+        confirmLabel: "ลบ",
+        requireNote: false,
+        onConfirm: () => {
+            settingsStateDraft.staffTypes = settingsStateDraft.staffTypes.filter(x => x.id !== id);
+            renderStaffTypesView();
+            showToast("ลบแบบร่างประเภทบุคลากรแล้ว (กรุณากดบันทึกด้านล่างเพื่อยืนยัน)", "warning");
+        }
+    });
+};
+
+// ---- Positions: render ----
+function renderPositionsView() {
+    const staffTypes = settingsStateDraft.staffTypes || [];
+    const list = settingsStateDraft.positions || [];
+    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    document.getElementById("pos-count-total").textContent = list.length;
+    document.getElementById("pos-count-active").textContent = list.filter(p => p.active).length;
+    document.getElementById("pos-count-inactive").textContent = list.filter(p => !p.active).length;
+
+    // เติม/รีเฟรช dropdown ตัวกรองประเภทบุคลากร
+    const typeFilterSelect = document.getElementById("position-filter-type");
+    if (typeFilterSelect && typeFilterSelect.dataset.rendered !== String(staffTypes.length)) {
+        const currentVal = typeFilterSelect.value;
+        typeFilterSelect.innerHTML = `<option value="">ทุกประเภทบุคลากร</option>` +
+            staffTypes.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+        typeFilterSelect.value = currentVal;
+        typeFilterSelect.dataset.rendered = String(staffTypes.length);
+    }
+
+    const searchVal = (document.getElementById("position-search")?.value || "").trim().toLowerCase();
+    const statusVal = document.getElementById("position-filter-status")?.value || "all";
+    const typeVal = document.getElementById("position-filter-type")?.value || "";
+
+    const filtered = sorted.filter(p => {
+        const matchesSearch = !searchVal || p.name.toLowerCase().includes(searchVal) || (p.code || "").toLowerCase().includes(searchVal);
+        const matchesStatus = statusVal === "all" || (statusVal === "active" ? p.active : !p.active);
+        const matchesType = !typeVal || (p.typeIds || []).includes(typeVal);
+        return matchesSearch && matchesStatus && matchesType;
+    });
+
+    const tbody = document.getElementById("positions-table-body");
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบตำแหน่งที่ค้นหา</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map((p) => {
+        const usedCount = countPersonnelForPosition(p.id);
+        const typeTags = (p.typeIds || []).map(tid => {
+            const t = staffTypes.find(x => x.id === tid);
+            return t ? `<span class="sign-doc-tag">${t.name}</span>` : "";
+        }).join("");
+
+        return `
+            <tr style="${p.active ? "" : "opacity:.55;"}">
+                <td style="text-align:center;white-space:nowrap;">
+                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนขึ้น" onclick="movePosition('${p.id}', -1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนลง" onclick="movePosition('${p.id}', 1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                </td>
+                <td style="font-weight:600;color:var(--text-primary);">${p.name}</td>
+                <td style="font-family:var(--font-heading);color:var(--text-muted);">${p.code || "-"}</td>
+                <td><div style="display:flex;flex-wrap:wrap;gap:4px;max-width:260px;">${typeTags || '<span style="color:var(--text-muted);font-size:11px;">ยังไม่ระบุ</span>'}</div></td>
+                <td style="text-align:center;color:var(--text-secondary);">${usedCount} คน</td>
+                <td style="text-align:center;">
+                    <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                        <label class="switch" title="${p.active ? "ปิดใช้งาน" : "เปิดใช้งาน"}">
+                            <input type="checkbox" ${p.active ? "checked" : ""} onchange="togglePositionActive('${p.id}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                        <button class="icon-btn" title="แก้ไข" onclick="openEditPositionModal('${p.id}')">
+                            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="icon-btn danger" title="ลบ" onclick="deletePosition('${p.id}')">
+                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function movePosition(id, dir) {
+    const list = settingsStateDraft.positions;
+    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
+    const idx = sorted.findIndex(p => p.id === id);
+    const swapIdx = idx + dir;
+    if (idx === -1 || swapIdx < 0 || swapIdx >= sorted.length) return;
+
+    const a = sorted[idx], b = sorted[swapIdx];
+    const tmp = a.order;
+    a.order = b.order;
+    b.order = tmp;
+
+    renderPositionsView();
+}
+
+window.togglePositionActive = function (id, isActive) {
+    const p = settingsStateDraft.positions.find(x => x.id === id);
+    if (!p) return;
+    p.active = isActive;
+    renderPositionsView();
+    showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${p.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+};
+
+function openAddPositionModal() {
+    settingsStateDraft.editingPositionId = null;
+    document.getElementById("modal-position-title").textContent = "เพิ่มตำแหน่ง";
+    document.getElementById("pos-modal-name").value = "";
+    document.getElementById("pos-modal-code").value = "";
+    renderPositionModalTypeCheckboxes([]);
+    openModal("modal-position");
+}
+
+window.openEditPositionModal = function (id) {
+    const p = settingsStateDraft.positions.find(x => x.id === id);
+    if (!p) return;
+    settingsStateDraft.editingPositionId = id;
+    document.getElementById("modal-position-title").textContent = "แก้ไขตำแหน่ง";
+    document.getElementById("pos-modal-name").value = p.name;
+    document.getElementById("pos-modal-code").value = p.code || "";
+    renderPositionModalTypeCheckboxes(p.typeIds || []);
+    openModal("modal-position");
+};
+
+function renderPositionModalTypeCheckboxes(checkedIds) {
+    const container = document.getElementById("pos-modal-types-list");
+    if (!container) return;
+    const staffTypes = [...settingsStateDraft.staffTypes].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    if (staffTypes.length === 0) {
+        container.innerHTML = `<div style="font-size:12px;color:var(--text-muted);">ยังไม่มีประเภทบุคลากรในระบบ กรุณาไปเพิ่มที่หน้า "ตั้งค่าประเภทบุคลากร" ก่อน</div>`;
+        return;
+    }
+
+    container.innerHTML = staffTypes.map(t => `
+        <label style="display:inline-flex; align-items:center; gap:6px; font-size:12.5px; cursor:pointer; margin:0; padding:4px 8px; background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:6px;">
+            <input type="checkbox" value="${t.id}" ${checkedIds.includes(t.id) ? "checked" : ""} ${!t.active ? "disabled" : ""}>
+            <span style="color:var(--text-secondary);">${t.name}${!t.active ? " (ปิดใช้งาน)" : ""}</span>
+        </label>
+    `).join("");
+}
+
+function savePositionFromModal() {
+    const name = document.getElementById("pos-modal-name").value.trim();
+    const code = document.getElementById("pos-modal-code").value.trim();
+    const typeIds = [...document.querySelectorAll("#pos-modal-types-list input[type='checkbox']:checked")].map(cb => cb.value);
+
+    if (!name) {
+        showToast("กรุณาระบุชื่อตำแหน่ง", "error");
+        return;
+    }
+    if (typeIds.length === 0) {
+        showToast("กรุณาเลือกอย่างน้อย 1 ประเภทบุคลากรที่สังกัดตำแหน่งนี้", "error");
+        return;
+    }
+
+    const dupe = settingsStateDraft.positions.some(p =>
+        p.name.trim().toLowerCase() === name.toLowerCase() && p.id !== settingsStateDraft.editingPositionId
+    );
+    if (dupe) {
+        showToast("มีตำแหน่งชื่อนี้อยู่แล้ว", "error");
+        return;
+    }
+
+    if (settingsStateDraft.editingPositionId) {
+        const p = settingsStateDraft.positions.find(x => x.id === settingsStateDraft.editingPositionId);
+        p.name = name; p.code = code; p.typeIds = typeIds;
+        showToast("แก้ไขแบบร่างตำแหน่งแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+    } else {
+        const maxOrder = settingsStateDraft.positions.reduce((m, p) => Math.max(m, p.order || 0), 0);
+        const newId = `POS${String(settingsStateDraft.positions.length + 1).padStart(2, "0")}`;
+        settingsStateDraft.positions.push({ id: newId, name, code, typeIds, active: true, order: maxOrder + 1 });
+        showToast("เพิ่มแบบร่างตำแหน่งใหม่แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+    }
+
+    closeModal("modal-position");
+    renderPositionsView();
+}
+
+window.deletePosition = function (id) {
+    const p = settingsStateDraft.positions.find(x => x.id === id);
+    if (!p) return;
+
+    const usedCount = countPersonnelForPosition(id);
+    if (usedCount > 0) {
+        App.showConfirm({
+            title: "ลบตำแหน่งไม่ได้",
+            message: `"${p.name}" มีบุคลากร ${usedCount} คนใช้ตำแหน่งนี้อยู่ — กรุณาย้ายบุคลากรเหล่านั้นไปตำแหน่งอื่นก่อน หรือกด "ปิดใช้งาน" แทนการลบ`,
+            confirmLabel: "ปิดใช้งานแทน",
+            requireNote: false,
+            onConfirm: () => {
+                p.active = false;
+                renderPositionsView();
+                showToast(`ปิดใช้งาน "${p.name}" แทนการลบแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "warning");
+            }
+        });
+        return;
+    }
+
+    App.showConfirm({
+        title: "ยืนยันการลบ",
+        message: `ต้องการลบตำแหน่ง "${p.name}" ใช่หรือไม่?`,
+        confirmLabel: "ลบ",
+        requireNote: false,
+        onConfirm: () => {
+            settingsStateDraft.positions = settingsStateDraft.positions.filter(x => x.id !== id);
+            renderPositionsView();
+            showToast("ลบแบบร่างตำแหน่งแล้ว (กรุณากดบันทึกด้านล่างเพื่อยืนยัน)", "warning");
+        }
+    });
+};
+
+// ---- Departments / Learning Areas: render ----
+// รายการแบนธรรมดา ไม่ผูกกับ entity อื่น (ต่างจากตำแหน่งที่ผูกกับประเภทบุคลากร) —
+// ใช้แค่เป็นตัวเลือก "กลุ่มสาระการเรียนรู้" ในฟอร์มข้อมูลตำแหน่งงานของบุคลากรเท่านั้น
+function renderDepartmentsView() {
+    const list = settingsStateDraft.departments || [];
+    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    document.getElementById("dep-count-total").textContent = list.length;
+    document.getElementById("dep-count-active").textContent = list.filter(d => d.active).length;
+    document.getElementById("dep-count-inactive").textContent = list.filter(d => !d.active).length;
+
+    const searchVal = (document.getElementById("department-search")?.value || "").trim().toLowerCase();
+    const statusVal = document.getElementById("department-filter-status")?.value || "all";
+
+    const filtered = sorted.filter(d => {
+        const matchesSearch = !searchVal || d.name.toLowerCase().includes(searchVal) || (d.code || "").toLowerCase().includes(searchVal);
+        const matchesStatus = statusVal === "all" || (statusVal === "active" ? d.active : !d.active);
+        return matchesSearch && matchesStatus;
+    });
+
+    const tbody = document.getElementById("departments-table-body");
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบแผนก/กลุ่มสาระการเรียนรู้ที่ค้นหา</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map((d) => {
+        const dot = STAFF_TYPE_COLOR_HEX[d.color] || "#9ca3af";
+        const usedCount = countPersonnelForDepartment(d.id);
+        const headName = departmentHeadName(d.headTeacherId);
+        return `
+            <tr style="${d.active ? "" : "opacity:.55;"}">
+                <td style="text-align:center;white-space:nowrap;">
+                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนขึ้น" onclick="moveDepartment('${d.id}', -1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนลง" onclick="moveDepartment('${d.id}', 1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                </td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dot};flex-shrink:0;"></span>
+                        <div>
+                            <div style="font-weight:600;color:var(--text-primary);">${d.name}</div>
+                            <div style="font-size:11px;color:var(--text-muted);">${d.desc || "-"}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="font-family:var(--font-heading);color:var(--text-muted);">${d.code || "-"}</td>
+                <td>${headName ? `<span style="color:var(--text-primary);">${headName}</span>` : `<span style="color:var(--text-muted);font-size:11px;">ยังไม่ระบุ</span>`}</td>
+                <td style="text-align:center;color:var(--text-secondary);">${usedCount} คน</td>
+                <td style="text-align:center;">
+                    <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                        <label class="switch" title="${d.active ? "ปิดใช้งาน" : "เปิดใช้งาน"}">
+                            <input type="checkbox" ${d.active ? "checked" : ""} onchange="toggleDepartmentActive('${d.id}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                        <button class="icon-btn" title="แก้ไข" onclick="openEditDepartmentModal('${d.id}')">
+                            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="icon-btn danger" title="ลบ" onclick="deleteDepartment('${d.id}')">
+                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function moveDepartment(id, dir) {
+    const list = settingsStateDraft.departments;
+    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
+    const idx = sorted.findIndex(d => d.id === id);
+    const swapIdx = idx + dir;
+    if (idx === -1 || swapIdx < 0 || swapIdx >= sorted.length) return;
+
+    const a = sorted[idx], b = sorted[swapIdx];
+    const tmp = a.order;
+    a.order = b.order;
+    b.order = tmp;
+
+    renderDepartmentsView();
+}
+
+window.toggleDepartmentActive = function (id, isActive) {
+    const d = settingsStateDraft.departments.find(x => x.id === id);
+    if (!d) return;
+    d.active = isActive;
+    renderDepartmentsView();
+    showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${d.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+};
+
+// เติม option ของ "หัวหน้าแผนก" ใหม่ทุกครั้งที่เปิดโมดัล (ไม่ cache) เพื่อให้บุคลากรที่เพิ่งเพิ่ม
+// ในหน้ารายชื่อบุคลากรโผล่เป็นตัวเลือกทันที เหมือนแพทเทิร์นของ getHomeroomTeacherPool()
+function populateDepartmentHeadSelect(selectedId) {
+    const select = document.getElementById("dep-modal-head");
+    if (!select) return;
+    const candidates = departmentHeadCandidates();
+    select.innerHTML = `<option value="">-- ไม่ระบุ --</option>` +
+        candidates.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+    select.value = (selectedId && candidates.some(t => t.id === selectedId)) ? selectedId : "";
+}
+
+function openAddDepartmentModal() {
+    settingsStateDraft.editingDepartmentId = null;
+    document.getElementById("modal-department-title").textContent = "เพิ่มแผนก/กลุ่มสาระการเรียนรู้";
+    document.getElementById("dep-modal-name").value = "";
+    document.getElementById("dep-modal-code").value = "";
+    document.getElementById("dep-modal-desc").value = "";
+    document.getElementById("dep-modal-color").value = "primary";
+    populateDepartmentHeadSelect(null);
+    openModal("modal-department");
+}
+
+window.openEditDepartmentModal = function (id) {
+    const d = settingsStateDraft.departments.find(x => x.id === id);
+    if (!d) return;
+    settingsStateDraft.editingDepartmentId = id;
+    document.getElementById("modal-department-title").textContent = "แก้ไขแผนก/กลุ่มสาระการเรียนรู้";
+    document.getElementById("dep-modal-name").value = d.name;
+    document.getElementById("dep-modal-code").value = d.code || "";
+    document.getElementById("dep-modal-desc").value = d.desc || "";
+    document.getElementById("dep-modal-color").value = d.color || "primary";
+    populateDepartmentHeadSelect(d.headTeacherId);
+    openModal("modal-department");
+};
+
+function saveDepartmentFromModal() {
+    const name = document.getElementById("dep-modal-name").value.trim();
+    const code = document.getElementById("dep-modal-code").value.trim();
+    const desc = document.getElementById("dep-modal-desc").value.trim();
+    const color = document.getElementById("dep-modal-color").value;
+    const headTeacherId = document.getElementById("dep-modal-head").value || null;
+
+    if (!name) {
+        showToast("กรุณาระบุชื่อแผนก/กลุ่มสาระการเรียนรู้", "error");
+        return;
+    }
+
+    const dupe = settingsStateDraft.departments.some(d =>
+        d.name.trim().toLowerCase() === name.toLowerCase() && d.id !== settingsStateDraft.editingDepartmentId
+    );
+    if (dupe) {
+        showToast("มีแผนก/กลุ่มสาระการเรียนรู้ชื่อนี้อยู่แล้ว", "error");
+        return;
+    }
+
+    if (settingsStateDraft.editingDepartmentId) {
+        const d = settingsStateDraft.departments.find(x => x.id === settingsStateDraft.editingDepartmentId);
+        d.name = name; d.code = code; d.desc = desc; d.color = color; d.headTeacherId = headTeacherId;
+        showToast("แก้ไขแบบร่างแผนก/กลุ่มสาระการเรียนรู้แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+    } else {
+        const maxOrder = settingsStateDraft.departments.reduce((m, d) => Math.max(m, d.order || 0), 0);
+        const newId = `DEP${String(settingsStateDraft.departments.length + 1).padStart(2, "0")}`;
+        settingsStateDraft.departments.push({ id: newId, name, code, desc, color, headTeacherId, active: true, order: maxOrder + 1 });
+        showToast("เพิ่มแบบร่างแผนก/กลุ่มสาระการเรียนรู้ใหม่แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+    }
+
+    closeModal("modal-department");
+    renderDepartmentsView();
+}
+
+window.deleteDepartment = function (id) {
+    const d = settingsStateDraft.departments.find(x => x.id === id);
+    if (!d) return;
+
+    const usedCount = countPersonnelForDepartment(id);
+    if (usedCount > 0) {
+        App.showConfirm({
+            title: "ลบแผนก/กลุ่มสาระการเรียนรู้ไม่ได้",
+            message: `"${d.name}" มีบุคลากร ${usedCount} คนสังกัดอยู่ — กรุณาย้ายบุคลากรเหล่านั้นไปแผนกอื่นก่อน หรือกด "ปิดใช้งาน" แทนการลบ`,
+            confirmLabel: "ปิดใช้งานแทน",
+            requireNote: false,
+            onConfirm: () => {
+                d.active = false;
+                renderDepartmentsView();
+                showToast(`ปิดใช้งาน "${d.name}" แทนการลบแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "warning");
+            }
+        });
+        return;
+    }
+
+    App.showConfirm({
+        title: "ยืนยันการลบ",
+        message: `ต้องการลบแผนก/กลุ่มสาระการเรียนรู้ "${d.name}" ใช่หรือไม่?`,
+        confirmLabel: "ลบ",
+        requireNote: false,
+        onConfirm: () => {
+            settingsStateDraft.departments = settingsStateDraft.departments.filter(x => x.id !== id);
+            renderDepartmentsView();
+            showToast("ลบแบบร่างแผนก/กลุ่มสาระการเรียนรู้แล้ว (กรุณากดบันทึกด้านล่างเพื่อยืนยัน)", "warning");
+        }
+    });
+};
+
+// -------------------------------------------------------------
 // EVENT HANDLERS & SAVE ACTIONS
 // -------------------------------------------------------------
 
@@ -1045,6 +1752,46 @@ document.getElementById("btn-save-doc-signatories")?.addEventListener("click", (
     saveStateToLocalStorage();
     renderSignatoriesView();
     showToast("บันทึกข้อมูลผู้ลงนามและการมอบหมายเอกสารเรียบร้อยแล้ว", "success");
+});
+
+// ---- Staff Types (ประเภทบุคลากร) ----
+document.getElementById("btn-add-staff-type")?.addEventListener("click", openAddStaffTypeModal);
+document.getElementById("btn-confirm-staff-type")?.addEventListener("click", saveStaffTypeFromModal);
+document.getElementById("staff-type-search")?.addEventListener("input", renderStaffTypesView);
+document.getElementById("staff-type-filter-status")?.addEventListener("change", renderStaffTypesView);
+
+document.getElementById("btn-save-staff-types")?.addEventListener("click", () => {
+    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+    saveStateToLocalStorage();
+    renderStaffTypesView();
+    showToast("บันทึกประเภทบุคลากรเรียบร้อยแล้ว", "success");
+});
+
+// ---- Positions (ตำแหน่ง) ----
+document.getElementById("btn-add-position")?.addEventListener("click", openAddPositionModal);
+document.getElementById("btn-confirm-position")?.addEventListener("click", savePositionFromModal);
+document.getElementById("position-search")?.addEventListener("input", renderPositionsView);
+document.getElementById("position-filter-status")?.addEventListener("change", renderPositionsView);
+document.getElementById("position-filter-type")?.addEventListener("change", renderPositionsView);
+
+document.getElementById("btn-save-positions")?.addEventListener("click", () => {
+    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+    saveStateToLocalStorage();
+    renderPositionsView();
+    showToast("บันทึกตำแหน่งเรียบร้อยแล้ว", "success");
+});
+
+// ---- Departments / Learning Areas (แผนก/กลุ่มสาระการเรียนรู้) ----
+document.getElementById("btn-add-department")?.addEventListener("click", openAddDepartmentModal);
+document.getElementById("btn-confirm-department")?.addEventListener("click", saveDepartmentFromModal);
+document.getElementById("department-search")?.addEventListener("input", renderDepartmentsView);
+document.getElementById("department-filter-status")?.addEventListener("change", renderDepartmentsView);
+
+document.getElementById("btn-save-departments")?.addEventListener("click", () => {
+    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+    saveStateToLocalStorage();
+    renderDepartmentsView();
+    showToast("บันทึกแผนก/กลุ่มสาระการเรียนรู้เรียบร้อยแล้ว", "success");
 });
 
 // -------------------------------------------------------------
