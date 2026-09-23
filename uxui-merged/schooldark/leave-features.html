@@ -248,9 +248,9 @@
     .att-note { min-width: 140px; padding: 6px 8px; font-size: 13px; }
     .att-summary-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); }
     .att-time-hint, .att-saved-note { font-size: 12px; color: var(--text-muted); }
-    .att-rep-kpi-btn { border: 0; cursor: pointer; font-family: inherit; }
-    .att-rep-kpi-btn:hover { filter: brightness(0.95); }
-    .att-rep-kpi-btn.on { box-shadow: 0 0 0 2px currentColor inset; }
+    .att-filter-btn { border: 0; cursor: pointer; font-family: inherit; }
+    .att-filter-btn:hover { filter: brightness(0.95); }
+    .att-filter-btn.on { box-shadow: 0 0 0 2px currentColor inset; }
     .att-pager { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap; }
     .att-pager span { margin-right: auto; }
   </style>
@@ -1446,7 +1446,6 @@
            VIEW: รายงานการมาเรียน — ค้นหาจากระดับชั้น, ห้องเรียน, ช่วงวันที่, ชื่อ/รหัสนักเรียน
       ================================================================= -->
       <section id="view-attendance-report" class="module-view">
-        <div class="att-summary-row" id="att-report-kpis"></div>
         <div class="glass-card" style="padding: 24px;">
           <div class="card-header" style="margin-bottom: 16px;flex-wrap:wrap;gap:12px;">
             <h3><svg class="icon" style="stroke: var(--primary);"><use href="#i-table"/></svg> รายงานการมาโรงเรียนของนักเรียน</h3>
@@ -1465,6 +1464,7 @@
               <input type="date" class="glass-input" id="att-rep-to" style="width:160px;" onchange="attReportPage=1;renderAttendanceReport()">
             </div>
           </div>
+          <div class="att-summary-row" id="att-report-kpis"></div>
           <div class="data-table-wrap">
             <table class="data-table att-table">
               <thead>
@@ -5743,6 +5743,7 @@ const ATT_REPORT_MAX_DAYS = 62;
 let attSettings = attLoad(ATT_SETTINGS_KEY, null) || { ...ATT_DEFAULT_SETTINGS };
 let attRecords = attLoad(ATT_RECORDS_KEY, {}) || {};
 let attCheckDraft = {};
+let attCheckFilter = 'all';
 let attReportFilter = 'all';
 let attReportPage = 1;
 let attReportRows = [];
@@ -5946,8 +5947,37 @@ function renderAttendanceCheck() {
     ? `บันทึกล่าสุดโดย ${lastSaved.recordedBy} · ${new Date(lastSaved.savedAt).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}`
     : (dateStr < attToday() ? 'ข้อมูลตัวอย่าง (ยังไม่มีการบันทึกจริง)' : 'ยังไม่ได้เช็คชื่อ');
 
-  tbody.innerHTML = list.map(s => attCheckRowHTML(s)).join('') ||
-    `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted);">ไม่มีนักเรียนในห้องนี้</td></tr>`;
+  renderAttendanceCheckRows();
+  renderAttendanceCheckSummary();
+}
+
+function attCheckMatchesFilter(d) {
+  if (attCheckFilter === 'all') return true;
+  if (attCheckFilter === 'early') return d.statusOut === 'ออกก่อนเวลา';
+  return attCategory(d.statusIn) === attCheckFilter;
+}
+
+function attCheckRoomList() {
+  const grade = document.getElementById('att-check-grade').value;
+  const room = document.getElementById('att-check-room').value;
+  return attStudentsOf(grade, room).filter(s => attCheckDraft[s.id]);
+}
+
+function attCheckFilteredList() {
+  return attCheckRoomList().filter(s => attCheckMatchesFilter(attCheckDraft[s.id]));
+}
+
+function renderAttendanceCheckRows() {
+  const full = attCheckRoomList();
+  const visible = attCheckFilteredList();
+  const emptyMsg = full.length === 0 ? 'ไม่มีนักเรียนในห้องนี้' : 'ไม่มีนักเรียนตรงกับตัวกรองที่เลือก';
+  document.getElementById('att-check-tbody').innerHTML = visible.map(s => attCheckRowHTML(s)).join('') ||
+    `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted);">${emptyMsg}</td></tr>`;
+}
+
+function setAttCheckFilter(f) {
+  attCheckFilter = f;
+  renderAttendanceCheckRows();
   renderAttendanceCheckSummary();
 }
 
@@ -5955,7 +5985,7 @@ function attCheckRowHTML(s) {
   const d = attCheckDraft[s.id];
   if (d.locked) {
     const noteHtml = d.reqId
-      ? `<a href="#" style="color:inherit;text-decoration:underline;" onclick="viewSLRequestDetails('${d.reqId}');return false;" title="ดูรายละเอียดใบลา">${d.note}</a>`
+      ? `<a href="#" class="note-leave-link"" onclick="viewSLRequestDetails('${d.reqId}');return false;" title="ดูรายละเอียดใบลา">${d.note}</a>`
       : d.note;
     return `<tr class="att-row-locked">
       <td style="text-align:center;">${s.no}</td><td>${s.id}</td><td><strong>${studentFullName(s)}</strong></td>
@@ -5989,10 +6019,7 @@ function setAttDraft(id, field, value, noRerender) {
   }
   if (field === 'statusOut' && value !== 'ออกก่อนเวลา') d.timeOut = '-';
   if (noRerender) return;
-  const s = STUDENTS.find(x => x.id === id);
-  const rows = document.getElementById('att-check-tbody').children;
-  const idx = attStudentsOf(document.getElementById('att-check-grade').value, document.getElementById('att-check-room').value).findIndex(x => x.id === id);
-  if (rows[idx]) rows[idx].outerHTML = attCheckRowHTML(s);
+  renderAttendanceCheckRows();
   renderAttendanceCheckSummary();
 }
 
@@ -6001,9 +6028,7 @@ function attCheckAllPresent() {
     if (d.locked) return;
     d.statusIn = 'ตรงเวลา'; d.timeIn = '-'; d.statusOut = 'ตรงเวลา'; d.timeOut = '-';
   });
-  const grade = document.getElementById('att-check-grade').value;
-  const room = document.getElementById('att-check-room').value;
-  document.getElementById('att-check-tbody').innerHTML = attStudentsOf(grade, room).map(s => attCheckRowHTML(s)).join('');
+  renderAttendanceCheckRows();
   renderAttendanceCheckSummary();
 }
 
@@ -6011,11 +6036,15 @@ function renderAttendanceCheckSummary() {
   const c = { ontime: 0, late: 0, absent: 0, leave: 0, early: 0 };
   const all = Object.values(attCheckDraft);
   all.forEach(d => { c[attCategory(d.statusIn)] = (c[attCategory(d.statusIn)] || 0) + 1; if (d.statusOut === 'ออกก่อนเวลา') c.early++; });
+  const kpis = [
+    ['ontime', 'มา', c.ontime, 'success'], ['late', 'สาย', c.late, 'warning'],
+    ['absent', 'ขาด', c.absent, 'danger'], ['leave', 'ลา', c.leave, 'info'],
+    ['early', 'ออกก่อนเวลา', c.early, 'warning']
+  ];
   document.getElementById('att-check-summary').innerHTML =
-    `<span>ทั้งหมด <strong>${all.length}</strong> คน</span>` +
-    `<span class="badge success">มา ${c.ontime}</span><span class="badge warning">สาย ${c.late}</span>` +
-    `<span class="badge danger">ขาด ${c.absent}</span><span class="badge info">ลา ${c.leave}</span>` +
-    `<span class="badge warning">ออกก่อนเวลา ${c.early}</span>`;
+    `<button type="button" class="badge muted att-filter-btn ${attCheckFilter === 'all' ? 'on' : ''}" onclick="setAttCheckFilter('all')">ทั้งหมด <strong>${all.length}</strong> คน</button>` +
+    kpis.map(([k, label, v, cls]) =>
+      `<button type="button" class="badge ${cls} att-filter-btn ${attCheckFilter === k ? 'on' : ''}" onclick="setAttCheckFilter('${k}')">${label} ${v}</button>`).join('');
 }
 
 function saveAttendanceCheck() {
@@ -6089,16 +6118,14 @@ function renderAttendanceReport() {
   const c = { all: rows.length, ontime: 0, late: 0, absent: 0, leave: 0, none: 0, early: 0 };
   rows.forEach(r => { c[attCategory(r.rec.statusIn)]++; if (r.rec.statusOut === 'ออกก่อนเวลา') c.early++; });
   const kpis = [
-    ['all', 'รายการทั้งหมด', c.all, 'var(--primary)'], ['ontime', 'มาตรงเวลา', c.ontime, 'var(--success)'],
-    ['late', 'มาสาย', c.late, 'var(--warning)'], ['absent', 'ขาดเรียน', c.absent, 'var(--danger)'],
-    ['leave', 'ลา', c.leave, 'var(--info)'], ['early', 'ออกก่อนเวลา', c.early, 'var(--warning)'],
-    ['none', 'ยังไม่เช็คชื่อ', c.none, 'var(--text-muted)']
+    ['ontime', 'มาตรงเวลา', c.ontime, 'success'], ['late', 'มาสาย', c.late, 'warning'],
+    ['absent', 'ขาดเรียน', c.absent, 'danger'], ['leave', 'ลา', c.leave, 'info'],
+    ['early', 'ออกก่อนเวลา', c.early, 'warning'], ['none', 'ยังไม่เช็คชื่อ', c.none, 'muted']
   ];
-  document.getElementById('att-report-kpis').innerHTML = kpis.map(([k, label, v, color]) =>
-    `<button type="button" class="att-kpi ${attReportFilter === k ? 'on' : ''}" style="--kpi-color:${color};" onclick="setAttReportFilter('${k}')">
-      <span class="att-kpi-label">${label}</span><span class="att-kpi-value">${v.toLocaleString('th-TH')}</span></button>`).join('');
-  document.getElementById('att-rep-chips').innerHTML = kpis.map(([k, label]) =>
-    `<button class="btn btn-secondary btn-sm ${attReportFilter === k ? 'btn-active' : ''}" onclick="setAttReportFilter('${k}')">${k === 'all' ? 'ทั้งหมด' : label}</button>`).join('') +
+  document.getElementById('att-report-kpis').innerHTML =
+    `<button type="button" class="badge muted att-filter-btn ${attReportFilter === 'all' ? 'on' : ''}" onclick="setAttReportFilter('all')">ทั้งหมด <strong>${c.all.toLocaleString('th-TH')}</strong> รายการ</button>` +
+    kpis.map(([k, label, v, cls]) =>
+      `<button type="button" class="badge ${cls} att-filter-btn ${attReportFilter === k ? 'on' : ''}" onclick="setAttReportFilter('${k}')">${label} ${v.toLocaleString('th-TH')}</button>`).join('') +
     (capped ? `<span class="att-time-hint">แสดงสูงสุด ${ATT_REPORT_MAX_DAYS} วันย้อนหลังจากวันที่สิ้นสุด</span>` : '');
 
   attReportRows = rows.filter(r => attReportFilter === 'all' ||
