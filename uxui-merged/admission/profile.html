@@ -99,6 +99,8 @@
           <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
             <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
           </a>
+          <!-- เมนูข้ามระบบ: สร้างจาก ../shared/cross-nav.js (แหล่งข้อมูลเมนูจุดเดียว) -->
+          <span id="cross-nav-topbar"></span>
         </div>
       </div>
       <a href="index.html" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold hover:bg-slate-50 transition-colors">
@@ -1018,5 +1020,8 @@
       }, 3500);
     }
   </script>
+
+<!-- เมนูข้ามระบบ (ปุ่ม "ระบบอื่น" บนแถบหัวหน้า) -->
+<script src="../shared/cross-nav.js"></script>
 </body>
 </html>

@@ -77,6 +77,31 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; animation: fadeIn .2s ease; }
 
+    /* ===== STICKY TAB BAR ===== */
+    .view-tabs-sticky { top: 0; 
+      margin: 0 -32px 16px; padding: 10px 32px 8px;
+      background: var(--bg-main); }
+    .view-tabs-sticky .tabs { margin-bottom: 0; }
+
+    /* ===== TABLE / CALENDAR VIEW TOGGLE (inside the main list tab) ===== */
+    .view-mode-switcher { display: inline-flex; background: rgba(255,255,255,0.05); padding: 3px;
+      border-radius: var(--border-radius-md); border: 1px solid var(--border-color); }
+    .view-mode-btn { background: transparent; border: none; color: var(--text-muted); font-size: 12px;
+      font-weight: 500; padding: 6px 14px; cursor: pointer; border-radius: var(--border-radius-sm);
+      transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 6px; }
+    .view-mode-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+    .view-mode-btn.active { background: var(--primary); color: #fff; font-weight: 600; }
+    .list-panel.hidden { display: none; }
+
+    /* ===== PENDING-COUNT PILL (inline KPI ในหัวแท็บรายการหลัก) ===== */
+    .header-pending-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
+      border-radius: 999px; background: var(--warning-bg); color: var(--warning);
+      font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+    .header-pending-pill svg { width: 14px; height: 14px; stroke: var(--warning); flex-shrink: 0; }
+    .header-pending-pill strong { font-size: 14px; font-weight: 800; }
+    .header-pending-pill.info { background: var(--info-bg); color: var(--info); }
+    .header-pending-pill.info svg { stroke: var(--info); }
+
     /* ===== CHIP FILTERS ===== */
     .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
     .chip { border: 1px solid var(--border-color); color: var(--text-secondary); background: transparent; border-radius: 999px; padding: 5px 12px; font-size: 12px; cursor: pointer; transition: .15s; font-family: var(--font-body); }
@@ -343,6 +368,9 @@
           <li><a class="submenu-item" data-view="student-leave-settings" data-step="5">5. เงื่อนไขเพิ่มเติม</a></li>
         </ul>
       </li>
+
+      <!-- เมนูข้ามระบบ: สร้างจาก ../shared/cross-nav.js (แหล่งข้อมูลเมนูจุดเดียว) -->
+      <li id="cross-nav-sidebar"></li>
     </ul>
     <div class="sidebar-footer">
       <div class="user-profile-badge">
@@ -585,94 +613,100 @@
            ปฏิทินภาพรวม ด้านบน + รายการคำขอ/ประวัติการลา/บัตรขออนุญาต เป็นแท็บด้านล่าง)
            ================================================================ -->
       <section id="view-approve" class="module-view">
-        <!-- ปฏิทินภาพรวมการลาของนักเรียน -->
-        <div class="glass-card" id="sl-calendar-card" style="margin-bottom:24px;">
-          <div class="card-header" style="flex-wrap:wrap;gap:12px;">
-            <h3><svg class="icon"><use href="#i-calendar"/></svg>ปฏิทินภาพรวมการลาของนักเรียน</h3>
-            <div class="calendar-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-              <div class="calendar-mode-switcher" style="display:flex;background:rgba(255,255,255,0.05);padding:3px;border-radius:var(--border-radius-md);border:1px solid var(--border-color);">
-                <button class="cal-mode-btn active" id="sl-cal-mode-month" data-mode="month">รายเดือน</button>
-                <button class="cal-mode-btn" id="sl-cal-mode-week" data-mode="week">รายสัปดาห์</button>
-                <button class="cal-mode-btn" id="sl-cal-mode-day" data-mode="day">รายวัน</button>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <button class="btn btn-secondary" id="sl-calendar-prev-month-btn" style="padding:6px 12px;font-size:13px;">
-                  <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>ก่อนหน้า
-                </button>
-                <span id="sl-calendar-month-year-label" style="font-weight:600;font-size:14px;min-width:170px;text-align:center;">-</span>
-                <button class="btn btn-secondary" id="sl-calendar-next-month-btn" style="padding:6px 12px;font-size:13px;">
-                  ถัดไป<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </button>
-                <button class="btn btn-secondary" id="sl-calendar-today-btn" style="padding:6px 12px;font-size:12px;">วันนี้</button>
-              </div>
-            </div>
-          </div>
-          <div id="sl-calendar-legend" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;font-size:12px;color:var(--text-muted);"></div>
-          <div id="sl-leave-calendar-container"></div>
-        </div>
-
-        <div class="dashboard-stats-grid" style="margin-bottom: 20px;">
-          <div class="stat-card" style="--card-accent: var(--warning);">
-            <div class="stat-icon" style="background: linear-gradient(135deg, hsl(38,92%,50%), hsl(38,75%,40%));">
-              <svg class="icon" style="stroke:#fff;"><use href="#i-history"/></svg>
-            </div>
-            <div class="stat-content">
-              <div class="stat-label">คำขอลานักเรียนรอตรวจสอบ</div>
-              <div class="stat-value" id="approve-kpi-sl-pending" style="color:var(--warning);">0</div>
-            </div>
-          </div>
-        </div>
-
         <!-- TABS (คล้าย "รายการคำขอ" / "ประวัติการลารายบุคคล" ของ view-leave-approve ในหน้าบุคลากร) -->
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="requests">รายการคำขอ</button>
-          <button class="tab-btn" data-tab="leave-history">ประวัติการลา</button>
+        <div class="view-tabs-sticky" id="sl-tabs-sticky">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="requests">รายการคำขอ</button>
+            <button class="tab-btn" data-tab="leave-history">ประวัติการลา</button>
+          </div>
         </div>
 
         <!-- Tab: รายการคำขอ (คำขอลาของนักเรียน) -->
         <div class="tab-content active glass-card" id="tab-requests" style="padding: 24px;">
-          <div class="card-header" style="margin-bottom: 16px;">
+          <div class="card-header" style="margin-bottom: 16px;flex-wrap:wrap;gap:12px;">
             <h3><svg viewBox="0 0 24 24" class="icon" style="stroke: var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> รายการคำขอลาของนักเรียน</h3>
-            <button class="btn btn-secondary btn-sm" onclick="exportExcel('sl-requests')">
-              <svg class="icon"><use href="#i-download"/></svg> Export
-            </button>
-          </div>
-          <div class="toolbar" style="margin-bottom: 16px;gap:10px;flex-wrap:wrap;">
-            <div class="search-box">
-              <svg><use href="#i-search"/></svg>
-              <input class="glass-input" id="sl-req-search" placeholder="ค้นหาชื่อหรือรหัสนักเรียน..." oninput="renderApproveStudentLeaveTable()">
-            </div>
-            <select class="glass-select" id="sl-req-type-filter" style="width:160px;" onchange="renderApproveStudentLeaveTable()">
-              <option value="">ทุกประเภทการลา</option>
-            </select>
-            <select class="glass-select" id="sl-req-grade-filter" style="width:110px;" onchange="renderApproveStudentLeaveTable()">
-              <option value="">ทุกชั้นปี</option>
-            </select>
-            <select class="glass-select" id="sl-req-room-filter" style="width:100px;" onchange="renderApproveStudentLeaveTable()">
-              <option value="">ทุกห้อง</option>
-            </select>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button class="btn btn-secondary btn-sm btn-active" onclick="setApproveFilter('sl','all',this)">คำขอทั้งหมด</button>
-              <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('sl','pending',this)">รอตรวจสอบ</button>
-              <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('sl','approved',this)">อนุมัติ</button>
-              <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('sl','rejected',this)">ไม่อนุมัติ</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span class="header-pending-pill">
+                <svg viewBox="0 0 24 24" style="fill:none;stroke-width:2;"><use href="#i-history"/></svg>
+                รอตรวจสอบ <strong id="approve-kpi-sl-pending">0</strong>
+              </span>
+              <div class="view-mode-switcher">
+                <button class="view-mode-btn active" data-mode="table" onclick="setListMode('approve','table',this)">ตาราง</button>
+                <button class="view-mode-btn" data-mode="calendar" onclick="setListMode('approve','calendar',this)">ปฏิทิน</button>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="exportExcel('sl-requests')">
+                <svg class="icon"><use href="#i-download"/></svg> Export
+              </button>
             </div>
           </div>
-          <div class="data-table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>วันที่ยื่น</th><th>ชื่อนักเรียน</th><th>ชั้น</th><th>ประเภทการลา</th><th>วันที่ลา</th>
-                  <th style="text-align:center;">จำนวนวัน</th><th>เหตุผล</th><th style="text-align:center;">เอกสารแนบ</th>
-                  <th>สถานะ</th><th style="width:190px;text-align:center;">ดำเนินการ</th><th style="width:60px;text-align:center;">ดู</th>
-                </tr>
-              </thead>
-              <tbody id="approve-sl-tbody"></tbody>
-            </table>
+
+          <!-- โหมดตาราง (default) -->
+          <div class="list-panel" id="sl-table-panel">
+            <div class="toolbar" style="margin-bottom: 16px;gap:10px;flex-wrap:wrap;">
+              <div class="search-box">
+                <svg><use href="#i-search"/></svg>
+                <input class="glass-input" id="sl-req-search" placeholder="ค้นหาชื่อหรือรหัสนักเรียน..." oninput="renderApproveStudentLeaveTable()">
+              </div>
+              <select class="glass-select" id="sl-req-type-filter" style="width:160px;" onchange="renderApproveStudentLeaveTable()">
+                <option value="">ทุกประเภทการลา</option>
+              </select>
+              <select class="glass-select" id="sl-req-grade-filter" style="width:110px;" onchange="renderApproveStudentLeaveTable()">
+                <option value="">ทุกชั้นปี</option>
+              </select>
+              <select class="glass-select" id="sl-req-room-filter" style="width:100px;" onchange="renderApproveStudentLeaveTable()">
+                <option value="">ทุกห้อง</option>
+              </select>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-sm btn-active" onclick="setApproveFilter('sl','all',this)">คำขอทั้งหมด</button>
+                <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('sl','pending',this)">รอตรวจสอบ</button>
+                <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('sl','approved',this)">อนุมัติ</button>
+                <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('sl','rejected',this)">ไม่อนุมัติ</button>
+              </div>
+            </div>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>วันที่ยื่น</th><th>ชื่อนักเรียน</th><th>ชั้น</th><th>ประเภทการลา</th><th>วันที่ลา</th>
+                    <th style="text-align:center;">จำนวนวัน</th><th>เหตุผล</th><th style="text-align:center;">เอกสารแนบ</th>
+                    <th>สถานะ</th><th style="width:190px;text-align:center;">ดำเนินการ</th><th style="width:60px;text-align:center;">ดู</th>
+                  </tr>
+                </thead>
+                <tbody id="approve-sl-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- โหมดปฏิทิน (opt-in) -->
+          <div class="list-panel hidden" id="sl-calendar-panel">
+            <div class="glass-card" id="sl-calendar-card" style="margin-bottom:0;">
+              <div class="card-header" style="flex-wrap:wrap;gap:12px;">
+                <h3><svg class="icon"><use href="#i-calendar"/></svg>ปฏิทินภาพรวมการลาของนักเรียน</h3>
+                <div class="calendar-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                  <div class="calendar-mode-switcher" style="display:flex;background:rgba(255,255,255,0.05);padding:3px;border-radius:var(--border-radius-md);border:1px solid var(--border-color);">
+                    <button class="cal-mode-btn active" id="sl-cal-mode-month" data-mode="month">รายเดือน</button>
+                    <button class="cal-mode-btn" id="sl-cal-mode-week" data-mode="week">รายสัปดาห์</button>
+                    <button class="cal-mode-btn" id="sl-cal-mode-day" data-mode="day">รายวัน</button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <button class="btn btn-secondary" id="sl-calendar-prev-month-btn" style="padding:6px 12px;font-size:13px;">
+                      <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>ก่อนหน้า
+                    </button>
+                    <span id="sl-calendar-month-year-label" style="font-weight:600;font-size:14px;min-width:170px;text-align:center;">-</span>
+                    <button class="btn btn-secondary" id="sl-calendar-next-month-btn" style="padding:6px 12px;font-size:13px;">
+                      ถัดไป<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-secondary" id="sl-calendar-today-btn" style="padding:6px 12px;font-size:12px;">วันนี้</button>
+                  </div>
+                </div>
+              </div>
+              <div id="sl-calendar-legend" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;font-size:12px;color:var(--text-muted);"></div>
+              <div id="sl-leave-calendar-container"></div>
+            </div>
           </div>
         </div>
 
@@ -701,90 +735,97 @@
            VIEW: ปฏิทินบัตรขออนุญาต (จัดหน้าเหมือน view-approve ด้านบน)
            ================================================================ -->
       <section id="view-ticket-calendar" class="module-view">
-        <div class="glass-card" id="ticket-calendar-card" style="margin-bottom:24px;">
-          <div class="card-header" style="flex-wrap:wrap;gap:12px;">
-            <h3><svg class="icon"><use href="#i-calendar"/></svg>บัตรขออนุญาต</h3>
-            <div class="calendar-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-              <div class="calendar-mode-switcher" style="display:flex;background:rgba(255,255,255,0.05);padding:3px;border-radius:var(--border-radius-md);border:1px solid var(--border-color);">
-                <button class="cal-mode-btn active" id="tk-cal-mode-month" data-mode="month">รายเดือน</button>
-                <button class="cal-mode-btn" id="tk-cal-mode-week" data-mode="week">รายสัปดาห์</button>
-                <button class="cal-mode-btn" id="tk-cal-mode-day" data-mode="day">รายวัน</button>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <button class="btn btn-secondary" id="tk-calendar-prev-month-btn" style="padding:6px 12px;font-size:13px;">
-                  <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
-                    <polyline points="15 18 9 12 15 6" />
-                  </svg>ก่อนหน้า
-                </button>
-                <span id="tk-calendar-month-year-label" style="font-weight:600;font-size:14px;min-width:170px;text-align:center;">-</span>
-                <button class="btn btn-secondary" id="tk-calendar-next-month-btn" style="padding:6px 12px;font-size:13px;">
-                  ถัดไป<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </button>
-                <button class="btn btn-secondary" id="tk-calendar-today-btn" style="padding:6px 12px;font-size:12px;">วันนี้</button>
-              </div>
-            </div>
-          </div>
-          <div id="tk-calendar-legend" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;font-size:12px;color:var(--text-muted);"></div>
-          <div id="tk-calendar-container"></div>
-        </div>
-
-        <div class="dashboard-stats-grid" style="margin-bottom: 20px;">
-          <div class="stat-card" style="--card-accent: var(--info);">
-            <div class="stat-icon" style="background: linear-gradient(135deg, hsl(199,89%,48%), hsl(199,70%,38%));">
-              <svg class="icon" style="stroke:#fff;"><use href="#i-ticket"/></svg>
-            </div>
-            <div class="stat-content">
-              <div class="stat-label">บัตรขออนุญาตรอตรวจสอบ</div>
-              <div class="stat-value" id="approve-kpi-ticket-pending" style="color:var(--info);">0</div>
-            </div>
-          </div>
-        </div>
-
         <!-- TABS (คล้าย "รายการคำขอ" / "ประวัติการลารายบุคคล" ของ view-approve) -->
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="tk-list">รายการบัตรขออนุญาตของนักเรียน</button>
-          <button class="tab-btn" data-tab="personal">ประวัติรายบุคคล</button>
-          <button class="tab-btn" data-tab="summary">สรุปรวมตามชั้นเรียน</button>
+        <div class="view-tabs-sticky" id="tk-tabs-sticky">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="tk-list">รายการบัตรขออนุญาตของนักเรียน</button>
+            <button class="tab-btn" data-tab="personal">ประวัติรายบุคคล</button>
+            <button class="tab-btn" data-tab="summary">สรุปรวมตามชั้นเรียน</button>
+          </div>
         </div>
 
         <!-- Tab: รายการบัตรขออนุญาตของนักเรียน -->
         <div class="tab-content active glass-card" id="tab-tk-list" style="padding: 24px;">
-          <div class="card-header" style="margin-bottom: 16px;">
+          <div class="card-header" style="margin-bottom: 16px;flex-wrap:wrap;gap:12px;">
             <h3><svg class="icon" style="stroke: var(--primary);"><use href="#i-ticket"/></svg> รายการบัตรขออนุญาตของนักเรียน</h3>
-            <button class="btn btn-secondary btn-sm" onclick="exportExcel('tickets')">
-              <svg class="icon"><use href="#i-download"/></svg> Export
-            </button>
-          </div>
-          <div class="toolbar" style="margin-bottom: 16px;gap:10px;flex-wrap:wrap;">
-            <div class="search-box">
-              <svg><use href="#i-search"/></svg>
-              <input class="glass-input" id="tk-req-search" placeholder="ค้นหาชื่อหรือรหัสนักเรียน..." oninput="renderApproveTicketTable()">
-            </div>
-            <select class="glass-select" id="tk-req-type-filter" style="width:190px;" onchange="renderApproveTicketTable()">
-              <option value="">ทุกประเภทบัตรขออนุญาต</option>
-            </select>
-            <select class="glass-select" id="tk-req-grade-filter" style="width:110px;" onchange="renderApproveTicketTable()">
-              <option value="">ทุกชั้นปี</option>
-            </select>
-            <select class="glass-select" id="tk-req-room-filter" style="width:100px;" onchange="renderApproveTicketTable()">
-              <option value="">ทุกห้อง</option>
-            </select>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button class="btn btn-secondary btn-sm btn-active" onclick="setApproveFilter('ticket','all',this)">คำขอทั้งหมด</button>
-              <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('ticket','pending',this)">รอตรวจสอบ</button>
-              <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('ticket','approved',this)">อนุมัติ</button>
-              <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('ticket','rejected',this)">ไม่อนุมัติ</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <span class="header-pending-pill info">
+                <svg viewBox="0 0 24 24" style="fill:none;stroke-width:2;"><use href="#i-ticket"/></svg>
+                รอตรวจสอบ <strong id="approve-kpi-ticket-pending">0</strong>
+              </span>
+              <div class="view-mode-switcher">
+                <button class="view-mode-btn active" data-mode="table" onclick="setListMode('ticket-calendar','table',this)">ตาราง</button>
+                <button class="view-mode-btn" data-mode="calendar" onclick="setListMode('ticket-calendar','calendar',this)">ปฏิทิน</button>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="exportExcel('tickets')">
+                <svg class="icon"><use href="#i-download"/></svg> Export
+              </button>
             </div>
           </div>
-          <div class="data-table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>ชั้น</th><th>ประเภท</th><th>วันที่</th><th>ช่วงเวลา</th><th>เหตุผล</th><th>สถานะ</th><th style="width:190px;text-align:center;">ดำเนินการ</th><th style="width:60px;text-align:center;">ดู</th><th style="width:60px;text-align:center;">ประวัติ</th></tr>
-              </thead>
-              <tbody id="approve-ticket-tbody"></tbody>
-            </table>
+
+          <!-- โหมดตาราง (default) -->
+          <div class="list-panel" id="tk-table-panel">
+            <div class="toolbar" style="margin-bottom: 16px;gap:10px;flex-wrap:wrap;">
+              <div class="search-box">
+                <svg><use href="#i-search"/></svg>
+                <input class="glass-input" id="tk-req-search" placeholder="ค้นหาชื่อหรือรหัสนักเรียน..." oninput="renderApproveTicketTable()">
+              </div>
+              <select class="glass-select" id="tk-req-type-filter" style="width:190px;" onchange="renderApproveTicketTable()">
+                <option value="">ทุกประเภทบัตรขออนุญาต</option>
+              </select>
+              <select class="glass-select" id="tk-req-grade-filter" style="width:110px;" onchange="renderApproveTicketTable()">
+                <option value="">ทุกชั้นปี</option>
+              </select>
+              <select class="glass-select" id="tk-req-room-filter" style="width:100px;" onchange="renderApproveTicketTable()">
+                <option value="">ทุกห้อง</option>
+              </select>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-secondary btn-sm btn-active" onclick="setApproveFilter('ticket','all',this)">คำขอทั้งหมด</button>
+                <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('ticket','pending',this)">รอตรวจสอบ</button>
+                <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('ticket','approved',this)">อนุมัติ</button>
+                <button class="btn btn-secondary btn-sm" onclick="setApproveFilter('ticket','rejected',this)">ไม่อนุมัติ</button>
+              </div>
+            </div>
+            <div class="data-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>ชั้น</th><th>ประเภท</th><th>วันที่</th><th>ช่วงเวลา</th><th>เหตุผล</th><th>สถานะ</th><th style="width:190px;text-align:center;">ดำเนินการ</th><th style="width:60px;text-align:center;">ดู</th><th style="width:60px;text-align:center;">ประวัติ</th></tr>
+                </thead>
+                <tbody id="approve-ticket-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- โหมดปฏิทิน (opt-in) -->
+          <div class="list-panel hidden" id="tk-calendar-panel">
+            <div class="glass-card" id="ticket-calendar-card" style="margin-bottom:0;">
+              <div class="card-header" style="flex-wrap:wrap;gap:12px;">
+                <h3><svg class="icon"><use href="#i-calendar"/></svg>บัตรขออนุญาต</h3>
+                <div class="calendar-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                  <div class="calendar-mode-switcher" style="display:flex;background:rgba(255,255,255,0.05);padding:3px;border-radius:var(--border-radius-md);border:1px solid var(--border-color);">
+                    <button class="cal-mode-btn active" id="tk-cal-mode-month" data-mode="month">รายเดือน</button>
+                    <button class="cal-mode-btn" id="tk-cal-mode-week" data-mode="week">รายสัปดาห์</button>
+                    <button class="cal-mode-btn" id="tk-cal-mode-day" data-mode="day">รายวัน</button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <button class="btn btn-secondary" id="tk-calendar-prev-month-btn" style="padding:6px 12px;font-size:13px;">
+                      <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>ก่อนหน้า
+                    </button>
+                    <span id="tk-calendar-month-year-label" style="font-weight:600;font-size:14px;min-width:170px;text-align:center;">-</span>
+                    <button class="btn btn-secondary" id="tk-calendar-next-month-btn" style="padding:6px 12px;font-size:13px;">
+                      ถัดไป<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </button>
+                    <button class="btn btn-secondary" id="tk-calendar-today-btn" style="padding:6px 12px;font-size:12px;">วันนี้</button>
+                  </div>
+                </div>
+              </div>
+              <div id="tk-calendar-legend" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;font-size:12px;color:var(--text-muted);"></div>
+              <div id="tk-calendar-container"></div>
+            </div>
           </div>
         </div>
 
@@ -826,6 +867,9 @@
 
               <div id="panel-student-profile" style="display: none;">
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: var(--br-md); border: 1px solid var(--border-color);">
+                  <button class="btn-icon" id="personal-profile-back-btn" style="display:none;flex-shrink:0;" onclick="goBackFromPersonalProfile()" title="กลับไปยังรายชื่อวันนั้นในปฏิทิน">
+                    <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
                   <div id="student-profile-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 15px;">-</div>
                   <div style="flex:1;">
                     <strong id="student-profile-name" style="font-size: 15px; color: var(--text-primary);">-</strong>
@@ -1717,8 +1761,13 @@
 <!-- Drawer 5: Generic single-record detail (leave request / ticket / individual profile) -->
 <aside class="drawer-panel drawer-wide" id="drawer-detail">
   <div class="drawer-title">
-    <h3 id="drawer-detail-title">รายละเอียด</h3>
-    <button class="btn-icon" onclick="closeDetailDrawer()"><svg class="icon"><use href="#i-x"/></svg></button>
+    <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+      <button class="btn-icon" id="drawer-detail-back-btn" style="display:none;flex-shrink:0;" onclick="goBackFromDetailDrawer()" title="กลับไปยังรายชื่อวันนั้นในปฏิทิน">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h3 id="drawer-detail-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">รายละเอียด</h3>
+    </div>
+    <button class="btn-icon" style="flex-shrink:0;" onclick="closeDetailDrawer()"><svg class="icon"><use href="#i-x"/></svg></button>
   </div>
   <div id="drawer-detail-body"></div>
 </aside>
@@ -2170,7 +2219,7 @@ function showModuleView(view, activeItem = null) {
   if (view === 'employees') renderEmployees();
   if (view === 'student-leave-settings') renderStudentLeaveSettings();
   if (view === 'sl-submit') renderSLSubmitPending();
-  if (view === 'approve') { renderApprovals(); renderStudentLeaveCalendar(); }
+  if (view === 'approve') renderApprovals();
   if (view === 'ticket-calendar') { renderTicketApprovals(); renderStudentList(); renderSummary(); }
 }
 
@@ -2832,6 +2881,8 @@ const PROFILE_STAT_CATEGORIES = [
 
 function selectPersonalStudent(studentId) {
   activeSelectedStudentId = studentId;
+  personalTabBackTo = null;
+  updatePersonalProfileBackBtn();
 
   // Re-render list to highlight selection
   renderStudentList();
@@ -3382,6 +3433,37 @@ function closeConfirmModal() {
 }
 
 // ======================================================================
+//  LIST MODE — ในแท็บรายการหลักของ view-approve และ view-ticket-calendar
+//  ("รายการคำขอ" / "รายการบัตรขออนุญาตของนักเรียน") ผู้ใช้สลับดูได้ระหว่าง
+//  โหมดตาราง (default) กับโหมดปฏิทิน — ปฏิทินจึงไม่ใช่ element ลอยบนสุดของ
+//  ทั้งหน้าอีกต่อไป แต่เป็นมุมมองทางเลือกที่อยู่ในแท็บเดียวที่มันเกี่ยวข้อง
+//  แท็บอื่น (ประวัติรายบุคคล/สรุปรวมตามชั้นเรียน/ประวัติการลา) ไม่มีปฏิทินเลย
+// ======================================================================
+const LIST_MODE_CONTEXT = {
+  'approve':         { tablePanel: 'sl-table-panel', calPanel: 'sl-calendar-panel', render: () => renderStudentLeaveCalendar() },
+  'ticket-calendar': { tablePanel: 'tk-table-panel', calPanel: 'tk-calendar-panel', render: () => renderTicketCalendar() }
+};
+const listMode = { approve: 'table', 'ticket-calendar': 'table' };
+
+function setListMode(view, mode, btn) {
+  const cfg = LIST_MODE_CONTEXT[view];
+  if (!cfg) return;
+  listMode[view] = mode;
+
+  const tablePanel = document.getElementById(cfg.tablePanel);
+  const calPanel = document.getElementById(cfg.calPanel);
+  if (tablePanel) tablePanel.classList.toggle('hidden', mode !== 'table');
+  if (calPanel) calPanel.classList.toggle('hidden', mode !== 'calendar');
+
+  if (btn) {
+    btn.parentElement.querySelectorAll('.view-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  if (mode === 'calendar') cfg.render();
+}
+
+// ======================================================================
 //  TABS
 // ======================================================================
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -3389,12 +3471,12 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     const parent = btn.closest('.module-view');
     parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    
+
     btn.classList.add('active');
     const tabId = btn.getAttribute('data-tab');
     const el = document.getElementById('tab-' + tabId);
     if (el) el.classList.add('active');
-    
+
     if (tabId === 'all') renderAllHistory();
     if (tabId === 'personal') {
       renderStudentList();
@@ -3403,6 +3485,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if (tabId === 'summary') renderSummary();
     if (tabId === 'requests') renderApproveStudentLeaveTable();
     if (tabId === 'leave-history') renderSLProfileList();
+
+    const stickyBar = parent.querySelector('.view-tabs-sticky');
+    if (stickyBar) stickyBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
 
@@ -3417,6 +3502,74 @@ const CURRENT_APPROVER_NAME = 'สมปอง ทองดี';
 // ticket, or a student's profile. When set, this re-renders whatever is
 // currently shown in it after an approve/reject/reset action changes data.
 let detailDrawerRefresh = null;
+
+// Set only when #drawer-detail was opened by drilling in from a calendar day's
+// list (via goToDaySLProfile / goToDaySLRequestDetail / goToDayTicketRequestDetail)
+// — lets the drawer show a "back to that day's list" button instead of just closing.
+let detailDrawerBackTo = null;
+
+function updateDetailDrawerBackBtn() {
+  const btn = document.getElementById('drawer-detail-back-btn');
+  if (btn) btn.style.display = detailDrawerBackTo ? 'grid' : 'none';
+}
+
+function goBackFromDetailDrawer() {
+  if (!detailDrawerBackTo) return;
+  const reopen = detailDrawerBackTo;
+  detailDrawerBackTo = null;
+  closeDetailDrawer();
+  reopen();
+}
+
+// Same idea as detailDrawerBackTo, but for the "ประวัติรายบุคคล" tab's profile
+// panel in view-ticket-calendar, which isn't a drawer — reached via
+// goToDayTicketProfile when drilling in from the ticket calendar's day list.
+let personalTabBackTo = null;
+
+function updatePersonalProfileBackBtn() {
+  const btn = document.getElementById('personal-profile-back-btn');
+  if (btn) btn.style.display = personalTabBackTo ? 'grid' : 'none';
+}
+
+function goBackFromPersonalProfile() {
+  if (!personalTabBackTo) return;
+  const reopen = personalTabBackTo;
+  personalTabBackTo = null;
+  reopen();
+}
+
+// Wrappers used by the calendar day-drawers/day-view so the detail drawer or
+// profile panel they open knows how to jump back to that day's list.
+function goToDaySLProfile(studentId, y, m, d) {
+  closeDayLeavesDrawer();
+  openSLProfileDrawer(studentId);
+  detailDrawerBackTo = () => openDayLeavesDrawer(new Date(y, m, d));
+  updateDetailDrawerBackBtn();
+}
+function goToDaySLRequestDetail(id, y, m, d) {
+  closeDayLeavesDrawer();
+  viewSLRequestDetails(id);
+  detailDrawerBackTo = () => openDayLeavesDrawer(new Date(y, m, d));
+  updateDetailDrawerBackBtn();
+}
+function goToDayTicketRequestDetail(reqId, y, m, d) {
+  closeDayTicketsDrawer();
+  viewTicketRequestDetails(reqId);
+  detailDrawerBackTo = () => openDayTicketsDrawer(new Date(y, m, d));
+  updateDetailDrawerBackBtn();
+}
+function goToDayTicketProfile(studentId, y, m, d) {
+  closeDayTicketsDrawer();
+  viewStudentHistory(studentId);
+  personalTabBackTo = () => {
+    const listTabBtn = document.querySelector('#view-ticket-calendar .tab-btn[data-tab="tk-list"]');
+    if (listTabBtn) listTabBtn.click();
+    const calBtn = document.querySelector('#tab-tk-list .view-mode-btn[data-mode="calendar"]');
+    setListMode('ticket-calendar', 'calendar', calBtn);
+    openDayTicketsDrawer(new Date(y, m, d));
+  };
+  updatePersonalProfileBackBtn();
+}
 
 function syncSelectOptions(select, values, placeholderText) {
   if (!select) return;
@@ -3443,12 +3596,13 @@ function studentMatchesGradeRoom(cls, grade, room) {
 function renderApprovals() {
   renderApproveBadgeCount();
   renderApproveStudentLeaveTable();
+  if (listMode.approve === 'calendar') renderStudentLeaveCalendar();
 }
 
 function renderTicketApprovals() {
   renderTicketBadgeCount();
   renderApproveTicketTable();
-  renderTicketCalendar();
+  if (listMode['ticket-calendar'] === 'calendar') renderTicketCalendar();
 }
 
 // ======================================================================
@@ -3496,6 +3650,8 @@ function renderSLProfileList() {
 function openSLProfileDrawer(studentId) {
   const student = STUDENTS.find(s => s.id === studentId);
   if (!student) return;
+  detailDrawerBackTo = null;
+  updateDetailDrawerBackBtn();
   const requests = STUDENT_LEAVE_REQUESTS.filter(r => r.studentId === studentId);
 
   const quotaCardsHtml = STUDENT_LEAVE_TYPES.map(t => {
@@ -3738,6 +3894,8 @@ function viewSLAttachmentMock(filename) {
 function viewSLRequestDetails(id) {
   const r = STUDENT_LEAVE_REQUESTS.find(x => x.id === id);
   if (!r) return;
+  detailDrawerBackTo = null;
+  updateDetailDrawerBackBtn();
 
   let attachmentHtml = "<span style='color:var(--text-muted);'>ไม่มีเอกสารแนบ</span>";
   if (r.attachment) {
@@ -3830,6 +3988,8 @@ function printLeaveRequestPreview(id) {
 function viewTicketRequestDetails(reqId) {
   const r = HISTORY.find(x => x.reqId === reqId);
   if (!r) return;
+  detailDrawerBackTo = null;
+  updateDetailDrawerBackBtn();
 
   const footerHtml = r.status === 'รอตรวจสอบ' ? `
     <button class="btn btn-danger" style="flex:1;" onclick="closeDetailDrawer(); rejectTicket('${r.reqId}');">ไม่อนุมัติ</button>
@@ -4020,7 +4180,11 @@ function slLeavesOnDate(cellDate) {
 
 function refreshSLCalendarIfVisible() {
   const view = document.getElementById('view-approve');
-  if (view && view.classList.contains('active')) renderStudentLeaveCalendar();
+  const tabRequests = document.getElementById('tab-requests');
+  if (view && view.classList.contains('active') && listMode.approve === 'calendar'
+      && tabRequests && tabRequests.classList.contains('active')) {
+    renderStudentLeaveCalendar();
+  }
   if (slDrawerOpenDate) openDayLeavesDrawer(slDrawerOpenDate);
 }
 
@@ -4229,26 +4393,27 @@ function renderSLWeekView(container, startOfWeek) {
   container.appendChild(grid);
 }
 
-function slDayCardHTML(req, onClickAttr) {
+function slDayCardHTML(req, actionAttr, navAttr) {
   const initials = req.name.replace(/\s/g, '').slice(0, 2);
   return `
     <div class="calendar-day-card">
-      <div style="display:flex; align-items:center; gap:12px;">
+      <div style="display:flex; align-items:center; gap:12px; cursor:pointer;" title="ดูโควตาและประวัติการลาของ ${req.name}" ${navAttr('openSLProfileDrawer', req.studentId)}>
         <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--primary), var(--info)); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; font-family:var(--font-heading);">${initials}</div>
         <div>
           <div style="font-weight:600; color:var(--text-primary); font-size:14px;">${req.name} <span style="font-weight:400;color:var(--text-muted);">(${req.cls})</span></div>
           <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">เหตุผล: ${req.reason}</div>
         </div>
       </div>
-      <div style="display:flex; align-items:center; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
         <div style="text-align:right;">
           <span class="calendar-leave-pill ${studentLeaveTypeBadgeClass(req.type)} ${req.status === 'รอตรวจสอบ' ? 'pending' : (req.status === 'อนุมัติ' ? 'approved' : '')}" style="display:inline-flex;">${req.type} (${req.days} วัน)</span>
           <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${thaiDate(req.startDate)}${req.endDate !== req.startDate ? ' - ' + thaiDate(req.endDate) : ''}</div>
         </div>
+        <button class="btn-icon" title="ดูรายละเอียด" ${navAttr('viewSLRequestDetails', req.id)}><svg class="icon"><use href="#i-view"/></svg></button>
         ${req.status === 'รอตรวจสอบ' ? `
           <div style="display:flex;gap:6px;">
-            <button class="btn-icon" style="border-color:var(--success);color:var(--success);" title="อนุมัติ" ${onClickAttr('approveStudentLeave', req.id)}><svg class="icon"><use href="#i-check"/></svg></button>
-            <button class="btn-icon" style="border-color:var(--danger);color:var(--danger);" title="ไม่อนุมัติ" ${onClickAttr('rejectStudentLeave', req.id)}><svg class="icon"><use href="#i-x"/></svg></button>
+            <button class="btn-icon" style="border-color:var(--success);color:var(--success);" title="อนุมัติ" ${actionAttr('approveStudentLeave', req.id)}><svg class="icon"><use href="#i-check"/></svg></button>
+            <button class="btn-icon" style="border-color:var(--danger);color:var(--danger);" title="ไม่อนุมัติ" ${actionAttr('rejectStudentLeave', req.id)}><svg class="icon"><use href="#i-x"/></svg></button>
           </div>
         ` : statusBadgeHTML(req.status)}
       </div>
@@ -4271,14 +4436,17 @@ function renderSLDayView(container, targetDate) {
   else if (isHoliday) statusTag = `<span class="badge warning">${HOLIDAY_NAMES_2026[dateString] || 'วันหยุดนักขัตฤกษ์'}</span>`;
 
   const activeLeaves = slLeavesOnDate(targetDate);
-  const onClickAttr = (fn, id) => `onclick="${fn}('${id}')"`;
+  // Rendered inline in the calendar itself (not inside a drawer), so nav actions
+  // (open profile / view request) need no "close drawer + remember how to come back" step.
+  const actionAttr = (fn, id) => `onclick="${fn}('${id}')"`;
+  const navAttr = actionAttr;
 
   const contentHtml = activeLeaves.length === 0 ? `
     <div style="text-align:center; padding: 40px 20px; color: var(--text-muted);">
       <svg viewBox="0 0 24 24" style="width: 40px; height: 40px; stroke: currentColor; fill: none; stroke-width: 1.5; margin-bottom: 8px; opacity: 0.5; display:inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       <p style="margin: 0; font-size: 14px; font-weight: 500;">ไม่มีนักเรียนยื่นขอลาในวันนี้</p>
     </div>
-  ` : activeLeaves.map(req => slDayCardHTML(req, onClickAttr)).join('');
+  ` : activeLeaves.map(req => slDayCardHTML(req, actionAttr, navAttr)).join('');
 
   dayView.innerHTML = `
     <div class="calendar-day-header">
@@ -4306,10 +4474,16 @@ function openDayLeavesDrawer(cellDate) {
   if (!bodyEl) return;
 
   const activeLeaves = slLeavesOnDate(cellDate);
-  const onClickAttr = (fn, id) => `onclick="closeDayLeavesDrawer(); ${fn}('${id}');"`;
+  const actionAttr = (fn, id) => `onclick="closeDayLeavesDrawer(); ${fn}('${id}');"`;
+  // Nav actions (open profile / view request) go through a wrapper that remembers
+  // this date so the detail drawer can show a "back to this day's list" button.
+  const navAttr = (fn, id) => {
+    const wrapper = fn === 'openSLProfileDrawer' ? 'goToDaySLProfile' : 'goToDaySLRequestDetail';
+    return `onclick="${wrapper}('${id}', ${y}, ${m}, ${d})"`;
+  };
   bodyEl.innerHTML = activeLeaves.length === 0
     ? `<div style="text-align:center; padding: 30px; color: var(--text-muted);">ไม่มีนักเรียนยื่นขอลาในวันนี้</div>`
-    : activeLeaves.map(req => slDayCardHTML(req, onClickAttr)).join('');
+    : activeLeaves.map(req => slDayCardHTML(req, actionAttr, navAttr)).join('');
 
   document.getElementById('drawer-overlay').classList.add('active');
   document.getElementById('drawer-day-leaves').classList.add('active');
@@ -4333,6 +4507,8 @@ function closeDetailDrawer() {
   const panel = document.getElementById('drawer-detail');
   if (panel) panel.classList.remove('active');
   hideDrawerOverlayIfNoneActive();
+  detailDrawerBackTo = null;
+  updateDetailDrawerBackBtn();
 }
 
 function prevSLCalendarMonth() {
@@ -4405,7 +4581,11 @@ function tkTicketsOnDate(cellDate) {
 
 function refreshTicketCalendarIfVisible() {
   const view = document.getElementById('view-ticket-calendar');
-  if (view && view.classList.contains('active')) renderTicketCalendar();
+  const tabTkList = document.getElementById('tab-tk-list');
+  if (view && view.classList.contains('active') && listMode['ticket-calendar'] === 'calendar'
+      && tabTkList && tabTkList.classList.contains('active')) {
+    renderTicketCalendar();
+  }
   if (tkDrawerOpenDate) openDayTicketsDrawer(tkDrawerOpenDate);
 }
 
@@ -4612,26 +4792,27 @@ function renderTkWeekView(container, startOfWeek) {
   container.appendChild(grid);
 }
 
-function tkDayCardHTML(r, onClickAttr) {
+function tkDayCardHTML(r, actionAttr, navAttr) {
   const initials = r.name.replace(/\s/g, '').slice(0, 2);
   return `
     <div class="calendar-day-card">
-      <div style="display:flex; align-items:center; gap:12px;">
+      <div style="display:flex; align-items:center; gap:12px; cursor:pointer;" title="ดูโควตาและประวัติการขออนุญาตของ ${r.name}" ${navAttr('viewStudentHistory', r.id)}>
         <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, var(--primary), var(--info)); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; font-family:var(--font-heading);">${initials}</div>
         <div>
           <div style="font-weight:600; color:var(--text-primary); font-size:14px;">${r.name} <span style="font-weight:400;color:var(--text-muted);">(${r.cls})</span></div>
           <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">เหตุผล: ${r.reason}</div>
         </div>
       </div>
-      <div style="display:flex; align-items:center; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
         <div style="text-align:right;">
           <span class="type-badge ${typeBadgeClass(r.type)}" style="display:inline-flex;">${r.type}</span>
           <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${r.time}</div>
         </div>
+        <button class="btn-icon" title="ดูรายละเอียด" ${navAttr('viewTicketRequestDetails', r.reqId)}><svg class="icon"><use href="#i-view"/></svg></button>
         ${r.status === 'รอตรวจสอบ' ? `
           <div style="display:flex;gap:6px;">
-            <button class="btn-icon" style="border-color:var(--success);color:var(--success);" title="อนุมัติ" ${onClickAttr('approveTicket', r.reqId)}><svg class="icon"><use href="#i-check"/></svg></button>
-            <button class="btn-icon" style="border-color:var(--danger);color:var(--danger);" title="ไม่อนุมัติ" ${onClickAttr('rejectTicket', r.reqId)}><svg class="icon"><use href="#i-x"/></svg></button>
+            <button class="btn-icon" style="border-color:var(--success);color:var(--success);" title="อนุมัติ" ${actionAttr('approveTicket', r.reqId)}><svg class="icon"><use href="#i-check"/></svg></button>
+            <button class="btn-icon" style="border-color:var(--danger);color:var(--danger);" title="ไม่อนุมัติ" ${actionAttr('rejectTicket', r.reqId)}><svg class="icon"><use href="#i-x"/></svg></button>
           </div>
         ` : statusBadgeHTML(r.status)}
       </div>
@@ -4654,14 +4835,17 @@ function renderTkDayView(container, targetDate) {
   else if (isHoliday) statusTag = `<span class="badge warning">${HOLIDAY_NAMES_2026[dateString] || 'วันหยุดนักขัตฤกษ์'}</span>`;
 
   const activeTickets = tkTicketsOnDate(targetDate);
-  const onClickAttr = (fn, id) => `onclick="${fn}('${id}')"`;
+  // Rendered inline in the calendar itself (not inside a drawer), so nav actions
+  // (open profile / view request) need no "close drawer + remember how to come back" step.
+  const actionAttr = (fn, id) => `onclick="${fn}('${id}')"`;
+  const navAttr = actionAttr;
 
   const contentHtml = activeTickets.length === 0 ? `
     <div style="text-align:center; padding: 40px 20px; color: var(--text-muted);">
       <svg viewBox="0 0 24 24" style="width: 40px; height: 40px; stroke: currentColor; fill: none; stroke-width: 1.5; margin-bottom: 8px; opacity: 0.5; display:inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       <p style="margin: 0; font-size: 14px; font-weight: 500;">ไม่มีนักเรียนขออนุญาตในวันนี้</p>
     </div>
-  ` : activeTickets.map(r => tkDayCardHTML(r, onClickAttr)).join('');
+  ` : activeTickets.map(r => tkDayCardHTML(r, actionAttr, navAttr)).join('');
 
   dayView.innerHTML = `
     <div class="calendar-day-header">
@@ -4689,10 +4873,16 @@ function openDayTicketsDrawer(cellDate) {
   if (!bodyEl) return;
 
   const activeTickets = tkTicketsOnDate(cellDate);
-  const onClickAttr = (fn, id) => `onclick="closeDayTicketsDrawer(); ${fn}('${id}');"`;
+  const actionAttr = (fn, id) => `onclick="closeDayTicketsDrawer(); ${fn}('${id}');"`;
+  // Nav actions (open profile / view request) go through a wrapper that remembers
+  // this date so the destination can show a "back to this day's list" button.
+  const navAttr = (fn, id) => {
+    const wrapper = fn === 'viewStudentHistory' ? 'goToDayTicketProfile' : 'goToDayTicketRequestDetail';
+    return `onclick="${wrapper}('${id}', ${y}, ${m}, ${d})"`;
+  };
   bodyEl.innerHTML = activeTickets.length === 0
     ? `<div style="text-align:center; padding: 30px; color: var(--text-muted);">ไม่มีนักเรียนขออนุญาตในวันนี้</div>`
-    : activeTickets.map(r => tkDayCardHTML(r, onClickAttr)).join('');
+    : activeTickets.map(r => tkDayCardHTML(r, actionAttr, navAttr)).join('');
 
   document.getElementById('drawer-overlay').classList.add('active');
   document.getElementById('drawer-day-tickets').classList.add('active');
@@ -5422,5 +5612,8 @@ window.syncApproverRoleCards = syncApproverRoleCards;
 syncApproverRoleCards();
 renderAllHistory();
 </script>
+
+<!-- เมนูข้ามระบบ (เติมกลุ่มเมนูของระบบอื่นเข้า sidebar) -->
+<script src="../shared/cross-nav.js"></script>
 </body>
 </html>

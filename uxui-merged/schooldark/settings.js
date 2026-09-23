@@ -50,6 +50,23 @@ const INITIAL_DOC_SIGNATORIES = [
     { docType: "หนังสือขอความอนุเคราะห์", signatoryId: "SIG002" }
 ];
 
+// Initial Homeroom Teacher Seed Data (ครูประจำชั้น — แยกตามปีการศึกษา)
+// โครง: { "<ปีการศึกษา>": { "<ห้อง>": [ { teacherId, role } ] } }
+// role: "homeroom" = ครูประจำชั้น, "advisor" = ครูที่ปรึกษา / ร่วมประจำชั้น
+// มีเฉพาะปี 2567 (ปีที่แล้ว) เป็นต้นทาง — ปีปัจจุบันจะถูก ensureHomeroomYearSeeded()
+// เติมให้อัตโนมัติเมื่อเปิดหน้าครั้งแรก แล้วผู้ใช้ค่อยแก้เฉพาะห้องที่เปลี่ยนและกดบันทึก
+// (ห้ามใส่ key ของปีปัจจุบันไว้ที่นี่ ไม่งั้นจะถือว่า "ตั้งค่าแล้ว" และไม่เติมอัตโนมัติ)
+const INITIAL_HOMEROOM = {
+    "2567": {
+        "ม.1/1": [{ teacherId: "T-001", role: "homeroom" }, { teacherId: "T-004", role: "advisor" }],
+        "ม.1/2": [{ teacherId: "T-002", role: "homeroom" }],
+        "ม.2/3": [{ teacherId: "T-004", role: "homeroom" }],
+        "ม.3/1": [{ teacherId: "T-003", role: "homeroom" }, { teacherId: "T-005", role: "advisor" }],
+        "ม.4/2": [{ teacherId: "T-005", role: "homeroom" }],
+        "ม.5/1": [{ teacherId: "T-002", role: "homeroom" }, { teacherId: "T-001", role: "advisor" }]
+    }
+};
+
 // Global State
 let settingsState = {
     schoolNameTh: "โรงเรียนตัวอย่าง",
@@ -73,9 +90,11 @@ let settingsState = {
     users: [],
     signatories: [],
     docSignatories: [],
+    homeroom: {},
     activeView: "general",
     editingShiftId: null,
-    editingSignatoryId: null
+    editingSignatoryId: null,
+    editingHomeroomClass: null
 };
 
 // Settings state draft for uncommitted configurations (Task 4)
@@ -166,6 +185,14 @@ function initSettingsDatabase() {
         }
     });
 
+    // 8. Homeroom teachers (ครูประจำชั้น — เก็บแยกตามปีการศึกษา)
+    if (localStorage.getItem("sd_homeroom_v2")) {
+        settingsState.homeroom = JSON.parse(localStorage.getItem("sd_homeroom_v2"));
+    } else {
+        settingsState.homeroom = JSON.parse(JSON.stringify(INITIAL_HOMEROOM));
+        localStorage.setItem("sd_homeroom_v2", JSON.stringify(settingsState.homeroom));
+    }
+
     // Load initial draft (Task 4)
     settingsStateDraft = JSON.parse(JSON.stringify(settingsState));
 }
@@ -192,6 +219,7 @@ function saveStateToLocalStorage() {
     localStorage.setItem("sd_users", JSON.stringify(settingsState.users));
     localStorage.setItem("sd_signatories", JSON.stringify(settingsState.signatories));
     localStorage.setItem("sd_doc_signatories", JSON.stringify(settingsState.docSignatories));
+    localStorage.setItem("sd_homeroom_v2", JSON.stringify(settingsState.homeroom));
 }
 
 // -------------------------------------------------------------
@@ -228,6 +256,8 @@ function navigateToView(viewId) {
 function renderViewData(viewId) {
     if (viewId === "general") {
         renderGeneralView();
+    } else if (viewId === "homeroom") {
+        renderHomeroomView();
     } else if (viewId === "schedule") {
         renderScheduleView();
     } else if (viewId === "permissions") {
@@ -251,6 +281,252 @@ function renderGeneralView() {
     document.getElementById("acad-year").value = settingsStateDraft.acadYear;
     document.getElementById("acad-start").value = settingsStateDraft.acadStart;
     document.getElementById("acad-end").value = settingsStateDraft.acadEnd;
+}
+
+// -------------------------------------------------------------
+// HOMEROOM TEACHERS (ครูประจำชั้น) — ตั้งค่าแยกตามปีการศึกษา
+//
+// เป็นแหล่งข้อมูลจริงของ "ครูประจำชั้น / ครูที่ปรึกษา" ที่หน้าตั้งค่าการลา
+// ของนักเรียน (leave-features.html) ระบุไว้ว่า "ดึงข้อมูลอัตโนมัติ"
+// ข้อมูลเก็บที่ settingsState.homeroom[ปีการศึกษา][ห้อง] = [{teacherId, role}]
+// -------------------------------------------------------------
+
+const HOMEROOM_LEVELS = ["ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
+const HOMEROOM_ROOMS_PER_LEVEL = 5;
+const HOMEROOM_ROLE_LABEL = { homeroom: "ครูประจำชั้น", advisor: "ครูที่ปรึกษา / ร่วมประจำชั้น" };
+
+// 30 ห้อง: ม.1/1 … ม.6/5 (ล้อกับ classroomOptions() ของฝั่ง admission เผื่อรวมระบบภายหลัง)
+function homeroomClassList() {
+    const list = [];
+    HOMEROOM_LEVELS.forEach(level => {
+        for (let room = 1; room <= HOMEROOM_ROOMS_PER_LEVEL; room++) {
+            list.push(`${level}/${room}`);
+        }
+    });
+    return list;
+}
+
+// อ่านรายชื่อครูจาก personnel.js ตอน render ทุกครั้ง (ไม่ cache)
+// เพื่อให้บุคลากรที่เพิ่มใหม่ในหน้า "รายชื่อบุคลากร" โผล่ในตัวเลือกทันที
+function getHomeroomTeacherPool() {
+    let pool = [];
+    if (typeof teachers !== "undefined" && Array.isArray(teachers) && teachers.length > 0) {
+        pool = teachers;
+    } else if (typeof INITIAL_PERSONNEL_TEACHERS !== "undefined") {
+        pool = INITIAL_PERSONNEL_TEACHERS;
+    }
+    return pool.map(t => ({
+        id: t.id,
+        name: `${t.prefix || ""}${t.firstname || ""} ${t.lastname || ""}`.trim(),
+        position: t.position || "",
+        department: t.department || ""
+    }));
+}
+
+function homeroomTeacherName(teacherId) {
+    const found = getHomeroomTeacherPool().find(t => t.id === teacherId);
+    return found ? found.name : `(ไม่พบบุคลากร ${teacherId})`;
+}
+
+// ปีการศึกษาที่เลือกอยู่บนหน้าจอ (fallback = ปีการศึกษาปัจจุบันจากหน้าตั้งค่าทั่วไป)
+function getSelectedHomeroomYear() {
+    const select = document.getElementById("homeroom-year");
+    return (select && select.value) ? select.value : String(settingsStateDraft.acadYear || settingsState.acadYear);
+}
+
+// map ของปีที่เลือก (สร้างให้ถ้ายังไม่มี)
+function getHomeroomYearMap(year) {
+    if (!settingsStateDraft.homeroom) settingsStateDraft.homeroom = {};
+    if (!settingsStateDraft.homeroom[year]) settingsStateDraft.homeroom[year] = {};
+    return settingsStateDraft.homeroom[year];
+}
+
+// จำไว้ว่าปีไหนถูกเติมอัตโนมัติมาจากปีไหน เพื่อขึ้นแถบแจ้งเตือนว่ายังไม่ได้บันทึก
+// (ล้างทิ้งเมื่อกดบันทึก — ไม่ถูกเก็บลง localStorage)
+let homeroomAutoFillNote = null;
+
+// เติมรายชื่อครูของปีที่เลือกให้อัตโนมัติจากปีที่แล้ว ถ้าปีนั้น "ยังไม่เคยตั้งค่า"
+// เกณฑ์คือดูว่ามี key ของปีนั้นใน homeroom หรือยัง — ไม่ได้ดูว่าว่างหรือไม่
+// เพราะถ้าผู้ใช้ตั้งใจล้างครูออกทั้งปีแล้วกดบันทึก (ได้ {} ว่าง) ต้องเคารพเจตนานั้น
+// ไม่ใช่เติมกลับมาให้อีกทุกครั้งที่เปิดหน้า
+function ensureHomeroomYearSeeded(year) {
+    if (!settingsStateDraft.homeroom) settingsStateDraft.homeroom = {};
+    if (year in settingsStateDraft.homeroom) return;
+
+    const prevYear = String(parseInt(year, 10) - 1);
+    const source = settingsStateDraft.homeroom[prevYear];
+
+    if (source && Object.keys(source).length > 0) {
+        settingsStateDraft.homeroom[year] = JSON.parse(JSON.stringify(source));
+        homeroomAutoFillNote = { year: year, fromYear: prevYear, rooms: Object.keys(source).length };
+    } else {
+        settingsStateDraft.homeroom[year] = {};
+    }
+}
+
+function populateHomeroomYearSelect() {
+    const select = document.getElementById("homeroom-year");
+    if (!select || select.dataset.ready === "1") return;
+    const current = parseInt(settingsStateDraft.acadYear || settingsState.acadYear, 10) || 2568;
+    let html = "";
+    for (let y = current - 2; y <= current + 1; y++) {
+        html += `<option value="${y}"${y === current ? " selected" : ""}>ปีการศึกษา ${y}</option>`;
+    }
+    select.innerHTML = html;
+    select.dataset.ready = "1";
+}
+
+function renderHomeroomView() {
+    populateHomeroomYearSelect();
+
+    const year = getSelectedHomeroomYear();
+    ensureHomeroomYearSeeded(year);
+    const yearMap = getHomeroomYearMap(year);
+    const classes = homeroomClassList();
+
+    // แถบแจ้งว่ารายชื่อชุดนี้ถูกดึงมาจากปีที่แล้วให้อัตโนมัติ และยังไม่ได้บันทึก
+    const note = document.getElementById("homeroom-source-note");
+    if (note) {
+        if (homeroomAutoFillNote && homeroomAutoFillNote.year === year) {
+            document.getElementById("homeroom-source-note-text").textContent =
+                `ดึงรายชื่อครูจากปีการศึกษา ${homeroomAutoFillNote.fromYear} มาให้อัตโนมัติ ${homeroomAutoFillNote.rooms} ห้อง — ตรวจสอบ แก้ไขห้องที่เปลี่ยน แล้วกด "บันทึก" เพื่อยืนยันเป็นข้อมูลของปี ${year}`;
+            note.style.display = "flex";
+        } else {
+            note.style.display = "none";
+        }
+    }
+
+    // ---- สถิติ 3 ใบ ----
+    const filled = classes.filter(cls => (yearMap[cls] || []).length > 0).length;
+    const uniqueTeachers = new Set();
+    classes.forEach(cls => (yearMap[cls] || []).forEach(a => uniqueTeachers.add(a.teacherId)));
+    document.getElementById("homeroom-stat-filled").textContent = filled;
+    document.getElementById("homeroom-stat-empty").textContent = classes.length - filled;
+    document.getElementById("homeroom-stat-teachers").textContent = uniqueTeachers.size;
+
+    // ---- ตาราง ----
+    const tbody = document.getElementById("homeroom-table-body");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    HOMEROOM_LEVELS.forEach(level => {
+        const header = document.createElement("tr");
+        header.className = "perm-group-header";
+        header.innerHTML = `<td colspan="4">🏫 ระดับชั้น ${level}</td>`;
+        tbody.appendChild(header);
+
+        classes.filter(cls => cls.startsWith(level + "/")).forEach(cls => {
+            const assigned = yearMap[cls] || [];
+            const chips = role => {
+                const list = assigned.filter(a => a.role === role);
+                if (list.length === 0) {
+                    return `<span style="color:var(--text-muted);font-size:12px;">— ยังไม่กำหนด —</span>`;
+                }
+                return list.map(a => `<span class="badge-soft" style="display:inline-block;margin:2px 4px 2px 0;padding:3px 10px;border-radius:999px;background:var(--primary-glow);color:var(--primary);font-size:12px;font-weight:600;">${homeroomTeacherName(a.teacherId)}</span>`).join("");
+            };
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="font-weight:600;">${cls}</td>
+                <td>${chips("homeroom")}</td>
+                <td>${chips("advisor")}</td>
+                <td style="text-align:center;">
+                    <button class="icon-btn" onclick="openHomeroomModal('${cls}')" title="แก้ไขครูของห้อง ${cls}" style="margin:0 auto;">
+                        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+}
+
+// ---- โมดัลแก้ไขครูของห้องเดียว ----
+function openHomeroomModal(cls) {
+    settingsStateDraft.editingHomeroomClass = cls;
+    const year = getSelectedHomeroomYear();
+    document.getElementById("modal-homeroom-title").textContent = `ครูประจำชั้น ${cls}`;
+    document.getElementById("modal-homeroom-subtitle").textContent =
+        `ปีการศึกษา ${year} — เพิ่มครูได้ไม่จำกัดจำนวน และกำหนดบทบาทของแต่ละคนได้`;
+    renderHomeroomModal();
+    openModal("modal-homeroom");
+}
+
+function renderHomeroomModal() {
+    const cls = settingsStateDraft.editingHomeroomClass;
+    if (!cls) return;
+    const yearMap = getHomeroomYearMap(getSelectedHomeroomYear());
+    const assigned = yearMap[cls] || [];
+    const pool = getHomeroomTeacherPool();
+
+    // รายชื่อที่มอบหมายแล้ว
+    const listEl = document.getElementById("homeroom-assigned-list");
+    if (assigned.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:18px;border:1px dashed var(--border-color);border-radius:8px;">ยังไม่ได้กำหนดครูให้ห้องนี้</div>`;
+    } else {
+        listEl.innerHTML = assigned.map((a, idx) => `
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border-color);border-radius:8px;">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:13px;font-weight:600;">${homeroomTeacherName(a.teacherId)}</div>
+                    <div style="font-size:11px;color:var(--text-muted);">${(pool.find(t => t.id === a.teacherId) || {}).position || ""}</div>
+                </div>
+                <select class="glass-select" style="width:190px;font-size:12px;" onchange="changeHomeroomRole(${idx}, this.value)">
+                    <option value="homeroom"${a.role === "homeroom" ? " selected" : ""}>ครูประจำชั้น</option>
+                    <option value="advisor"${a.role === "advisor" ? " selected" : ""}>ครูที่ปรึกษา / ร่วมประจำชั้น</option>
+                </select>
+                <button class="icon-btn danger" onclick="removeHomeroomTeacher(${idx})" title="เอาออกจากห้องนี้">
+                    <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </div>
+        `).join("");
+    }
+
+    // ตัวเลือกเพิ่มครู — เฉพาะคนที่ยังไม่อยู่ในห้องนี้
+    const assignedIds = assigned.map(a => a.teacherId);
+    const available = pool.filter(t => !assignedIds.includes(t.id));
+    const addSelect = document.getElementById("homeroom-add-teacher");
+    if (available.length === 0) {
+        addSelect.innerHTML = `<option value="">— บุคลากรทุกคนถูกเพิ่มในห้องนี้แล้ว —</option>`;
+    } else {
+        addSelect.innerHTML = available
+            .map(t => `<option value="${t.id}">${t.name}${t.department ? " · " + t.department : ""}</option>`)
+            .join("");
+    }
+}
+
+function addHomeroomTeacher() {
+    const cls = settingsStateDraft.editingHomeroomClass;
+    const teacherId = document.getElementById("homeroom-add-teacher").value;
+    if (!cls || !teacherId) {
+        showToast("ไม่มีบุคลากรให้เพิ่มแล้ว", "warning");
+        return;
+    }
+    const yearMap = getHomeroomYearMap(getSelectedHomeroomYear());
+    if (!yearMap[cls]) yearMap[cls] = [];
+    // คนแรกของห้องตั้งเป็นครูประจำชั้น คนถัดไปตั้งเป็นครูที่ปรึกษา (ปรับได้เองภายหลัง)
+    const role = yearMap[cls].some(a => a.role === "homeroom") ? "advisor" : "homeroom";
+    yearMap[cls].push({ teacherId, role });
+    renderHomeroomModal();
+    renderHomeroomView();
+}
+
+function changeHomeroomRole(index, role) {
+    const cls = settingsStateDraft.editingHomeroomClass;
+    const yearMap = getHomeroomYearMap(getSelectedHomeroomYear());
+    if (!cls || !yearMap[cls] || !yearMap[cls][index]) return;
+    yearMap[cls][index].role = role;
+    renderHomeroomModal();
+    renderHomeroomView();
+}
+
+function removeHomeroomTeacher(index) {
+    const cls = settingsStateDraft.editingHomeroomClass;
+    const yearMap = getHomeroomYearMap(getSelectedHomeroomYear());
+    if (!cls || !yearMap[cls]) return;
+    yearMap[cls].splice(index, 1);
+    if (yearMap[cls].length === 0) delete yearMap[cls];
+    renderHomeroomModal();
+    renderHomeroomView();
 }
 
 // Render Schedule View (reads from draft)
@@ -490,6 +766,33 @@ document.getElementById("btn-save-acad").addEventListener("click", () => {
     settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
     saveStateToLocalStorage();
     showToast("บันทึกปีการศึกษาปัจจุบันเรียบร้อยแล้ว", "success");
+});
+
+// ---- Homeroom teachers (ครูประจำชั้น) ----
+document.getElementById("homeroom-year").addEventListener("change", () => {
+    renderHomeroomView();
+});
+
+document.getElementById("btn-homeroom-add").addEventListener("click", addHomeroomTeacher);
+
+document.getElementById("btn-homeroom-done").addEventListener("click", () => {
+    closeModal("modal-homeroom");
+    settingsStateDraft.editingHomeroomClass = null;
+    renderHomeroomView();
+});
+
+document.getElementById("btn-save-homeroom").addEventListener("click", () => {
+    // Commit draft to active state
+    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+    saveStateToLocalStorage();
+
+    // ยืนยันแล้วว่าเป็นข้อมูลของปีนี้จริง — เอาแถบ "ดึงมาจากปีที่แล้ว" ออก
+    homeroomAutoFillNote = null;
+    renderHomeroomView();
+
+    const year = getSelectedHomeroomYear();
+    const count = Object.keys(settingsState.homeroom[year] || {}).length;
+    showToast(`บันทึกครูประจำชั้นปีการศึกษา ${year} แล้ว (${count} ห้อง)`, "success");
 });
 
 // Save Work Hours, Shifts, and Holidays (Task 4)
