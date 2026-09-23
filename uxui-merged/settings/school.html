@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตั้งค่าโรงเรียน — ศูนย์รวมการตั้งค่า</title>
+
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Tailwind Config to match theme (เหมือน admission/course_settings.html) -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#3e63dd', foreground: '#ffffff', hover: '#2f51c7' },
+            secondary: { DEFAULT: '#f1f3f9', foreground: '#1e293b' },
+            success: { DEFAULT: '#10b981', foreground: '#ffffff' },
+            warning: { DEFAULT: '#f59e0b', foreground: '#78350f' },
+            info: { DEFAULT: '#0284c7', foreground: '#ffffff' },
+            destructive: { DEFAULT: '#ef4444', foreground: '#ffffff' },
+            muted: { DEFAULT: '#f8fafc', foreground: '#64748b' },
+            card: { DEFAULT: '#ffffff', foreground: '#0f172a' },
+            border: '#e2e8f0'
+          },
+          fontFamily: { sans: ['Sarabun', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body { background-color: #f8fafc; }
+    .custom-card { background-color: #ffffff; border-color: #e2e8f0; color: #0f172a; }
+    .custom-input { background-color: #ffffff; border-color: #cbd5e1; color: #0f172a; }
+    .custom-input:focus { border-color: #3e63dd; outline: none; }
+  </style>
+  <link rel="stylesheet" href="../shared/cross-nav.css">
+</head>
+<body class="font-sans antialiased text-card-foreground">
+<script src="../shared/cross-nav.js"></script>
+
+  <!-- Header เรียบ ๆ ของศูนย์ตั้งค่า (ไม่มีแท็บระบบเดิมเหมือน admission) -->
+  <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
+    <div class="mx-auto flex max-w-[1400px] items-center gap-3 px-6 py-4">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+        <i data-lucide="settings" class="h-5 w-5"></i>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold leading-tight text-slate-900">ศูนย์รวมการตั้งค่า</h1>
+        <p class="text-xs text-slate-500">School Settings Center</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-[1400px] px-6 py-6 pb-24">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
+      <a href="index.html" class="hover:underline">ศูนย์รวมการตั้งค่า</a>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <span class="text-slate-700 font-medium">ตั้งค่าโรงเรียน</span>
+    </div>
+
+    <!-- Title Area -->
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div class="flex items-center gap-3">
+        <div id="tab-icon-tile" class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
+          <i data-lucide="door-open" class="h-6 w-6"></i>
+        </div>
+        <div>
+          <h2 id="tab-title" class="text-2xl font-bold tracking-tight text-slate-900">ข้อมูลห้องเรียน</h2>
+          <p id="tab-desc" class="text-xs text-slate-500"></p>
+        </div>
+      </div>
+
+      <button onclick="SchoolSettings.openModal()" class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-4.5 py-2.5 text-sm font-semibold transition-all shadow-md cursor-pointer active:scale-95">
+        <i data-lucide="plus-circle" class="h-4.5 w-4.5"></i> เพิ่มรายการ
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl max-w-4xl mb-6 flex-wrap">
+      <a href="#tab=classrooms" data-tab-link="classrooms" class="tab-pill flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold transition-colors">ข้อมูลห้องเรียน</a>
+      <a href="#tab=calendar" data-tab-link="calendar" class="tab-pill flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold transition-colors">ปฏิทินโรงเรียน</a>
+      <a href="#tab=years" data-tab-link="years" class="tab-pill flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold transition-colors">ปีการศึกษา</a>
+      <a href="#tab=levels" data-tab-link="levels" class="tab-pill flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold transition-colors">ระดับการศึกษา</a>
+      <a href="#tab=majors" data-tab-link="majors" class="tab-pill flex-1 text-center py-2 px-3 rounded-lg text-xs font-semibold transition-colors">สาขางาน-สาขาวิชา</a>
+    </div>
+
+    <!-- Classroom level filter (เฉพาะแท็บ classrooms) -->
+    <div id="classrooms-filter" class="mb-4 hidden">
+      <select id="classroom-level-filter" class="custom-input rounded-lg border p-2 text-xs">
+        <option value="">ทุกระดับชั้น</option>
+      </select>
+    </div>
+
+    <!-- Table Card -->
+    <div class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-w-6xl">
+      <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center flex-wrap gap-2">
+        <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+          <i data-lucide="list" class="h-4 w-4 text-primary"></i> <span id="table-title">รายการทั้งหมด</span>
+        </h3>
+        <div class="flex items-center gap-2">
+          <span id="row-count-badge" class="px-2.5 py-0.5 rounded-full text-xs bg-slate-50 border border-slate-200 text-slate-500 font-mono"></span>
+          <button onclick="SchoolSettings.resetTab()" class="px-2.5 py-1 rounded-full text-xs border border-slate-200 text-slate-500 hover:bg-slate-100 flex items-center gap-1">
+            <i data-lucide="rotate-ccw" class="h-3 w-3"></i> คืนค่าเริ่มต้น
+          </button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr id="table-head-row" class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-bold uppercase"></tr>
+          </thead>
+          <tbody id="table-body" class="divide-y divide-slate-200"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add/Edit Modal -->
+  <div id="modal-form" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200 p-4">
+    <div class="custom-card border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col">
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 id="modal-form-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="plus-circle" class="h-5 w-5 text-primary"></i> เพิ่มรายการ
+        </h3>
+        <button type="button" onclick="SchoolSettings.closeModal()" class="p-1 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <form id="form-el" onsubmit="SchoolSettings.saveForm(event)" class="p-6 space-y-4">
+        <input type="hidden" id="form-edit-id">
+        <div id="form-fields" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+        <div class="border-t border-slate-200 pt-6 flex items-center justify-end gap-3">
+          <button type="button" onclick="SchoolSettings.closeModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-transparent text-slate-700 hover:bg-slate-100 transition-colors text-xs font-bold cursor-pointer">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white transition-colors text-xs font-bold cursor-pointer">
+            บันทึก
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50">
+    <div id="toast-icon"></div>
+    <p id="toast-message" class="text-sm font-semibold text-slate-700"></p>
+  </div>
+
+  <script src="js/school-store.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var CAL_TYPE_LABELS = { term: 'เปิด/ปิดภาคเรียน', exam: 'สอบ', event: 'กิจกรรม', holiday: 'วันหยุด' };
+      var CAL_TYPE_COLOR = {
+        term: 'bg-sky-50 text-sky-600 border-sky-200',
+        exam: 'bg-amber-50 text-amber-600 border-amber-200',
+        event: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+        holiday: 'bg-rose-50 text-rose-600 border-rose-200'
+      };
+      var STAGE_OPTIONS = ['อนุบาล', 'ประถมศึกษา', 'มัธยมศึกษาตอนต้น', 'มัธยมศึกษาตอนปลาย', 'ปวช.', 'ปวส.'];
+      var MAJOR_TYPE_OPTIONS = ['แผนการเรียน', 'สาขาวิชา', 'สาขางาน'];
+
+      function levelShorts() {
+        return SchoolStore.get('school_levels').slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); }).map(function (l) { return l.short; });
+      }
+      function levelOrderOf(short) {
+        var lv = SchoolStore.get('school_levels').filter(function (l) { return l.short === short; })[0];
+        return lv ? lv.order : 999;
+      }
+      function majorNames() {
+        return SchoolStore.get('school_majors').map(function (m) { return m.name; });
+      }
+      function thDate(iso) {
+        if (!iso) return '';
+        try { return new Date(iso + 'T00:00:00').toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }); }
+        catch (e) { return iso; }
+      }
+      function escapeHtml(t) {
+        return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+      }
+
+      var TABS = {
+        classrooms: {
+          key: 'school_classrooms', title: 'ข้อมูลห้องเรียน', icon: 'door-open',
+          desc: 'รายชื่อห้องเรียน อาคาร ความจุ และสาขา/แผนการเรียนประจำห้อง',
+          fields: [
+            { name: 'level', label: 'ระดับชั้น', type: 'select', options: levelShorts, required: true },
+            { name: 'room', label: 'ห้องที่', type: 'number', required: true },
+            { name: 'major', label: 'สาขา/แผนการเรียน', type: 'select', options: function () { return [''].concat(majorNames()); } },
+            { name: 'building', label: 'อาคาร', type: 'text' },
+            { name: 'capacity', label: 'ความจุ (คน)', type: 'number' },
+            { name: 'homeroom', label: 'ครูประจำชั้น', type: 'text' }
+          ],
+          columns: [
+            { label: 'ห้อง', render: function (r) { return escapeHtml(r.level + '/' + r.room); } },
+            { label: 'สาขา/แผนการเรียน', render: function (r) { return escapeHtml(r.major || '-'); } },
+            { label: 'อาคาร', render: function (r) { return escapeHtml(r.building || '-'); } },
+            { label: 'ความจุ', render: function (r) { return escapeHtml(r.capacity || '-'); } },
+            { label: 'ครูประจำชั้น', render: function (r) { return escapeHtml(r.homeroom || '-'); } }
+          ],
+          sort: function (a, b) { return levelOrderOf(a.level) - levelOrderOf(b.level) || (Number(a.room) - Number(b.room)); }
+        },
+        calendar: {
+          key: 'school_calendar', title: 'ปฏิทินโรงเรียน', icon: 'calendar-days',
+          desc: 'วันเปิด/ปิดภาคเรียน วันสอบ กิจกรรม และวันหยุดของโรงเรียน',
+          fields: [
+            { name: 'date', label: 'วันที่', type: 'date', required: true },
+            { name: 'endDate', label: 'ถึงวันที่ (ถ้ามีหลายวัน)', type: 'date' },
+            { name: 'title', label: 'ชื่อกิจกรรม/วันสำคัญ', type: 'text', required: true },
+            { name: 'type', label: 'ประเภท', type: 'select', options: function () { return Object.keys(CAL_TYPE_LABELS); }, optionLabels: CAL_TYPE_LABELS, required: true }
+          ],
+          columns: [
+            { label: 'วันที่', render: function (r) { return escapeHtml(thDate(r.date) + (r.endDate ? ' – ' + thDate(r.endDate) : '')); } },
+            { label: 'ชื่อกิจกรรม', render: function (r) { return escapeHtml(r.title); } },
+            { label: 'ประเภท', render: function (r) { return '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold border ' + (CAL_TYPE_COLOR[r.type] || '') + '">' + escapeHtml(CAL_TYPE_LABELS[r.type] || r.type) + '</span>'; } }
+          ],
+          sort: function (a, b) { return (a.date || '').localeCompare(b.date || ''); }
+        },
+        years: {
+          key: 'school_academic_years', title: 'ข้อมูลปีการศึกษา', icon: 'calendar-range',
+          desc: 'ปีการศึกษาและช่วงวันที่ของแต่ละภาคเรียน',
+          fields: [
+            { name: 'year', label: 'ปีการศึกษา (พ.ศ.)', type: 'text', required: true },
+            { name: 'term1Start', label: 'ภาคเรียนที่ 1 เริ่ม', type: 'date', required: true },
+            { name: 'term1End', label: 'ภาคเรียนที่ 1 สิ้นสุด', type: 'date', required: true },
+            { name: 'term2Start', label: 'ภาคเรียนที่ 2 เริ่ม', type: 'date', required: true },
+            { name: 'term2End', label: 'ภาคเรียนที่ 2 สิ้นสุด', type: 'date', required: true },
+            { name: 'isCurrent', label: 'ตั้งเป็นปีการศึกษาปัจจุบัน', type: 'checkbox' }
+          ],
+          columns: [
+            { label: 'ปีการศึกษา', render: function (r) { return escapeHtml(r.year); } },
+            { label: 'ภาคเรียนที่ 1', render: function (r) { return escapeHtml(thDate(r.term1Start) + ' – ' + thDate(r.term1End)); } },
+            { label: 'ภาคเรียนที่ 2', render: function (r) { return escapeHtml(thDate(r.term2Start) + ' – ' + thDate(r.term2End)); } },
+            { label: 'สถานะ', render: function (r) { return r.isCurrent ? '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold border bg-emerald-50 text-emerald-600 border-emerald-200">ปีปัจจุบัน</span>' : ''; } }
+          ],
+          sort: function (a, b) { return (a.year || '').localeCompare(b.year || ''); },
+          beforeSave: function (row, list) {
+            if (row.isCurrent) list.forEach(function (r) { if (r.id !== row.id) r.isCurrent = false; });
+          }
+        },
+        levels: {
+          key: 'school_levels', title: 'ข้อมูลระดับการศึกษา', icon: 'layers',
+          desc: 'ระดับชั้นเรียนและช่วงชั้นของโรงเรียน',
+          fields: [
+            { name: 'short', label: 'รหัสระดับชั้น (เช่น ม.1)', type: 'text', required: true },
+            { name: 'name', label: 'ชื่อเต็ม', type: 'text', required: true },
+            { name: 'stage', label: 'ช่วงชั้น', type: 'select', options: function () { return STAGE_OPTIONS; } },
+            { name: 'order', label: 'ลำดับการแสดงผล', type: 'number' }
+          ],
+          columns: [
+            { label: 'รหัส', render: function (r) { return escapeHtml(r.short); } },
+            { label: 'ชื่อเต็ม', render: function (r) { return escapeHtml(r.name); } },
+            { label: 'ช่วงชั้น', render: function (r) { return escapeHtml(r.stage || '-'); } },
+            { label: 'ลำดับ', render: function (r) { return escapeHtml(r.order != null && r.order !== '' ? r.order : '-'); } }
+          ],
+          sort: function (a, b) { return (a.order || 0) - (b.order || 0); }
+        },
+        majors: {
+          key: 'school_majors', title: 'ข้อมูลสาขางาน-สาขาวิชา', icon: 'briefcase',
+          desc: 'แผนการเรียน สาขาวิชา และสาขางานที่โรงเรียนเปิดสอน',
+          fields: [
+            { name: 'code', label: 'รหัส', type: 'text' },
+            { name: 'name', label: 'ชื่อ', type: 'text', required: true },
+            { name: 'type', label: 'ประเภท', type: 'select', options: function () { return MAJOR_TYPE_OPTIONS; } },
+            { name: 'levelRange', label: 'ช่วงชั้นที่ใช้ (เช่น ม.4-ม.6)', type: 'text' },
+            { name: 'note', label: 'หมายเหตุ', type: 'text' }
+          ],
+          columns: [
+            { label: 'รหัส', render: function (r) { return escapeHtml(r.code || '-'); } },
+            { label: 'ชื่อ', render: function (r) { return escapeHtml(r.name); } },
+            { label: 'ประเภท', render: function (r) { return escapeHtml(r.type || '-'); } },
+            { label: 'ช่วงชั้น', render: function (r) { return escapeHtml(r.levelRange || '-'); } },
+            { label: 'หมายเหตุ', render: function (r) { return escapeHtml(r.note || '-'); } }
+          ],
+          sort: function (a, b) { return String(a.name || '').localeCompare(String(b.name || ''), 'th'); }
+        }
+      };
+
+      var currentTab = 'classrooms';
+      var currentRows = [];
+      var classroomLevelFilter = '';
+
+      function getTabFromHash() {
+        var h = location.hash.replace('#', '');
+        var m = /tab=([a-z]+)/.exec(h);
+        return (m && TABS[m[1]]) ? m[1] : 'classrooms';
+      }
+
+      function switchTab(tab) {
+        currentTab = TABS[tab] ? tab : 'classrooms';
+        if (location.hash !== '#tab=' + currentTab) {
+          location.hash = 'tab=' + currentTab;
+        } else {
+          render();
+        }
+      }
+
+      function render() {
+        var def = TABS[currentTab];
+        document.getElementById('tab-title').textContent = def.title;
+        document.getElementById('tab-desc').textContent = def.desc;
+        document.getElementById('tab-icon-tile').innerHTML = '<i data-lucide="' + def.icon + '" class="h-6 w-6"></i>';
+        document.getElementById('table-title').textContent = def.title + 'ทั้งหมด';
+
+        document.querySelectorAll('.tab-pill').forEach(function (a) {
+          var active = a.getAttribute('data-tab-link') === currentTab;
+          a.className = 'tab-pill flex-1 text-center py-2 px-3 rounded-lg text-xs transition-colors ' +
+            (active ? 'font-bold bg-[#3e63dd] text-white shadow-sm' : 'font-semibold text-slate-500 hover:text-slate-700');
+        });
+
+        var filterWrap = document.getElementById('classrooms-filter');
+        filterWrap.classList.toggle('hidden', currentTab !== 'classrooms');
+        if (currentTab === 'classrooms') {
+          var sel = document.getElementById('classroom-level-filter');
+          var opts = ['<option value="">ทุกระดับชั้น</option>'].concat(levelShorts().map(function (s) {
+            return '<option value="' + escapeHtml(s) + '"' + (s === classroomLevelFilter ? ' selected' : '') + '>' + escapeHtml(s) + '</option>';
+          }));
+          sel.innerHTML = opts.join('');
+        }
+
+        currentRows = SchoolStore.get(def.key).slice().sort(def.sort || function () { return 0; });
+        if (currentTab === 'classrooms' && classroomLevelFilter) {
+          currentRows = currentRows.filter(function (r) { return r.level === classroomLevelFilter; });
+        }
+
+        var headRow = document.getElementById('table-head-row');
+        headRow.innerHTML = def.columns.map(function (c) { return '<th class="p-4">' + escapeHtml(c.label) + '</th>'; }).join('') +
+          '<th class="p-4 w-28 text-center">การจัดการ</th>';
+
+        var body = document.getElementById('table-body');
+        if (!currentRows.length) {
+          body.innerHTML = '<tr><td colspan="' + (def.columns.length + 1) + '" class="p-8 text-center text-xs text-slate-400">ยังไม่มีข้อมูล</td></tr>';
+        } else {
+          body.innerHTML = currentRows.map(function (r) {
+            return '<tr class="hover:bg-slate-50">' +
+              def.columns.map(function (c) { return '<td class="p-4">' + c.render(r) + '</td>'; }).join('') +
+              '<td class="p-4 text-center"><div class="flex items-center justify-center gap-1">' +
+              '<button onclick="SchoolSettings.openModal(\'' + r.id + '\')" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-sky-600 hover:bg-sky-50" title="แก้ไข"><i data-lucide="edit-3" class="h-3.5 w-3.5"></i></button>' +
+              '<button onclick="SchoolSettings.removeRow(\'' + r.id + '\')" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-rose-600 hover:bg-rose-50" title="ลบ"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>' +
+              '</div></td></tr>';
+          }).join('');
+        }
+        document.getElementById('row-count-badge').textContent = currentRows.length + ' รายการ';
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function fieldInputHtml(f, value) {
+        var id = 'field-' + f.name;
+        if (f.type === 'select') {
+          var opts = typeof f.options === 'function' ? f.options() : (f.options || []);
+          return '<select id="' + id + '" class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">' +
+            opts.map(function (o) {
+              var label = (f.optionLabels && f.optionLabels[o]) || o || '(ไม่ระบุ)';
+              return '<option value="' + escapeHtml(o) + '"' + (o === value ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
+            }).join('') + '</select>';
+        }
+        if (f.type === 'checkbox') {
+          return '<label class="flex items-center gap-2 text-sm text-slate-600"><input type="checkbox" id="' + id + '"' + (value ? ' checked' : '') + ' class="rounded border-slate-300"> ' + escapeHtml(f.label) + '</label>';
+        }
+        return '<input type="' + f.type + '" id="' + id + '"' + (f.required ? ' required' : '') + ' value="' + escapeHtml(value == null ? '' : value) + '" class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">';
+      }
+
+      function openModal(id) {
+        var def = TABS[currentTab];
+        var row = id ? currentRows.filter(function (r) { return r.id === id; })[0] : null;
+        document.getElementById('form-edit-id').value = id || '';
+        document.getElementById('modal-form-title').innerHTML =
+          '<i data-lucide="' + (id ? 'edit-3' : 'plus-circle') + '" class="h-5 w-5 text-primary"></i> ' + (id ? 'แก้ไข' : 'เพิ่ม') + def.title;
+        var wrap = document.getElementById('form-fields');
+        wrap.innerHTML = def.fields.map(function (f) {
+          if (f.type === 'checkbox') {
+            return '<div class="md:col-span-2 pt-1">' + fieldInputHtml(f, row ? row[f.name] : false) + '</div>';
+          }
+          return '<div><label class="block text-xs font-bold text-slate-500 mb-1.5">' + escapeHtml(f.label) + (f.required ? ' *' : '') + '</label>' + fieldInputHtml(f, row ? row[f.name] : '') + '</div>';
+        }).join('');
+        document.getElementById('modal-form').classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function closeModal() {
+        document.getElementById('modal-form').classList.add('hidden');
+      }
+
+      function saveForm(e) {
+        e.preventDefault();
+        var def = TABS[currentTab];
+        var id = document.getElementById('form-edit-id').value;
+        var list = SchoolStore.get(def.key);
+        var row = id ? list.filter(function (r) { return r.id === id; })[0] : null;
+        var isNew = !row;
+        if (isNew) { row = { id: SchoolStore.uid(currentTab + '-') }; list.push(row); }
+        def.fields.forEach(function (f) {
+          var el = document.getElementById('field-' + f.name);
+          if (!el) return;
+          if (f.type === 'checkbox') row[f.name] = el.checked;
+          else if (f.type === 'number') row[f.name] = el.value === '' ? '' : Number(el.value);
+          else row[f.name] = el.value;
+        });
+        if (def.beforeSave) def.beforeSave(row, list);
+        SchoolStore.save(def.key, list);
+        closeModal();
+        render();
+        showToast(isNew ? 'เพิ่มรายการเรียบร้อย' : 'บันทึกการแก้ไขเรียบร้อย');
+      }
+
+      function removeRow(id) {
+        if (!confirm('ยืนยันการลบรายการนี้? ข้อมูลนี้ไม่สามารถกู้คืนได้')) return;
+        var def = TABS[currentTab];
+        var list = SchoolStore.get(def.key).filter(function (r) { return r.id !== id; });
+        SchoolStore.save(def.key, list);
+        render();
+        showToast('ลบรายการเรียบร้อย');
+      }
+
+      function resetTab() {
+        if (!confirm('คืนค่าข้อมูลเริ่มต้นของแท็บนี้? การแก้ไขที่ทำไว้ทั้งหมดจะหายไป')) return;
+        SchoolStore.reset(TABS[currentTab].key);
+        render();
+        showToast('คืนค่าเริ่มต้นเรียบร้อย');
+      }
+
+      var toastTimer = null;
+      function showToast(msg) {
+        var el = document.getElementById('toast');
+        document.getElementById('toast-message').textContent = msg;
+        document.getElementById('toast-icon').innerHTML = '<i data-lucide="check-circle" class="h-5 w-5 text-emerald-500"></i>';
+        if (window.lucide) lucide.createIcons();
+        el.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { el.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none'); }, 2200);
+      }
+
+      window.SchoolSettings = {
+        openModal: openModal, closeModal: closeModal, saveForm: saveForm,
+        removeRow: removeRow, resetTab: resetTab, switchTab: switchTab
+      };
+
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.tab-pill').forEach(function (a) {
+          a.addEventListener('click', function (e) {
+            e.preventDefault();
+            switchTab(a.getAttribute('data-tab-link'));
+          });
+        });
+        document.getElementById('classroom-level-filter').addEventListener('change', function (e) {
+          classroomLevelFilter = e.target.value;
+          render();
+        });
+        window.addEventListener('hashchange', function () {
+          var t = getTabFromHash();
+          if (t !== currentTab) { currentTab = t; render(); }
+        });
+        currentTab = getTabFromHash();
+        render();
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -13,6 +13,19 @@ This file documents the `schooldark/` prototype based on inspection of `app.html
 > `personnel.html` and `settings.html` (plus `index.css`, `personnel.css`, `settings.css`) were deleted
 > during the merge, because `app.html` had already absorbed all of their views. Their JavaScript —
 > `index.js`, `personnel.js`, `settings.js` — is still here and still loaded by `app.html`.
+>
+> **The left `<aside class="sidebar" id="sidebar">` no longer has hand-written menu markup in this
+> folder.** Both `app.html` and `leave-features.html` now hold just a single
+> `<script src="../shared/cross-nav.js"></script>` inside that `<aside>`, which builds the entire
+> sidebar (logo, menu groups, submenus, badges, user footer) from `NAV_GROUPS` in that shared file —
+> the same menu data also drives `admission/*`'s sidebar. The sidebar's CSS moved out of `app.css`
+> entirely into `../shared/cross-nav.css` too. **Add/remove/rename a sidebar item by editing
+> `NAV_GROUPS` in `../shared/cross-nav.js`, never by hand-editing markup in `app.html` /
+> `leave-features.html`.** None of this touched `app.js` / `index.js` / `personnel.js` / `settings.js`
+> — the generated markup intentionally keeps every id/class/data-attribute those files already query
+> (`#sidebar`, `#sidebar-toggle-btn`, `#theme-toggle`, `#menu-*` ids, `.menu-item[data-module]`,
+> `.submenu-item[data-step|data-tab|data-subtab]`, `#sidebar-approval-badge`, etc.) so their existing
+> click/bind logic keeps working unmodified. See `../CLAUDE.md` → "จุดเชื่อมของเมนูรวมในแต่ละหน้า".
 
 ## 1. What this system is for
 

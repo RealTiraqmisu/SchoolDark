@@ -80,8 +80,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+  <link rel="stylesheet" href="../shared/cross-nav.css">
 </head>
 <body class="font-sans antialiased text-card-foreground">
+<script src="../shared/cross-nav.js"></script>
 
   <!-- Header -->
   <header class="border-b bg-card shadow-sm">
@@ -95,7 +97,7 @@
           <p class="text-xs text-muted-foreground">Admitify Student Registration Portal</p>
         </div>
         <!-- Tab navigation inside header -->
-        <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2">
+        <div class="hidden md:flex items-center gap-1 border-l border-slate-200 pl-4 ml-2" data-legacy-tabs>
           <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
             <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
           </a>
@@ -105,8 +107,6 @@
           <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
             <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
           </a>
-          <!-- เมนูข้ามระบบ: สร้างจาก ../shared/cross-nav.js (แหล่งข้อมูลเมนูจุดเดียว) -->
-          <span id="cross-nav-topbar"></span>
         </div>
       </div>
       <div>
@@ -1128,6 +1128,5 @@
   </script>
 
 <!-- เมนูข้ามระบบ (ปุ่ม "ระบบอื่น" บนแถบหัวหน้า) -->
-<script src="../shared/cross-nav.js"></script>
 </body>
 </html>

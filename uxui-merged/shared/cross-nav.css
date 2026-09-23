@@ -1,0 +1,354 @@
+/* ======================================================================
+ *  cross-nav.css — สไตล์ของ sidebar เมนูรวม (ฝังโดย shared/cross-nav.js)
+ *
+ *  ไฟล์นี้เป็นสไตล์ "จุดเดียว" ของ sidebar ทั้งแอป ย้ายมาจาก
+ *  schooldark/app.css (SECTION 4: SIDEBAR เดิม) แล้วแก้ปัญหาอาการหน่วง/แลค
+ *  ตอนย่อ-ขยายเมนู กับ hover เมนู (ดูหมายเหตุ "แก้แลค" ในแต่ละ rule ด้านล่าง)
+ *
+ *  โหลดคู่กับ shared/cross-nav.js เสมอ ทุกหน้า (schooldark/*, admission/*)
+ * ====================================================================== */
+
+/* ----------------------------------------------------------------------
+   1) โทนสีของ sidebar เมื่อไม่ได้อยู่ในหน้า schooldark (ไม่มี --bg-sidebar ฯลฯ
+      ของ app.css ให้ใช้) — หน้า schooldark เองมี body.dark-mode/.light-mode
+      เสมอ (ตั้งค่าโดย app.js ตอน DOMContentLoaded) จึงใช้ attribute บน <html>
+      (data-app="schooldark", ใส่ไว้ตรง ๆ ใน markup ไม่ใช่ทาง JS) เป็นตัวคัดแยก
+      เพื่อไม่ให้ค่า fallback พวกนี้ไปทับโทนมืด/สว่างจริงของฝั่ง schooldark
+      ---------------------------------------------------------------- */
+html:not([data-app="schooldark"]) {
+    --bg-sidebar: #ffffff;
+    --bg-card: #f8fafc;
+    --border-color: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --primary: #3e63dd;
+    --primary-hover: #2f51c7;
+    --primary-glow: rgba(62, 99, 221, 0.12);
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.1);
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+    --border-radius-md: 12px;
+    --border-radius-sm: 8px;
+    --font-heading: 'Sarabun', sans-serif;
+    --font-body: 'Sarabun', sans-serif;
+}
+
+/* ----------------------------------------------------------------------
+   2) โครง sidebar เอง (คงชื่อ class เดิมทั้งหมดจาก schooldark/app.css เดิม
+      เพื่อให้ app.js / อินไลน์สคริปต์ของ leave-features.html bind ได้เหมือนเดิม)
+      ---------------------------------------------------------------- */
+aside.sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    overflow: hidden;
+    font-family: var(--font-body);
+    /* แก้แลค 1/5: ไม่ animate width/padding อีกต่อไป (เดิม transition 0.3s ทำให้
+       ทั้งหน้า reflow ทุกเฟรมระหว่างย่อ/ขยาย ซ้ำกับการ์ดกระจกฝ้าที่ต้องคำนวณ
+       backdrop-filter ใหม่ทุกครั้ง) — สลับขนาดทันที ไม่มี transition ที่ตัว aside
+       (contain กันไม่ให้การเปลี่ยนขนาดกระทบ layout รอบข้างเกินจำเป็น) */
+    contain: layout paint;
+    overscroll-behavior: contain;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-shrink: 0;
+}
+
+.logo-group { display: flex; align-items: center; gap: 12px; }
+
+.sidebar-logo svg.logo-icon {
+    width: 36px;
+    height: 36px;
+    fill: var(--primary);
+    flex-shrink: 0;
+    /* แก้แลค 2/5: ตัด drop-shadow กระจกเรืองแสงออก (กินแรง paint แต่ไม่ได้ช่วย
+       อ่านง่ายขึ้น) */
+}
+
+.sidebar-logo h1 {
+    font-family: var(--font-heading);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.sidebar-logo span {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    display: block;
+    margin-top: -2px;
+}
+
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    flex-shrink: 0;
+    transition: color 150ms ease, background-color 150ms ease, opacity 150ms ease;
+}
+.sidebar-toggle-btn:hover { color: var(--text-primary); background: rgba(0, 0, 0, 0.06); opacity: 1; }
+html[data-app="schooldark"] body.dark-mode .sidebar-toggle-btn:hover { background: rgba(255, 255, 255, 0.08); }
+.sidebar-toggle-btn svg { transition: transform 150ms ease; }
+
+/* สถานะย่อ sidebar — สลับทันที ไม่ animate (แก้แลค 1/5 ต่อ) */
+aside.sidebar.collapsed { width: 72px; padding: 24px 12px; }
+aside.sidebar.collapsed .logo-group,
+aside.sidebar.collapsed .menu-label,
+aside.sidebar.collapsed .menu-item span,
+aside.sidebar.collapsed .sidebar-footer .user-info { display: none; }
+aside.sidebar.collapsed .sidebar-logo { justify-content: center; }
+aside.sidebar.collapsed .menu-item { justify-content: center; padding: 12px; }
+aside.sidebar.collapsed .menu-item svg { margin: 0; }
+aside.sidebar.collapsed .sidebar-toggle-btn svg { transform: rotate(180deg); }
+aside.sidebar.collapsed .user-avatar { height: auto; background: transparent; }
+aside.sidebar.collapsed .submenu,
+aside.sidebar.collapsed .submenu-toggle { display: none; }
+
+.menu-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    margin-top: 16px;
+    padding-left: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: var(--border-radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+    /* แก้แลค 3/5: จากเดิม `transition: all 0.3s` (animate ทุก property รวมถึง
+       box-shadow/border ที่ paint แพง) → ระบุเฉพาะ property ที่ต้องขยับจริง
+       และย่นเวลาให้สั้นลง เพื่อให้ hover ตอบสนองไว ไม่รู้สึกหน่วง */
+    transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+.menu-item svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    flex-shrink: 0;
+}
+.menu-item:hover {
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border-color: var(--border-color);
+}
+.menu-item.active {
+    color: var(--text-primary);
+    background: var(--primary-glow);
+    border-color: var(--border-color);
+}
+.menu-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    height: 60%;
+    width: 3px;
+    background: var(--primary);
+    border-radius: 0 4px 4px 0;
+    /* แก้แลค 4/5: ตัด box-shadow เรืองแสงรอบแถบไฮไลต์ออก (ของเดิมมี glow ซ้อน
+       ทุกแถวที่ active ทำให้ browser ต้อง paint เงาเบลอเพิ่มโดยไม่จำเป็น) */
+}
+
+.menu-item-row { display: flex; align-items: stretch; gap: 4px; }
+.menu-item-row .menu-item { flex: 1; min-width: 0; }
+.submenu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-md);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+.submenu-toggle:hover { color: var(--text-primary); background: var(--bg-card); border-color: var(--border-color); }
+.submenu-toggle svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; transition: transform 150ms ease; }
+.menu-item-group.expanded .submenu-toggle svg { transform: rotate(180deg); }
+
+/* แก้แลค 5/5: submenu เดิม animate `max-height: 0 → 600px` (animate layout
+   property ตรง ๆ — เบราว์เซอร์ต้อง reflow ทุกเฟรมระหว่าง 0.3s และจังหวะเพี้ยน
+   ถ้าเนื้อหาสูงกว่า 600px) → ใช้ grid-template-rows 0fr → 1fr แทน ซึ่งเนียนกว่า
+   (animate เฉพาะ grid track ไม่บังคับ reflow ทั้งซับทรี) และพอดีความสูงจริงเสมอ */
+.submenu {
+    list-style: none;
+    display: grid;
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    padding-left: 34px;
+    margin: 0;
+    transition: grid-template-rows 180ms ease;
+}
+.submenu > * { overflow: hidden; min-height: 0; }
+.menu-item-group.expanded .submenu { grid-template-rows: 1fr; }
+.submenu-item, .submenu-link {
+    display: block;
+    padding: 7px 10px;
+    margin: 2px 0;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 12.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 120ms ease, background-color 120ms ease;
+}
+.submenu-item:hover, .submenu-link:hover { color: var(--text-primary); background: var(--bg-card); }
+.submenu-item.active,
+.submenu-link.active { color: var(--primary); font-weight: 600; background: var(--primary-glow); }
+
+.sidebar-divider { height: 1px; background: var(--border-color); margin: 12px 0 4px; flex-shrink: 0; }
+
+.sidebar-footer { padding-top: 16px; border-top: 1px solid var(--border-color); margin-top: auto; flex-shrink: 0; }
+.user-profile-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--border-radius-md);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+}
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--info, var(--primary)));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    font-family: var(--font-heading);
+    flex-shrink: 0;
+}
+.user-info { flex-grow: 1; min-width: 0; overflow: hidden; }
+.user-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
+.user-role { font-size: 11px; color: var(--text-muted); }
+
+/* badge เล็กท้ายเมนู (จำนวนรออนุมัติ ฯลฯ) — ผูก scope ไว้ใต้ .sidebar-menu เพื่อ
+   ไม่ไปแก้ลุคของ .badge ที่ใช้ในตารางอื่นของ schooldark (มี specificity สูงกว่า
+   .badge เฉย ๆ ใน app.css จึงชนะโดยไม่ต้องพึ่ง !important) */
+.sidebar-menu .badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: auto;
+}
+.sidebar-menu .badge.danger,
+.sidebar-menu .badge-pending { color: var(--danger); background: var(--danger-bg); }
+
+/* ----------------------------------------------------------------------
+   3) โหมด fixed-sidebar สำหรับหน้าที่ไม่มีโครง .app-container ของ schooldark
+      อยู่ก่อน (admission/*) — เพิ่ม class นี้บน <html> จาก cross-nav.js ตอนที่
+      ต้องสร้าง <aside> เอง แล้วดันเนื้อหาเดิมของหน้าด้วย padding-left บน body
+      ---------------------------------------------------------------- */
+html.xnav-fixed-layout aside.sidebar {
+    position: fixed;
+    inset-block: 0;
+    left: 0;
+    z-index: 45; /* ต่ำกว่า overlay/modal ของ admission (z-50 ขึ้นไป) แต่สูงกว่าเนื้อหาปกติ */
+    height: 100vh;
+}
+html.xnav-fixed-layout body {
+    padding-left: 280px;
+}
+html.xnav-fixed-layout.xnav-collapsed body {
+    padding-left: 72px;
+}
+/* ซ่อนแท็บเมนูเดิมบน header ของ admission ไว้ก่อน (ยังอยู่ใน HTML ตามที่ตกลงกัน
+   ไว้ — ยกเลิกการซ่อนได้ในอนาคตด้วยการลบกฎนี้ทีเดียว โดยไม่ต้องแก้ทีละหน้า) */
+[data-legacy-tabs] { display: none !important; }
+
+@media (max-width: 1024px) {
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) { width: 72px; padding: 24px 12px; }
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .logo-group,
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .menu-label,
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .menu-item span,
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-footer .user-info { display: none; }
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .menu-item { justify-content: center; padding: 12px; }
+    html.xnav-fixed-layout body { padding-left: 72px; }
+}
+
+/* shortcut ในแต่ละหมวด → พาไปศูนย์รวมการตั้งค่า (settings/index.html) */
+.menu-item.menu-shortcut {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    padding-top: 7px;
+    padding-bottom: 7px;
+    border-style: dashed;
+    border-color: var(--border-color);
+}
+.menu-item.menu-shortcut::after {
+    content: '→';
+    margin-left: auto;
+    font-size: 12px;
+    opacity: .7;
+}
+.menu-item.menu-shortcut:hover { color: var(--primary); }
+aside.sidebar.collapsed .menu-item.menu-shortcut::after { display: none; }

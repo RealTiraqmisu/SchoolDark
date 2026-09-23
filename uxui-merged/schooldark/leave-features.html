@@ -1,11 +1,13 @@
 ﻿<!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-app="schooldark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SchoolDark — รายงาน & บัตรอนุญาต</title>
   <meta name="description" content="SchoolDark — ระบบรายงานและบัตรขออนุญาตบุคลากรและนักเรียน">
   <link rel="stylesheet" href="app.css">
+  <!-- เมนูรวมจุดเดียวของทั้งโปรเจกต์ (sidebar) — ดู ../shared/cross-nav.js -->
+  <link rel="stylesheet" href="../shared/cross-nav.css">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     /* ===== VIEW TOGGLE ===== */
@@ -270,117 +272,8 @@
 <div class="app-container">
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <a href="app.html" class="logo-group" style="text-decoration: none; color: inherit;">
-        <svg class="logo-icon" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
-        <div><h1>SchoolDark</h1><span>บริหารงานบุคคล</span></div>
-      </a>
-    </div>
-    <ul class="sidebar-menu">
-      <li><p class="menu-label">ภาพรวมระบบ</p></li>
-      <li><a class="menu-item" href="app.html">
-        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg><span>แดชบอร์ดภาพรวม</span>
-      </a></li>
-      <div class="sidebar-divider" style="height: 1px; background: var(--border-color); margin: 8px 14px; opacity: 0.5;"></div>
-      <li><p class="menu-label">การอนุมัติ</p></li>
-      <li class="menu-item-group">
-        <div class="menu-item-row">
-          <a class="menu-item" data-view="approve">
-            <svg class="icon"><use href="#i-check"/></svg><span>อนุมัติการลานักเรียน</span>
-            <span id="sidebar-approve-badge" class="badge danger" style="margin-left:auto;padding:2px 8px;font-size:10px;display:none;">0</span>
-          </a>
-          <button type="button" class="submenu-toggle" aria-label="แสดงหัวข้อย่อย" aria-expanded="false">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-        </div>
-        <ul class="submenu">
-          <li><a class="submenu-item" data-view="approve" data-tab="requests">รายการคำขอ</a></li>
-          <li><a class="submenu-item" data-view="approve" data-tab="leave-history">ประวัติการลา</a></li>
-        </ul>
-      </li>
-      <div class="sidebar-divider" style="height: 1px; background: var(--border-color); margin: 8px 14px; opacity: 0.5;"></div>
-      <li><p class="menu-label">รายงาน &amp; บัตรอนุญาต</p></li>
-      <li class="menu-item-group">
-        <div class="menu-item-row">
-          <a class="menu-item active" data-view="leave-card">
-            <svg class="icon"><use href="#i-ticket"/></svg><span>ยื่นบัตรขออนุญาต</span>
-          </a>
-          <button type="button" class="submenu-toggle" aria-label="แสดงหัวข้อย่อย" aria-expanded="false">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-        </div>
-        <ul class="submenu">
-          <li><a class="submenu-item" data-view="leave-card" data-step="1">1. ค้นหานักเรียน</a></li>
-          <li><a class="submenu-item" data-view="leave-card" data-step="2">2. เลือกประเภท</a></li>
-          <li><a class="submenu-item" data-view="leave-card" data-step="3">3. กรอกรายละเอียด</a></li>
-        </ul>
-      </li>
-      <li class="menu-item-group">
-        <div class="menu-item-row">
-          <a class="menu-item" data-view="ticket-calendar">
-            <svg class="icon"><use href="#i-calendar"/></svg><span>รายการบัตรขออนุญาต</span>
-            <span id="sidebar-ticket-badge" class="badge danger" style="margin-left:auto;padding:2px 8px;font-size:10px;display:none;">0</span>
-          </a>
-          <button type="button" class="submenu-toggle" aria-label="แสดงหัวข้อย่อย" aria-expanded="false">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-        </div>
-        <ul class="submenu">
-          <li><a class="submenu-item" data-view="ticket-calendar" data-tab="tk-list">รายการบัตรขออนุญาตของนักเรียน</a></li>
-          <li><a class="submenu-item" data-view="ticket-calendar" data-tab="personal">ประวัติรายบุคคล</a></li>
-          <li><a class="submenu-item" data-view="ticket-calendar" data-tab="summary">สรุปรวมตามชั้นเรียน</a></li>
-        </ul>
-      </li>
-      <li><a class="menu-item" data-view="employees">
-        <svg class="icon"><use href="#i-users"/></svg><span>รายชื่อบุคลากรและอาจารย์</span>
-      </a></li>
-      <div class="sidebar-divider" style="height: 1px; background: var(--border-color); margin: 8px 14px; opacity: 0.5;"></div>
-      <li><p class="menu-label">การลาเรียนของนักเรียน</p></li>
-      <li class="menu-item-group">
-        <div class="menu-item-row">
-          <a class="menu-item" data-view="sl-submit">
-            <svg class="icon"><use href="#i-file"/></svg><span>ยื่นขอลาของนักเรียน</span>
-          </a>
-          <button type="button" class="submenu-toggle" aria-label="แสดงหัวข้อย่อย" aria-expanded="false">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-        </div>
-        <ul class="submenu">
-          <li><a class="submenu-item" data-view="sl-submit" data-step="1">1. ค้นหานักเรียน</a></li>
-          <li><a class="submenu-item" data-view="sl-submit" data-step="2">2. เลือกประเภทการลา</a></li>
-          <li><a class="submenu-item" data-view="sl-submit" data-step="3">3. กรอกรายละเอียด</a></li>
-        </ul>
-      </li>
-      <li class="menu-item-group">
-        <div class="menu-item-row">
-          <a class="menu-item" data-view="student-leave-settings">
-            <svg class="icon"><use href="#i-settings"/></svg><span>ตั้งค่าการลาเรียน</span>
-          </a>
-          <button type="button" class="submenu-toggle" aria-label="แสดงหัวข้อย่อย" aria-expanded="false">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-        </div>
-        <ul class="submenu">
-          <li><a class="submenu-item" data-view="student-leave-settings" data-step="1">1. ปีการศึกษา</a></li>
-          <li><a class="submenu-item" data-view="student-leave-settings" data-step="2">2. ประเภทการลา</a></li>
-          <li><a class="submenu-item" data-view="student-leave-settings" data-step="3">3. ผู้ตรวจสอบ/อนุมัติ</a></li>
-          <li><a class="submenu-item" data-view="student-leave-settings" data-step="4">4. โควตาวันลา</a></li>
-          <li><a class="submenu-item" data-view="student-leave-settings" data-step="5">5. เงื่อนไขเพิ่มเติม</a></li>
-        </ul>
-      </li>
-
-      <!-- เมนูข้ามระบบ: สร้างจาก ../shared/cross-nav.js (แหล่งข้อมูลเมนูจุดเดียว) -->
-      <li id="cross-nav-sidebar"></li>
-    </ul>
-    <div class="sidebar-footer">
-      <div class="user-profile-badge">
-        <div class="user-avatar">สท</div>
-        <div class="user-info">
-          <div class="user-name">สมปอง ทองดี</div>
-          <div class="user-role">เจ้าหน้าที่บุคคล</div>
-        </div>
-      </div>
-    </div>
+    <!-- เมนูรวมจุดเดียวของทั้งโปรเจกต์ (sidebar) — สร้างโดย ../shared/cross-nav.js -->
+    <script src="../shared/cross-nav.js"></script>
   </aside>
 
   <!-- MAIN -->
@@ -5613,7 +5506,5 @@ syncApproverRoleCards();
 renderAllHistory();
 </script>
 
-<!-- เมนูข้ามระบบ (เติมกลุ่มเมนูของระบบอื่นเข้า sidebar) -->
-<script src="../shared/cross-nav.js"></script>
 </body>
 </html>

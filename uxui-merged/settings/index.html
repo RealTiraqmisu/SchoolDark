@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ศูนย์รวมการตั้งค่า</title>
+
+  <!-- Google Fonts Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Tailwind Config to match theme (เหมือน admission/course_settings.html) -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#3e63dd', foreground: '#ffffff', hover: '#2f51c7' },
+            secondary: { DEFAULT: '#f1f3f9', foreground: '#1e293b' },
+            success: { DEFAULT: '#10b981', foreground: '#ffffff' },
+            warning: { DEFAULT: '#f59e0b', foreground: '#78350f' },
+            info: { DEFAULT: '#0284c7', foreground: '#ffffff' },
+            destructive: { DEFAULT: '#ef4444', foreground: '#ffffff' },
+            muted: { DEFAULT: '#f8fafc', foreground: '#64748b' },
+            card: { DEFAULT: '#ffffff', foreground: '#0f172a' },
+            border: '#e2e8f0'
+          },
+          fontFamily: { sans: ['Sarabun', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body { background-color: #f8fafc; }
+    .custom-card { background-color: #ffffff; border-color: #e2e8f0; color: #0f172a; }
+  </style>
+  <link rel="stylesheet" href="../shared/cross-nav.css">
+</head>
+<body class="font-sans antialiased text-card-foreground">
+<script src="../shared/cross-nav.js"></script>
+
+  <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
+    <div class="mx-auto flex max-w-[1400px] items-center gap-3 px-6 py-4">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+        <i data-lucide="settings" class="h-5 w-5"></i>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold leading-tight text-slate-900">ศูนย์รวมการตั้งค่า</h1>
+        <p class="text-xs text-slate-500">รวมการตั้งค่าทุกระบบไว้ที่เดียว — School Settings Center</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-[1400px] px-6 py-8 pb-24">
+    <div id="settings-hub"></div>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      function escapeHtml(t) {
+        return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+      }
+
+      function systemBadge(page) {
+        if (page.indexOf('schooldark/') === 0) return { label: 'บุคลากร & การลา', cls: 'bg-slate-100 text-slate-600 border-slate-200' };
+        if (page.indexOf('admission/') === 0) return { label: 'รับสมัคร', cls: 'bg-sky-50 text-sky-600 border-sky-200' };
+        return { label: 'ใหม่', cls: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
+      }
+
+      function renderHub() {
+        var mount = document.getElementById('settings-hub');
+        if (!window.CrossNav) {
+          mount.innerHTML = '<p class="text-sm text-rose-600">โหลดเมนูไม่สำเร็จ (shared/cross-nav.js)</p>';
+          return;
+        }
+        var group = CrossNav.NAV_GROUPS.filter(function (g) { return g.id === 'settings'; })[0];
+        if (!group) return;
+
+        var sectionsHtml = group.items.filter(function (item) { return item.section; }).map(function (item) {
+          var cardsHtml = (item.children || []).map(function (child) {
+            var hash = child.hash ? '#' + child.hash : CrossNav.hashFor(child, null);
+            var href = CrossNav.hrefTo(child.page) + hash;
+            var badge = systemBadge(child.page);
+            return (
+              '<a href="' + escapeHtml(href) + '" class="custom-card border border-slate-200 rounded-2xl p-5 hover:border-primary hover:shadow-lg transition-all block relative">' +
+              '<span class="absolute top-4 right-4 text-[10px] font-bold px-2 py-0.5 rounded-full border ' + badge.cls + '">' + escapeHtml(badge.label) + '</span>' +
+              '<div class="font-bold text-slate-900 text-sm pr-16">' + escapeHtml(child.label) + '</div>' +
+              (child.desc ? '<div class="text-xs text-slate-500 mt-1.5">' + escapeHtml(child.desc) + '</div>' : '') +
+              '</a>'
+            );
+          }).join('');
+
+          return (
+            '<section id="' + escapeHtml(item.section) + '" class="mb-10 scroll-mt-24">' +
+            '<div class="flex items-center gap-2 mb-4">' +
+            '<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">' + CrossNav.svg(item.icon, 'h-4.5 w-4.5') + '</div>' +
+            '<h3 class="text-lg font-bold text-slate-900">' + escapeHtml(item.label) + '</h3>' +
+            '</div>' +
+            '<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">' + cardsHtml + '</div>' +
+            '</section>'
+          );
+        }).join('');
+
+        mount.innerHTML =
+          '<p class="text-sm text-slate-500 mb-8 max-w-2xl">รวมการตั้งค่าของทั้งระบบบุคลากร/การลา และระบบรับสมัครนักเรียนไว้ในที่เดียว ' +
+          'กดเข้าไปที่การ์ดเพื่อไปยังหน้าตั้งค่านั้น ๆ ได้ทันที</p>' +
+          sectionsHtml;
+
+        if (window.lucide) lucide.createIcons();
+
+        if (location.hash) {
+          var target = document.getElementById(location.hash.slice(1));
+          if (target) target.scrollIntoView({ block: 'start' });
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', renderHub);
+    })();
+  </script>
+</body>
+</html>
