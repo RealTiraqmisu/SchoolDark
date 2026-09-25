@@ -23,7 +23,7 @@ This file documents the `schooldark/` prototype based on inspection of `app.html
 > `NAV_GROUPS` in `../shared/cross-nav.js`, never by hand-editing markup in `app.html` /
 > `leave-features.html`.** None of this touched `app.js` / `index.js` / `personnel.js` / `settings.js`
 > — the generated markup intentionally keeps every id/class/data-attribute those files already query
-> (`#sidebar`, `#sidebar-toggle-btn`, `#theme-toggle`, `#menu-*` ids, `.menu-item[data-module]`,
+> (`#sidebar`, `#sidebar-toggle-btn`, `#menu-*` ids, `.menu-item[data-module]`,
 > `.submenu-item[data-step|data-tab|data-subtab]`, `#sidebar-approval-badge`, etc.) so their existing
 > click/bind logic keeps working unmodified. See `../CLAUDE.md` → "จุดเชื่อมของเมนูรวมในแต่ละหน้า".
 
@@ -93,17 +93,23 @@ Several modals overlay these views: leave request detail (`modal-detail`), the i
 
 Sidebar sections:
 
-**การอนุมัติ (Approvals)**
+**การมาเรียนของนักเรียน (Student attendance)** — no scanner hardware yet, so attendance comes from (1) homeroom teachers checking names, (2) approved student leave (`STUDENT_LEAVE_REQUESTS`, auto-filled and locked), (3) approved exit tickets in `HISTORY` (`ATT_EXIT_TICKET_TYPES` → "ออกก่อนเวลา"). `getAttendance(student, date)` is the single source of truth for a student-day, in that priority order; past dates the teacher never saved fall back to deterministic mock data (`attMockRecord`, seeded so reloads match) and today/unsaved shows "ยังไม่เช็คชื่อ". A `source` field (`teacher`/`scan`/`import`/`leave`) is already modeled for a future scanner/Excel import. Teacher saves live in localStorage `sd_student_attendance` (key `<date>|<studentId>`); settings in `sd_student_attendance_settings`.
+- `view-attendance-check` — "เช็คชื่อนักเรียน": pick grade + room + date (max today); everyone defaults to "มา", the teacher only flips late/absent/early-leave rows (time inputs enable only when relevant), "ทุกคนมาเรียน" resets the room, "บันทึกการเช็คชื่อ" saves the whole room (`recordedBy` = `CURRENT_APPROVER_NAME`).
+- `view-attendance-report` — "รายงานการมาเรียน": filters by grade, room, date range (capped at `ATT_REPORT_MAX_DAYS`, school days only), name/ID search; clickable KPI cards double as status filters; 50-row pagination (`ATT_REPORT_PAGE_SIZE`) because a month of ~175 students is thousands of rows; `exportExcel('attendance')` exports all filtered rows. Columns: วันที่, ชั้น/ห้อง, ชื่อ-นามสกุล (with prefix via `studentFullName()`), รหัส, สถานะเข้า, เวลาเข้า, สถานะเลิก, เวลาออก, บันทึกโดย, หมายเหตุ.
+- `view-attendance-settings` — "เวลาเข้า-เลิกเรียนของนักเรียน" (linked from the settings group under "ตั้งค่าโรงเรียน", not from this group), modeled on `app.html`'s `view-schedule` (reuses its `.shift-stat-card`/`.form-grid-4`/`.weekday-selector` CSS): start/end time, "absent after" time, gate-open time (stored only — reserved for a future scanner), late/early-leave minute thresholds, school weekdays. Statuses for records that carry a time are *derived* from these settings at render time (`attStatusInFromTime`/`attStatusOutFromTime`), so changing a threshold re-classifies mock/scanned rows; teacher-saved statuses are stored explicitly.
+- `STUDENTS` now gets ~167 generated students appended right after its literal (`generateStudentRoster()`, 25 per room in `ATT_ROOMS`, ids `S-<grade><room><no>`, plus a `gender` field for name prefixes) so every student list on this page (ticket wizard, leave wizard, history) sees the same roster.
+
+**การลาเรียนของนักเรียน → อนุมัติการลานักเรียน** (sidebar group was "การอนุมัติ" before the menu reorganization; see `../CLAUDE.md`)
 - `view-approve` — "อนุมัติการลานักเรียน": a calendar overview of student leave on top (**ปฏิทินภาพรวมการลาของนักเรียน** — month/week/day, same `.calendar-grid`/`.calendar-leave-pill`/`.cal-mode-btn` pattern as `app.html`'s staff calendar, sourced from `STUDENT_LEAVE_REQUESTS`; leave-type colors/legend come from the CRUD-able `STUDENT_LEAVE_TYPES` via `studentLeaveTypeBadgeClass`), one KPI card (pending count), then two tabs:
   1. **รายการคำขอ** — the approval queue table, with a name/ID search box + leave-type filter dropdown alongside the existing status filter chips. The attachment column is a clickable paperclip link (`slAttachmentLinkHTML`, matching the staff table's style); the action column is 3-state like the staff table (pending → approve/reject; resolved → an "อนุมัติโดย/ปฏิเสธ" note plus a "เปลี่ยนสถานะ" reset button via `resetSLLeaveStatus`); and a "ดู" column opens the full request + attachment in the shared `#drawer-detail` (`viewSLRequestDetails`).
   2. **ประวัติการลา** — a searchable, class-filterable student-name list (no dropdown); clicking a student opens their quota cards + full history timeline in the same `#drawer-detail` (`openSLProfileDrawer`), and history entries there drill further into `viewSLRequestDetails`.
   A day on the calendar (or a pill) opens `#drawer-day-leaves` listing that day's requests with inline approve/reject. All of these — the calendar, its day-drawer, the request table, and the profile drawer — share one refresh path (`refreshSLCalendarIfVisible()` + the generic `detailDrawerRefresh` callback) so a status change made from any of them updates all the others.
 - `view-ticket-calendar` — "ปฏิทินภาพรวมบัตรขออนุญาต" (sidebar item sits just above "ประวัติการขออนุญาต"): the same calendar-on-top layout as `view-approve`, but for single-day permission tickets (`HISTORY`, matched by exact date rather than a date range) — legend/pill colors reuse the existing `typeBadgeClass` categories (`class-in`/`class-out`/`school-out`/`late-permit`/`parent-pick`/`duty-delegate`). Below the calendar: one KPI card (ticket-pending count) and the ticket approval table, upgraded the same way as the student leave table (search + type filter, 3-state action column with `resetTicketStatus`, and a "ดู" column into `#drawer-detail` via `viewTicketRequestDetails`). A calendar day opens `#drawer-day-tickets`. This view has its own sidebar badge (`sidebar-ticket-badge`) separate from the leave-only `sidebar-approve-badge`.
 
-**รายงาน & บัตรอนุญาต (Reports & permission cards)**
+**บัตรขออนุญาตนักเรียน (Permission tickets)** (sidebar group was "รายงาน & บัตรอนุญาต")
 - `view-leave-card` — Record a permission ticket: 2 KPI cards (tickets recorded today, pending print) + a 3-step horizontal wizard (search/select student → choose permission type → fill details), producing a printable ticket preview (`.ticket-preview`).
 - `view-history` — Permission history, in 3 tabs: **รายการทั้งหมด** (all records table: code, name, class, type, date, time range, reason, status, with Excel export and month/type filters), **ประวัติรายบุคคล** (per-student search + cumulative history/timeline panel), **สรุปรวมตามชั้นเรียน** (summary table aggregated by class: entered class / left class / left campus / other / parent pickup / total, with a 6-column stats grid).
-- `view-employees` — Staff directory (compact/full toggle, filter chips by employment type: municipal teacher, contract teacher, teaching assistant, administrator, general staff), Excel export.
+- `view-employees` — **No longer in the sidebar** (merged into `app.html`'s `view-directory` as the single staff directory menu; the view's code is still here and not yet ported). Staff directory (compact/full toggle, filter chips by employment type: municipal teacher, contract teacher, teaching assistant, administrator, general staff), Excel export.
 
 `#drawer-detail` is a single generic right-side drawer reused for three different things (a leave request's details, a ticket's details, or a person's quota+history profile) — whichever function last populated `#drawer-detail-title`/`#drawer-detail-body` "owns" it, and `detailDrawerRefresh` (a closure set by that function) is what the approve/reject/reset handlers call to keep it live-updated.
 
@@ -115,7 +121,7 @@ Sidebar sections:
   4. **โควตาวันลา** — per-leave-type annual quota, "unlimited" toggle, optional monthly cap.
   5. **เงื่อนไขเพิ่มเติม** — require medical certificate after N sick days, auto-notify parents (LINE/SMS), allow students to self-submit leave, quota-warning threshold.
 
-Both pages share `app.css` and use a light/dark theme toggle, and both link back to each other (`leave-features.html`'s logo links to `app.html`).
+Both pages share `app.css`. Both link back to each other (`leave-features.html`'s logo links to `app.html`). Dark mode has been removed entirely — `body` always carries `class="light-mode"` and there is no theme toggle anywhere in this folder.
 
 ## 4. Design patterns observed
 
@@ -123,7 +129,7 @@ Both pages share `app.css` and use a light/dark theme toggle, and both link back
 - **Journey Steps wizard**: a reusable horizontal numbered-step pattern (`.journey-steps` / `.journey-step` / `.step-node` / `.step-label`) used for every multi-step settings/entry flow (staff leave settings, student leave settings, permission ticket entry).
 - **Two-column settings step**: `.settings-step-grid` = form column (`.settings-form-col`) on the left + a live preview panel (`.step-preview-panel`) on the right that updates in real time as the form changes (`updateSettingPreview()`, `updatePreviewStep1()`, etc.).
 - **Glass-morphism cards**: `.glass-card`, `.glass-input`, `.glass-select` — translucent, blurred, rounded surfaces (`--glass-blur`, `--br-md`/`--br-lg` radii) over a dark (or light) app background.
-- **CSS custom-property theming**: a single token set (`--bg-*`, `--text-*`, `--primary`, `--success/warning/danger/info` + `-bg`/`-glow` variants) redefined under `.light-mode`, toggled at runtime by `theme-toggle-btn` — a full light/dark design system rather than hardcoded colors.
+- **CSS custom-property theming**: a single token set (`--bg-*`, `--text-*`, `--primary`, `--success/warning/danger/info` + `-bg`/`-glow` variants) defined once on `:root` — light-only, hardcoded colors rather than a runtime-switchable design system. Dark mode existed here previously (a `.light-mode` override class toggled by a `theme-toggle-btn`) and was fully removed; don't reintroduce it without the user asking.
 - **Stat/KPI cards**: `.stat-card` with icon badge, big value, and a trend line (`.stat-change.up/.down/.neutral`) — used on every dashboard-like view.
 - **Data tables**: consistent `.data-table` / `.premium-table` styling, paired with a `.toolbar` (search box + filter selects/chips) above and often an Excel export button.
 - **Chips & tabs**: pill-shaped filter chips (`.chip.active`) and top-level tab bars (`.tabs`/`.tab-btn`) for switching sub-views without leaving the page.
@@ -180,8 +186,7 @@ components/
     PermissionsTable (+ UserRoleModal)
     SignatoriesList (+ SignatoryModal)
 
-state/theming/
-  ThemeProvider (light/dark tokens, persisted toggle)
+state/
   navigation store (active module/view, mirrors data-module/data-view)
 ```
 

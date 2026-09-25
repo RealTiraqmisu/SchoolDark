@@ -108,6 +108,7 @@
     clipboardList: '<rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/>',
     table: '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="12" y1="3" x2="12" y2="21"/>',
     doorOpen: '<path d="M13 4v16"/><path d="M13 4l6 2v14"/><path d="M19 20H5V6l8-4"/>',
+    check: '<polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
     chevron: '<polyline points="6 9 12 15 18 9"/>'
   };
   function svg(name, cls) {
@@ -133,33 +134,18 @@
 
   var NAV_GROUPS = [
     {
-      label: 'ภาพรวมระบบ',
+      label: 'ภาพรวม',
       items: [
-        { id: 'menu-dashboard', icon: 'dashboard', label: 'แดชบอร์ดภาพรวม', page: SD_APP, module: 'dashboard', view: 'dashboard-main' }
+        { id: 'menu-dashboard', icon: 'dashboard', label: 'แดชบอร์ดภาพรวม', page: SD_APP, module: 'dashboard', view: 'dashboard-main', keywords: 'หน้าแรก สรุป สถิติ' }
       ]
     },
     {
-      label: 'ระบบบริหารการลา',
+      label: 'บุคลากร',
       items: [
-        { id: 'menu-leave-form', icon: 'fileText', label: 'ยื่นคำขอลา', page: SD_APP, module: 'leave', view: 'leave-form' },
+        // รายชื่อบุคลากรมีที่เดียว (เดิมมี "รายชื่อบุคลากรและอาจารย์" ใน leave-features.html ซ้ำอีกอัน)
+        { id: 'menu-directory', icon: 'users', label: 'รายชื่อบุคลากร', page: SD_APP, module: 'personnel', view: 'directory', keywords: 'ครู อาจารย์ พนักงาน staff' },
         {
-          id: 'menu-leave-approve', icon: 'checkCircle', label: 'อนุมัติการลา', page: SD_APP, module: 'leave', view: 'leave-approve',
-          badgeId: 'sidebar-approval-badge', badgeClass: 'badge-pending',
-          children: [
-            { label: 'รายการคำขอ', tab: 'requests' },
-            { label: 'ประวัติการลารายบุคคล', tab: 'profile' }
-          ]
-        },
-        // shortcut → ศูนย์รวมการตั้งค่า (คง id เดิมไว้ เพราะ schooldark/index.js:264 ซ่อน/แสดงตาม role)
-        { id: 'menu-leave-settings', icon: 'gear', label: 'ตั้งค่าการลา', page: 'settings/index.html', anchor: 'leave', shortcut: true }
-      ]
-    },
-    {
-      label: 'ระบบบุคลากร',
-      items: [
-        { id: 'menu-directory', icon: 'users', label: 'รายชื่อบุคลากร', page: SD_APP, module: 'personnel', view: 'directory' },
-        {
-          id: 'menu-basic-info', icon: 'user', label: 'ข้อมูลพื้นฐาน', page: SD_APP, module: 'personnel', view: 'basic-info',
+          id: 'menu-basic-info', icon: 'user', label: 'ข้อมูลพื้นฐาน', page: SD_APP, module: 'personnel', view: 'basic-info', keywords: 'ประวัติ ที่อยู่ ครอบครัว',
           children: [
             { label: 'ประวัติส่วนตัว', subtab: 'personal-profile' },
             { label: 'ที่อยู่ตามทะเบียนบ้าน', subtab: 'registered-address' },
@@ -168,7 +154,7 @@
           ]
         },
         {
-          id: 'menu-education', icon: 'graduation', label: 'การศึกษา & อบรม', page: SD_APP, module: 'personnel', view: 'education',
+          id: 'menu-education', icon: 'graduation', label: 'การศึกษา & อบรม', page: SD_APP, module: 'personnel', view: 'education', keywords: 'วุฒิ ฝึกอบรม ดูงาน',
           children: [
             { label: 'ข้อมูลการศึกษา', subtab: 'edu-background' },
             { label: 'ข้อมูลเกียรติคุณ', subtab: 'edu-honors' },
@@ -177,7 +163,7 @@
           ]
         },
         {
-          id: 'menu-job-license', icon: 'idcard', label: 'ตำแหน่ง & ใบประกอบฯ', page: SD_APP, module: 'personnel', view: 'job-license',
+          id: 'menu-job-license', icon: 'idcard', label: 'ตำแหน่ง & ใบประกอบฯ', page: SD_APP, module: 'personnel', view: 'job-license', keywords: 'ใบอนุญาต วิชาชีพ เครื่องราช',
           children: [
             { label: 'ข้อมูลตำแหน่งงาน', subtab: 'job-position-tab' },
             { label: 'ใบอนุญาตประกอบวิชาชีพ', subtab: 'professional-license-tab' },
@@ -185,21 +171,44 @@
           ]
         },
         {
-          id: 'menu-import-hub', icon: 'upload', label: 'นำเข้าข้อมูล', page: SD_APP, module: 'personnel', view: 'import-hub',
+          id: 'menu-import-hub', icon: 'upload', label: 'นำเข้าข้อมูล', page: SD_APP, module: 'personnel', view: 'import-hub', keywords: 'excel import อัปโหลด รูปภาพ',
           children: [
             { label: 'อัพโหลดไฟล์ Excel', subtab: 'import-excel-tab' },
             { label: 'อัพโหลดรูปภาพประจำตัวบุคลากร', subtab: 'import-photo-tab' }
           ]
         },
-        { id: 'menu-print-studio', icon: 'printer', label: 'พิมพ์ & QR Studio', page: SD_APP, module: 'personnel', view: 'print-studio' },
-        { icon: 'gear', label: 'ตั้งค่าบุคลากร', page: 'settings/index.html', anchor: 'personnel', shortcut: true }
+        { id: 'menu-print-studio', icon: 'printer', label: 'พิมพ์ & QR Studio', page: SD_APP, module: 'personnel', view: 'print-studio', keywords: 'qr พิมพ์ บัตร print' }
       ]
     },
     {
-      label: 'การอนุมัติ',
+      label: 'การลาของบุคลากร',
+      items: [
+        { id: 'menu-leave-form', icon: 'fileText', label: 'ยื่นคำขอลา', page: SD_APP, module: 'leave', view: 'leave-form', keywords: 'ใบลา ลาป่วย ลากิจ ลาพักผ่อน' },
+        {
+          id: 'menu-leave-approve', icon: 'checkCircle', label: 'อนุมัติการลา', page: SD_APP, module: 'leave', view: 'leave-approve', keywords: 'ใบลา อนุมัติ ปฏิทิน',
+          badgeId: 'sidebar-approval-badge', badgeClass: 'badge-pending',
+          children: [
+            { label: 'รายการคำขอ', tab: 'requests' },
+            { label: 'ประวัติการลารายบุคคล', tab: 'profile' }
+          ]
+        }
+      ]
+    },
+    {
+      label: 'การมาเรียนของนักเรียน',
+      items: [
+        { icon: 'check', label: 'เช็คชื่อนักเรียน', page: SD_LEAVE, view: 'attendance-check', keywords: 'เช็คชื่อ มาเรียน ขาด สาย ครูประจำชั้น' },
+        { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย' }
+      ]
+    },
+    {
+      label: 'การลาเรียนของนักเรียน',
       items: [
         {
-          icon: 'checkCircle', label: 'อนุมัติการลานักเรียน', page: SD_LEAVE, view: 'approve',
+          icon: 'fileText', label: 'ยื่นขอลาของนักเรียน', page: SD_LEAVE, view: 'sl-submit', keywords: 'ลาป่วย ลากิจ นักเรียน'
+        },
+        {
+          icon: 'checkCircle', label: 'อนุมัติการลานักเรียน', page: SD_LEAVE, view: 'approve', keywords: 'ลาเรียน อนุมัติ ปฏิทิน',
           badgeId: 'sidebar-approve-badge', badgeClass: 'danger',
           children: [
             { label: 'รายการคำขอ', tab: 'requests' },
@@ -209,10 +218,10 @@
       ]
     },
     {
-      label: 'รายงาน & บัตรอนุญาต',
+      label: 'บัตรขออนุญาตนักเรียน',
       items: [
         {
-          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card',
+          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย',
           children: [
             { label: '1. ค้นหานักเรียน', step: '1' },
             { label: '2. เลือกประเภท', step: '2' },
@@ -220,40 +229,24 @@
           ]
         },
         {
-          icon: 'calendar', label: 'รายการบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-calendar',
+          icon: 'calendar', label: 'รายการบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-calendar', keywords: 'ปฏิทิน อนุมัติบัตร รายงาน สรุป',
           badgeId: 'sidebar-ticket-badge', badgeClass: 'danger',
           children: [
             { label: 'รายการบัตรขออนุญาตของนักเรียน', tab: 'tk-list' },
             { label: 'ประวัติรายบุคคล', tab: 'personal' },
             { label: 'สรุปรวมตามชั้นเรียน', tab: 'summary' }
           ]
-        },
-        { icon: 'users', label: 'รายชื่อบุคลากรและอาจารย์', page: SD_LEAVE, view: 'employees' }
-      ]
-    },
-    {
-      label: 'การลาเรียนของนักเรียน',
-      items: [
-        {
-          icon: 'fileText', label: 'ยื่นขอลาของนักเรียน', page: SD_LEAVE, view: 'sl-submit',
-          children: [
-            { label: '1. ค้นหานักเรียน', step: '1' },
-            { label: '2. เลือกประเภทการลา', step: '2' },
-            { label: '3. กรอกรายละเอียด', step: '3' }
-          ]
-        },
-        { icon: 'gear', label: 'ตั้งค่าการลาเรียน', page: 'settings/index.html', anchor: 'leave', shortcut: true }
+        }
       ]
     },
     {
       label: 'รับสมัคร & ทะเบียนนักเรียน',
       items: [
-        { icon: 'clipboardList', label: 'บอร์ดรับสมัคร', page: 'admission/index.html' },
-        { icon: 'users', label: 'ข้อมูลนักเรียน', page: 'admission/students.html' },
-        { icon: 'gear', label: 'ตั้งค่ารับสมัคร', page: 'settings/index.html', anchor: 'admission', shortcut: true },
+        { icon: 'clipboardList', label: 'บอร์ดรับสมัคร', page: 'admission/index.html', keywords: 'สมัครเรียน ม.1 ม.4 ผู้สมัคร' },
+        { icon: 'users', label: 'ข้อมูลนักเรียน', page: 'admission/students.html', keywords: 'ทะเบียน นักเรียน' },
         // hubOnly: แสดงเฉพาะการ์ดในหน้า hub ไม่แสดงใน sidebar (เข้าได้จากปุ่มบนบอร์ดรับสมัครอยู่แล้ว)
         { icon: 'userPlus', label: 'พอร์ทัลสมัครเรียน', page: 'admission/apply.html', hubOnly: true },
-        { icon: 'search', label: 'ตรวจสอบสถานะผู้สมัคร', page: 'admission/status.html' }
+        { icon: 'search', label: 'ตรวจสอบสถานะผู้สมัคร', page: 'admission/status.html', keywords: 'สถานะ ผลสอบ' }
       ]
     },
     {
@@ -278,7 +271,8 @@
             { label: 'ข้อมูลสาขางาน-สาขาวิชา', page: 'settings/school.html', hash: 'tab=majors', desc: 'แผนการเรียน สาขาวิชา สาขางาน' },
             { label: 'ข้อมูลห้องเรียน', page: 'settings/school.html', hash: 'tab=classrooms', desc: 'ห้องเรียน อาคาร ความจุ' },
             { label: 'ปฏิทินโรงเรียน', page: 'settings/school.html', hash: 'tab=calendar', desc: 'วันหยุด กิจกรรม วันสอบ' },
-            { label: 'ข้อมูลครูประจำชั้น', page: SD_APP, module: 'settings', view: 'homeroom', desc: 'ครูประจำชั้น/ที่ปรึกษาแต่ละห้อง' }
+            { label: 'ข้อมูลครูประจำชั้น', page: SD_APP, module: 'settings', view: 'homeroom', desc: 'ครูประจำชั้น/ที่ปรึกษาแต่ละห้อง' },
+            { label: 'เวลาเข้า-เลิกเรียนของนักเรียน', page: SD_LEAVE, view: 'attendance-settings', desc: 'เวลาเข้าเรียน เลิกเรียน เกณฑ์มาสาย วันเรียน' }
           ]
         },
         {
@@ -328,6 +322,11 @@
     return false;
   }
 
+  function whenDomReady(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
   function escapeHtml(text) {
     return String(text).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
@@ -346,6 +345,11 @@
     var isActive = (!item.anchor && isCurrentPage(item.page)) || (hasChildren && item.children.some(function (c) {
       return c.page && !c.view && isCurrentPage(c.page);
     }));
+    // item ที่ชี้มาหน้าปัจจุบันแบบไม่ใช่ SPA view (เช่นหมวดต่าง ๆ ใน settings/index.html ที่เป็นลิงก์
+    // #anchor ในหน้าเดียวกัน) — กดแล้วเปลี่ยนแค่ hash ไม่โหลดหน้าใหม่ จึงต้องไฮไลต์ตาม hash แทน
+    // (ตั้งค่าจริงใน syncAnchorActive() หลัง inject และทุกครั้งที่ hashchange)
+    var anchorHere = isCurrentPage(item.page) && !item.module && !item.view;
+    if (anchorHere) isActive = false;
 
     // attribute สำหรับ item ที่อยู่หน้าเดียวกัน (ให้ JS เดิมของหน้านั้น bind SPA switching)
     var attrs = '';
@@ -365,13 +369,17 @@
       ? '<span id="' + item.badgeId + '" class="badge ' + item.badgeClass + '" style="margin-left:auto;padding:2px 8px;font-size:10px;display:none;">0</span>'
       : '';
 
-    var idAttr = item.id ? ' id="' + item.id + '"' : '';
+    var idAttr = (item.id ? ' id="' + item.id + '"' : '') +
+      (anchorHere ? ' data-xnav-anchor="' + escapeHtml(item.anchor || '') + '"' : '');
     var itemCls = 'menu-item' + (isActive ? ' active' : '') + (item.shortcut ? ' menu-shortcut' : '');
     var linkOpen = '<a class="' + itemCls + '" href="' + escapeHtml(href) + '"' + attrs + idAttr + '>';
     var linkInner = svg(item.icon) + '<span>' + escapeHtml(item.label) + '</span>' + badge;
 
+    // keywords = คำค้นเพิ่มเติมของช่องค้นหาเมนู (ไม่แสดงบนจอ)
+    var kwAttr = item.keywords ? ' data-kw="' + escapeHtml(item.keywords) + '"' : '';
+
     if (!hasChildren) {
-      return '<li>' + linkOpen + linkInner + '</a></li>';
+      return '<li' + kwAttr + '>' + linkOpen + linkInner + '</a></li>';
     }
 
     var childLinks = item.children.map(function (child) {
@@ -404,11 +412,13 @@
     }).join('');
 
     return (
-      '<li class="menu-item-group' + (isActive ? ' expanded' : '') + '">' +
+      '<li class="menu-item-group' + (isActive ? ' expanded' : '') + '"' + kwAttr + '>' +
       '<div class="menu-item-row">' + linkOpen + linkInner + '</a>' +
       '<button type="button" class="submenu-toggle" aria-label="แสดงหัวข้อย่อย" aria-expanded="' + (isActive ? 'true' : 'false') + '">' + svg('chevron') + '</button>' +
       '</div>' +
-      '<ul class="submenu">' + childLinks + '</ul>' +
+      // .submenu เป็น grid แถวเดียว (0fr ↔ 1fr) ต้องมีลูกตัวเดียวคือ .submenu-list —
+      // ถ้าใส่ <li> ตรง ๆ หลายตัว จะมีแค่ตัวแรกที่ถูกพับ ที่เหลือล้นเป็น implicit row โผล่ค้าง
+      '<div class="submenu"><ul class="submenu-list">' + childLinks + '</ul></div>' +
       '</li>'
     );
   }
@@ -472,9 +482,17 @@
       '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>' +
       '</button></div>';
 
-    var menu = '<ul class="sidebar-menu">' + renderGroups() + renderHomeLink() + '</ul>';
+    var search =
+      '<div class="sidebar-search">' +
+      '<button type="button" class="sidebar-search-icon" id="xnav-search-icon" title="ค้นหาเมนู" tabindex="-1">' + svg('search') + '</button>' +
+      '<input type="search" class="sidebar-search-input" id="xnav-search" placeholder="ค้นหาเมนู..." autocomplete="off" spellcheck="false" aria-label="ค้นหาเมนู">' +
+      '<kbd class="sidebar-search-kbd" title="กด / หรือ Ctrl+K เพื่อค้นหา">/</kbd>' +
+      '</div>';
 
-    return { html: logo + menu + renderFooter(), asideClass: asideClass, collapsed: collapsed };
+    var menu = '<ul class="sidebar-menu">' + renderGroups() + renderHomeLink() + '</ul>' +
+      '<p class="sidebar-search-empty" id="xnav-search-empty" hidden>ไม่พบเมนูที่ค้นหา</p>';
+
+    return { html: logo + search + menu + renderFooter(), asideClass: asideClass, collapsed: collapsed };
   }
 
   // ------------------------------------------------------------------
@@ -535,6 +553,34 @@
     }
   }
 
+  // ไฮไลต์ item แบบ #anchor ของหน้าปัจจุบันตาม location.hash — hash ตรงกับ anchor ตัวไหน
+  // ตัวนั้น active (+ กางเมนูย่อยของมัน) ถ้าไม่ตรงเลย ให้ item ของหน้านี้ที่ไม่มี anchor
+  // (เช่น "ศูนย์รวมการตั้งค่า") active แทน
+  function syncAnchorActive() {
+    var links = sidebarEl.querySelectorAll('a.menu-item[data-xnav-anchor]');
+    if (!links.length) return;
+    var hash = '';
+    try { hash = decodeURIComponent(location.hash.slice(1)); } catch (e) { hash = location.hash.slice(1); }
+    var match = null, fallback = null;
+    Array.prototype.forEach.call(links, function (a) {
+      if (hash && a.dataset.xnavAnchor === hash) match = a;
+      if (a.dataset.xnavAnchor === '' && !fallback) fallback = a;
+    });
+    var target = match || fallback;
+    Array.prototype.forEach.call(links, function (a) {
+      var on = a === target;
+      a.classList.toggle('active', on);
+      var group = a.closest('.menu-item-group');
+      if (group) {
+        group.classList.toggle('expanded', on);
+        var tgl = group.querySelector('.submenu-toggle');
+        if (tgl) tgl.setAttribute('aria-expanded', on ? 'true' : 'false');
+      }
+    });
+  }
+  syncAnchorActive();
+  window.addEventListener('hashchange', syncAnchorActive);
+
   // จำ/คืนตำแหน่ง scroll ของเมนู ระหว่างเปลี่ยนหน้า
   var menuEl = sidebarEl.querySelector('.sidebar-menu');
   if (menuEl) {
@@ -549,6 +595,20 @@
     });
   }
 
+  // กดเมนู/เมนูย่อยที่สลับ view ในหน้าเดียวกัน → เลื่อนเนื้อหาหน้ากลับขึ้นบนสุดเสมอ
+  // (ลิงก์ข้ามหน้าโหลดหน้าใหม่อยู่แล้ว) ใช้ capture เพราะ handler ของ .submenu-item เรียก
+  // stopPropagation() และหน่วงด้วย setTimeout(0) ให้หน้าสลับ view/แท็บ/ขั้นตอนเสร็จก่อน
+  if (menuEl) {
+    menuEl.addEventListener('click', function (e) {
+      var a = e.target.closest('a.menu-item, a.submenu-item');
+      if (!a || !(a.dataset.view || a.dataset.module)) return;
+      setTimeout(function () {
+        document.querySelectorAll('.content-body, .main-content').forEach(function (el) { el.scrollTop = 0; });
+        window.scrollTo(0, 0);
+      }, 0);
+    }, true);
+  }
+
   // ------------------------------------------------------------------
   // Deep-link: ถ้าเปิดหน้า schooldark มาพร้อม hash (#m=..&v=..&step=..) ให้จำลอง
   // คลิกเมนู/เมนูย่อยที่ตรงกัน เพื่อสลับไป view นั้นทันที (ไม่แก้ JS ของเพื่อนเลย)
@@ -559,7 +619,12 @@
       var kv = pair.split('=');
       if (kv[0]) hashParams[kv[0]] = decodeURIComponent(kv[1] || '');
     });
-    setTimeout(function () {
+    // ต้องรอ DOMContentLoaded + setTimeout(0) — แค่ setTimeout(0) อย่างเดียวไม่พอ เพราะหน้าใหญ่
+    // (leave-features.html ~330KB) timer จะยิงก่อนเบราว์เซอร์ parse ถึงสคริปต์ท้ายหน้าที่ผูก
+    // click ให้เมนู คลิกเลยไม่มีผล แล้วหน้าค้างอยู่ view เริ่มต้น (เช่น กด "อนุมัติการลานักเรียน"
+    // จาก app.html แล้วไปโผล่ "ยื่นบัตรขออนุญาต") ส่วน setTimeout(0) ที่ซ้อนอยู่ข้างใน ทำให้รันหลัง
+    // handler DOMContentLoaded ของทุกหน้า (app.js ผูก listener ตอน DOMContentLoaded)
+    whenDomReady(function () { setTimeout(function () {
       var view = hashParams.v;
       var mod = hashParams.m;
       if (!view) return;
@@ -576,7 +641,157 @@
         target = document.querySelector('.submenu-item[data-view="' + view + '"]' + modSel + ':not([data-step]):not([data-tab]):not([data-subtab])');
       }
       if (target) target.click();
-    }, 0);
+    }, 0); });
+  }
+
+  // ------------------------------------------------------------------
+  // ช่องค้นหาเมนู: กรองเมนูเดิม "ในที่" (ซ่อนตัวที่ไม่ตรง) ไม่สร้างรายการผลลัพธ์ใหม่ —
+  // ลิงก์ที่เหลือจึงยังใช้ click handler เดิมของแต่ละหน้า (app.js / leave-features) ได้ทันที
+  // กลุ่มที่มีเมนูย่อยตรงคำค้นจะกางด้วยคลาส .search-open (ไม่ยุ่งกับ .expanded ที่ JS
+  // ของหน้าคุมอยู่ ล้างคำค้นแล้วสถานะกาง/พับเดิมจึงกลับมาเหมือนเดิม)
+  // ------------------------------------------------------------------
+  var searchInput = sidebarEl.querySelector('#xnav-search');
+  var searchEmpty = sidebarEl.querySelector('#xnav-search-empty');
+  if (searchInput && menuEl) {
+    // จัดกลุ่ม <li> ตามหัวข้อ (.menu-label) ที่อยู่ก่อนหน้า — markup เป็น list แบน ๆ
+    var searchGroups = [];
+    var searchDividers = [];
+    var curGroup = null;
+    Array.prototype.forEach.call(menuEl.children, function (el) {
+      if (el.classList.contains('sidebar-divider')) { searchDividers.push(el); return; }
+      if (el.querySelector(':scope > .menu-label')) {
+        curGroup = { label: el, items: [] };
+        searchGroups.push(curGroup);
+        return;
+      }
+      if (!curGroup) { curGroup = { label: null, items: [] }; searchGroups.push(curGroup); }
+      curGroup.items.push(el);
+    });
+
+    function norm(t) { return String(t || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+    function labelEl(a) { return a.classList.contains('menu-item') ? a.querySelector('span:not(.badge)') : a; }
+    // จำข้อความเดิมไว้ใช้คืนค่าหลังไฮไลต์คำค้น
+    menuEl.querySelectorAll('a.menu-item, a.submenu-item, a.submenu-link').forEach(function (a) {
+      var l = labelEl(a);
+      if (l) a.dataset.xnavLabel = l.textContent;
+    });
+    function setLabel(a, q) {
+      var l = labelEl(a);
+      if (!l) return;
+      var text = a.dataset.xnavLabel || '';
+      var i = q ? text.toLowerCase().indexOf(q) : -1;
+      l.innerHTML = i < 0 ? escapeHtml(text)
+        : escapeHtml(text.slice(0, i)) + '<mark>' + escapeHtml(text.slice(i, i + q.length)) + '</mark>' + escapeHtml(text.slice(i + q.length));
+    }
+
+    var kbdIndex = -1;
+    function visibleLinks() {
+      return Array.prototype.filter.call(
+        menuEl.querySelectorAll('a.menu-item, a.submenu-item, a.submenu-link'),
+        function (a) { return a.offsetParent !== null && !a.closest('[hidden]'); }
+      );
+    }
+    function setKbd(i) {
+      var links = visibleLinks();
+      menuEl.querySelectorAll('.xnav-kbd').forEach(function (a) { a.classList.remove('xnav-kbd'); });
+      if (!links.length) { kbdIndex = -1; return; }
+      kbdIndex = (i + links.length) % links.length;
+      links[kbdIndex].classList.add('xnav-kbd');
+      links[kbdIndex].scrollIntoView({ block: 'nearest' });
+    }
+
+    function applySearch() {
+      var q = norm(searchInput.value);
+      var searching = q.length > 0;
+      sidebarEl.classList.toggle('is-searching', searching);
+      var anyVisible = false;
+
+      searchGroups.forEach(function (g) {
+        var groupText = g.label ? norm(g.label.textContent) : '';
+        var groupHit = searching && groupText.indexOf(q) !== -1; // ตรงชื่อหมวด → โชว์ทั้งหมวด
+        var groupVisible = false;
+
+        g.items.forEach(function (li) {
+          var top = li.querySelector(':scope > a.menu-item, :scope > .menu-item-row > a.menu-item');
+          var subs = Array.prototype.slice.call(li.querySelectorAll('.submenu-list > li'));
+          var ownText = norm((top ? top.dataset.xnavLabel : '') + ' ' + (li.dataset.kw || ''));
+          var ownHit = !searching || groupHit || ownText.indexOf(q) !== -1;
+          var subHits = 0;
+          subs.forEach(function (sli) {
+            var a = sli.querySelector('a');
+            var hit = searching && a && norm(a.dataset.xnavLabel).indexOf(q) !== -1;
+            if (hit) subHits++;
+            // ตรงที่ตัวเมนูหลัก → โชว์เมนูย่อยครบ, ตรงแค่เมนูย่อย → โชว์เฉพาะตัวที่ตรง
+            sli.hidden = searching && !ownHit && !hit;
+            if (a) setLabel(a, searching ? q : '');
+          });
+          var show = ownHit || subHits > 0;
+          li.hidden = !show;
+          li.classList.toggle('search-open', searching && subHits > 0);
+          if (top) setLabel(top, searching ? q : '');
+          if (show) groupVisible = true;
+        });
+
+        if (g.label) g.label.hidden = searching && !groupVisible;
+        if (groupVisible) anyVisible = true;
+      });
+      searchDividers.forEach(function (d) { d.hidden = searching; });
+
+      if (searchEmpty) searchEmpty.hidden = !searching || anyVisible;
+      if (searching) menuEl.scrollTop = 0;
+      setKbd(searching ? 0 : -1);
+      if (!searching) menuEl.querySelectorAll('.xnav-kbd').forEach(function (a) { a.classList.remove('xnav-kbd'); });
+    }
+
+    function clearSearch() {
+      if (!searchInput.value) return;
+      searchInput.value = '';
+      applySearch();
+    }
+
+    searchInput.addEventListener('input', applySearch);
+    searchInput.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); setKbd(kbdIndex + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setKbd(kbdIndex - 1); }
+      else if (e.key === 'Enter') {
+        e.preventDefault();
+        var links = visibleLinks();
+        var target = links[kbdIndex] || links[0];
+        if (target) target.click();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        if (searchInput.value) clearSearch(); else searchInput.blur();
+      }
+    });
+
+    // เลือกเมนูจากผลค้นหาแล้ว ล้างคำค้นให้ sidebar กลับเป็นปกติ (หลัง handler ของหน้ารันเสร็จ
+    // เพื่อให้ .expanded/.active ที่หน้าเพิ่งตั้งใหม่แสดงผลถูกต้อง)
+    // capture: true — handler ของ .submenu-item ในหน้า schooldark เรียก stopPropagation()
+    // ถ้าฟังแบบ bubble ปกติจะไม่ได้ยินคลิกเมนูย่อยเลย
+    menuEl.addEventListener('click', function (e) {
+      if (!sidebarEl.classList.contains('is-searching')) return;
+      if (e.target.closest('a.menu-item, a.submenu-item, a.submenu-link')) setTimeout(clearSearch, 0);
+    }, true);
+
+    // ตอน sidebar ย่อ: เหลือแค่ไอคอนแว่นขยาย กดแล้วขยาย sidebar (ผ่านปุ่มเดิม ให้ JS ของ
+    // หน้า schooldark ได้จัดการเองเหมือนกดปุ่มย่อ/ขยายปกติ) แล้วโฟกัสช่องค้นหา
+    function focusSearch() {
+      if (sidebarEl.classList.contains('collapsed')) {
+        var tBtn = sidebarEl.querySelector('#sidebar-toggle-btn');
+        if (tBtn) tBtn.click();
+      }
+      setTimeout(function () { searchInput.focus(); searchInput.select(); }, 0);
+    }
+    var searchIcon = sidebarEl.querySelector('#xnav-search-icon');
+    if (searchIcon) searchIcon.addEventListener('click', focusSearch);
+
+    // คีย์ลัด: "/" หรือ Ctrl/Cmd+K (ยกเว้นตอนกำลังพิมพ์ในช่องอื่นอยู่ สำหรับ "/")
+    document.addEventListener('keydown', function (e) {
+      var tag = (e.target && e.target.tagName) || '';
+      var typing = /^(INPUT|TEXTAREA|SELECT)$/.test(tag) || (e.target && e.target.isContentEditable);
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); focusSearch(); }
+      else if (e.key === '/' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); focusSearch(); }
+    });
   }
 
   // scrollIntoView ให้เมนูที่ active เห็นตั้งแต่แรก (ถ้าไม่มีตำแหน่ง scroll ที่จำไว้)
