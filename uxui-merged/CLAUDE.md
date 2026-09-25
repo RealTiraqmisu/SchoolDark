@@ -20,10 +20,12 @@ uxui-merged/
 │   └── CLAUDE.md     # ← รายละเอียดของระบบนี้อยู่ในไฟล์นี้
 ├── admission/        # ระบบรับสมัครนักเรียน + ทะเบียน/ข้อมูลนักเรียน (Admitify Spark)
 │   └── AGENTS.md     # ← รายละเอียดของระบบนี้อยู่ในไฟล์นี้ (source of truth ของฝั่งนั้น)
-└── settings/         # ศูนย์รวมการตั้งค่าของทั้ง 2 ระบบ (โฟลเดอร์กลาง ไม่ใช่ของฝั่งใด)
-    ├── index.html    # การ์ดรวมทุกหมวดตั้งค่า (อ่านจาก NAV_GROUPS กลุ่ม id "settings")
-    ├── school.html   # ตั้งค่าโรงเรียน (master data) 5 แท็บ — ดูหัวข้อถัดไป
-    └── js/school-store.js  # เก็บข้อมูลของ school.html คีย์ localStorage `school_*`
+├── settings/         # ศูนย์รวมการตั้งค่าของทั้ง 2 ระบบ (โฟลเดอร์กลาง ไม่ใช่ของฝั่งใด)
+│   ├── index.html    # การ์ดรวมทุกหมวดตั้งค่า (อ่านจาก NAV_GROUPS กลุ่ม id "settings")
+│   ├── school.html   # ตั้งค่าโรงเรียน (master data) 5 แท็บ — ดูหัวข้อถัดไป
+│   └── js/school-store.js  # เก็บข้อมูลของ school.html คีย์ localStorage `school_*`
+└── parent/           # พอร์ทัลผู้ปกครอง — navbar บนสุดของตัวเอง (ไม่ใช้ sidebar แอดมิน)
+    └── CLAUDE.md     # ← รายละเอียดของระบบนี้อยู่ในไฟล์นี้
 ```
 
 > [!NOTE]
@@ -75,6 +77,7 @@ uxui-merged/
 | `admission/*.html` | วาง `<script src="../shared/cross-nav.js">` เป็น**สิ่งแรกหลัง `<body>`** (ไม่มี `<aside>` อยู่ก่อน) | สคริปต์สร้าง `<aside id="sidebar">` แบบ `position:fixed` ทางซ้ายให้เอง + ใส่ class `xnav-fixed-layout` บน `<html>` (ดัน body ด้วย padding-left ใน `cross-nav.css`) |
 | `index.html` (hub) | `<div id="cross-nav-hub">` (เหมือนเดิม) | การ์ดของแต่ละระบบพร้อมลิสต์ลิงก์ — หน้านี้**ไม่มี sidebar ซ้าย** ตั้งใจเก็บดีไซน์การ์ดกลางหน้าแบบเดิมไว้ |
 | `settings/*.html` | เหมือน `admission/*.html` (script เป็นสิ่งแรกหลัง `<body>`, ไม่มี `<aside>` มาก่อน) | ได้ sidebar fixed แบบเดียวกับ admission; `settings/index.html` มี `<div id="settings-hub">` เพิ่มเติมที่อ่าน `window.CrossNav.NAV_GROUPS` เอง (ดูย่อหน้าถัดไป) |
+| `parent/*.html` | **ไม่โหลด** `shared/cross-nav.js`/`cross-nav.css` เลย (ข้อยกเว้นตั้งใจ) — ใช้ `parent/js/parent-nav.js` เรนเดอร์ navbar บนสุดของตัวเองแทน | navbar เต็มความกว้างด้านบน (ไม่ใช่ sidebar), เข้าถึงจากหน้า hub ผ่าน item `hubOnly: true` ในกลุ่ม `id: 'parent'` ของ `NAV_GROUPS` |
 
 ทุกหน้าต้องโหลด `shared/cross-nav.css` คู่กับ `cross-nav.js` เสมอ (ยกเว้น hub ที่ไม่จำเป็น)
 เมนูที่แสดงจะเป็น**ชุดเดียวกันทุกหน้า** (ไม่ตัดกลุ่มของระบบตัวเองออกอีกต่อไป) — ต่างกันแค่ไฮไลต์
@@ -136,3 +139,8 @@ module?, view?, hash?, desc?}` — ถ้า child มี `view` และ `page
   `NAV_GROUPS` (เหลือ item ทางลัดในหมวดเดิม) และเพิ่มโฟลเดอร์ `settings/` ใหม่ (`index.html` การ์ด
   รวม, `school.html` หน้าตั้งค่าโรงเรียน/master data 5 แท็บที่ไม่เคยมีมาก่อน, `js/school-store.js`)
   — ดูหัวข้อ "ศูนย์รวมการตั้งค่า" ด้านบน
+- **เพิ่มพอร์ทัลผู้ปกครอง** (`parent/`) เป็นระบบที่ 3 ของโปรเจกต์ ใช้ navbar บนสุดของตัวเอง
+  (`js/parent-nav.js`) ไม่ใช้ sidebar แอดมิน (ข้อยกเว้นของกฎ sidebar รวม) ข้อมูลทั้งหมดเป็น
+  mock ใหม่ (`parent_*` ใน localStorage) ยังไม่เชื่อมกับข้อมูลจริงของ admission/schooldark
+- เข้าถึงพอร์ทัลผู้ปกครองได้จากหน้า hub ผ่านการ์ดใหม่ (กลุ่ม `id: 'parent'` ใน `NAV_GROUPS`,
+  item เดียวเป็น `hubOnly: true` จึงไม่โผล่ใน sidebar ของระบบอื่น)

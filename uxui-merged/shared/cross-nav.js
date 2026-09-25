@@ -257,6 +257,14 @@
       ]
     },
     {
+      id: 'parent',
+      label: 'พอร์ทัลผู้ปกครอง',
+      items: [
+        // hubOnly: portal ฝั่งผู้ปกครองมี navbar ของตัวเอง ไม่ใช้ sidebar แอดมิน
+        { icon: 'users', label: 'เข้าสู่พอร์ทัลผู้ปกครอง', page: 'parent/login.html', hubOnly: true }
+      ]
+    },
+    {
       id: 'settings',
       label: 'การตั้งค่า',
       items: [
@@ -406,11 +414,14 @@
   }
 
   function renderGroups() {
-    return NAV_GROUPS.map(function (group, gi) {
-      var itemsHtml = group.items.filter(function (it) { return !it.hubOnly; }).map(renderItem).join('');
-      return (gi ? '<div class="sidebar-divider"></div>' : '') +
-        '<li><p class="menu-label">' + escapeHtml(group.label) + '</p></li>' + itemsHtml;
-    }).join('');
+    var out = [];
+    NAV_GROUPS.forEach(function (group) {
+      var visible = group.items.filter(function (it) { return !it.hubOnly; });
+      if (!visible.length) return;
+      out.push((out.length ? '<div class="sidebar-divider"></div>' : '') +
+        '<li><p class="menu-label">' + escapeHtml(group.label) + '</p></li>' + visible.map(renderItem).join(''));
+    });
+    return out.join('');
   }
 
   function renderHomeLink() {
@@ -583,13 +594,13 @@
   // ------------------------------------------------------------------
   var hubMount = document.getElementById('cross-nav-hub');
   if (hubMount) {
-    var bySystemLabel = { schooldark: 'บุคลากร & การลา', admission: 'รับสมัคร & ทะเบียนนักเรียน', settings: 'การตั้งค่า' };
+    var bySystemLabel = { schooldark: 'บุคลากร & การลา', admission: 'รับสมัคร & ทะเบียนนักเรียน', settings: 'การตั้งค่า', parent: 'พอร์ทัลผู้ปกครอง' };
     var seen = {};
     var cards = [];
     NAV_GROUPS.forEach(function (group) {
       group.items.forEach(function (item) {
         if (item.shortcut) return; // ทางลัดในหมวดอื่นซ้ำกับที่อยู่ในหมวด "การตั้งค่า" อยู่แล้ว
-        var sys = group.id === 'settings' ? 'settings' : (item.page.indexOf('schooldark/') === 0 ? 'schooldark' : 'admission');
+        var sys = group.id === 'settings' ? 'settings' : group.id === 'parent' ? 'parent' : (item.page.indexOf('schooldark/') === 0 ? 'schooldark' : 'admission');
         if (!seen[sys]) { seen[sys] = { label: bySystemLabel[sys], links: [] }; cards.push(seen[sys]); }
         var pageChildren = (item.children || []).filter(function (c) { return c.page; });
         if (pageChildren.length) {

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="th">
+<!-- TODO(Team C): หน้านี้เป็น placeholder เท่านั้น — Team C รับผิดชอบพัฒนาส่วนการเยี่ยมบ้านต่อ
+     (ข้อมูล/ผลการเยี่ยมบ้าน, นัดหมาย ฯลฯ) ยังไม่มี logic จริงในไฟล์นี้ -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>การเยี่ยมบ้าน | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-3xl mx-auto px-4 py-6">
+    <h1 class="text-xl font-bold text-card-foreground mb-4">การเยี่ยมบ้าน</h1>
+
+    <div class="bg-warning/10 border border-warning/30 text-warning-foreground rounded-lg p-3 text-sm flex gap-2 items-start mb-4">
+      <i data-lucide="construction" class="w-4 h-4 mt-0.5 shrink-0"></i>
+      <span>หน้านี้อยู่ระหว่างพัฒนา — ส่วนการเยี่ยมบ้านรับผิดชอบพัฒนาต่อโดย Team C</span>
+    </div>
+
+    <div id="home-visit-content"></div>
+  </main>
+
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+    (function () {
+      var esc = ParentUI.escapeHtml;
+      var child = ParentStore.getActiveChild();
+      var childName = child ? esc(child.nickname) : 'บุตร';
+
+      document.getElementById('home-visit-content').innerHTML =
+        '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
+          '<h2 class="font-bold text-card-foreground mb-2">การเยี่ยมบ้านนักเรียน</h2>' +
+          '<p class="text-sm text-muted-foreground mb-4">' +
+            'ข้อมูลการเยี่ยมบ้านของ' + childName + ' โดยครูที่ปรึกษา จะแสดงในหน้านี้เมื่อพัฒนาส่วนนี้เสร็จแล้ว' +
+          '</p>' +
+          '<div class="flex flex-wrap gap-3">' +
+            '<button type="button" disabled class="bg-muted text-muted-foreground rounded-lg px-4 py-2 font-medium cursor-not-allowed">ดูผลการเยี่ยมบ้าน (ยังไม่พร้อมใช้งาน)</button>' +
+          '</div>' +
+        '</div>';
+
+      if (window.lucide) lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ประวัติส่วนตัวนักเรียน | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <a href="index.html" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-4">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> กลับหน้าหลัก
+    </a>
+    <div id="student-content" class="space-y-6"></div>
+  </main>
+
+  <script src="js/parent-store.js"></script>
+  <script>
+    /* ---------------- resolve ?id= ก่อนโหลด navbar เพื่อให้ child switcher ตรงกัน ---------------- */
+    (function () {
+      try {
+        var children = window.ParentStore.getChildren();
+        var ids = children.map(function (c) { return c.id; });
+        var qid = new URLSearchParams(location.search).get('id');
+        var activeId = (qid && ids.indexOf(qid) !== -1) ? qid : (window.ParentStore.getActiveChild() || {}).id;
+        if (activeId && activeId !== window.ParentStore.get('parent_active_child')) {
+          window.ParentStore.setActiveChild(activeId);
+        }
+        window.__studentPageChildId = activeId;
+      } catch (e) {}
+    })();
+  </script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+    (function () {
+      var esc = ParentUI.escapeHtml;
+      var childId = window.__studentPageChildId;
+      var profile = childId ? ParentStore.getStudentProfile(childId) : null;
+      var wrap = document.getElementById('student-content');
+
+      if (!profile) {
+        wrap.innerHTML = '<div class="bg-card rounded-xl border border-border shadow-sm p-5 text-muted-foreground">ไม่พบข้อมูลนักเรียน</div>';
+        if (window.lucide) lucide.createIcons();
+        return;
+      }
+
+      function ageFromDob(dob) {
+        if (!dob) return '—';
+        var today = ParentStore.today();
+        var d = dob.split('-').map(Number);
+        var t = today.split('-').map(Number);
+        var age = t[0] - d[0];
+        if (t[1] < d[1] || (t[1] === d[1] && t[2] < d[2])) age--;
+        return age + ' ปี';
+      }
+
+      function field(label, value) {
+        return '<div><div class="text-xs text-muted-foreground">' + esc(label) + '</div>' +
+          '<div class="text-sm text-card-foreground mt-0.5">' + (value || '<span class="text-muted-foreground">—</span>') + '</div></div>';
+      }
+
+      function card(title, icon, innerHtml) {
+        return '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
+          '<h2 class="font-bold text-card-foreground mb-4 flex items-center gap-2">' +
+            '<i data-lucide="' + icon + '" class="w-4 h-4 text-primary"></i>' + esc(title) +
+          '</h2>' + innerHtml + '</div>';
+      }
+
+      function personHtml(label, person) {
+        if (!person) {
+          return '<div class="border border-border rounded-lg p-4">' +
+            '<div class="text-sm font-semibold text-card-foreground mb-2">' + esc(label) + '</div>' +
+            '<p class="text-sm text-muted-foreground">ไม่มีข้อมูล</p></div>';
+        }
+        return '<div class="border border-border rounded-lg p-4">' +
+          '<div class="text-sm font-semibold text-card-foreground mb-2">' + esc(label) + '</div>' +
+          '<div class="text-sm text-card-foreground font-medium">' + esc(person.name) + '</div>' +
+          '<div class="text-sm text-muted-foreground mt-1">' + esc(person.occupation || '—') + '</div>' +
+          '<a href="tel:' + esc(person.phone) + '" class="text-sm text-primary hover:underline flex items-center gap-1 mt-1">' +
+            '<i data-lucide="phone" class="w-3.5 h-3.5"></i>' + esc(person.phone) +
+          '</a>' +
+          (person.status ? '<div class="text-xs text-muted-foreground mt-1">' + esc(person.status) + '</div>' : '') +
+        '</div>';
+      }
+
+      var fullName = esc(profile.prefix) + esc(profile.firstName) + ' ' + esc(profile.lastName);
+
+      /* 1. Header */
+      var headerHtml =
+        '<div class="bg-card rounded-xl border border-border shadow-sm p-5 flex flex-wrap items-center gap-4">' +
+          '<span class="w-20 h-20 shrink-0 rounded-full bg-primary/10 text-primary flex items-center justify-center text-2xl font-semibold">' +
+            esc(ParentUI.initials(profile.nickname)) +
+          '</span>' +
+          '<div class="min-w-0">' +
+            '<div class="text-xl font-bold text-card-foreground">' + fullName + ' <span class="font-normal text-muted-foreground text-base">(' + esc(profile.nickname) + ')</span></div>' +
+            '<div class="text-sm text-muted-foreground mt-1">' + esc(profile.level) + ' ห้อง ' + esc(profile.classroom) + ' · เลขที่ ' + esc(profile.no) + ' · รหัสนักเรียน ' + esc(profile.studentId) + '</div>' +
+          '</div>' +
+        '</div>';
+
+      /* 2. ข้อมูลส่วนตัว */
+      var personalHtml = card('ข้อมูลส่วนตัว', 'user',
+        '<div class="grid grid-cols-2 sm:grid-cols-3 gap-4">' +
+          field('วันเกิด', esc(ParentUI.fmtDate(profile.dob)) + ' (' + ageFromDob(profile.dob) + ')') +
+          field('เพศ', esc(profile.gender)) +
+          field('กรุ๊ปเลือด', esc(profile.bloodType)) +
+          field('สัญชาติ', esc(profile.nationality)) +
+          field('เชื้อชาติ', esc(profile.ethnicity)) +
+          field('ศาสนา', esc(profile.religion)) +
+          field('เลขประจำตัวประชาชน', esc(profile.nationalId)) +
+          field('สถานที่เกิด', esc(profile.birthPlace)) +
+        '</div>'
+      );
+
+      /* 3. ข้อมูลการศึกษา */
+      var eduHtml = card('ข้อมูลการศึกษา', 'graduation-cap',
+        '<div class="grid grid-cols-2 sm:grid-cols-3 gap-4">' +
+          field('ระดับชั้น', esc(profile.level)) +
+          field('ห้อง/เลขที่', esc(profile.classroom) + ' / ' + esc(profile.no)) +
+          field('แผนการเรียน', esc(profile.studyPlan)) +
+          field('ครูประจำชั้น', esc(profile.homeroomTeacher) +
+            ' <a href="tel:' + esc(profile.homeroomPhone) + '" class="text-primary hover:underline">' + esc(profile.homeroomPhone) + '</a>') +
+          field('วันที่เข้าเรียน', esc(profile.enrollDate)) +
+          field('โรงเรียนเดิม', esc(profile.previousSchool)) +
+        '</div>'
+      );
+
+      /* 4. ที่อยู่ */
+      var addr = profile.address || {};
+      var addressHtml = card('ที่อยู่', 'map-pin',
+        '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">' +
+          field('ที่อยู่ตามทะเบียนบ้าน', esc(addr.registered)) +
+          field('ที่อยู่ปัจจุบัน', esc(addr.current)) +
+        '</div>'
+      );
+
+      /* 5. ครอบครัว */
+      var familyHtml = card('ครอบครัว', 'users',
+        '<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">' +
+          personHtml('บิดา', profile.father) +
+          personHtml('มารดา', profile.mother) +
+          personHtml('ผู้ปกครอง', profile.guardian) +
+        '</div>'
+      );
+
+      /* 6. พี่น้อง */
+      var siblings = profile.siblings || [];
+      var siblingsInner = siblings.length
+        ? siblings.map(function (s) {
+            var nameHtml = s.childId
+              ? '<a href="student.html?id=' + esc(s.childId) + '" class="font-medium text-primary hover:underline">' + esc(s.name) + '</a>'
+              : '<span class="font-medium text-card-foreground">' + esc(s.name) + '</span>';
+            return '<div class="flex items-center justify-between py-2 border-b border-border last:border-b-0">' +
+              '<div>' + nameHtml + '<span class="text-sm text-muted-foreground"> · ' + esc(s.relation) + ' · อายุ ' + esc(s.age) + ' ปี</span></div>' +
+              '<div class="text-sm text-muted-foreground">' + esc(s.school) + '</div>' +
+            '</div>';
+          }).join('')
+        : '<p class="text-sm text-muted-foreground">ไม่มีข้อมูลพี่น้อง</p>';
+      var siblingsHtml = card('พี่น้อง', 'users-round', siblingsInner);
+
+      /* 7. สุขภาพ + ผู้ติดต่อฉุกเฉิน */
+      var health = profile.health || {};
+      var ec = profile.emergencyContact || {};
+      var healthHtml = card('ข้อมูลสุขภาพและผู้ติดต่อฉุกเฉิน', 'heart-pulse',
+        '<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">' +
+          field('น้ำหนัก', esc(health.weight)) +
+          field('ส่วนสูง', esc(health.height)) +
+          field('โรคประจำตัว', esc(health.conditions)) +
+          field('การแพ้', esc(health.allergies)) +
+        '</div>' +
+        '<div class="h-px bg-border my-4"></div>' +
+        '<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">' +
+          field('ผู้ติดต่อฉุกเฉิน', esc(ec.name)) +
+          field('ความสัมพันธ์', esc(ec.relation)) +
+          field('เบอร์โทร', ec.phone ? '<a href="tel:' + esc(ec.phone) + '" class="text-primary hover:underline">' + esc(ec.phone) + '</a>' : '') +
+        '</div>'
+      );
+
+      wrap.innerHTML = headerHtml + personalHtml + eduHtml + addressHtml + familyHtml + siblingsHtml + healthHtml +
+        '<p class="text-sm text-muted-foreground">หากข้อมูลไม่ถูกต้อง กรุณาติดต่อฝ่ายทะเบียนของโรงเรียน</p>';
+
+      if (window.lucide) lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

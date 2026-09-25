@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตารางเรียน | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @media print {
+      #parent-nav, .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <div class="flex items-center justify-between mb-4 gap-3">
+      <h1 class="text-xl font-bold text-card-foreground">ตารางเรียน</h1>
+      <button type="button" id="btn-print" class="no-print border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">
+        <i data-lucide="printer" class="w-4 h-4"></i>
+        <span>พิมพ์</span>
+      </button>
+    </div>
+
+    <div id="tab-bar" class="flex gap-2 mb-4"></div>
+    <div id="tab-content"></div>
+  </main>
+
+  <script src="../settings/js/school-store.js"></script>
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
+    var DAY_LABELS_FULL = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์'];
+    var DAY_LABELS_SHORT = ['จ', 'อ', 'พ', 'พฤ', 'ศ'];
+
+    var GROUP_COLORS = {
+      'ท': 'bg-red-50',
+      'ค': 'bg-blue-50',
+      'ว': 'bg-green-50',
+      'ส': 'bg-yellow-50',
+      'อ': 'bg-purple-50',
+      'พ': 'bg-orange-50',
+      'ศ': 'bg-pink-50',
+      'ง': 'bg-teal-50',
+      'ก': 'bg-gray-50'
+    };
+
+    var mobileDay = null; // ตั้งค่าตอน render ครั้งแรก
+
+    /* -----------------------------------------------------------------
+     * helpers
+     * --------------------------------------------------------------- */
+
+    function groupColor(code) {
+      if (!code) return '';
+      return GROUP_COLORS[code.charAt(0)] || 'bg-gray-50';
+    }
+
+    function todayDayKey() {
+      var t = ParentStore.today();
+      var y = parseInt(t.substring(0, 4), 10);
+      var m = parseInt(t.substring(5, 7), 10);
+      var d = parseInt(t.substring(8, 10), 10);
+      var dow = new Date(y, m - 1, d).getDay(); // 0=อา ... 6=ส
+      var map = { 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri' };
+      return map[dow] || null;
+    }
+
+    // จับคู่ periods (รวมช่องพักกลางวัน no:0) เข้ากับ slot ข้อมูลจริงของวันนั้น
+    // (parent_timetables เก็บเฉพาะ 8 คาบเรียนจริง ไม่มี slot ของพักกลางวัน)
+    function mapPeriodsToSlots(periods, daySlots) {
+      var slotIdx = 0;
+      return periods.map(function (p) {
+        if (p.no === 0) return { period: p, slot: null, isLunch: true };
+        var s = daySlots ? daySlots[slotIdx] : null;
+        slotIdx++;
+        return { period: p, slot: s, isLunch: false };
+      });
+    }
+
+    function getTab() {
+      var h = location.hash.replace('#', '');
+      var m = /tab=([a-z]+)/.exec(h);
+      return (m && m[1]) || 'class';
+    }
+
+    /* -----------------------------------------------------------------
+     * tab bar
+     * --------------------------------------------------------------- */
+
+    function renderTabBar(tab) {
+      var bar = document.getElementById('tab-bar');
+      var tabs = [
+        { id: 'class', label: 'ตารางเรียนรายวิชา' },
+        { id: 'exam', label: 'ตารางสอบ' }
+      ];
+      bar.innerHTML = tabs.map(function (t) {
+        var active = t.id === tab;
+        var cls = active ? 'bg-primary text-white' : 'text-card-foreground hover:bg-secondary';
+        return '<button type="button" data-tab="' + t.id + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' +
+          ParentUI.escapeHtml(t.label) + '</button>';
+      }).join('');
+      bar.querySelectorAll('[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          location.hash = 'tab=' + btn.getAttribute('data-tab');
+        });
+      });
+    }
+
+    /* -----------------------------------------------------------------
+     * แท็บ class — ตารางเรียนรายวิชา
+     * --------------------------------------------------------------- */
+
+    function buildDesktopTable(periods, timetable) {
+      var todayKey = todayDayKey();
+
+      var theadCells = periods.map(function (p) {
+        var isLunch = p.no === 0;
+        var mainLabel = isLunch ? ParentUI.escapeHtml(p.label) : ('คาบ ' + p.no);
+        return '<th class="p-2 border border-border text-xs font-medium text-card-foreground ' + (isLunch ? 'bg-secondary w-16' : 'bg-muted') + '">' +
+          '<div>' + mainLabel + '</div>' +
+          '<div class="font-normal text-muted-foreground">' + p.start + '-' + p.end + '</div>' +
+          '</th>';
+      }).join('');
+
+      var rows = DAY_KEYS.map(function (dk, i) {
+        var daySlots = timetable[dk] || [];
+        var mapped = mapPeriodsToSlots(periods, daySlots);
+        var isToday = dk === todayKey;
+        var ringCls = isToday ? ' ring-2 ring-inset ring-primary/30' : '';
+
+        var cells = mapped.map(function (m) {
+          if (m.isLunch) {
+            return '<td class="p-2 border border-border bg-secondary text-center text-xs text-muted-foreground' + ringCls + '">' +
+              ParentUI.escapeHtml(m.period.label) + '</td>';
+          }
+          var s = m.slot;
+          if (!s) {
+            return '<td class="p-2 border border-border text-center text-muted-foreground' + ringCls + '">–</td>';
+          }
+          return '<td class="p-2 border border-border align-top ' + groupColor(s.code) + ringCls + '">' +
+            '<div class="text-xs font-semibold text-card-foreground">' + ParentUI.escapeHtml(s.code) + ' ' + ParentUI.escapeHtml(s.subject) + '</div>' +
+            '<div class="text-xs text-muted-foreground mt-0.5">' + ParentUI.escapeHtml(s.teacher) + ' · ' + ParentUI.escapeHtml(s.room) + '</div>' +
+            '</td>';
+        }).join('');
+
+        var dayCellCls = 'p-2 border border-border font-medium bg-muted text-card-foreground' +
+          (isToday ? ' text-primary bg-primary/10' + ringCls : '');
+
+        return '<tr><td class="' + dayCellCls + '">' + DAY_LABELS_FULL[i] + '</td>' + cells + '</tr>';
+      }).join('');
+
+      return '<table class="min-w-full border-collapse text-sm">' +
+        '<thead><tr><th class="p-2 border border-border bg-secondary text-sm font-medium text-card-foreground">วัน</th>' + theadCells + '</tr></thead>' +
+        '<tbody>' + rows + '</tbody></table>';
+    }
+
+    function buildMobileView(periods, timetable) {
+      var buttonsHtml = DAY_KEYS.map(function (dk, i) {
+        var active = dk === mobileDay;
+        var cls = active ? 'bg-primary text-white' : 'text-card-foreground hover:bg-secondary border border-border';
+        return '<button type="button" data-day="' + dk + '" class="flex-1 py-2 rounded-lg text-sm font-medium ' + cls + '">' + DAY_LABELS_SHORT[i] + '</button>';
+      }).join('');
+
+      var daySlots = timetable[mobileDay] || [];
+      var mapped = mapPeriodsToSlots(periods, daySlots);
+
+      var cardsHtml = mapped.map(function (m) {
+        if (m.isLunch) {
+          return '<div class="flex items-center gap-2 py-2 text-xs text-muted-foreground">' +
+            '<div class="flex-1 h-px bg-border"></div>' +
+            '<span>' + ParentUI.escapeHtml(m.period.label) + ' ' + m.period.start + '-' + m.period.end + '</span>' +
+            '<div class="flex-1 h-px bg-border"></div></div>';
+        }
+        var s = m.slot;
+        return '<div class="flex items-center gap-3 p-3 rounded-lg border border-border mb-2 ' + (s ? groupColor(s.code) : '') + '">' +
+          '<div class="w-16 shrink-0 text-center">' +
+          '<div class="text-sm font-semibold text-card-foreground">คาบ ' + m.period.no + '</div>' +
+          '<div class="text-xs text-muted-foreground">' + m.period.start + '-' + m.period.end + '</div>' +
+          '</div>' +
+          '<div class="flex-1 min-w-0">' +
+          (s ?
+            ('<div class="text-sm font-semibold text-card-foreground truncate">' + ParentUI.escapeHtml(s.code) + ' ' + ParentUI.escapeHtml(s.subject) + '</div>' +
+              '<div class="text-xs text-muted-foreground truncate">' + ParentUI.escapeHtml(s.teacher) + ' · ' + ParentUI.escapeHtml(s.room) + '</div>')
+            : '<div class="text-sm text-muted-foreground text-center">–</div>') +
+          '</div></div>';
+      }).join('');
+
+      return '<div class="bg-card rounded-xl border border-border shadow-sm p-4">' +
+        '<div class="flex gap-1 mb-4">' + buttonsHtml + '</div>' +
+        '<div>' + cardsHtml + '</div>' +
+        '</div>';
+    }
+
+    function weeklySubjectCounts(timetable) {
+      var counts = {};
+      DAY_KEYS.forEach(function (dk) {
+        (timetable[dk] || []).forEach(function (s) {
+          if (s) counts[s.subject] = (counts[s.subject] || 0) + 1;
+        });
+      });
+      return counts;
+    }
+
+    function buildWeeklySummary(timetable) {
+      var counts = weeklySubjectCounts(timetable);
+      var keys = Object.keys(counts);
+      var chips = keys.length ? keys.map(function (k) {
+        return '<span class="inline-flex items-center rounded-full bg-secondary text-card-foreground px-3 py-1 text-xs mr-2 mb-2">' +
+          ParentUI.escapeHtml(k) + ' × ' + counts[k] + '</span>';
+      }).join('') : '<span class="text-sm text-muted-foreground">ไม่มีข้อมูล</span>';
+
+      return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mt-4">' +
+        '<h3 class="font-semibold text-card-foreground mb-3">จำนวนคาบต่อวิชาในสัปดาห์นี้</h3>' +
+        '<div class="flex flex-wrap">' + chips + '</div></div>';
+    }
+
+    function renderClassTab(container, child) {
+      var periods = ParentStore.get('parent_periods');
+      var timetables = ParentStore.get('parent_timetables');
+      var timetable = timetables[child.id] || {};
+
+      if (mobileDay === null) mobileDay = todayDayKey() || 'mon';
+
+      container.innerHTML =
+        '<div class="hidden md:block overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4">' +
+        buildDesktopTable(periods, timetable) + '</div>' +
+        '<div class="md:hidden">' + buildMobileView(periods, timetable) + '</div>' +
+        buildWeeklySummary(timetable);
+
+      container.querySelectorAll('[data-day]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          mobileDay = btn.getAttribute('data-day');
+          renderClassTab(container, child);
+          lucide.createIcons();
+        });
+      });
+    }
+
+    /* -----------------------------------------------------------------
+     * แท็บ exam — ตารางสอบ
+     * --------------------------------------------------------------- */
+
+    function examLinkHtml() {
+      return '<a href="calendar.html" class="inline-flex items-center gap-1 text-primary text-sm font-medium hover:underline mt-2">' +
+        'ดูกำหนดการสอบทั้งหมดในปฏิทิน <i data-lucide="arrow-right" class="w-4 h-4"></i></a>';
+    }
+
+    function renderExamTab(container, exams) {
+      if (!exams || !exams.length) {
+        container.innerHTML =
+          '<div class="bg-card rounded-xl border border-border shadow-sm p-8 text-center text-muted-foreground">ยังไม่มีกำหนดการสอบ</div>' +
+          examLinkHtml();
+        return;
+      }
+
+      var byDate = {};
+      exams.forEach(function (e) {
+        (byDate[e.date] = byDate[e.date] || []).push(e);
+      });
+      var dates = Object.keys(byDate).sort();
+
+      var html = dates.map(function (date) {
+        var rows = byDate[date].map(function (e) {
+          return '<tr>' +
+            '<td class="p-2 border border-border text-sm">' + e.start + '-' + e.end + '</td>' +
+            '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(e.code) + ' ' + ParentUI.escapeHtml(e.subject) + '</td>' +
+            '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(e.room) + '</td>' +
+            '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(e.seat) + '</td>' +
+            '</tr>';
+        }).join('');
+
+        return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mb-4">' +
+          '<h3 class="font-semibold text-card-foreground mb-3">' + ParentUI.fmtDate(date, true) + '</h3>' +
+          '<div class="overflow-x-auto"><table class="min-w-full border-collapse text-left">' +
+          '<thead><tr>' +
+          '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">เวลา</th>' +
+          '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">วิชา</th>' +
+          '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">ห้องสอบ</th>' +
+          '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">เลขที่นั่ง</th>' +
+          '</tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+      }).join('');
+
+      container.innerHTML = html + examLinkHtml();
+    }
+
+    /* -----------------------------------------------------------------
+     * render หลัก
+     * --------------------------------------------------------------- */
+
+    function render() {
+      var tab = getTab();
+      renderTabBar(tab);
+      var child = ParentStore.getActiveChild();
+      var content = document.getElementById('tab-content');
+
+      if (tab === 'exam') {
+        var exams = (ParentStore.get('parent_exams') || {})[child.id] || [];
+        renderExamTab(content, exams);
+      } else {
+        renderClassTab(content, child);
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    document.getElementById('btn-print').addEventListener('click', function () { window.print(); });
+    window.addEventListener('hashchange', render);
+    render();
+  })();
+  </script>
+</body>
+</html>

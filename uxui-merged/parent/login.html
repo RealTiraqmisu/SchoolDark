@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบ | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-md w-full bg-card rounded-xl border border-border shadow-lg p-8">
+    <div class="flex flex-col items-center text-center mb-6">
+      <span class="w-14 h-14 rounded-xl bg-primary flex items-center justify-center mb-4">
+        <i data-lucide="graduation-cap" class="w-8 h-8 text-white"></i>
+      </span>
+      <div id="login-school-name" class="text-lg font-bold text-card-foreground"></div>
+      <div class="text-sm text-muted-foreground">พอร์ทัลผู้ปกครอง</div>
+    </div>
+
+    <form id="login-form" novalidate>
+      <div class="mb-4">
+        <label for="username" class="block text-sm font-medium text-card-foreground mb-1">เลขประจำตัวประชาชน หรือ เบอร์โทรศัพท์</label>
+        <input type="text" id="username" class="w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+      </div>
+      <div class="mb-4">
+        <label for="password" class="block text-sm font-medium text-card-foreground mb-1">รหัสผ่าน</label>
+        <div class="relative">
+          <input type="password" id="password" class="w-full rounded-lg border border-border px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+          <button type="button" id="toggle-password" class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-card-foreground" tabindex="-1">
+            <i data-lucide="eye" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 mb-4">
+        <input type="checkbox" id="remember" class="rounded border-border text-primary focus:ring-primary">
+        <label for="remember" class="text-sm text-muted-foreground">จดจำฉันไว้ในระบบ</label>
+      </div>
+
+      <div id="login-error" class="text-destructive text-sm mb-3 hidden"></div>
+
+      <button type="submit" class="w-full bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 font-medium">เข้าสู่ระบบ</button>
+
+      <div class="bg-info/10 text-info text-sm rounded-lg p-3 mt-4">
+        โปรโตไทป์: กรอกอะไรก็ได้เพื่อเข้าสู่ระบบ
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="../index.html" class="text-sm text-muted-foreground hover:text-primary">← กลับหน้ารวมระบบ</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+    (function () {
+      // ป้องกันคนที่ login แล้วเข้าหน้า login ซ้ำ
+      try {
+        if (window.ParentStore && ParentStore.getSession()) {
+          location.replace('index.html');
+          return;
+        }
+      } catch (e) {}
+
+      if (window.ParentUI) {
+        document.getElementById('login-school-name').textContent = ParentUI.schoolName();
+      }
+      if (window.lucide) lucide.createIcons();
+
+      var togglePwBtn = document.getElementById('toggle-password');
+      var pwInput = document.getElementById('password');
+      togglePwBtn.addEventListener('click', function () {
+        var isPw = pwInput.type === 'password';
+        pwInput.type = isPw ? 'text' : 'password';
+        togglePwBtn.innerHTML = isPw
+          ? '<i data-lucide="eye-off" class="w-4 h-4"></i>'
+          : '<i data-lucide="eye" class="w-4 h-4"></i>';
+        if (window.lucide) lucide.createIcons();
+      });
+
+      var form = document.getElementById('login-form');
+      var errorBox = document.getElementById('login-error');
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var username = document.getElementById('username').value.trim();
+        var password = pwInput.value.trim();
+
+        if (!username || !password) {
+          errorBox.textContent = 'กรุณากรอกเลขประจำตัวประชาชน/เบอร์โทรศัพท์ และรหัสผ่าน';
+          errorBox.classList.remove('hidden');
+          return;
+        }
+
+        errorBox.classList.add('hidden');
+        ParentStore.login(username);
+        location.href = 'index.html';
+      });
+    })();
+  </script>
+</body>
+</html>

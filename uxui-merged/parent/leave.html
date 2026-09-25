@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แจ้งลาเรียน | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <div class="bg-warning/10 border border-warning/30 text-warning-foreground rounded-lg p-3 text-sm flex gap-2 items-start mb-6">
+      <i data-lucide="info" class="w-4 h-4 mt-0.5 shrink-0"></i>
+      <span>คำขอจะส่งถึงครูประจำชั้นเพื่อพิจารณา (โปรโตไทป์: ยังไม่เชื่อมกับระบบการลาเรียนของโรงเรียน)</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div id="leave-form-wrap"></div>
+      <div id="leave-history-wrap"></div>
+    </div>
+  </main>
+
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+    (function () {
+      var esc = ParentUI.escapeHtml;
+      var children = ParentStore.getChildren();
+      var active = ParentStore.getActiveChild();
+      var selectedChildId = active ? active.id : (children[0] && children[0].id);
+      var selectedType = null;
+      var attachmentInfo = null;
+
+      function childById(id) {
+        return children.filter(function (c) { return c.id === id; })[0];
+      }
+
+      /* ============================== FORM ============================== */
+
+      function renderForm() {
+        selectedType = null;
+        attachmentInfo = null;
+        var today = ParentStore.today();
+        var parent = ParentStore.getParent();
+
+        var childOptionsHtml = children.map(function (c) {
+          return '<option value="' + esc(c.id) + '"' + (c.id === selectedChildId ? ' selected' : '') + '>' +
+            esc(c.nickname) + ' (' + esc(c.classroom) + ')</option>';
+        }).join('');
+
+        var typeCardsHtml = ParentStore.LEAVE_TYPES.map(function (t) {
+          var remaining = t.quota - ParentStore.leaveUsed(selectedChildId, t.name);
+          return '<label data-type-card="' + esc(t.name) + '" class="block border border-border rounded-lg p-3 cursor-pointer hover:border-primary/50">' +
+            '<input type="radio" name="leave-type" value="' + esc(t.name) + '" class="hidden">' +
+            '<div class="font-medium text-card-foreground text-sm">' + esc(t.name) + '</div>' +
+            '<div class="text-xs text-muted-foreground mt-0.5">' + esc(t.desc) + '</div>' +
+            '<div class="text-xs text-muted-foreground mt-1">คงเหลือ ' + remaining + ' / ' + t.quota + ' วัน</div>' +
+          '</label>';
+        }).join('');
+
+        var html =
+          '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
+            '<h2 class="font-bold text-card-foreground mb-4">แจ้งขอลาเรียน</h2>' +
+            '<form id="leave-form" novalidate>' +
+              '<div class="mb-4">' +
+                '<label class="block text-sm font-medium text-card-foreground mb-1">บุตร</label>' +
+                '<select id="lf-child" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' + childOptionsHtml + '</select>' +
+              '</div>' +
+
+              '<div class="mb-4">' +
+                '<label class="block text-sm font-medium text-card-foreground mb-1">ประเภทการลา</label>' +
+                '<div id="lf-type-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-2">' + typeCardsHtml + '</div>' +
+                '<div id="lf-type-error" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกประเภทการลา</div>' +
+              '</div>' +
+
+              '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-1">' +
+                '<div>' +
+                  '<label class="block text-sm font-medium text-card-foreground mb-1">วันเริ่ม</label>' +
+                  '<input type="date" id="lf-start" min="' + today + '" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' +
+                  '<div id="lf-start-error" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกวันเริ่ม</div>' +
+                '</div>' +
+                '<div>' +
+                  '<label class="block text-sm font-medium text-card-foreground mb-1">วันสิ้นสุด</label>' +
+                  '<input type="date" id="lf-end" min="' + today + '" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' +
+                  '<div id="lf-end-error" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกวันสิ้นสุด</div>' +
+                '</div>' +
+              '</div>' +
+              '<div id="lf-days-text" class="text-sm text-muted-foreground mb-4"></div>' +
+
+              '<div class="mb-4">' +
+                '<label class="block text-sm font-medium text-card-foreground mb-1">เหตุผล</label>' +
+                '<textarea id="lf-reason" required rows="3" class="w-full rounded-lg border border-border px-3 py-2 text-sm"></textarea>' +
+                '<div id="lf-reason-error" class="text-destructive text-xs mt-1 hidden">กรุณาระบุเหตุผลอย่างน้อย 5 ตัวอักษร</div>' +
+              '</div>' +
+
+              '<div class="mb-4">' +
+                '<label class="block text-sm font-medium text-card-foreground mb-1">แนบไฟล์</label>' +
+                '<input type="file" id="lf-file" class="w-full text-sm">' +
+                '<div id="lf-file-name" class="text-xs text-muted-foreground mt-1"></div>' +
+              '</div>' +
+
+              '<div class="mb-4">' +
+                '<label class="block text-sm font-medium text-card-foreground mb-1">เบอร์ติดต่อ</label>' +
+                '<input type="tel" id="lf-phone" value="' + esc(parent.phone) + '" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' +
+              '</div>' +
+
+              '<div id="lf-form-error" class="text-destructive text-sm mb-3 hidden"></div>' +
+
+              '<button type="submit" class="w-full bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 font-medium">ส่งคำขอลา</button>' +
+            '</form>' +
+          '</div>';
+
+        document.getElementById('leave-form-wrap').innerHTML = html;
+        if (window.lucide) lucide.createIcons();
+        bindFormEvents();
+      }
+
+      function updateDaysText() {
+        var start = document.getElementById('lf-start').value;
+        var end = document.getElementById('lf-end').value;
+        var box = document.getElementById('lf-days-text');
+        if (!start || !end) { box.textContent = ''; box.className = 'text-sm text-muted-foreground mb-4'; return; }
+        if (end < start) {
+          box.textContent = 'วันสิ้นสุดต้องไม่ก่อนวันเริ่ม';
+          box.className = 'text-sm text-destructive mb-4';
+          return;
+        }
+        var days = ParentStore.countSchoolDays(start, end);
+        box.textContent = 'รวม ' + days + ' วันทำการ';
+        box.className = 'text-sm text-muted-foreground mb-4';
+      }
+
+      function bindFormEvents() {
+        var childSelect = document.getElementById('lf-child');
+        childSelect.addEventListener('change', function () {
+          selectedChildId = childSelect.value;
+          renderForm();
+          renderHistory();
+        });
+
+        document.querySelectorAll('[data-type-card]').forEach(function (label) {
+          label.addEventListener('click', function () {
+            selectedType = label.getAttribute('data-type-card');
+            document.querySelectorAll('[data-type-card]').forEach(function (l) {
+              var isSel = l.getAttribute('data-type-card') === selectedType;
+              l.className = 'block border rounded-lg p-3 cursor-pointer hover:border-primary/50' +
+                (isSel ? ' border-primary ring-1 ring-primary' : ' border-border');
+              l.querySelector('input').checked = isSel;
+            });
+            document.getElementById('lf-type-error').classList.add('hidden');
+          });
+        });
+
+        var startInput = document.getElementById('lf-start');
+        var endInput = document.getElementById('lf-end');
+        startInput.addEventListener('change', function () {
+          endInput.min = startInput.value || ParentStore.today();
+          updateDaysText();
+        });
+        endInput.addEventListener('change', updateDaysText);
+
+        document.getElementById('lf-file').addEventListener('change', function (e) {
+          var f = e.target.files && e.target.files[0];
+          if (f) {
+            attachmentInfo = { name: f.name, size: (f.size / 1024).toFixed(0) + ' KB' };
+            document.getElementById('lf-file-name').textContent = 'ไฟล์ที่เลือก: ' + f.name;
+          } else {
+            attachmentInfo = null;
+            document.getElementById('lf-file-name').textContent = '';
+          }
+        });
+
+        document.getElementById('leave-form').addEventListener('submit', handleSubmit);
+      }
+
+      function handleSubmit(e) {
+        e.preventDefault();
+        var child = childById(selectedChildId);
+        var start = document.getElementById('lf-start').value;
+        var end = document.getElementById('lf-end').value;
+        var reason = document.getElementById('lf-reason').value.trim();
+        var phone = document.getElementById('lf-phone').value.trim();
+
+        var ok = true;
+
+        document.getElementById('lf-type-error').classList.toggle('hidden', !!selectedType);
+        if (!selectedType) ok = false;
+
+        document.getElementById('lf-start-error').classList.toggle('hidden', !!start);
+        if (!start) ok = false;
+
+        document.getElementById('lf-end-error').classList.toggle('hidden', !!end);
+        if (!end) ok = false;
+
+        document.getElementById('lf-reason-error').classList.toggle('hidden', reason.length >= 5);
+        if (reason.length < 5) ok = false;
+
+        var formError = document.getElementById('lf-form-error');
+        formError.classList.add('hidden');
+
+        if (!ok || !child) return;
+
+        if (end < start) {
+          document.getElementById('lf-days-text').textContent = 'วันสิ้นสุดต้องไม่ก่อนวันเริ่ม';
+          document.getElementById('lf-days-text').className = 'text-sm text-destructive mb-4';
+          return;
+        }
+
+        var days = ParentStore.countSchoolDays(start, end);
+        var typeInfo = ParentStore.LEAVE_TYPES.filter(function (t) { return t.name === selectedType; })[0];
+        var remaining = typeInfo.quota - ParentStore.leaveUsed(selectedChildId, selectedType);
+
+        if (days <= 0 || days > remaining) {
+          formError.textContent = 'จำนวนวันลาเกินโควตาคงเหลือ';
+          formError.classList.remove('hidden');
+          return;
+        }
+
+        ParentStore.addLeave({
+          childId: child.id,
+          studentId: child.studentId,
+          name: child.prefix + child.firstName + ' ' + child.lastName,
+          cls: child.classroom,
+          type: selectedType,
+          startDate: start,
+          endDate: end,
+          reason: reason,
+          attachment: attachmentInfo,
+          contactPhone: phone
+        });
+
+        ParentUI.toast('ส่งคำขอลาเรียนสำเร็จ', 'success');
+        renderForm();
+        renderHistory();
+      }
+
+      /* ============================== HISTORY ============================== */
+
+      function renderHistory() {
+        var list = ParentStore.get('parent_leave_requests')
+          .filter(function (r) { return r.childId === selectedChildId; })
+          .sort(function (a, b) { return a.submitDate < b.submitDate ? 1 : (a.submitDate > b.submitDate ? -1 : 0); });
+
+        var itemsHtml = '<p class="text-muted-foreground">ยังไม่มีประวัติคำขอลา</p>';
+
+        if (list.length) {
+          itemsHtml = list.map(function (r) {
+            var commentHtml = r.comment
+              ? '<div class="bg-muted text-sm rounded-lg p-2 mt-2">หมายเหตุจากโรงเรียน: ' + esc(r.comment) + '</div>'
+              : '';
+            var cancelBtnHtml = r.status === 'รอตรวจสอบ'
+              ? '<button type="button" data-cancel-id="' + esc(r.id) + '" class="mt-2 text-xs border border-destructive text-destructive rounded-lg px-3 py-1 hover:bg-destructive/10">ยกเลิกคำขอ</button>'
+              : '';
+            return '<div class="py-3 border-b border-border last:border-b-0">' +
+              '<div class="flex items-start justify-between gap-2">' +
+                '<div class="font-medium text-card-foreground text-sm">' + esc(r.type) + '</div>' +
+                ParentUI.statusBadge(r.status) +
+              '</div>' +
+              '<div class="text-sm text-muted-foreground mt-1">' + esc(ParentUI.fmtDate(r.startDate)) + ' – ' + esc(ParentUI.fmtDate(r.endDate)) + ' (' + r.days + ' วัน)</div>' +
+              '<div class="text-sm text-muted-foreground mt-1">' + esc(r.reason) + '</div>' +
+              commentHtml +
+              cancelBtnHtml +
+            '</div>';
+          }).join('');
+        }
+
+        document.getElementById('leave-history-wrap').innerHTML =
+          '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
+            '<h2 class="font-bold text-card-foreground mb-3">ประวัติคำขอลาเรียน</h2>' +
+            '<div>' + itemsHtml + '</div>' +
+          '</div>';
+
+        if (window.lucide) lucide.createIcons();
+
+        document.querySelectorAll('[data-cancel-id]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (!confirm('ยืนยันยกเลิกคำขอลานี้?')) return;
+            ParentStore.cancelLeave(btn.getAttribute('data-cancel-id'));
+            ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
+            renderHistory();
+          });
+        });
+      }
+
+      renderForm();
+      renderHistory();
+      if (window.lucide) lucide.createIcons();
+
+      /* ---------------- Deep-link: #history ---------------- */
+      if (location.hash === '#history') {
+        var historyCard = document.getElementById('leave-history-wrap').firstElementChild;
+        if (historyCard) {
+          historyCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          historyCard.classList.add('ring-2', 'ring-primary');
+          setTimeout(function () {
+            historyCard.classList.remove('ring-2', 'ring-primary');
+          }, 2000);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

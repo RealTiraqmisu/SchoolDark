@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ตั้งค่าบัญชี | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-3xl mx-auto px-4 py-6">
+    <h1 class="text-xl font-bold text-card-foreground mb-4">ตั้งค่าบัญชี</h1>
+    <div class="space-y-6">
+
+      <div class="bg-card rounded-xl border border-border shadow-sm p-5">
+        <h2 class="font-bold text-card-foreground mb-4">บัญชีผู้ใช้</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          <div>
+            <div class="text-muted-foreground">ชื่อผู้ใช้ (เบอร์โทรศัพท์)</div>
+            <div id="acc-username" class="text-card-foreground font-medium mt-0.5"></div>
+          </div>
+          <div>
+            <div class="text-muted-foreground">อีเมลกู้คืนบัญชี</div>
+            <div id="acc-email" class="text-card-foreground font-medium mt-0.5"></div>
+          </div>
+        </div>
+        <a href="profile.html" class="inline-block mt-4 text-sm text-primary hover:underline">แก้ไขข้อมูลส่วนตัว →</a>
+      </div>
+
+      <div class="bg-card rounded-xl border border-border shadow-sm p-5">
+        <h2 class="font-bold text-card-foreground mb-4">เปลี่ยนรหัสผ่าน</h2>
+        <form id="pwd-form">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-card-foreground mb-1">รหัสผ่านเดิม</label>
+            <input type="password" id="pw-old" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-card-foreground mb-1">รหัสผ่านใหม่</label>
+            <input type="password" id="pw-new" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+            <div id="pw-new-error" class="text-destructive text-xs mt-1 hidden">รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร</div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-card-foreground mb-1">ยืนยันรหัสผ่านใหม่</label>
+            <input type="password" id="pw-confirm" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+            <div id="pw-confirm-error" class="text-destructive text-xs mt-1 hidden">รหัสผ่านยืนยันไม่ตรงกัน</div>
+          </div>
+          <button type="submit" class="bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 font-medium">เปลี่ยนรหัสผ่าน</button>
+        </form>
+      </div>
+
+      <div class="bg-card rounded-xl border border-border shadow-sm p-5">
+        <h2 class="font-bold text-card-foreground mb-4">การแจ้งเตือน</h2>
+
+        <div class="text-sm font-medium text-card-foreground mb-2">ช่องทางการแจ้งเตือน</div>
+        <div class="space-y-3 mb-5">
+          <label class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">แจ้งเตือนผ่าน LINE</span>
+            <input type="checkbox" id="ntf-line" data-notify-key="line" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+          </label>
+          <label class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">แจ้งเตือนผ่าน SMS</span>
+            <input type="checkbox" id="ntf-sms" data-notify-key="sms" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+          </label>
+          <label class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">แจ้งเตือนผ่านอีเมล</span>
+            <input type="checkbox" id="ntf-email" data-notify-key="email" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+          </label>
+        </div>
+
+        <div class="h-px bg-border my-4"></div>
+
+        <div class="text-sm font-medium text-card-foreground mb-2">ประเภทการแจ้งเตือน</div>
+        <div class="space-y-3">
+          <label class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">ประกาศจากโรงเรียน</span>
+            <input type="checkbox" id="ntf-announcements" data-notify-key="announcements" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+          </label>
+          <label class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">ผลคำขอลา</span>
+            <input type="checkbox" id="ntf-leaveResult" data-notify-key="leaveResult" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+          </label>
+          <label class="flex items-center justify-between">
+            <span class="text-sm text-card-foreground">การมาเรียน/ขาด/มาสาย</span>
+            <input type="checkbox" id="ntf-attendance" data-notify-key="attendance" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+          </label>
+        </div>
+      </div>
+
+      <div class="bg-card rounded-xl border border-border shadow-sm p-5">
+        <h2 class="font-bold text-card-foreground mb-4">อุปกรณ์ที่เข้าสู่ระบบ</h2>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border border-border rounded-lg p-3">
+            <div class="flex items-center gap-3">
+              <i data-lucide="smartphone" class="w-5 h-5 text-primary"></i>
+              <div>
+                <div class="text-sm font-medium text-card-foreground">อุปกรณ์นี้</div>
+                <div class="text-xs text-muted-foreground">เข้าสู่ระบบล่าสุด: วันนี้</div>
+              </div>
+            </div>
+            <span class="text-xs text-success bg-success/10 rounded-full px-2 py-1">ใช้งานอยู่</span>
+          </div>
+          <div class="flex items-center justify-between border border-border rounded-lg p-3">
+            <div class="flex items-center gap-3">
+              <i data-lucide="laptop" class="w-5 h-5 text-muted-foreground"></i>
+              <div>
+                <div class="text-sm font-medium text-card-foreground">คอมพิวเตอร์ที่บ้าน</div>
+                <div class="text-xs text-muted-foreground">เข้าสู่ระบบล่าสุด: 3 วันที่แล้ว</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="btn-logout-all" class="mt-4 text-sm border border-destructive text-destructive rounded-lg px-3 py-2 hover:bg-destructive/10">ออกจากระบบทุกอุปกรณ์</button>
+      </div>
+
+      <div class="bg-card rounded-xl border border-border shadow-sm p-5">
+        <h2 class="font-bold text-card-foreground mb-2">ข้อมูลโปรโตไทป์</h2>
+        <p class="text-sm text-muted-foreground mb-4">รีเซ็ตข้อมูลตัวอย่างทั้งหมดในพอร์ทัลนี้กลับไปเป็นค่าเริ่มต้น (ใช้สำหรับทดสอบเท่านั้น)</p>
+        <button type="button" id="btn-reset-data" class="text-sm border border-destructive text-destructive rounded-lg px-3 py-2 hover:bg-destructive/10">รีเซ็ตข้อมูลตัวอย่าง</button>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+    (function () {
+      var esc = ParentUI.escapeHtml;
+      var parent = ParentStore.getParent();
+
+      /* ---------------- บัญชีผู้ใช้ ---------------- */
+      document.getElementById('acc-username').textContent = parent.phone || '—';
+      document.getElementById('acc-email').textContent = parent.email || '—';
+
+      /* ---------------- เปลี่ยนรหัสผ่าน (จำลอง) ---------------- */
+      document.getElementById('pwd-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var newPw = document.getElementById('pw-new').value;
+        var confirmPw = document.getElementById('pw-confirm').value;
+        var newErr = document.getElementById('pw-new-error');
+        var confirmErr = document.getElementById('pw-confirm-error');
+
+        var ok = true;
+        if (newPw.length < 8) { newErr.classList.remove('hidden'); ok = false; } else { newErr.classList.add('hidden'); }
+        if (confirmPw !== newPw || !confirmPw) { confirmErr.classList.remove('hidden'); ok = false; } else { confirmErr.classList.add('hidden'); }
+
+        if (!ok) return;
+
+        ParentUI.toast('เปลี่ยนรหัสผ่านแล้ว (จำลอง)', 'success');
+        document.getElementById('pwd-form').reset();
+      });
+
+      /* ---------------- การแจ้งเตือน ---------------- */
+      (function initNotify() {
+        var notify = parent.notify || {};
+        document.querySelectorAll('[data-notify-key]').forEach(function (input) {
+          var key = input.getAttribute('data-notify-key');
+          input.checked = !!notify[key];
+          input.addEventListener('change', function () {
+            var patch = { notify: {} };
+            patch.notify[key] = input.checked;
+            ParentStore.saveParent(patch);
+            ParentUI.toast('อัปเดตการแจ้งเตือนแล้ว', 'success');
+          });
+        });
+      })();
+
+      /* ---------------- อุปกรณ์ ---------------- */
+      document.getElementById('btn-logout-all').addEventListener('click', function () {
+        if (!confirm('ยืนยันออกจากระบบทุกอุปกรณ์?')) return;
+        ParentStore.logout();
+        location.href = 'login.html';
+      });
+
+      /* ---------------- รีเซ็ตข้อมูลตัวอย่าง ---------------- */
+      document.getElementById('btn-reset-data').addEventListener('click', function () {
+        if (!confirm('ยืนยันรีเซ็ตข้อมูลตัวอย่างทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้')) return;
+        ParentStore.resetAll();
+        location.href = 'login.html';
+      });
+
+      if (window.lucide) lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

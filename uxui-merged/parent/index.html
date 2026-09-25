@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>หน้าหลัก | พอร์ทัลผู้ปกครอง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <div id="dash-header" class="mb-6"></div>
+    <div id="dash-child" class="mb-6"></div>
+    <div id="dash-services" class="mb-6"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div id="dash-announcements"></div>
+      <div class="flex flex-col gap-6">
+        <div id="dash-events"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../settings/js/school-store.js"></script>
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+    (function () {
+      var esc = ParentUI.escapeHtml;
+
+      var parent = ParentStore.getParent();
+      var child = ParentStore.getActiveChild();
+      var today = ParentStore.today();
+
+      /* ---------------- 1. Header ---------------- */
+      document.getElementById('dash-header').innerHTML =
+        '<h1 class="text-2xl font-bold text-card-foreground">สวัสดี คุณ' + esc(parent.firstName) + '</h1>' +
+        '<p class="text-muted-foreground mt-1">' + esc(ParentUI.fmtDateLong(today)) + '</p>';
+
+      /* ---------------- 2. การ์ดบุตรที่เลือก + สถิติย่อ ---------------- */
+      (function renderChildCard() {
+        if (!child) {
+          document.getElementById('dash-child').innerHTML =
+            '<div class="bg-card rounded-xl border border-border shadow-sm p-5 text-muted-foreground">ไม่พบข้อมูลบุตร</div>';
+          return;
+        }
+        var fullName = esc(child.prefix) + esc(child.firstName) + ' ' + esc(child.lastName);
+
+        // อัตรามาเรียน
+        var attRate = '—';
+        var attPct = 0;
+        var attAll = ParentStore.get('parent_attendance')[child.id] || [];
+        var attPast = attAll.filter(function (a) { return a.date <= today; });
+        if (attPast.length) {
+          var okCount = attPast.filter(function (a) { return a.status === 'present' || a.status === 'late'; }).length;
+          attPct = Math.round((okCount / attPast.length) * 100);
+          attRate = attPct + '%';
+        }
+        var attColor = attPct >= 90 ? 'text-success' : (attPct >= 80 ? 'text-warning' : 'text-destructive');
+
+        // วันลาที่ใช้ไป แยกตามประเภท สรุปบรรทัดเดียว
+        var leaveSummary = ParentStore.LEAVE_TYPES.map(function (t) {
+          var used = ParentStore.leaveUsed(child.id, t.name);
+          var shortName = t.name.replace(/^ลา/, '');
+          return esc(shortName) + ' ' + used + '/' + t.quota;
+        }).join(' · ');
+
+        document.getElementById('dash-child').innerHTML =
+          '<div class="relative group bg-card rounded-xl border border-border shadow-sm p-5 flex flex-col md:flex-row md:items-center gap-4 hover:border-primary hover:shadow-md transition">' +
+            '<div class="flex items-center gap-4 min-w-0">' +
+              '<span class="w-16 h-16 shrink-0 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-semibold group-hover:bg-primary/20 transition">' +
+                esc(ParentUI.initials(child.nickname)) +
+              '</span>' +
+              '<div class="min-w-0">' +
+                '<a href="student.html?id=' + esc(child.id) + '" class="text-lg font-bold text-card-foreground truncate group-hover:text-primary after:absolute after:inset-0 after:content-[\'\']">' + fullName + '</a>' +
+                '<div class="text-sm text-muted-foreground">ห้อง ' + esc(child.classroom) + ' · เลขที่ ' + esc(child.no) + ' · รหัสนักเรียน ' + esc(child.studentId) + '</div>' +
+                '<div class="text-sm text-muted-foreground flex items-center gap-1 mt-1">' +
+                  '<i data-lucide="user" class="w-4 h-4"></i>' +
+                  '<span>' + esc(child.homeroomTeacher) + '</span>' +
+                  '<a href="tel:' + esc(child.homeroomPhone) + '" class="relative z-10 text-primary hover:underline">' + esc(child.homeroomPhone) + '</a>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex gap-5 md:ml-auto md:border-l border-border md:pl-5 pt-4 md:pt-0 border-t md:border-t-0">' +
+              '<a href="reports.html#tab=attendance" class="relative z-10 rounded-lg p-2 -m-2 hover:bg-secondary transition">' +
+                '<div class="text-xs text-muted-foreground">มาเรียน</div>' +
+                '<div class="text-xl font-bold ' + attColor + '">' + esc(attRate) + '</div>' +
+              '</a>' +
+              '<a href="reports.html#tab=leave" class="relative z-10 rounded-lg p-2 -m-2 hover:bg-secondary transition">' +
+                '<div class="text-xs text-muted-foreground">วันลาที่ใช้</div>' +
+                '<div class="text-sm text-card-foreground mt-1">' + leaveSummary + '</div>' +
+              '</a>' +
+            '</div>' +
+          '</div>';
+      })();
+
+      /* ---------------- 3. กิจกรรมที่จะถึง ---------------- */
+      (function renderEvents() {
+        var dotColor = { term: 'bg-primary', event: 'bg-info', holiday: 'bg-destructive', exam: 'bg-warning' };
+        var itemsHtml = '<p class="text-muted-foreground">ไม่มีกิจกรรมที่จะถึง</p>';
+
+        if (window.SchoolStore) {
+          var cal = SchoolStore.get('school_calendar') || [];
+          var upcoming = cal.filter(function (e) {
+            var endD = e.endDate || e.date;
+            return endD >= today;
+          }).sort(function (a, b) { return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0); }).slice(0, 5);
+
+          if (upcoming.length) {
+            itemsHtml = upcoming.map(function (e) {
+              var dot = dotColor[e.type] || 'bg-muted-foreground';
+              return '<div class="flex items-center gap-3 py-2 border-b border-border last:border-b-0">' +
+                '<span class="w-2.5 h-2.5 rounded-full shrink-0 ' + dot + '"></span>' +
+                '<span class="text-sm text-muted-foreground w-24 shrink-0">' + esc(ParentUI.fmtDate(e.date)) + '</span>' +
+                '<span class="text-sm text-card-foreground">' + esc(e.title) + '</span>' +
+              '</div>';
+            }).join('');
+          }
+        }
+
+        document.getElementById('dash-events').innerHTML =
+          '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
+            '<h2 class="font-bold text-card-foreground mb-3">กิจกรรมที่จะถึง</h2>' +
+            '<div>' + itemsHtml + '</div>' +
+            '<a href="calendar.html" class="inline-block mt-3 text-sm text-primary hover:underline">ดูปฏิทินทั้งหมด →</a>' +
+          '</div>';
+      })();
+
+      /* ---------------- 4. เมนูลัด ---------------- */
+      (function renderServices() {
+        var services = [
+          { file: 'timetable.html', label: 'ตารางเรียน', icon: 'calendar-clock', desc: 'ตารางเรียนและตารางสอบของบุตร' }
+        ].concat((window.ParentUI && ParentUI.SERVICES) || []);
+        if (!services.length) return;
+
+        var itemsHtml = services.map(function (s) {
+          var href = s.file + (s.hash ? ('#' + s.hash) : '');
+          return '<a href="' + href + '" title="' + esc(s.desc || '') + '" class="inline-flex items-center gap-2 rounded-lg bg-secondary px-3 py-2 text-sm font-medium text-card-foreground hover:bg-primary/10 hover:text-primary transition">' +
+            '<i data-lucide="' + s.icon + '" class="w-4 h-4 text-primary"></i>' + esc(s.label) +
+          '</a>';
+        }).join('');
+
+        document.getElementById('dash-services').innerHTML =
+          '<div class="bg-card rounded-xl border border-border shadow-sm px-5 py-3 flex flex-wrap items-center gap-3">' +
+            '<span class="flex items-center gap-1.5 text-sm font-bold text-card-foreground mr-1">' +
+              '<i data-lucide="zap" class="w-4 h-4 text-primary"></i>เมนูลัด' +
+            '</span>' +
+            itemsHtml +
+          '</div>';
+      })();
+
+      /* ---------------- 5. ประกาศจากโรงเรียน ---------------- */
+      (function renderAnnouncements() {
+        var tagColor = { 'สำคัญ': 'bg-destructive/10 text-destructive', 'กิจกรรม': 'bg-info/10 text-info', 'ทั่วไป': 'bg-secondary text-secondary-foreground' };
+        var list = ParentStore.get('parent_announcements').slice().sort(function (a, b) {
+          return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0);
+        });
+        var latest = list.slice(0, 3);
+
+        var itemsHtml = latest.length
+          ? latest.map(function (a) {
+              var tagCls = tagColor[a.tag] || 'bg-secondary text-secondary-foreground';
+              return '<div class="py-3 border-b border-border last:border-b-0">' +
+                '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium mb-1 ' + tagCls + '">' + esc(a.tag) + '</span>' +
+                '<div class="font-bold text-card-foreground text-sm mt-1">' + esc(a.title) + '</div>' +
+                '<div class="text-sm text-muted-foreground line-clamp-2 mt-0.5">' + esc(a.body) + '</div>' +
+                '<div class="text-xs text-muted-foreground mt-1">' + esc(ParentUI.fmtDate(a.date)) + '</div>' +
+              '</div>';
+            }).join('')
+          : '<p class="text-muted-foreground">ไม่มีประกาศ</p>';
+
+        document.getElementById('dash-announcements').innerHTML =
+          '<div class="bg-card rounded-xl border border-border shadow-sm p-5 h-full">' +
+            '<div class="flex items-center justify-between mb-1">' +
+              '<h2 class="font-bold text-card-foreground">ประกาศจากโรงเรียน</h2>' +
+              '<a href="announcements.html" class="text-sm text-primary hover:underline shrink-0">ดูทั้งหมด →</a>' +
+            '</div>' +
+            '<div>' + itemsHtml + '</div>' +
+          '</div>';
+      })();
+
+      if (window.lucide) lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

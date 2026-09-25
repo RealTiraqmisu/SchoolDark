@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ประกาศจากโรงเรียน | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <a href="index.html" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-4">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> กลับหน้าหลัก
+    </a>
+    <h1 class="text-xl font-bold text-card-foreground mb-4">ประกาศจากโรงเรียน</h1>
+    <div id="tag-filter" class="flex gap-2 mb-4 flex-wrap"></div>
+    <div id="announcement-list" class="space-y-3"></div>
+  </main>
+
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+    (function () {
+      var esc = ParentUI.escapeHtml;
+      var tagColor = { 'สำคัญ': 'bg-destructive/10 text-destructive', 'กิจกรรม': 'bg-info/10 text-info', 'ทั่วไป': 'bg-secondary text-secondary-foreground' };
+      var allList = ParentStore.get('parent_announcements').slice().sort(function (a, b) {
+        return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0);
+      });
+      var tags = ['ทั้งหมด', 'สำคัญ', 'กิจกรรม', 'ทั่วไป'];
+      var activeTag = 'ทั้งหมด';
+
+      function renderFilter() {
+        document.getElementById('tag-filter').innerHTML = tags.map(function (t) {
+          var active = t === activeTag;
+          var cls = active ? 'bg-primary text-white' : 'bg-card border border-border text-card-foreground hover:bg-secondary';
+          return '<button type="button" data-tag="' + esc(t) + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' + esc(t) + '</button>';
+        }).join('');
+
+        document.querySelectorAll('[data-tag]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            activeTag = btn.getAttribute('data-tag');
+            renderFilter();
+            renderList();
+          });
+        });
+      }
+
+      function renderList() {
+        var list = activeTag === 'ทั้งหมด' ? allList : allList.filter(function (a) { return a.tag === activeTag; });
+
+        var html = list.length
+          ? list.map(function (a) {
+              var tagCls = tagColor[a.tag] || 'bg-secondary text-secondary-foreground';
+              return '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
+                '<div class="flex items-center justify-between gap-2">' +
+                  '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ' + tagCls + '">' + esc(a.tag) + '</span>' +
+                  '<span class="text-xs text-muted-foreground">' + esc(ParentUI.fmtDate(a.date)) + '</span>' +
+                '</div>' +
+                '<div class="font-bold text-card-foreground mt-2">' + esc(a.title) + '</div>' +
+                '<p class="text-sm text-muted-foreground mt-1">' + esc(a.body) + '</p>' +
+              '</div>';
+            }).join('')
+          : '<p class="text-muted-foreground">ไม่มีประกาศในหมวดนี้</p>';
+
+        document.getElementById('announcement-list').innerHTML = html;
+      }
+
+      renderFilter();
+      renderList();
+      if (window.lucide) lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

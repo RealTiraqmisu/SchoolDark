@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายงาน | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @media print {
+      #parent-nav, .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="text-xl font-bold text-card-foreground mb-4">รายงาน</h1>
+    <div id="tab-bar" class="flex gap-2 mb-4"></div>
+    <div id="tab-content"></div>
+  </main>
+
+  <script src="../settings/js/school-store.js"></script>
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var COLOR_MAP = { danger: 'destructive', warning: 'warning', primary: 'primary' };
+
+    function getTab() {
+      var h = location.hash.replace('#', '');
+      var m = /tab=([a-z]+)/.exec(h);
+      return (m && m[1]) || 'attendance';
+    }
+
+    function renderTabBar(tab) {
+      var bar = document.getElementById('tab-bar');
+      var tabs = [
+        { id: 'attendance', label: 'การมาเรียน' },
+        { id: 'leave', label: 'การลา' },
+        { id: 'grades', label: 'ผลการเรียน' },
+        { id: 'behavior', label: 'ความประพฤติ' }
+      ];
+      bar.innerHTML = tabs.map(function (t) {
+        var active = t.id === tab;
+        var cls = active ? 'bg-primary text-white' : 'text-card-foreground hover:bg-secondary';
+        return '<button type="button" data-tab="' + t.id + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' +
+          ParentUI.escapeHtml(t.label) + '</button>';
+      }).join('');
+      bar.querySelectorAll('[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          location.hash = 'tab=' + btn.getAttribute('data-tab');
+        });
+      });
+    }
+
+    /* ===================================================================
+     * แท็บ grades — ผลการเรียน
+     * =================================================================== */
+
+    function formatGrade(point) {
+      return (point % 1 === 0) ? String(point) : point.toFixed(1);
+    }
+
+    function buildGradesTable(record) {
+      var rows = record.subjects.map(function (s) {
+        var point = ParentStore.gradePoint(s.score);
+        var gradeCls = point === 0 ? 'text-destructive font-bold' : 'text-card-foreground';
+        return '<tr>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(s.code) + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(s.name) + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + s.credit + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + s.score + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center ' + gradeCls + '">' + formatGrade(point) + '</td>' +
+          '</tr>';
+      }).join('');
+
+      var totalCredit = record.subjects.reduce(function (sum, s) { return sum + s.credit; }, 0);
+      var termGpa = ParentStore.gpa(record.subjects);
+
+      return '<div class="overflow-x-auto">' +
+        '<table class="min-w-full border-collapse text-left">' +
+        '<thead><tr>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">รหัสวิชา</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">ชื่อวิชา</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground text-center">หน่วยกิต</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground text-center">คะแนน</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground text-center">เกรด</th>' +
+        '</tr></thead>' +
+        '<tbody>' + rows +
+        '<tr class="bg-secondary font-bold">' +
+        '<td class="p-2 border border-border text-sm" colspan="2">รวม</td>' +
+        '<td class="p-2 border border-border text-sm text-center">' + totalCredit + '</td>' +
+        '<td class="p-2 border border-border text-sm" colspan="2">GPA เทอมนี้: ' + termGpa + '</td>' +
+        '</tr>' +
+        '</tbody></table></div>';
+    }
+
+    function renderGradesTab(container, child) {
+      var records = (ParentStore.get('parent_grades') || {})[child.id] || [];
+
+      if (!records.length) {
+        container.innerHTML = '<div class="bg-card rounded-xl border border-border shadow-sm p-8 text-center text-muted-foreground">ยังไม่มีข้อมูลผลการเรียน</div>';
+        return;
+      }
+
+      var allSubjects = [];
+      records.forEach(function (r) { allSubjects = allSubjects.concat(r.subjects); });
+      var gpax = ParentStore.gpa(allSubjects);
+
+      var options = records.map(function (r, i) {
+        return '<option value="' + i + '">ปีการศึกษา ' + ParentUI.escapeHtml(r.year) + ' เทอม ' + r.term + '</option>';
+      }).join('');
+
+      container.innerHTML =
+        '<div class="flex flex-col md:flex-row gap-4">' +
+        '<div class="flex-1 bg-card rounded-xl border border-border shadow-sm p-5">' +
+        '<div class="flex items-center justify-between mb-4 gap-3">' +
+        '<select id="grade-select" class="border border-border rounded-lg px-3 py-1.5 text-sm bg-card">' + options + '</select>' +
+        '<button type="button" id="btn-print" class="no-print border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">' +
+        '<i data-lucide="printer" class="w-4 h-4"></i><span>พิมพ์</span></button>' +
+        '</div>' +
+        '<div id="grade-table"></div>' +
+        '</div>' +
+        '<div class="md:w-56 shrink-0 bg-card rounded-xl border border-border shadow-sm p-5 text-center">' +
+        '<div class="text-sm text-muted-foreground mb-1">GPAX สะสม</div>' +
+        '<div class="text-4xl font-bold text-primary">' + gpax + '</div>' +
+        '</div>' +
+        '</div>';
+
+      var select = document.getElementById('grade-select');
+      var tableMount = document.getElementById('grade-table');
+
+      function renderSelected() {
+        var idx = parseInt(select.value, 10);
+        tableMount.innerHTML = buildGradesTable(records[idx]);
+      }
+
+      select.value = String(records.length - 1);
+      renderSelected();
+      select.addEventListener('change', renderSelected);
+
+      document.getElementById('btn-print').addEventListener('click', function () { window.print(); });
+    }
+
+    /* ===================================================================
+     * แท็บ attendance — การมาเรียน
+     * =================================================================== */
+
+    var ATT_STATUSES = ['present', 'late', 'absent', 'leave'];
+    var ATT_COLOR = { present: 'success', late: 'warning', absent: 'destructive', leave: 'info' };
+
+    function summarize(records) {
+      var counts = { present: 0, late: 0, absent: 0, leave: 0 };
+      records.forEach(function (r) { if (counts.hasOwnProperty(r.status)) counts[r.status]++; });
+      return counts;
+    }
+
+    function buildSummaryCards(records) {
+      var counts = summarize(records);
+      var total = records.length || 1;
+      return '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">' +
+        ATT_STATUSES.map(function (st) {
+          var c = counts[st];
+          var pct = ((c / total) * 100).toFixed(1);
+          var color = ATT_COLOR[st];
+          return '<div class="bg-card rounded-xl border border-border shadow-sm p-4">' +
+            '<div class="text-xs text-muted-foreground mb-1">' + ParentUI.escapeHtml(ParentStore.STATUS_LABEL[st]) + '</div>' +
+            '<div class="text-2xl font-bold text-' + color + '">' + c + '</div>' +
+            '<div class="text-xs text-muted-foreground">' + pct + '%</div>' +
+            '</div>';
+        }).join('') + '</div>';
+    }
+
+    function buildStackedBar(records) {
+      var counts = summarize(records);
+      var total = records.length || 1;
+      return '<div class="bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
+        '<div class="flex w-full h-4 rounded-full overflow-hidden bg-muted">' +
+        ATT_STATUSES.map(function (st) {
+          var pct = (counts[st] / total) * 100;
+          if (pct <= 0) return '';
+          return '<div class="bg-' + ATT_COLOR[st] + '" style="width:' + pct + '%"></div>';
+        }).join('') +
+        '</div>' +
+        '<div class="flex flex-wrap gap-3 mt-2">' +
+        ATT_STATUSES.map(function (st) {
+          return '<span class="flex items-center gap-1 text-xs text-muted-foreground">' +
+            '<span class="w-2.5 h-2.5 rounded-full bg-' + ATT_COLOR[st] + '"></span>' +
+            ParentUI.escapeHtml(ParentStore.STATUS_LABEL[st]) + '</span>';
+        }).join('') + '</div></div>';
+    }
+
+    function groupByMonth(records) {
+      var map = {};
+      records.forEach(function (r) {
+        var ym = r.date.substring(0, 7);
+        (map[ym] = map[ym] || []).push(r);
+      });
+      return map;
+    }
+
+    function buildMonthlyTable(records) {
+      var map = groupByMonth(records);
+      var months = Object.keys(map).sort();
+      var rows = months.map(function (ym) {
+        var recs = map[ym];
+        var counts = summarize(recs);
+        var total = recs.length || 1;
+        var pct = ((counts.present / total) * 100).toFixed(1);
+        return '<tr>' +
+          '<td class="p-2 border border-border text-sm">' + ym + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + counts.present + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + counts.late + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + counts.absent + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + counts.leave + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + pct + '%</td>' +
+          '</tr>';
+      }).join('');
+
+      return '<div class="overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
+        '<h3 class="font-semibold text-card-foreground mb-3">สรุปรายเดือน</h3>' +
+        '<table class="min-w-full border-collapse text-left">' +
+        '<thead><tr>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">เดือน</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">มาเรียน</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">มาสาย</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">ขาดเรียน</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">ลา</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">% มาเรียน</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+    }
+
+    function renderAttendanceTab(container, child) {
+      var records = (ParentStore.get('parent_attendance') || {})[child.id] || [];
+
+      if (!records.length) {
+        container.innerHTML = '<div class="bg-card rounded-xl border border-border shadow-sm p-8 text-center text-muted-foreground">ยังไม่มีข้อมูลการมาเรียน</div>';
+        return;
+      }
+
+      var map = groupByMonth(records);
+      var months = Object.keys(map).sort();
+      var latestMonth = months[months.length - 1];
+
+      var monthOptions = months.map(function (ym) {
+        return '<option value="' + ym + '">' + ym + '</option>';
+      }).join('');
+
+      container.innerHTML =
+        buildSummaryCards(records) +
+        buildStackedBar(records) +
+        buildMonthlyTable(records) +
+        '<div class="bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
+        '<div class="flex items-center justify-between mb-3 gap-3">' +
+        '<h3 class="font-semibold text-card-foreground">รายวันของเดือน</h3>' +
+        '<select id="att-month-select" class="border border-border rounded-lg px-3 py-1.5 text-sm bg-card">' + monthOptions + '</select>' +
+        '</div>' +
+        '<div id="att-daily-list"></div>' +
+        '</div>';
+
+      var select = document.getElementById('att-month-select');
+      var listMount = document.getElementById('att-daily-list');
+
+      function renderDaily() {
+        var ym = select.value;
+        var recs = (map[ym] || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+        listMount.innerHTML = recs.length
+          ? '<ul class="divide-y divide-border">' + recs.map(function (r) {
+              return '<li class="py-2 flex items-center justify-between gap-3">' +
+                '<span class="text-sm text-card-foreground">' + ParentUI.fmtDate(r.date, true) + '</span>' +
+                ParentUI.statusBadge(r.status) +
+                '<span class="text-sm text-muted-foreground w-16 text-right">' + (r.timeIn || '–') + '</span>' +
+                '</li>';
+            }).join('') + '</ul>'
+          : '<div class="text-sm text-muted-foreground">ไม่มีข้อมูล</div>';
+      }
+
+      select.value = latestMonth;
+      renderDaily();
+      select.addEventListener('change', renderDaily);
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ===================================================================
+     * แท็บ leave — การลา
+     * =================================================================== */
+
+    function buildQuotaCards(child) {
+      return '<div class="grid grid-cols-1 md:grid-cols-3 gap-3">' +
+        ParentStore.LEAVE_TYPES.map(function (t) {
+          var used = ParentStore.leaveUsed(child.id, t.name);
+          var pct = Math.min(100, (used / t.quota) * 100);
+          var color = COLOR_MAP[t.color] || 'primary';
+          return '<div class="bg-card rounded-xl border border-border shadow-sm p-4">' +
+            '<div class="text-sm font-semibold text-card-foreground mb-1">' + ParentUI.escapeHtml(t.name) + '</div>' +
+            '<div class="text-xs text-muted-foreground mb-2">ใช้ไป ' + used + ' / ' + t.quota + ' วัน</div>' +
+            '<div class="w-full h-2 rounded-full bg-muted overflow-hidden">' +
+            '<div class="h-full bg-' + color + '" style="width:' + pct + '%"></div>' +
+            '</div></div>';
+        }).join('') + '</div>';
+    }
+
+    function buildLeaveRequestsTable(child) {
+      var rows = (ParentStore.get('parent_leave_requests') || [])
+        .filter(function (r) { return r.childId === child.id; })
+        .sort(function (a, b) { return a.submitDate < b.submitDate ? 1 : (a.submitDate > b.submitDate ? -1 : 0); });
+
+      if (!rows.length) {
+        return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mt-3 text-center text-muted-foreground text-sm">ยังไม่มีคำขอลา</div>';
+      }
+
+      var shown = rows.slice(0, 4);
+
+      var body = shown.map(function (r) {
+        var actionCell = r.status === 'รอตรวจสอบ'
+          ? '<button type="button" data-cancel-id="' + ParentUI.escapeHtml(r.id) + '" class="text-xs border border-destructive text-destructive rounded-lg px-3 py-1 hover:bg-destructive/10">ยกเลิก</button>'
+          : '<span class="text-muted-foreground">–</span>';
+        return '<tr>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(r.type) + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.fmtDate(r.startDate) + ' – ' + ParentUI.fmtDate(r.endDate) + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + r.days + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.statusBadge(r.status) + '</td>' +
+          '<td class="p-2 border border-border text-sm truncate max-w-[200px]" title="' + ParentUI.escapeHtml(r.reason) + '">' + ParentUI.escapeHtml(r.reason) + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center">' + actionCell + '</td>' +
+          '</tr>';
+      }).join('');
+
+      return '<div class="overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
+        '<div class="flex items-center justify-between mb-3 gap-3">' +
+        '<h3 class="font-semibold text-card-foreground">คำขอลา</h3>' +
+        '<a href="leave.html#history" class="text-sm text-primary hover:underline shrink-0">ดูเพิ่มเติม →</a>' +
+        '</div>' +
+        '<table class="min-w-full border-collapse text-left">' +
+        '<thead><tr>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">ประเภท</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">ช่วงวันที่</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">จำนวนวัน</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">สถานะ</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">เหตุผล</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">จัดการ</th>' +
+        '</tr></thead><tbody>' + body + '</tbody></table>' +
+        (rows.length > 4 ? '<div class="text-xs text-muted-foreground mt-2">แสดง 4 จาก ' + rows.length + ' รายการ</div>' : '') +
+        '</div>';
+    }
+
+    function buildTicketsTable(child) {
+      var rows = (ParentStore.get('parent_tickets') || [])
+        .filter(function (t) { return t.childId === child.id; })
+        .sort(function (a, b) { return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+
+      if (!rows.length) {
+        return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mt-3 text-center text-muted-foreground text-sm">ยังไม่มีบัตรขออนุญาต</div>';
+      }
+
+      var body = rows.map(function (t) {
+        return '<tr>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(t.type) + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.fmtDate(t.date) + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(t.time) + '</td>' +
+          '<td class="p-2 border border-border text-sm truncate max-w-[200px]" title="' + ParentUI.escapeHtml(t.reason) + '">' + ParentUI.escapeHtml(t.reason) + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.statusBadge(t.status) + '</td>' +
+          '</tr>';
+      }).join('');
+
+      return '<div class="overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
+        '<h3 class="font-semibold text-card-foreground mb-3">บัตรขออนุญาต (มารับก่อนกำหนด ฯลฯ)</h3>' +
+        '<table class="min-w-full border-collapse text-left">' +
+        '<thead><tr>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">ประเภท</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">วันที่</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">ช่วงเวลา</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">เหตุผล</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">สถานะ</th>' +
+        '</tr></thead><tbody>' + body + '</tbody></table></div>';
+    }
+
+    function renderLeaveTab(container, child) {
+      container.innerHTML =
+        '<div class="flex items-center justify-between mb-3 gap-3">' +
+        '<h2 class="text-sm font-semibold text-card-foreground">โควตาการลา</h2>' +
+        '<a href="leave.html" class="bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 font-medium text-sm inline-flex items-center gap-2">' +
+        '<i data-lucide="file-pen-line" class="w-4 h-4"></i><span>แจ้งลาใหม่</span></a>' +
+        '</div>' +
+        buildQuotaCards(child) +
+        buildLeaveRequestsTable(child) +
+        buildTicketsTable(child);
+
+      container.querySelectorAll('[data-cancel-id]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!confirm('ยืนยันยกเลิกคำขอลานี้?')) return;
+          ParentStore.cancelLeave(btn.getAttribute('data-cancel-id'));
+          ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
+          renderLeaveTab(container, child);
+        });
+      });
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ===================================================================
+     * แท็บ behavior — ความประพฤติ
+     * =================================================================== */
+
+    function behaviorScoreColor(score) {
+      if (score >= 90) return 'success';
+      if (score >= 80) return 'warning';
+      return 'destructive';
+    }
+
+    function buildBehaviorTable(records) {
+      var sorted = records.slice().sort(function (a, b) { return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+      var rows = sorted.map(function (r) {
+        var positive = r.points > 0;
+        var pointsCls = positive ? 'text-success' : 'text-destructive';
+        var pointsText = (positive ? '+' : '') + r.points;
+        return '<tr>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.fmtDate(r.date, true) + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(r.category) + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(r.detail) + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(r.recordedBy) + '</td>' +
+          '<td class="p-2 border border-border text-sm text-center font-semibold ' + pointsCls + '">' + pointsText + '</td>' +
+          '</tr>';
+      }).join('');
+
+      return '<div class="overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
+        '<h3 class="font-semibold text-card-foreground mb-3">บันทึกพฤติกรรม</h3>' +
+        '<table class="min-w-full border-collapse text-left">' +
+        '<thead><tr>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">วันที่</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">หมวด</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">รายละเอียด</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium">ผู้บันทึก</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">คะแนน</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+    }
+
+    function renderBehaviorTab(container, child) {
+      var summary = ParentStore.behaviorSummary(child.id);
+      var color = behaviorScoreColor(summary.score);
+
+      var summaryCard = '<div class="bg-card rounded-xl border border-border shadow-sm p-4 flex flex-wrap items-center gap-6">' +
+        '<div>' +
+        '<div class="text-xs text-muted-foreground mb-1">คะแนนความประพฤติคงเหลือ</div>' +
+        '<div class="text-3xl font-bold text-' + color + '">' + summary.score +
+        '<span class="text-base font-normal text-muted-foreground"> / ' + ParentStore.BEHAVIOR_BASE + '</span></div>' +
+        '</div>' +
+        '<div class="text-sm text-muted-foreground">ถูกหัก <span class="text-destructive font-semibold">' + summary.deducted +
+        '</span> · ได้เพิ่ม <span class="text-success font-semibold">' + summary.added + '</span> คะแนน</div>' +
+        '</div>';
+
+      if (!summary.records.length) {
+        container.innerHTML = summaryCard +
+          '<div class="bg-card rounded-xl border border-border shadow-sm p-8 text-center text-muted-foreground mt-3">ยังไม่มีบันทึกพฤติกรรม</div>';
+        return;
+      }
+
+      container.innerHTML = summaryCard + buildBehaviorTable(summary.records);
+    }
+
+    /* ===================================================================
+     * render หลัก
+     * =================================================================== */
+
+    function render() {
+      var tab = getTab();
+      renderTabBar(tab);
+      var child = ParentStore.getActiveChild();
+      var content = document.getElementById('tab-content');
+
+      if (tab === 'attendance') renderAttendanceTab(content, child);
+      else if (tab === 'leave') renderLeaveTab(content, child);
+      else if (tab === 'behavior') renderBehaviorTab(content, child);
+      else renderGradesTab(content, child);
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.addEventListener('hashchange', render);
+    render();
+  })();
+  </script>
+</body>
+</html>
