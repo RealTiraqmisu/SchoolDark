@@ -14,13 +14,17 @@
 <body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
   <div id="parent-nav"></div>
   <main class="max-w-6xl mx-auto px-4 py-6">
-    <h1 class="text-xl font-bold text-card-foreground mb-4">ปฏิทิน</h1>
+    <div class="flex items-center justify-between gap-3 mb-4">
+      <h1 class="text-xl font-bold text-card-foreground">ปฏิทิน</h1>
+      <div id="cal-mode-toggle"></div>
+    </div>
     <div id="cal-root"></div>
   </main>
 
   <script src="../settings/js/school-store.js"></script>
   <script src="js/parent-store.js"></script>
   <script src="js/parent-nav.js"></script>
+  <script src="js/parent-export.js"></script>
   <script>
   (function () {
     'use strict';
@@ -38,9 +42,18 @@
       holiday: 'bg-destructive/10 text-destructive',
       exam: 'bg-warning/10 text-warning'
     };
+    // สีแถวในโหมดตารางกิจกรรม = สีอ่อนของจุดสีตามประเภทเดียวกับ TYPE_DOT (ไม่ใช่สีสุ่มตาม mockup)
+    var TYPE_ROW_BG = {
+      term: 'bg-primary/10',
+      event: 'bg-info/10',
+      holiday: 'bg-destructive/10',
+      exam: 'bg-warning/10'
+    };
 
     var filterState = { term: true, event: true, holiday: true, exam: true };
     var selectedDate = null;
+    // index ของปีการศึกษาที่กำลังดูในโหมดตาราง — ไม่ persist ผ่าน hash (คำนวณครั้งแรกจากวันที่ปัจจุบัน)
+    var tableYearIdx = null;
 
     /* -----------------------------------------------------------------
      * helpers
@@ -50,11 +63,14 @@
 
     function daysInMonth(y, m) { return new Date(y, m, 0).getDate(); }
 
-    function parseMonthHash() {
+    function parseHash() {
       var h = location.hash.replace('#', '');
-      var m = /m=(\d{4})-(\d{2})/.exec(h);
-      if (m) return { y: parseInt(m[1], 10), m: parseInt(m[2], 10) };
-      return null;
+      var mMatch = /m=(\d{4})-(\d{2})/.exec(h);
+      var vMatch = /view=(\w+)/.exec(h);
+      return {
+        ym: mMatch ? { y: parseInt(mMatch[1], 10), m: parseInt(mMatch[2], 10) } : null,
+        view: vMatch ? vMatch[1] : null
+      };
     }
 
     function currentYM() {
@@ -62,7 +78,9 @@
       return { y: parseInt(t.substring(0, 4), 10), m: parseInt(t.substring(5, 7), 10) };
     }
 
-    function getYM() { return parseMonthHash() || currentYM(); }
+    function getYM() { return parseHash().ym || currentYM(); }
+
+    function getView() { return parseHash().view === 'table' ? 'table' : 'calendar'; }
 
     function shiftYM(ym, delta) {
       var m = ym.m + delta, y = ym.y;
@@ -71,7 +89,14 @@
       return { y: y, m: m };
     }
 
-    function setYM(ym) { location.hash = 'm=' + ym.y + '-' + pad2(ym.m); }
+    function buildHash(ym, view) {
+      var h = 'm=' + ym.y + '-' + pad2(ym.m);
+      if (view === 'table') h += '&view=table';
+      return h;
+    }
+
+    function setYM(ym) { location.hash = buildHash(ym, getView()); }
+    function setView(v) { location.hash = buildHash(getYM(), v); }
 
     function monthBounds(ym) {
       return {
@@ -93,6 +118,45 @@
         var start = e.date, end = e.endDate || e.date;
         return start <= b.end && end >= b.start;
       }).sort(function (a, c) { return a.date < c.date ? -1 : (a.date > c.date ? 1 : 0); });
+    }
+
+    // ตารางสอบของบุตรที่กำลังเลือกดูอยู่ (parent_exams) — คนละแหล่งข้อมูลจาก school_calendar
+    function getActiveChildExams() {
+      try {
+        var child = ParentStore.getActiveChild();
+        var all = ParentStore.get('parent_exams') || {};
+        return (child && all[child.id]) || [];
+      } catch (e) { return []; }
+    }
+
+    function examsForDate(exams, dateStr) {
+      return exams.filter(function (e) { return e.date === dateStr; })
+        .sort(function (a, b) { return a.start < b.start ? -1 : (a.start > b.start ? 1 : 0); });
+    }
+
+    function examsInMonth(exams, ym) {
+      var prefix = ym.y + '-' + pad2(ym.m);
+      return exams.filter(function (e) { return e.date.substring(0, 7) === prefix; });
+    }
+
+    /* -----------------------------------------------------------------
+     * ปุ่มสลับโหมด ปฏิทิน / ตารางกิจกรรม
+     * --------------------------------------------------------------- */
+
+    function renderModeToggle(view) {
+      function btnCls(active) {
+        return 'px-3 py-1.5 text-sm flex items-center gap-1.5 ' +
+          (active ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground hover:bg-secondary');
+      }
+      var segmented = '<div class="inline-flex rounded-lg border border-border overflow-hidden shrink-0">' +
+        '<button type="button" data-view-btn="calendar" class="' + btnCls(view === 'calendar') + '">' +
+        '<i data-lucide="calendar-days" class="w-4 h-4"></i> <span class="hidden sm:inline">ปฏิทิน</span></button>' +
+        '<button type="button" data-view-btn="table" class="border-l border-border ' + btnCls(view === 'table') + '">' +
+        '<i data-lucide="table-2" class="w-4 h-4"></i> <span class="hidden sm:inline">ตารางกิจกรรม</span></button>' +
+        '</div>';
+      var exportBtn = '<button type="button" data-export-open class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-1.5 shrink-0">' +
+        '<i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden sm:inline">พิมพ์ / ดาวน์โหลด</span></button>';
+      return '<div class="flex items-center gap-2">' + exportBtn + segmented + '</div>';
     }
 
     /* -----------------------------------------------------------------
@@ -151,7 +215,7 @@
       return cells;
     }
 
-    function renderGrid(ym, events) {
+    function renderGrid(ym, events, exams) {
       var cells = buildCells(ym);
       var today = ParentStore.today();
 
@@ -163,30 +227,47 @@
         var dateStr = c.y + '-' + pad2(c.m) + '-' + pad2(c.d);
         var isToday = dateStr === today;
         var dayEvents = eventsForDate(events, dateStr);
-        var shown = dayEvents.slice(0, 2);
-        var extra = dayEvents.length - shown.length;
+        var dayExams = examsForDate(exams, dateStr);
 
-        var tagsHtml = shown.map(function (e) {
-          return '<div class="truncate rounded px-1 py-0.5 text-[10px] leading-tight mb-0.5 ' + TYPE_BADGE[e.type] + '">' + ParentUI.escapeHtml(e.title) + '</div>';
+        var items = dayEvents.map(function (e) { return { kind: 'event', data: e }; })
+          .concat(dayExams.map(function (e) { return { kind: 'exam', data: e }; }));
+        var shown = items.slice(0, 3);
+        var extra = items.length - shown.length;
+
+        var tagsHtml = shown.map(function (item) {
+          if (item.kind === 'event') {
+            var e = item.data;
+            return '<div class="truncate rounded px-1 py-0.5 text-[10px] leading-tight mb-0.5 ' + TYPE_BADGE[e.type] + '">' + ParentUI.escapeHtml(e.title) + '</div>';
+          }
+          var ex = item.data;
+          return '<div class="border-l-2 border-warning pl-1 mb-0.5 leading-tight">' +
+            '<div class="text-[10px] font-medium text-warning truncate">' + ParentUI.escapeHtml(ex.start + '–' + ex.end) + '</div>' +
+            '<div class="text-[10px] truncate text-card-foreground">' + ParentUI.escapeHtml(ex.subject) + '</div>' +
+            '</div>';
         }).join('');
         if (extra > 0) {
           tagsHtml += '<div class="text-[10px] text-muted-foreground">+' + extra + ' เพิ่มเติม</div>';
         }
 
-        var boxCls = 'w-full border border-border rounded-lg p-1.5 min-h-[72px] text-left align-top cursor-pointer hover:bg-secondary/60 transition-colors';
+        var boxCls = 'w-full border border-border rounded-lg p-1.5 min-h-[72px] flex flex-col items-stretch text-left cursor-pointer hover:bg-secondary/60 transition-colors';
         if (!c.inMonth) boxCls += ' bg-muted/60 text-muted-foreground';
         else boxCls += ' bg-card';
         if (isToday) boxCls += ' ring-2 ring-inset ring-primary bg-primary/5';
 
-        var numCls = 'text-xs font-medium mb-1 ' + (isToday ? 'text-primary font-bold' : (c.inMonth ? 'text-card-foreground' : 'text-muted-foreground'));
+        var dayNumHtml;
+        if (isToday) {
+          dayNumHtml = '<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-bold">' + c.d + '</span>';
+        } else {
+          dayNumHtml = '<span class="text-xs font-medium ' + (c.inMonth ? 'text-card-foreground' : 'text-muted-foreground') + '">' + c.d + '</span>';
+        }
 
         return '<button type="button" data-date="' + dateStr + '" class="' + boxCls + '">' +
-          '<div class="' + numCls + '">' + c.d + '</div>' +
+          '<div class="self-start mb-1">' + dayNumHtml + '</div>' +
           tagsHtml +
           '</button>';
       }).join('');
 
-      return '<div class="bg-card rounded-xl border border-border shadow-sm p-4">' +
+      return '<div data-export-source="grid" class="bg-card rounded-xl border border-border shadow-sm p-4">' +
         '<div class="grid grid-cols-7 gap-1 mb-1">' + headHtml + '</div>' +
         '<div class="grid grid-cols-7 gap-1">' + cellsHtml + '</div>' +
         '</div>';
@@ -196,13 +277,20 @@
      * รายละเอียดวันที่เลือก
      * --------------------------------------------------------------- */
 
-    function renderDayDetail(events) {
+    function renderDayDetail(events, exams) {
       if (!selectedDate) {
         return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mt-4 text-sm text-muted-foreground">' +
           'คลิกวันที่ในปฏิทินเพื่อดูรายละเอียดกิจกรรม</div>';
       }
       var dayEvents = eventsForDate(events, selectedDate);
-      var body = dayEvents.length
+      var dayExams = examsForDate(exams, selectedDate);
+      var childName = '';
+      try {
+        var child = ParentStore.getActiveChild();
+        childName = child ? (child.nickname || '') : '';
+      } catch (e) {}
+
+      var allDayBody = dayEvents.length
         ? '<ul class="space-y-2">' + dayEvents.map(function (e) {
             return '<li class="flex items-start gap-2">' +
               '<span class="mt-1 w-2 h-2 rounded-full shrink-0 ' + TYPE_DOT[e.type] + '"></span>' +
@@ -210,25 +298,44 @@
               '<span class="inline-block mt-0.5 rounded px-1.5 py-0.5 text-[10px] ' + TYPE_BADGE[e.type] + '">' + ParentUI.escapeHtml(TYPE_LABEL[e.type]) + '</span></div>' +
               '</li>';
           }).join('') + '</ul>'
-        : '<div class="text-sm text-muted-foreground">ไม่มีกิจกรรมในวันนี้</div>';
+        : '<div class="text-sm text-muted-foreground">ไม่มีกิจกรรมทั้งวัน</div>';
+
+      var examBody = dayExams.length
+        ? '<ul class="space-y-2">' + dayExams.map(function (ex) {
+            return '<li class="flex items-start gap-3">' +
+              '<span class="text-xs font-medium text-warning w-24 shrink-0">' + ParentUI.escapeHtml(ex.start + '–' + ex.end) + '</span>' +
+              '<div><div class="text-sm font-medium text-card-foreground">' + ParentUI.escapeHtml(ex.subject) + '</div>' +
+              '<div class="text-xs text-muted-foreground">' + ParentUI.escapeHtml(ex.code) + ' · ห้อง ' + ParentUI.escapeHtml(ex.room) + ' · ที่นั่ง ' + ParentUI.escapeHtml(ex.seat) + '</div></div>' +
+              '</li>';
+          }).join('') + '</ul>'
+        : '<div class="text-sm text-muted-foreground">ไม่มีสอบในวันนี้</div>';
 
       return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mt-4">' +
         '<h3 class="font-semibold text-card-foreground mb-3">รายการวันที่ ' + ParentUI.fmtDate(selectedDate, true) + '</h3>' +
-        body + '</div>';
+        '<div class="mb-4"><div class="text-xs font-semibold text-muted-foreground uppercase mb-2">ทั้งวัน</div>' + allDayBody + '</div>' +
+        '<div><div class="text-xs font-semibold text-muted-foreground uppercase mb-2">ตารางสอบ' + (childName ? 'ของ' + ParentUI.escapeHtml(childName) : '') + '</div>' + examBody + '</div>' +
+        '</div>';
     }
 
     /* -----------------------------------------------------------------
      * ลิสต์เดือนนี้ + การ์ดปีการศึกษา
      * --------------------------------------------------------------- */
 
-    function renderMonthList(ym, events) {
-      var list = eventsInMonth(events, ym);
-      var body = list.length
-        ? '<ul class="divide-y divide-border">' + list.map(function (e) {
+    function renderMonthList(ym, events, exams) {
+      var rows = eventsInMonth(events, ym).map(function (e) {
+        return { date: e.date, sortKey: e.date + ' 00:00', label: e.title, type: e.type, time: null };
+      }).concat(examsInMonth(exams, ym).map(function (ex) {
+        return { date: ex.date, sortKey: ex.date + ' ' + ex.start, label: 'สอบ ' + ex.subject, type: 'exam', time: ex.start + '–' + ex.end };
+      }));
+      rows.sort(function (a, b) { return a.sortKey < b.sortKey ? -1 : (a.sortKey > b.sortKey ? 1 : 0); });
+
+      var body = rows.length
+        ? '<ul class="divide-y divide-border">' + rows.map(function (r) {
             return '<li class="py-2 flex items-center gap-3">' +
-              '<span class="text-xs text-muted-foreground w-20 shrink-0">' + ParentUI.fmtDate(e.date) + '</span>' +
-              '<span class="text-sm text-card-foreground flex-1">' + ParentUI.escapeHtml(e.title) + '</span>' +
-              '<span class="rounded px-1.5 py-0.5 text-[10px] ' + TYPE_BADGE[e.type] + '">' + ParentUI.escapeHtml(TYPE_LABEL[e.type]) + '</span>' +
+              '<span class="text-xs text-muted-foreground w-20 shrink-0">' + ParentUI.fmtDate(r.date) + '</span>' +
+              (r.time ? '<span class="text-xs text-warning w-20 shrink-0">' + ParentUI.escapeHtml(r.time) + '</span>' : '') +
+              '<span class="text-sm text-card-foreground flex-1">' + ParentUI.escapeHtml(r.label) + '</span>' +
+              '<span class="rounded px-1.5 py-0.5 text-[10px] ' + TYPE_BADGE[r.type] + '">' + ParentUI.escapeHtml(TYPE_LABEL[r.type]) + '</span>' +
               '</li>';
           }).join('') + '</ul>'
         : '<div class="text-sm text-muted-foreground">ไม่มีกิจกรรมในเดือนนี้</div>';
@@ -251,6 +358,106 @@
     }
 
     /* -----------------------------------------------------------------
+     * โหมดตาราง — กิจกรรมการศึกษาประจำปี (แถว = กิจกรรม, คอลัมน์ = ภาคเรียน)
+     * --------------------------------------------------------------- */
+
+    function initialTableYearIdx(years) {
+      var today = ParentStore.today();
+      for (var i = 0; i < years.length; i++) {
+        if (today >= years[i].term1Start && today <= years[i].term2End) return i;
+      }
+      for (var j = 0; j < years.length; j++) {
+        if (years[j].isCurrent) return j;
+      }
+      return years.length ? years.length - 1 : 0;
+    }
+
+    function getTableYearIdx(years) {
+      if (tableYearIdx === null || tableYearIdx < 0 || tableYearIdx >= years.length) {
+        tableYearIdx = initialTableYearIdx(years);
+      }
+      return tableYearIdx;
+    }
+
+    // รวมกิจกรรมที่เป็นเรื่องเดียวกันข้ามภาคเรียน (เช่น "เปิดภาคเรียนที่ 1"/"เปิดภาคเรียนที่ 2")
+    // ให้อยู่แถวเดียวกัน โดยตัดเลขภาคเรียนออกจากชื่อ
+    function buildTableRows(year, events) {
+      var map = {};
+      var order = [];
+      events.forEach(function (e) {
+        if (e.date < year.term1Start || e.date > year.term2End) return;
+        var key = e.title.replace(/ภาคเรียนที่\s*\d+/g, 'ภาคเรียน').trim();
+        if (!map[key]) {
+          map[key] = { title: key, type: e.type, term1: [], term2: [] };
+          order.push(key);
+        }
+        var isTerm1 = e.date < year.term2Start;
+        (isTerm1 ? map[key].term1 : map[key].term2).push(e);
+      });
+      var rows = order.map(function (k) { return map[k]; });
+      rows.sort(function (a, b) {
+        function earliest(r) {
+          return r.term1.concat(r.term2).reduce(function (m, e) { return (!m || e.date < m) ? e.date : m; }, null);
+        }
+        var ea = earliest(a), eb = earliest(b);
+        return ea < eb ? -1 : (ea > eb ? 1 : 0);
+      });
+      return rows;
+    }
+
+    function tableCellHtml(list) {
+      if (!list.length) return '<span class="text-muted-foreground">–</span>';
+      return list.map(function (e) {
+        return e.endDate
+          ? ParentUI.fmtDate(e.date, true) + ' – ' + ParentUI.fmtDate(e.endDate, true)
+          : ParentUI.fmtDate(e.date, true);
+      }).join('<br>');
+    }
+
+    function renderTable(years, events) {
+      if (!years.length) {
+        return '<div class="bg-card rounded-xl border border-border shadow-sm p-10 text-center text-muted-foreground">ไม่พบข้อมูลปีการศึกษา</div>';
+      }
+      var idx = getTableYearIdx(years);
+      var year = years[idx];
+      var rows = buildTableRows(year, events);
+
+      var headerHtml = '<div class="flex items-center justify-between mb-4">' +
+        '<button type="button" data-year-prev' + (idx <= 0 ? ' disabled' : '') +
+        ' class="border border-border text-card-foreground hover:bg-secondary disabled:opacity-40 disabled:hover:bg-transparent rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">' +
+        '<i data-lucide="chevron-left" class="w-4 h-4"></i></button>' +
+        '<h2 class="text-lg font-semibold text-card-foreground">กิจกรรมการศึกษา ประจำปีการศึกษา ' + ParentUI.escapeHtml(year.year) + '</h2>' +
+        '<button type="button" data-year-next' + (idx >= years.length - 1 ? ' disabled' : '') +
+        ' class="border border-border text-card-foreground hover:bg-secondary disabled:opacity-40 disabled:hover:bg-transparent rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">' +
+        '<i data-lucide="chevron-right" class="w-4 h-4"></i></button>' +
+        '</div>';
+
+      var theadHtml = '<tr class="bg-secondary text-secondary-foreground">' +
+        '<th class="px-3 py-2 text-left font-semibold">กิจกรรม</th>' +
+        '<th class="px-3 py-2 text-left font-semibold">ภาคเรียนที่ 1 (' + ParentUI.fmtDate(year.term1Start) + ' – ' + ParentUI.fmtDate(year.term1End) + ')</th>' +
+        '<th class="px-3 py-2 text-left font-semibold">ภาคเรียนที่ 2 (' + ParentUI.fmtDate(year.term2Start) + ' – ' + ParentUI.fmtDate(year.term2End) + ')</th>' +
+        '</tr>';
+
+      var tbodyHtml = rows.length
+        ? rows.map(function (r) {
+            return '<tr class="' + (TYPE_ROW_BG[r.type] || '') + '">' +
+              '<td class="px-3 py-2 font-medium text-card-foreground">' +
+              '<span class="inline-flex items-center gap-2"><span class="w-2 h-2 rounded-full shrink-0 ' + TYPE_DOT[r.type] + '"></span>' + ParentUI.escapeHtml(r.title) + '</span></td>' +
+              '<td class="px-3 py-2 text-sm text-card-foreground">' + tableCellHtml(r.term1) + '</td>' +
+              '<td class="px-3 py-2 text-sm text-card-foreground">' + tableCellHtml(r.term2) + '</td>' +
+              '</tr>';
+          }).join('')
+        : '<tr><td colspan="3" class="px-3 py-6 text-center text-muted-foreground">ยังไม่มีกิจกรรมในปีการศึกษานี้</td></tr>';
+
+      return headerHtml +
+        '<div data-export-source="table" class="bg-card rounded-xl border border-border shadow-sm overflow-hidden">' +
+        '<div class="overflow-x-auto">' +
+        '<table class="w-full text-sm"><thead>' + theadHtml + '</thead>' +
+        '<tbody class="divide-y divide-border">' + tbodyHtml + '</tbody></table>' +
+        '</div></div>';
+    }
+
+    /* -----------------------------------------------------------------
      * render หลัก
      * --------------------------------------------------------------- */
 
@@ -262,25 +469,73 @@
         return;
       }
 
-      var ym = getYM();
+      var view = getView();
       var allEvents = window.SchoolStore.get('school_calendar') || [];
       var filtered = allEvents.filter(function (e) { return filterState[e.type] !== false; });
+      var legendHtml = renderLegend();
 
-      // ถ้าวันที่ที่เลือกไว้ไม่ได้อยู่ในเดือนที่กำลังดู ให้เคลียร์ selection
-      if (selectedDate && selectedDate.substring(0, 7) !== (ym.y + '-' + pad2(ym.m))) {
-        selectedDate = null;
+      var toggleMount = document.getElementById('cal-mode-toggle');
+      if (toggleMount) toggleMount.innerHTML = renderModeToggle(view);
+
+      if (view === 'table') {
+        var years = window.SchoolStore.get('school_academic_years') || [];
+        root.innerHTML = legendHtml + renderTable(years, filtered);
+        bindTableEvents(root, years);
+      } else {
+        var ym = getYM();
+        // ถ้าวันที่ที่เลือกไว้ไม่ได้อยู่ในเดือนที่กำลังดู ให้เคลียร์ selection
+        if (selectedDate && selectedDate.substring(0, 7) !== (ym.y + '-' + pad2(ym.m))) {
+          selectedDate = null;
+        }
+        var exams = filterState.exam ? getActiveChildExams() : [];
+
+        root.innerHTML =
+          renderHeader(ym) +
+          legendHtml +
+          renderGrid(ym, filtered, exams) +
+          renderDayDetail(filtered, exams) +
+          renderMonthList(ym, filtered, exams) +
+          renderAcademicYearCard();
+
+        bindEvents(root, ym);
       }
 
-      root.innerHTML =
-        renderHeader(ym) +
-        renderLegend() +
-        renderGrid(ym, filtered) +
-        renderDayDetail(filtered) +
-        renderMonthList(ym, filtered) +
-        renderAcademicYearCard();
-
-      bindEvents(root, ym);
+      bindModeToggleEvents(toggleMount);
       if (window.lucide) lucide.createIcons();
+    }
+
+    function bindModeToggleEvents(mount) {
+      if (!mount) return;
+      mount.querySelectorAll('[data-view-btn]').forEach(function (btn) {
+        btn.addEventListener('click', function () { setView(btn.getAttribute('data-view-btn')); });
+      });
+      var exportBtn = mount.querySelector('[data-export-open]');
+      if (exportBtn) exportBtn.addEventListener('click', openExport);
+    }
+
+    function openExport() {
+      if (getView() === 'table') {
+        var years = window.SchoolStore.get('school_academic_years') || [];
+        var year = years[getTableYearIdx(years)];
+        var tableSource = document.querySelector('[data-export-source="table"]');
+        if (!tableSource || !year) return;
+        window.ParentExport.open({
+          title: 'ตารางกิจกรรมการศึกษา ประจำปีการศึกษา ' + year.year,
+          filename: 'ปฏิทินกิจกรรม-' + year.year,
+          orientation: 'portrait',
+          node: tableSource
+        });
+      } else {
+        var ym = getYM();
+        var gridSource = document.querySelector('[data-export-source="grid"]');
+        if (!gridSource) return;
+        window.ParentExport.open({
+          title: 'ปฏิทิน ' + THAI_MONTHS_FULL[ym.m - 1] + ' ' + (ym.y + 543),
+          filename: 'ปฏิทิน-' + ym.y + '-' + pad2(ym.m),
+          orientation: 'landscape',
+          node: gridSource
+        });
+      }
     }
 
     function bindEvents(root, ym) {
@@ -307,8 +562,25 @@
       });
     }
 
+    function bindTableEvents(root, years) {
+      var prevBtn = root.querySelector('[data-year-prev]');
+      var nextBtn = root.querySelector('[data-year-next]');
+      if (prevBtn) prevBtn.addEventListener('click', function () {
+        if (getTableYearIdx(years) > 0) { tableYearIdx = getTableYearIdx(years) - 1; render(); }
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function () {
+        if (getTableYearIdx(years) < years.length - 1) { tableYearIdx = getTableYearIdx(years) + 1; render(); }
+      });
+      root.querySelectorAll('[data-filter]').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          filterState[cb.getAttribute('data-filter')] = cb.checked;
+          render();
+        });
+      });
+    }
+
     // ตั้ง hash เริ่มต้นถ้ายังไม่มี
-    if (!parseMonthHash()) {
+    if (!parseHash().ym) {
       setYM(currentYM());
     }
 

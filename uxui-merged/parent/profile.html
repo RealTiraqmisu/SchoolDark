@@ -16,61 +16,92 @@
   <main class="max-w-6xl mx-auto px-4 py-6">
     <div class="space-y-6">
       <div class="bg-card rounded-xl border border-border shadow-sm p-5">
-        <h2 class="font-bold text-card-foreground mb-4">ข้อมูลผู้ปกครอง</h2>
-        <form id="parent-form">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-card-foreground mb-1">คำนำหน้า</label>
-              <select id="pf-prefix" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-                <option value="นาย">นาย</option>
-                <option value="นาง">นาง</option>
-                <option value="นางสาว">นางสาว</option>
-              </select>
+        <div class="flex flex-col-reverse md:flex-row gap-6">
+
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-bold text-card-foreground">ข้อมูลผู้ปกครอง</h2>
+              <button type="button" id="btn-pf-edit" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-1.5">
+                <i data-lucide="pencil" class="w-4 h-4"></i> แก้ไข</button>
             </div>
-            <div></div>
-            <div>
-              <label class="block text-sm font-medium text-card-foreground mb-1">ชื่อ</label>
-              <input type="text" id="pf-firstName" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-card-foreground mb-1">นามสกุล</label>
-              <input type="text" id="pf-lastName" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-card-foreground mb-1">ความสัมพันธ์</label>
-              <select id="pf-relation" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-                <option value="บิดา">บิดา</option>
-                <option value="มารดา">มารดา</option>
-                <option value="ผู้ปกครอง">ผู้ปกครอง</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-card-foreground mb-1">เบอร์โทร</label>
-              <input type="tel" id="pf-phone" pattern="^0[0-9]{1,2}-?[0-9]{3,4}-?[0-9]{4}$" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-card-foreground mb-1">อีเมล</label>
-              <input type="email" id="pf-email" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-card-foreground mb-1">LINE ID</label>
-              <input type="text" id="pf-lineId" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-card-foreground mb-1">อาชีพ</label>
-              <input type="text" id="pf-occupation" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-            </div>
-            <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-card-foreground mb-1">ที่อยู่</label>
-              <textarea id="pf-address" rows="2" class="w-full rounded-lg border border-border px-3 py-2 text-sm"></textarea>
-            </div>
+
+            <div id="pf-view" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-sm"></div>
+
+            <form id="parent-form" class="hidden">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-card-foreground mb-1">คำนำหน้า</label>
+                  <select id="pf-prefix" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                    <option value="นาย">นาย</option>
+                    <option value="นาง">นาง</option>
+                    <option value="นางสาว">นางสาว</option>
+                  </select>
+                </div>
+                <div></div>
+                <div>
+                  <label class="block text-sm font-medium text-card-foreground mb-1">ชื่อ</label>
+                  <input type="text" id="pf-firstName" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-card-foreground mb-1">นามสกุล</label>
+                  <input type="text" id="pf-lastName" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-card-foreground mb-1">ความสัมพันธ์</label>
+                  <select id="pf-relation" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                    <option value="บิดา">บิดา</option>
+                    <option value="มารดา">มารดา</option>
+                    <option value="ผู้ปกครอง">ผู้ปกครอง</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-card-foreground mb-1">เบอร์โทร</label>
+                  <input type="tel" id="pf-phone" pattern="^0[0-9]{1,2}-?[0-9]{3,4}-?[0-9]{4}$" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-card-foreground mb-1">อีเมล</label>
+                  <input type="email" id="pf-email" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-card-foreground mb-1">LINE ID</label>
+                  <input type="text" id="pf-lineId" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-card-foreground mb-1">อาชีพ</label>
+                  <input type="text" id="pf-occupation" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium text-card-foreground mb-1">ที่อยู่</label>
+                  <textarea id="pf-address" rows="2" class="w-full rounded-lg border border-border px-3 py-2 text-sm"></textarea>
+                </div>
+              </div>
+              <div id="pf-error" class="text-destructive text-sm mt-3 hidden"></div>
+              <div class="mt-4 flex items-center justify-end gap-2">
+                <button type="button" id="btn-pf-cancel" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-4 py-2 font-medium">ยกเลิก</button>
+                <button type="submit" class="bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 font-medium">บันทึกการเปลี่ยนแปลง</button>
+              </div>
+            </form>
           </div>
-          <div id="pf-error" class="text-destructive text-sm mt-3 hidden"></div>
-          <div class="mt-4 flex items-center justify-between">
-            <a href="settings.html" class="text-sm text-primary hover:underline">เปลี่ยนรหัสผ่าน/การแจ้งเตือน → ตั้งค่าบัญชี</a>
-            <button type="submit" class="bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 font-medium">บันทึกการเปลี่ยนแปลง</button>
+
+          <div class="md:w-48 shrink-0">
+            <div class="text-xs font-semibold text-muted-foreground uppercase mb-2">รูปโปรไฟล์</div>
+            <div class="relative w-32 h-32 md:w-40 md:h-40 mx-auto md:mx-0">
+              <div id="pf-avatar" class="w-full h-full rounded-full overflow-hidden border border-border bg-primary/10 flex items-center justify-center text-2xl font-semibold text-primary"></div>
+              <div class="absolute bottom-1 left-1" data-dropdown="avatar">
+                <button type="button" data-dropdown-toggle="avatar" class="bg-card border border-border rounded-lg px-2 py-1 text-xs shadow-sm flex items-center gap-1 text-card-foreground hover:bg-secondary">
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i> แก้ไข</button>
+                <div data-dropdown-menu="avatar" class="hidden absolute left-0 mt-1 w-40 bg-card border border-border rounded-lg shadow-lg p-1 z-20">
+                  <button type="button" id="btn-avatar-upload" class="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary text-card-foreground text-left">
+                    <i data-lucide="upload" class="w-4 h-4"></i> อัปโหลดรูปใหม่…</button>
+                  <button type="button" id="btn-avatar-remove" class="hidden w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg hover:bg-destructive/10 text-destructive text-left">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> ลบรูป</button>
+                </div>
+              </div>
+            </div>
+            <input type="file" id="pf-avatar-input" accept="image/*" class="hidden">
           </div>
-        </form>
+
+        </div>
       </div>
 
       <div class="bg-card rounded-xl border border-border shadow-sm p-5">
@@ -87,7 +118,32 @@
     (function () {
       var esc = ParentUI.escapeHtml;
 
-      /* ---------------- การ์ด 1: ข้อมูลผู้ปกครอง ---------------- */
+      /* ---------------- การ์ด 1: ข้อมูลผู้ปกครอง — โหมดแสดง/แก้ไข ---------------- */
+      var pfView = document.getElementById('pf-view');
+      var pfForm = document.getElementById('parent-form');
+      var btnEdit = document.getElementById('btn-pf-edit');
+      var btnCancel = document.getElementById('btn-pf-cancel');
+
+      function fieldRow(label, value) {
+        return '<div class="text-muted-foreground">' + esc(label) + '</div>' +
+          '<div class="text-card-foreground font-medium">' + (value ? esc(value) : '<span class="text-muted-foreground">—</span>') + '</div>';
+      }
+
+      function renderParentView() {
+        var p = ParentStore.getParent();
+        var fullName = (p.prefix || '') + (p.firstName || '') + ' ' + (p.lastName || '');
+        pfView.innerHTML =
+          fieldRow('ชื่อ-นามสกุล', fullName.trim()) +
+          fieldRow('ความสัมพันธ์', p.relation) +
+          fieldRow('เบอร์โทร', p.phone) +
+          fieldRow('อีเมล', p.email) +
+          fieldRow('LINE ID', p.lineId) +
+          fieldRow('อาชีพ', p.occupation) +
+          '<div class="md:col-span-2 text-muted-foreground">ที่อยู่</div>' +
+          '<div class="md:col-span-2 text-card-foreground font-medium">' + (p.address ? esc(p.address) : '<span class="text-muted-foreground">—</span>') + '</div>';
+      }
+      renderParentView();
+
       function fillParentForm() {
         var p = ParentStore.getParent();
         document.getElementById('pf-prefix').value = p.prefix || 'นาย';
@@ -100,9 +156,26 @@
         document.getElementById('pf-occupation').value = p.occupation || '';
         document.getElementById('pf-address').value = p.address || '';
       }
-      fillParentForm();
 
-      document.getElementById('parent-form').addEventListener('submit', function (e) {
+      function enterEditMode() {
+        fillParentForm();
+        document.getElementById('pf-error').classList.add('hidden');
+        pfView.classList.add('hidden');
+        btnEdit.classList.add('hidden');
+        pfForm.classList.remove('hidden');
+        document.getElementById('pf-firstName').focus();
+      }
+
+      function exitEditMode() {
+        pfForm.classList.add('hidden');
+        pfView.classList.remove('hidden');
+        btnEdit.classList.remove('hidden');
+      }
+
+      btnEdit.addEventListener('click', enterEditMode);
+      btnCancel.addEventListener('click', exitEditMode);
+
+      pfForm.addEventListener('submit', function (e) {
         e.preventDefault();
         var firstName = document.getElementById('pf-firstName').value.trim();
         var lastName = document.getElementById('pf-lastName').value.trim();
@@ -127,6 +200,100 @@
           address: document.getElementById('pf-address').value.trim()
         });
         ParentUI.toast('บันทึกข้อมูลสำเร็จ', 'success');
+        renderParentView();
+        exitEditMode();
+      });
+
+      /* ---------------- รูปโปรไฟล์ ---------------- */
+      var avatarBox = document.getElementById('pf-avatar');
+      var avatarInput = document.getElementById('pf-avatar-input');
+      var btnAvatarUpload = document.getElementById('btn-avatar-upload');
+      var btnAvatarRemove = document.getElementById('btn-avatar-remove');
+      var avatarDropdownMenu = document.querySelector('[data-dropdown-menu="avatar"]');
+      var avatarDropdownToggle = document.querySelector('[data-dropdown-toggle="avatar"]');
+
+      function renderAvatar() {
+        var p = ParentStore.getParent();
+        if (p.avatar) {
+          avatarBox.innerHTML = '<img src="' + esc(p.avatar) + '" alt="" class="w-full h-full object-cover">';
+          btnAvatarRemove.classList.remove('hidden');
+        } else {
+          avatarBox.textContent = ParentUI.initials(p.firstName);
+          btnAvatarRemove.classList.add('hidden');
+        }
+      }
+      renderAvatar();
+
+      function refreshNavbarAvatar() {
+        var p = ParentStore.getParent();
+        document.querySelectorAll('[data-dropdown-toggle="user"]').forEach(function (btn) {
+          btn.innerHTML = p.avatar
+            ? '<img src="' + esc(p.avatar) + '" alt="" class="w-full h-full object-cover">'
+            : esc(ParentUI.initials(p.firstName));
+        });
+      }
+
+      avatarDropdownToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        avatarDropdownMenu.classList.toggle('hidden');
+      });
+      document.addEventListener('click', function () { avatarDropdownMenu.classList.add('hidden'); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') avatarDropdownMenu.classList.add('hidden'); });
+
+      btnAvatarUpload.addEventListener('click', function () {
+        avatarDropdownMenu.classList.add('hidden');
+        avatarInput.click();
+      });
+
+      btnAvatarRemove.addEventListener('click', function () {
+        avatarDropdownMenu.classList.add('hidden');
+        ParentStore.saveParent({ avatar: '' });
+        renderAvatar();
+        refreshNavbarAvatar();
+        ParentUI.toast('ลบรูปโปรไฟล์แล้ว', 'success');
+      });
+
+      avatarInput.addEventListener('change', function () {
+        var file = avatarInput.files && avatarInput.files[0];
+        avatarInput.value = '';
+        if (!file) return;
+
+        if (file.type.indexOf('image/') !== 0) {
+          ParentUI.toast('กรุณาเลือกไฟล์รูปภาพ', 'error');
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          ParentUI.toast('ไฟล์รูปภาพต้องมีขนาดไม่เกิน 5MB', 'error');
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            var size = Math.min(img.width, img.height);
+            var sx = (img.width - size) / 2;
+            var sy = (img.height - size) / 2;
+            var canvas = document.createElement('canvas');
+            canvas.width = 256;
+            canvas.height = 256;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, sx, sy, size, size, 0, 0, 256, 256);
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            try {
+              ParentStore.saveParent({ avatar: dataUrl });
+              renderAvatar();
+              refreshNavbarAvatar();
+              ParentUI.toast('อัปเดตรูปโปรไฟล์แล้ว', 'success');
+            } catch (err) {
+              ParentUI.toast('บันทึกรูปไม่สำเร็จ (พื้นที่จัดเก็บเต็ม)', 'error');
+            }
+          };
+          img.onerror = function () { ParentUI.toast('ไม่สามารถอ่านไฟล์รูปภาพนี้ได้', 'error'); };
+          img.src = e.target.result;
+        };
+        reader.onerror = function () { ParentUI.toast('ไม่สามารถอ่านไฟล์นี้ได้', 'error'); };
+        reader.readAsDataURL(file);
       });
 
       /* ---------------- การ์ด 2: ข้อมูลบุตร (อ่านอย่างเดียว) ---------------- */

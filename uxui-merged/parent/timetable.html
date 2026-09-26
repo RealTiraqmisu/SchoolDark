@@ -23,7 +23,7 @@
       <h1 class="text-xl font-bold text-card-foreground">ตารางเรียน</h1>
       <button type="button" id="btn-print" class="no-print border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">
         <i data-lucide="printer" class="w-4 h-4"></i>
-        <span>พิมพ์</span>
+        <span>พิมพ์ / ดาวน์โหลด</span>
       </button>
     </div>
 
@@ -34,6 +34,7 @@
   <script src="../settings/js/school-store.js"></script>
   <script src="js/parent-store.js"></script>
   <script src="js/parent-nav.js"></script>
+  <script src="js/parent-export.js"></script>
   <script>
   (function () {
     'use strict';
@@ -232,7 +233,7 @@
       if (mobileDay === null) mobileDay = todayDayKey() || 'mon';
 
       container.innerHTML =
-        '<div class="hidden md:block overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4">' +
+        '<div data-export-source="class" class="hidden md:block overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4">' +
         buildDesktopTable(periods, timetable) + '</div>' +
         '<div class="md:hidden">' + buildMobileView(periods, timetable) + '</div>' +
         buildWeeklySummary(timetable);
@@ -251,8 +252,38 @@
      * --------------------------------------------------------------- */
 
     function examLinkHtml() {
-      return '<a href="calendar.html" class="inline-flex items-center gap-1 text-primary text-sm font-medium hover:underline mt-2">' +
+      return '<a href="calendar.html" class="no-export inline-flex items-center gap-1 text-primary text-sm font-medium hover:underline mt-2">' +
         'ดูกำหนดการสอบทั้งหมดในปฏิทิน <i data-lucide="arrow-right" class="w-4 h-4"></i></a>';
+    }
+
+    // หาปีการศึกษาที่ครอบคลุมวันที่กำหนด — คืน { year, term } (term = 1|2) หรือ null ถ้าหาไม่เจอ
+    function findAcademicTerm(dateStr) {
+      try {
+        if (!window.SchoolStore) return null;
+        var years = window.SchoolStore.get('school_academic_years') || [];
+        for (var i = 0; i < years.length; i++) {
+          var y = years[i];
+          if (dateStr >= y.term1Start && dateStr <= y.term2End) {
+            return { year: y.year, term: (dateStr < y.term2Start ? 1 : 2) };
+          }
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    function examHeaderHtml(child, firstDate) {
+      var term = findAcademicTerm(firstDate);
+      var fullName = (child.prefix || '') + (child.firstName || '') + ' ' + (child.lastName || '');
+      var lines = [
+        '<div class="font-bold text-card-foreground">' + ParentUI.escapeHtml(ParentUI.schoolName()) + '</div>',
+        '<div class="text-sm text-card-foreground">ชั้น ' + ParentUI.escapeHtml(child.classroom) + '</div>'
+      ];
+      if (term) {
+        lines.push('<div class="text-sm text-card-foreground">ประจำภาคเรียนที่ ' + term.term + '&nbsp;&nbsp;&nbsp;ปีการศึกษา ' + ParentUI.escapeHtml(term.year) + '</div>');
+      }
+      lines.push('<div class="text-sm text-card-foreground">เลขประจำตัว ' + ParentUI.escapeHtml(child.studentId) + '&nbsp;&nbsp;&nbsp;ชื่อ ' + ParentUI.escapeHtml(fullName) + '</div>');
+
+      return '<div class="bg-secondary/60 px-5 py-4 text-center">' + lines.join('') + '</div>';
     }
 
     function renderExamTab(container, exams) {
@@ -263,34 +294,75 @@
         return;
       }
 
-      var byDate = {};
-      exams.forEach(function (e) {
-        (byDate[e.date] = byDate[e.date] || []).push(e);
-      });
-      var dates = Object.keys(byDate).sort();
+      var child = ParentStore.getActiveChild();
 
-      var html = dates.map(function (date) {
-        var rows = byDate[date].map(function (e) {
-          return '<tr>' +
-            '<td class="p-2 border border-border text-sm">' + e.start + '-' + e.end + '</td>' +
-            '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(e.code) + ' ' + ParentUI.escapeHtml(e.subject) + '</td>' +
-            '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(e.room) + '</td>' +
-            '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(e.seat) + '</td>' +
+      // จัดกลุ่มตามชุดสอบ (e.exam เช่น "สอบกลางภาคเรียนที่ 1") แต่ละกลุ่มเป็นการ์ดตารางเดียว
+      var byExam = {};
+      var examOrder = [];
+      exams.forEach(function (e) {
+        if (!byExam[e.exam]) { byExam[e.exam] = []; examOrder.push(e.exam); }
+        byExam[e.exam].push(e);
+      });
+      examOrder.sort(function (a, b) {
+        var da = byExam[a].reduce(function (m, e) { return (!m || e.date < m) ? e.date : m; }, null);
+        var db = byExam[b].reduce(function (m, e) { return (!m || e.date < m) ? e.date : m; }, null);
+        return da < db ? -1 : (da > db ? 1 : 0);
+      });
+
+      var cardsHtml = examOrder.map(function (examName) {
+        var rows = byExam[examName].slice().sort(function (a, b) {
+          if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+          return a.start < b.start ? -1 : (a.start > b.start ? 1 : 0);
+        });
+
+        // นับจำนวนวิชาต่อวัน เพื่อทำ rowspan ของคอลัมน์วันที่ + สลับสีพื้นตาม "วัน" ไม่ใช่ตามแถว
+        var dateOrder = [];
+        var countByDate = {};
+        rows.forEach(function (r) {
+          if (countByDate[r.date] === undefined) { countByDate[r.date] = 0; dateOrder.push(r.date); }
+          countByDate[r.date]++;
+        });
+        var dateIndex = {};
+        dateOrder.forEach(function (d, i) { dateIndex[d] = i; });
+
+        var seenDate = {};
+        var rowsHtml = rows.map(function (r) {
+          var isFirstOfDate = !seenDate[r.date];
+          seenDate[r.date] = true;
+          var rowBg = dateIndex[r.date] % 2 === 1 ? ' bg-secondary/40' : '';
+          var dateCell = isFirstOfDate
+            ? '<td rowspan="' + countByDate[r.date] + '" class="px-4 py-3 text-center border-t border-border align-middle">' + ParentUI.escapeHtml(ParentUI.fmtDate(r.date, true)) + '</td>'
+            : '';
+          return '<tr class="' + rowBg + '">' +
+            dateCell +
+            '<td class="px-4 py-3 text-center border-t border-border">' + ParentUI.escapeHtml(r.start + ' - ' + r.end) + '</td>' +
+            '<td class="px-4 py-3 text-center border-t border-border">' + ParentUI.escapeHtml(r.code) + '</td>' +
+            '<td class="px-4 py-3 text-center border-t border-border">' + ParentUI.escapeHtml(r.subject) + '</td>' +
+            '<td class="px-4 py-3 text-center border-t border-border">' + ParentUI.escapeHtml(r.room) + '</td>' +
+            '<td class="px-4 py-3 text-center border-t border-border">' + ParentUI.escapeHtml(r.seat) + '</td>' +
             '</tr>';
         }).join('');
 
-        return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mb-4">' +
-          '<h3 class="font-semibold text-card-foreground mb-3">' + ParentUI.fmtDate(date, true) + '</h3>' +
-          '<div class="overflow-x-auto"><table class="min-w-full border-collapse text-left">' +
-          '<thead><tr>' +
-          '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">เวลา</th>' +
-          '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">วิชา</th>' +
-          '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">ห้องสอบ</th>' +
-          '<th class="p-2 border border-border bg-secondary text-xs font-medium text-card-foreground">เลขที่นั่ง</th>' +
-          '</tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+        var firstDate = rows[0].date;
+
+        return '<div class="bg-card rounded-xl border border-border shadow-sm overflow-hidden mb-4">' +
+          examHeaderHtml(child, firstDate) +
+          '<div class="px-5 pt-3"><span class="font-semibold text-card-foreground">' + ParentUI.escapeHtml(examName) + '</span></div>' +
+          '<div class="overflow-x-auto px-5 pb-5 pt-2">' +
+          '<table class="w-full text-sm">' +
+          '<thead><tr class="text-xs text-muted-foreground">' +
+          '<th class="px-4 py-2 font-medium">วันสอบ</th>' +
+          '<th class="px-4 py-2 font-medium">เวลา</th>' +
+          '<th class="px-4 py-2 font-medium">รหัสวิชา</th>' +
+          '<th class="px-4 py-2 font-medium">ชื่อวิชา</th>' +
+          '<th class="px-4 py-2 font-medium">ห้องสอบ</th>' +
+          '<th class="px-4 py-2 font-medium">เลขที่นั่ง</th>' +
+          '</tr></thead>' +
+          '<tbody>' + rowsHtml + '</tbody>' +
+          '</table></div></div>';
       }).join('');
 
-      container.innerHTML = html + examLinkHtml();
+      container.innerHTML = cardsHtml + examLinkHtml();
     }
 
     /* -----------------------------------------------------------------
@@ -313,7 +385,33 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    document.getElementById('btn-print').addEventListener('click', function () { window.print(); });
+    function openExport() {
+      var tab = getTab();
+      var child = ParentStore.getActiveChild();
+      var fullName = (child.prefix || '') + (child.firstName || '') + ' ' + (child.lastName || '');
+
+      if (tab === 'exam') {
+        window.ParentExport.open({
+          title: 'ตารางสอบ',
+          subtitle: fullName + ' ชั้น ' + child.classroom,
+          filename: 'ตารางสอบ-' + child.studentId,
+          orientation: 'portrait',
+          node: document.getElementById('tab-content')
+        });
+      } else {
+        var source = document.querySelector('[data-export-source="class"]');
+        if (!source) return;
+        window.ParentExport.open({
+          title: 'ตารางเรียน',
+          subtitle: fullName + ' ชั้น ' + child.classroom,
+          filename: 'ตารางเรียน-' + child.studentId,
+          orientation: 'landscape',
+          node: source
+        });
+      }
+    }
+
+    document.getElementById('btn-print').addEventListener('click', openExport);
     window.addEventListener('hashchange', render);
     render();
   })();

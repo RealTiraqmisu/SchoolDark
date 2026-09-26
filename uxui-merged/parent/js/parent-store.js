@@ -9,6 +9,10 @@
  *
  *  parent_attendance เป็นข้อมูลที่ "คำนวณ" จาก genAttendance() แบบ deterministic
  *  (ไม่ใช่ literal seed ตายตัว) ดูรายละเอียดที่ genAttendance() ด้านล่าง
+ *
+ *  today() รองรับ override ผ่านคีย์ parent_demo_today (ตั้งค่าจาก demo panel ใน
+ *  parent-nav.js) — ถ้ามีค่านี้จะใช้แทนวันจริง/ค่าเริ่มต้นเสมอ ไม่รวมอยู่ใน ALL_KEYS
+ *  (ปุ่ม "รีเซ็ตข้อมูลตัวอย่าง" จึงไม่ล้างวันที่จำลองทิ้ง)
  * ====================================================================== */
 
 window.ParentStore = (function () {
@@ -349,6 +353,10 @@ window.ParentStore = (function () {
 
   function todayImpl() {
     try {
+      var demo = localStorage.getItem('parent_demo_today');
+      if (demo && /^\d{4}-\d{2}-\d{2}$/.test(demo)) return demo;
+    } catch (e) {}
+    try {
       var cur = findCurrentAcademicYear();
       if (cur) {
         var now = new Date();
@@ -503,6 +511,19 @@ window.ParentStore = (function () {
     },
 
     today: function () { return todayImpl(); },
+    realToday: function () {
+      var n = new Date();
+      return toDateStr(n.getFullYear(), n.getMonth() + 1, n.getDate());
+    },
+    getDemoToday: function () {
+      try { return localStorage.getItem('parent_demo_today'); } catch (e) { return null; }
+    },
+    setDemoToday: function (dateStr) {
+      try {
+        if (dateStr) localStorage.setItem('parent_demo_today', dateStr);
+        else localStorage.removeItem('parent_demo_today');
+      } catch (e) {}
+    },
 
     gradePoint: function (score) {
       if (score >= 80) return 4;

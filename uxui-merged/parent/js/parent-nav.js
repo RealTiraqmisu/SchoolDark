@@ -184,9 +184,12 @@
 
   function buildUserMenuHtml(parent) {
     var fullName = (parent.prefix || '') + (parent.firstName || '') + ' ' + (parent.lastName || '');
+    var avatarHtml = parent.avatar
+      ? '<img src="' + escapeHtml(parent.avatar) + '" alt="" class="w-full h-full object-cover">'
+      : escapeHtml(initials(parent.firstName));
     return '<div class="relative" data-dropdown="user">' +
-      '<button type="button" data-dropdown-toggle="user" class="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">' +
-      escapeHtml(initials(parent.firstName)) +
+      '<button type="button" data-dropdown-toggle="user" class="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold overflow-hidden">' +
+      avatarHtml +
       '</button>' +
       '<div data-dropdown-menu="user" class="hidden absolute right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg p-1 z-50">' +
       '<div class="px-3 py-2">' +
@@ -365,8 +368,122 @@
     });
   }
 
+  /* ---------------------------------------------------------------------
+   * Demo panel — เลือกวันที่จำลองสำหรับ demo/test (parent_demo_today)
+   * ไม่ใช้กับ login.html (ยังไม่มี session/ข้อมูลบุตรให้อ้างอิง)
+   * ------------------------------------------------------------------- */
+
+  var DEMO_SHORTCUTS = [
+    { label: 'วันเปิดเทอม 1', date: '2025-05-19' },
+    { label: 'สัปดาห์สอบกลางภาค', date: '2025-08-25' },
+    { label: 'วันเริ่มเทอม 2', date: '2025-11-03' }
+  ];
+
+  function demoPanelOpen() {
+    try { return sessionStorage.getItem('parent_demo_panel_open') === '1'; } catch (e) { return false; }
+  }
+
+  function setDemoPanelOpen(open) {
+    try { sessionStorage.setItem('parent_demo_panel_open', open ? '1' : '0'); } catch (e) {}
+  }
+
+  function renderDemoPanel() {
+    if (currentFile === 'login.html') return;
+    if (!window.ParentStore) return;
+    if (document.getElementById('demo-panel')) return;
+
+    var today = window.ParentStore.today();
+    var realToday = window.ParentStore.realToday();
+    var demoOverride = window.ParentStore.getDemoToday();
+    var isOverridden = !!demoOverride;
+    var open = demoPanelOpen();
+
+    var toneCls = isOverridden ? 'border-warning text-warning' : 'border-border text-card-foreground';
+    var sourceLabel = isOverridden
+      ? 'ตั้งเอง'
+      : (today === realToday ? 'วันจริง' : 'ค่าเริ่มต้น (วันจริงอยู่นอกปีการศึกษา)');
+
+    var shortcutsHtml = DEMO_SHORTCUTS.map(function (s) {
+      return '<button type="button" data-demo-set="' + s.date + '" class="rounded-lg bg-secondary hover:bg-secondary/70 text-secondary-foreground text-xs px-2 py-1.5 text-left">' +
+        escapeHtml(s.label) + '</button>';
+    }).join('') +
+      '<button type="button" data-demo-set="' + realToday + '" class="rounded-lg bg-secondary hover:bg-secondary/70 text-secondary-foreground text-xs px-2 py-1.5 text-left">' +
+      'วันจริง (' + escapeHtml(fmtDate(realToday)) + ')</button>';
+
+    var el = document.createElement('div');
+    el.id = 'demo-panel';
+    el.className = 'fixed bottom-4 left-4 z-40';
+    el.innerHTML =
+      '<button type="button" data-demo-toggle class="flex items-center gap-2 rounded-full bg-card border shadow-lg px-3 py-2 text-xs font-medium ' + toneCls + (open ? ' hidden' : '') + '">' +
+        '<i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>' +
+        '<span>Demo · ' + escapeHtml(fmtDate(today)) + '</span>' +
+      '</button>' +
+      '<div data-demo-card class="bg-card rounded-xl border border-border shadow-lg p-4 w-72' + (open ? '' : ' hidden') + '">' +
+        '<div class="flex items-center justify-between mb-2">' +
+          '<span class="text-sm font-semibold text-card-foreground">โหมดทดสอบ: วันที่จำลอง</span>' +
+          '<button type="button" data-demo-close class="text-muted-foreground hover:text-card-foreground"><i data-lucide="x" class="w-4 h-4"></i></button>' +
+        '</div>' +
+        '<div class="text-sm text-card-foreground">วันที่ที่ระบบใช้: ' + escapeHtml(fmtDate(today, true)) + '</div>' +
+        '<div class="text-xs text-muted-foreground mb-3">ที่มา: ' + escapeHtml(sourceLabel) + '</div>' +
+        '<div class="flex items-center gap-2 mb-3">' +
+          '<input type="date" data-demo-input value="' + escapeHtml(today) + '" class="flex-1 rounded-lg border border-border px-2 py-1.5 text-sm">' +
+          '<button type="button" data-demo-apply class="rounded-lg bg-primary text-primary-foreground text-sm px-3 py-1.5">ใช้วันนี้</button>' +
+        '</div>' +
+        '<div class="grid grid-cols-1 gap-1 mb-2">' + shortcutsHtml + '</div>' +
+        '<button type="button" data-demo-clear class="text-xs text-muted-foreground hover:text-card-foreground underline">ล้างค่า (กลับค่าเริ่มต้น)</button>' +
+      '</div>';
+
+    document.body.appendChild(el);
+    if (window.lucide) lucide.createIcons();
+    bindDemoPanelEvents(el);
+  }
+
+  function bindDemoPanelEvents(el) {
+    var toggleBtn = el.querySelector('[data-demo-toggle]');
+    var closeBtn = el.querySelector('[data-demo-close]');
+    var card = el.querySelector('[data-demo-card]');
+    var input = el.querySelector('[data-demo-input]');
+    var applyBtn = el.querySelector('[data-demo-apply]');
+    var clearBtn = el.querySelector('[data-demo-clear]');
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function () {
+        toggleBtn.classList.add('hidden');
+        card.classList.remove('hidden');
+        setDemoPanelOpen(true);
+      });
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        card.classList.add('hidden');
+        toggleBtn.classList.remove('hidden');
+        setDemoPanelOpen(false);
+      });
+    }
+    if (applyBtn && input) {
+      applyBtn.addEventListener('click', function () {
+        if (!input.value) return;
+        window.ParentStore.setDemoToday(input.value);
+        location.reload();
+      });
+    }
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        window.ParentStore.setDemoToday(null);
+        location.reload();
+      });
+    }
+    el.querySelectorAll('[data-demo-set]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        window.ParentStore.setDemoToday(btn.getAttribute('data-demo-set'));
+        location.reload();
+      });
+    });
+  }
+
   function init() {
     renderNavbar();
+    renderDemoPanel();
   }
 
   if (document.readyState === 'loading') {
