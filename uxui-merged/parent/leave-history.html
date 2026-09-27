@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ประวัติคำขอลาเรียน | พอร์ทัลผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
+  <div id="parent-nav"></div>
+  <main class="max-w-4xl mx-auto px-4 py-6">
+    <a href="leave.html" data-back class="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-3">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> ย้อนกลับ</a>
+    <h1 class="text-xl font-bold text-card-foreground mb-4">ประวัติคำขอลาเรียน</h1>
+
+    <div class="bg-card rounded-xl border border-border shadow-sm p-5 mb-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="lh-child" class="block text-sm font-medium text-card-foreground mb-1">บุตร</label>
+          <select id="lh-child" class="w-full rounded-lg border border-border px-3 py-2 text-sm"></select>
+        </div>
+        <div>
+          <label for="lh-status" class="block text-sm font-medium text-card-foreground mb-1">สถานะ</label>
+          <select id="lh-status" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+            <option value="">ทั้งหมด</option>
+            <option value="รอตรวจสอบ">รอตรวจสอบ</option>
+            <option value="อนุมัติ">อนุมัติ</option>
+            <option value="ไม่อนุมัติ">ไม่อนุมัติ</option>
+            <option value="ยกเลิก">ยกเลิก</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="lh-list-wrap"></div>
+  </main>
+
+  <script src="js/parent-store.js"></script>
+  <script src="js/parent-nav.js"></script>
+  <script>
+    (function () {
+      var esc = ParentUI.escapeHtml;
+      var children = ParentStore.getChildren();
+      var active = ParentStore.getActiveChild();
+      var selectedChildId = active ? active.id : (children[0] && children[0].id);
+      var selectedStatus = '';
+
+      function childById(id) {
+        return children.filter(function (c) { return c.id === id; })[0];
+      }
+
+      function getRequests() {
+        return ParentStore.get('parent_leave_requests')
+          .filter(function (r) { return r.childId === selectedChildId; })
+          .filter(function (r) { return !selectedStatus || r.status === selectedStatus; })
+          .sort(function (a, b) { return a.submitDate < b.submitDate ? 1 : (a.submitDate > b.submitDate ? -1 : 0); });
+      }
+
+      /* ---------------- ตัวกรอง: บุตร / สถานะ ---------------- */
+
+      function renderChildSelect() {
+        var select = document.getElementById('lh-child');
+        select.innerHTML = children.map(function (c) {
+          return '<option value="' + esc(c.id) + '"' + (c.id === selectedChildId ? ' selected' : '') + '>' +
+            esc(c.nickname) + ' (' + esc(c.classroom) + ')</option>';
+        }).join('');
+        select.addEventListener('change', function () {
+          selectedChildId = select.value;
+          renderList();
+        });
+      }
+
+      document.getElementById('lh-status').addEventListener('change', function (e) {
+        selectedStatus = e.target.value;
+        renderList();
+      });
+
+      /* ---------------- รายการ (ตาราง desktop / การ์ด mobile) ---------------- */
+
+      function renderList() {
+        var list = getRequests();
+        var wrap = document.getElementById('lh-list-wrap');
+
+        if (!list.length) {
+          wrap.innerHTML = '<div class="bg-card rounded-xl border border-border shadow-sm p-8 text-center text-muted-foreground">ไม่พบประวัติคำขอลา</div>';
+          return;
+        }
+
+        // แถว/การ์ด: ใช้ปุ่ม "เลขที่คำขอ" เป็น stretched button (after:absolute after:inset-0) แทนการดัก
+        // click ทั้ง <tr>/<div> — ปุ่มจริงกดด้วยคีย์บอร์ดได้ ต่างจาก <tr> ที่ไม่ใช่ interactive element
+        var rowsHtml = list.map(function (r) {
+          return '<tr class="relative hover:bg-secondary/60">' +
+            '<td class="px-4 py-3 border-t border-border">' +
+              '<button type="button" data-open-id="' + esc(r.id) + '" class="text-primary hover:underline font-medium after:absolute after:inset-0">' + esc(r.id) + '</button>' +
+            '</td>' +
+            '<td class="px-4 py-3 border-t border-border">' + esc(ParentUI.fmtDate(r.submitDate)) + '</td>' +
+            '<td class="px-4 py-3 border-t border-border">' + esc(r.type) + '</td>' +
+            '<td class="px-4 py-3 border-t border-border">' + esc(ParentUI.fmtDate(r.startDate)) + ' – ' + esc(ParentUI.fmtDate(r.endDate)) + '</td>' +
+            '<td class="px-4 py-3 border-t border-border text-center">' + r.days + '</td>' +
+            '<td class="px-4 py-3 border-t border-border">' + ParentUI.statusBadge(r.status) + '</td>' +
+          '</tr>';
+        }).join('');
+
+        var cardsHtml = list.map(function (r) {
+          return '<div class="relative border border-border rounded-lg p-3 hover:border-primary/50">' +
+            '<div class="flex items-start justify-between gap-2">' +
+              '<button type="button" data-open-id="' + esc(r.id) + '" class="font-medium text-card-foreground text-sm text-left after:absolute after:inset-0">' + esc(r.type) + '</button>' +
+              ParentUI.statusBadge(r.status) +
+            '</div>' +
+            '<div class="text-sm text-muted-foreground mt-1">' + esc(ParentUI.fmtDate(r.startDate)) + ' – ' + esc(ParentUI.fmtDate(r.endDate)) + ' (' + r.days + ' วัน)</div>' +
+            '<div class="text-xs text-muted-foreground mt-1">เลขที่คำขอ ' + esc(r.id) + ' · ยื่นเมื่อ ' + esc(ParentUI.fmtDate(r.submitDate)) + '</div>' +
+          '</div>';
+        }).join('');
+
+        wrap.innerHTML =
+          '<div class="hidden md:block bg-card rounded-xl border border-border shadow-sm overflow-hidden">' +
+            '<table class="w-full text-sm">' +
+              '<caption class="sr-only">ประวัติคำขอลาเรียน</caption>' +
+              '<thead><tr class="text-xs text-muted-foreground text-left">' +
+                '<th scope="col" class="px-4 py-2 font-medium">เลขที่คำขอ</th>' +
+                '<th scope="col" class="px-4 py-2 font-medium">วันที่ยื่น</th>' +
+                '<th scope="col" class="px-4 py-2 font-medium">ประเภท</th>' +
+                '<th scope="col" class="px-4 py-2 font-medium">ช่วงวันลา</th>' +
+                '<th scope="col" class="px-4 py-2 font-medium">จำนวนวัน</th>' +
+                '<th scope="col" class="px-4 py-2 font-medium">สถานะ</th>' +
+              '</tr></thead>' +
+              '<tbody>' + rowsHtml + '</tbody>' +
+            '</table>' +
+          '</div>' +
+          '<div class="md:hidden space-y-2">' + cardsHtml + '</div>';
+
+        wrap.querySelectorAll('button[data-open-id]').forEach(function (btn) {
+          btn.addEventListener('click', function () { openDetail(btn.getAttribute('data-open-id')); });
+        });
+
+        if (window.lucide) lucide.createIcons();
+      }
+
+      /* ---------------- Modal รายละเอียด ---------------- */
+
+      function detailRow(label, value) {
+        return '<div class="text-muted-foreground">' + esc(label) + '</div>' +
+          '<div class="text-card-foreground font-medium">' + (value ? esc(value) : '<span class="text-muted-foreground">—</span>') + '</div>';
+      }
+
+      function closeDetail() {
+        var dialog = document.getElementById('lh-modal');
+        if (dialog) dialog.close();
+      }
+
+      function openDetail(id) {
+        var r = ParentStore.get('parent_leave_requests').filter(function (x) { return x.id === id; })[0];
+        if (!r) return;
+
+        var child = childById(r.childId);
+        if (child && child.id !== selectedChildId) {
+          selectedChildId = child.id;
+          document.getElementById('lh-child').value = child.id;
+          renderList();
+        }
+
+        var attachmentText = r.attachment ? (r.attachment.name + ' (' + r.attachment.size + ')') : '';
+        var commentHtml = r.comment
+          ? '<div class="bg-muted text-sm rounded-lg p-3 mt-4">หมายเหตุจากโรงเรียน: ' + esc(r.comment) + '</div>'
+          : '';
+        var cancelBtnHtml = r.status === 'รอตรวจสอบ'
+          ? '<button type="button" id="lh-cancel-btn" class="mt-4 text-sm border border-destructive text-destructive rounded-lg px-4 py-2 hover:bg-destructive/10">ยกเลิกคำขอ</button>'
+          : '';
+
+        var html =
+          '<div class="flex items-center justify-between px-5 py-3 border-b border-border">' +
+            '<span id="lh-dialog-title" class="font-semibold text-card-foreground">รายละเอียดคำขอลา ' + esc(r.id) + '</span>' +
+            '<button type="button" data-dialog-close aria-label="ปิด" class="text-muted-foreground hover:text-card-foreground"><i data-lucide="x" class="w-5 h-5"></i></button>' +
+          '</div>' +
+          '<div class="p-5">' +
+            '<div class="mb-3">' + ParentUI.statusBadge(r.status) + '</div>' +
+            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">' +
+              detailRow('เลขที่คำขอ', r.id) +
+              detailRow('วันที่ยื่น', ParentUI.fmtDate(r.submitDate, true)) +
+              detailRow('ประเภทการลา', r.type) +
+              detailRow('จำนวนวัน', r.days + ' วัน') +
+              detailRow('วันเริ่ม', ParentUI.fmtDate(r.startDate, true)) +
+              detailRow('วันสิ้นสุด', ParentUI.fmtDate(r.endDate, true)) +
+              detailRow('เบอร์ติดต่อ', r.contactPhone) +
+              detailRow('ผู้แจ้งขอลา', r.submittedBy) +
+              '<div class="sm:col-span-2 text-muted-foreground">เหตุผล</div>' +
+              '<div class="sm:col-span-2 text-card-foreground font-medium">' + esc(r.reason) + '</div>' +
+              '<div class="sm:col-span-2 text-muted-foreground">ไฟล์แนบ</div>' +
+              '<div class="sm:col-span-2 text-card-foreground font-medium">' + (attachmentText ? esc(attachmentText) : '<span class="text-muted-foreground">—</span>') + '</div>' +
+            '</div>' +
+            commentHtml +
+            cancelBtnHtml +
+          '</div>';
+
+        var dialog = ParentUI.createDialog({
+          id: 'lh-modal',
+          labelledBy: 'lh-dialog-title',
+          className: 'max-w-lg w-[calc(100%-2rem)] max-h-[90vh] overflow-auto',
+          html: html
+        });
+
+        if (window.lucide) lucide.createIcons();
+
+        var cancelBtn = dialog.querySelector('#lh-cancel-btn');
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', function () {
+            ParentUI.confirm('ยืนยันยกเลิกคำขอลานี้?', { danger: true, confirmText: 'ยกเลิกคำขอ' }).then(function (confirmed) {
+              if (!confirmed) return;
+              ParentStore.cancelLeave(r.id);
+              ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
+              dialog.close();
+              renderList();
+            });
+          });
+        }
+      }
+
+      /* ---------------- init ---------------- */
+
+      renderChildSelect();
+      renderList();
+      if (window.lucide) lucide.createIcons();
+
+      var params = new URLSearchParams(location.search);
+      var deepLinkId = params.get('id');
+      if (deepLinkId) openDetail(deepLinkId);
+    })();
+  </script>
+</body>
+</html>

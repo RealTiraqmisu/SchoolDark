@@ -501,6 +501,20 @@ window.ParentStore = (function () {
     },
     setActiveChild: function (id) { this.save('parent_active_child', id); },
 
+    // ลบบุตรออกจากบัญชีผู้ปกครองนี้ (ไม่ได้ลบข้อมูลบุตรจริง แค่ตัดออกจาก childIds ของ parent_profile)
+    // คืนค่า false ถ้ามีบุตรเหลืออยู่แค่ 1 คน (ต้องมีอย่างน้อย 1 คนเสมอ) — ไม่ทำอะไรแล้วคืน false
+    removeChild: function (childId) {
+      var profile = this.getParent();
+      var childIds = profile.childIds || [];
+      if (childIds.length <= 1) return false;
+      var nextChildIds = childIds.filter(function (id) { return id !== childId; });
+      this.saveParent({ childIds: nextChildIds });
+      if (this.get('parent_active_child') === childId) {
+        this.setActiveChild(nextChildIds[0]);
+      }
+      return true;
+    },
+
     getStudentProfile: function (childId) {
       var children = this.get('parent_children');
       var child = children.filter(function (c) { return c.id === childId; })[0];

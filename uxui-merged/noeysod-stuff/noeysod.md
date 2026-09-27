@@ -187,6 +187,91 @@ noeysod เขียนงานเป็น to-do list ใน `uxui-merged/noey
   `ParentStore.saveParent`) — `parent-nav.js` (`buildUserMenuHtml`) เปลี่ยนปุ่มโปรไฟล์บน navbar
   ให้แสดงรูปนี้แทนตัวอักษรย่อถ้ามีค่า อัปโหลด/ลบรูปใน `profile.html` จะรีเฟรชปุ่มบน navbar ทันที
   โดยไม่ต้อง reload (`document.querySelectorAll('[data-dropdown-toggle="user"]')`)
+- (2026-09-27) **รอบแก้ตาม `noeysod-prompt.md` (พิมพ์/ดาวน์โหลด, ตารางเรียน, ตั้งค่าบัญชี, แจ้งลาเรียน, โปรไฟล์)**:
+  - **`js/parent-export.js`**: modal preview เพิ่มปุ่มสลับแนวตั้ง/แนวนอนได้เอง (ไม่ต้องรอ `opts.orientation`
+    ตอนเปิดอย่างเดียว) และปุ่มดาวน์โหลดแยกเป็น PDF กับ JPG (JPG ใช้ `html2pdf().toCanvas()` แล้ว
+    `canvas.toDataURL('image/jpeg')`) เพิ่มกลไกทั่วไป `data-export-strip="class1 class2"` ใน
+    `prepareNode()` — ใส่ attribute นี้กับ element ไหนก็ได้เพื่อถอด class ออกเฉพาะตอน preview/พิมพ์/
+    ดาวน์โหลด (ใช้ครั้งแรกกับไฮไลต์ "วันนี้" ในตารางเรียน — บนจอยังติดไฮไลต์อยู่ปกติ)
+  - **`timetable.html`**: ลบการ์ด "จำนวนคาบต่อวิชาในสัปดาห์นี้" (`buildWeeklySummary`) ออกทั้งหมด
+    ตามที่ noeysod สั่ง — ไม่ได้แก้ไฟล์จริงที่พิมพ์ออกมาเพี้ยน (noeysod บอกให้ข้ามไปก่อน)
+  - **`calendar.html`**: ปุ่ม "พิมพ์ / ดาวน์โหลด" ใน `#cal-mode-toggle` โผล่เฉพาะโหมด "ตารางกิจกรรม"
+    เท่านั้น โหมดปฏิทินไม่มีปุ่มนี้แล้ว (`renderModeToggle`/`openExport` เช็ค `view === 'table'`)
+  - **`js/parent-profile-editor.js` (ใหม่)**: ดึงการ์ด "ข้อมูลผู้ปกครอง" (แสดง/แก้ไข + รูปโปรไฟล์)
+    ออกมาเป็นโมดูลกลาง `window.ParentProfileEditor.mount(container)` ใช้ร่วมกันทั้ง `profile.html`
+    และ `settings.html#account` — เหลือปุ่ม "แก้ไข" ปุ่มเดียว (เดิม `profile.html` แยกปุ่มแก้ไขข้อมูล
+    กับปุ่มแก้ไขรูปเป็นคนละที่) กด "แก้ไข" ครั้งเดียวแก้ได้ทั้งฟอร์มข้อมูลและรูป อัปโหลด/ลบรูปตอนนี้
+    เป็น "staged" (เก็บใน `pendingAvatar` ยังไม่บันทึกจริง) กด "ยกเลิก" ทิ้งทั้งฟอร์มและรูปที่เพิ่งแก้
+    กด "บันทึกการเปลี่ยนแปลง" ถึงจะเรียก `ParentStore.saveParent()` จริง — dropdown รูป
+    (`data-dropdown="avatar"`) แบบเดิมถูกถอดออก เพราะปุ่มอัปโหลด/ลบรูปย้ายไปโผล่ตอนกด "แก้ไข" แทน
+  - **`js/parent-store.js`**: เพิ่ม `ParentStore.removeChild(childId)` — ตัด id ออกจาก
+    `profile.childIds` (ไม่ได้ลบข้อมูลบุตรจาก `parent_children`) คืน `false` ถ้าเหลือบุตรแค่ 1 คน
+    (ต้องมีอย่างน้อย 1 คนเสมอ) ย้าย `parent_active_child` ให้บุตรที่เหลือถ้าลบตัวที่กำลังเลือกอยู่
+  - **`settings.html#account`**: เปลี่ยนจากแสดงเบอร์/อีเมลอ่านอย่างเดียว มาเป็น mount
+    `ParentProfileEditor` ตัวเดียวกับ `profile.html` เลย (แก้ไขได้ตรงนี้จริง) เพิ่มส่วน
+    "บุตรในบัญชีนี้" อ่านอย่างเดียว (ไม่ให้แก้ฟิลด์ของบุตร ตามที่ noeysod ตัดสินใจ) แต่ละคนมีปุ่ม
+    "ลบออกจากบัญชี" (ถ้าเหลือคนเดียว ปุ่มจะ disable ทั้งหมด) — ลบสำเร็จแล้ว `location.reload()`
+    เพื่อให้ child switcher บน navbar sync ตาม `settings.html#notify`: ครอบทั้งกล่องด้วย
+    `aria-disabled` + `opacity-50 pointer-events-none` และใส่ `disabled` ทุก checkbox ตามที่ noeysod
+    ขอ (ยังไม่พัฒนาต่อเพราะรอคุยกับอาจารย์ — **ไม่มีโน้ตอธิบายในหน้า** ตามที่สั่งชัดเจน)
+  - **`leave.html`**: การ์ด "ประวัติคำขอลาเรียน" ตัดเหลือแสดง 5 รายการล่าสุด (`list.slice(0, 5)`)
+    มีลิงก์ "ดูทั้งหมด →" ไป `leave-history.html` มุมขวาบนของการ์ด (โผล่เมื่อมีคำขออย่างน้อย 1 รายการ)
+  - **`leave-history.html` (ใหม่)**: หน้าประวัติคำขอลาเต็ม — กรองตามบุตร/สถานะ, ตาราง (desktop) /
+    การ์ด (mobile) กดแถวเปิด modal รายละเอียดครบทุกฟิลด์ (รวมไฟล์แนบ, เบอร์ติดต่อ, ผู้แจ้งขอลา,
+    หมายเหตุจากโรงเรียน) ยกเลิกคำขอได้จาก modal เมื่อสถานะ "รอตรวจสอบ" รองรับ deep-link
+    `?id=PL-xxxx` เปิด modal อัตโนมัติ — `reports.html` ลิงก์ "ดูเพิ่มเติม →" ของแท็บการลา
+    เปลี่ยนจาก `leave.html#history` มาชี้ที่นี่แทน
+  - **`js/parent-nav.js`**: เพิ่ม `alsoActive: ['leave-history.html']` ให้ item `leave.html`
+    ใน `PARENT_PAGES` (`matchesCurrentFile()` เช็คทั้ง `file` และ `alsoActive`) เพื่อให้เมนู
+    "แจ้งลาเรียน" ไฮไลต์ค้างตอนอยู่หน้า `leave-history.html` ด้วย โดยไม่เพิ่มเมนูใหม่ใน `PARENT_PAGES`
+- (2026-09-27) **ตรวจ `parent/` ด้วย skill `modern-web-guidance` แล้วแก้ 3 กลุ่ม (a11y เร็ว ๆ /
+  modal → `<dialog>` / คอนทราสต์สี)** — noeysod เลือกเองจากรายการ ~35 จุดที่ตรวจเจอ ข้อที่ไม่ทำ
+  (ตั้งใจ): เปลี่ยน dropdown เป็น Popover API (ต้องโหลด polyfill จาก CDN ซึ่งเสี่ยงพังตอนเปิดผ่าน
+  `file:///`) และการย้าย Tailwind CDN/Lucide `@latest` ออกจาก `<head>` (ยอมรับได้สำหรับ prototype)
+  - **`js/parent-nav.js` มีมาตรฐานใหม่ 2 ตัวที่ `window.ParentUI` — ใช้ตัวนี้เสมอ ห้ามเขียน modal/
+    `confirm()` เองอีกต่อไป**:
+    - **`ParentUI.createDialog({ id?, labelledBy?, className?, html })`** สร้าง `<dialog>` จริง
+      (ไม่ใช่ `div.fixed` แบบเดิม) เรียก `showModal()` ให้ — ได้ focus trap/คืน focus/Esc ปิดฟรีจาก
+      เบราว์เซอร์ ปิดด้วย `closedby="any"` (มี fallback คลิก backdrop เองให้ Safari ที่ยังไม่รู้จัก
+      `closedBy` — เช็คจาก `getBoundingClientRect()`) ปุ่มใดใน `html` ที่มี `data-dialog-close` จะ
+      ปิด dialog ให้อัตโนมัติ ปิดแล้ว dialog `.remove()` ตัวเองจาก DOM
+    - **`ParentUI.confirm(message, { danger?, confirmText? }) → Promise<boolean>`** แทน
+      `window.confirm()` ทุกจุด (เดิมมี 6 จุด: ลบบุตร/ออกจากระบบทุกอุปกรณ์/รีเซ็ตข้อมูลใน
+      `settings.html`, ยกเลิกคำขอลาใน `leave.html`/`reports.html`/`leave-history.html`) —
+      resolve `true` เฉพาะกดปุ่มยืนยัน (`value="confirm"`), Esc/backdrop/ปุ่มยกเลิก resolve `false`
+    - `ParentUI.toast()` ตอนนี้มี `role="status"`/`aria-live="polite"` และถ้ามี `<dialog open>`
+      อยู่ จะแปะ toast ไว้ข้างในตัวที่เปิดล่าสุดแทน `document.body` เพื่อไม่ให้โดน top layer ของ
+      dialog บัง
+    - `renderNavbar()` เพิ่ม skip link ("ข้ามไปเนื้อหาหลัก") ให้ทุกหน้าอัตโนมัติ + ใส่
+      `id`/`tabindex="-1"` ให้ `<main>` เอง ไม่ต้องแก้แต่ละหน้า
+  - **`js/parent-export.js`**: เปลี่ยนจาก `div#export-modal` เดิมมาใช้ `ParentUI.createDialog` —
+    ปุ่มแนวตั้ง/แนวนอนมี `aria-pressed`, ปุ่มปิดมี `aria-label="ปิด"`, ปรับ `ensurePrintStyle()`
+    ให้ตรงกับ `<dialog>` (`::backdrop`, ไม่ใช้ `background`/`padding` override แบบเดิม)
+  - **สีในธีม (`js/tailwind-config.js`)**: `success`/`warning`/`destructive`/`info` เข้มขึ้น
+    (เดิมอ่อนเกิน คอนทราสต์บนพื้นขาวต่ำกว่า 4.5:1) — ค่าใหม่ `#047857`/`#b45309`/`#dc2626`/`#0369a1`
+    กระทบ `statusBadge()`, badge สถานะ, ตัวเลขสถิติสีเขียว/เหลือง/แดงทุกหน้า — ยังไม่ได้แก้
+    `primary`/`muted` (ผ่านคอนทราสต์อยู่แล้ว)
+  - **แพตเทิร์น a11y ที่ใช้ซ้ำหลายหน้า** (`leave.html`, `leave-history.html`, `settings.html`,
+    `login.html`, `js/parent-profile-editor.js`, `calendar.html`, `timetable.html`,
+    `reports.html`): `label for=` ครบทุกฟอร์ม, `autocomplete` ตามชนิดฟิลด์, error message เป็น
+    `role="alert"` + `aria-describedby`/`aria-invalid` บน input, โฟกัสไปช่องที่ผิดตัวแรกหลัง
+    submit ไม่ผ่าน, ปุ่มไอคอนล้วน (ปิด, ลูกศรเดือน/ปีก่อนหน้า-ถัดไป, เมนูมือถือ) มี `aria-label`,
+    ปุ่มสลับ/แท็บมี `aria-pressed`, ลิงก์เมนู/หมวดที่ active มี `aria-current="page"`
+  - **`leave-history.html`**: แถวตาราง/การ์ดเลิกดัก click ที่ `<tr>`/`<div>` เอง เปลี่ยนเป็นปุ่ม
+    จริง (`<button data-open-id>` มี `after:absolute after:inset-0` ยืดเต็มแถว/การ์ด) กดด้วย
+    คีย์บอร์ดได้ — modal รายละเอียดใช้ `createDialog` แล้ว
+  - **`leave.html`**: การ์ดประเภทการลาเปลี่ยนจาก `<div><label>` เป็น `<fieldset><legend>`, ตัว
+    radio จาก `class="hidden"` → `class="sr-only"` (แตะด้วยคีย์บอร์ด/อ่านจอได้ ของเดิมกดได้แค่เมาส์)
+- (2026-09-27) **ปุ่ม "ย้อนกลับ" ใช้ history จริง**: `js/parent-nav.js` เพิ่ม handler กลาง
+  ดัก `a[data-back]` ทุกตัว — ใช้ `history.back()` เมื่อแท็บนั้นเคยเปิดหน้าอื่นใน `parent/` มาก่อน
+  (เช็คจาก sessionStorage `parent_nav_seen`, ตั้งค่าหลัง session guard เพื่อไม่ให้หน้าที่กำลังจะ
+  ถูก redirect ไป `login.html` ตั้ง flag ผิด) ไม่งั้น fallback ไปตาม `href` เดิม (เปิดแท็บใหม่/
+  deep-link ตรง ๆ ที่ history ว่าง) มี `pageshow` handler คู่กัน — ถ้าหน้าโดนดึงจาก bfcache
+  (ไม่รันสคริปต์ใหม่) ให้ `location.reload()` ทันที กันเคสสลับบุตร/ยกเลิกคำขอลาในหน้าถัดไปแล้ว
+  กดย้อนกลับแล้วเห็นข้อมูลเก่าค้าง — ใช้แล้วใน `student.html`/`leave-history.html`/
+  `announcements.html` (ป้ายข้อความเปลี่ยนเป็น "ย้อนกลับ" ทั้ง 3) ไม่แตะ `login.html`/เมนู
+  "กลับหน้ารวมระบบ" เพราะปลายทางตายตัวโดยตั้งใจอยู่แล้ว — หน้าใหม่ที่จะมีปุ่มกลับแบบนี้ ใส่
+  `data-back` บน `<a href="fallback.html">` เดิมก็พอ ไม่ต้องเขียน handler เอง
 
 ## ความชอบด้าน UI ของ noeysod
 

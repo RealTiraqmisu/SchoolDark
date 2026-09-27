@@ -148,14 +148,17 @@
         return 'px-3 py-1.5 text-sm flex items-center gap-1.5 ' +
           (active ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground hover:bg-secondary');
       }
-      var segmented = '<div class="inline-flex rounded-lg border border-border overflow-hidden shrink-0">' +
-        '<button type="button" data-view-btn="calendar" class="' + btnCls(view === 'calendar') + '">' +
-        '<i data-lucide="calendar-days" class="w-4 h-4"></i> <span class="hidden sm:inline">ปฏิทิน</span></button>' +
-        '<button type="button" data-view-btn="table" class="border-l border-border ' + btnCls(view === 'table') + '">' +
-        '<i data-lucide="table-2" class="w-4 h-4"></i> <span class="hidden sm:inline">ตารางกิจกรรม</span></button>' +
+      var segmented = '<div role="group" aria-label="มุมมอง" class="inline-flex rounded-lg border border-border overflow-hidden shrink-0">' +
+        '<button type="button" data-view-btn="calendar" aria-pressed="' + (view === 'calendar' ? 'true' : 'false') + '" class="' + btnCls(view === 'calendar') + '">' +
+        '<i data-lucide="calendar-days" class="w-4 h-4"></i> <span class="sr-only sm:not-sr-only">ปฏิทิน</span></button>' +
+        '<button type="button" data-view-btn="table" aria-pressed="' + (view === 'table' ? 'true' : 'false') + '" class="border-l border-border ' + btnCls(view === 'table') + '">' +
+        '<i data-lucide="table-2" class="w-4 h-4"></i> <span class="sr-only sm:not-sr-only">ตารางกิจกรรม</span></button>' +
         '</div>';
-      var exportBtn = '<button type="button" data-export-open class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-1.5 shrink-0">' +
-        '<i data-lucide="printer" class="w-4 h-4"></i> <span class="hidden sm:inline">พิมพ์ / ดาวน์โหลด</span></button>';
+      // ปุ่มพิมพ์/ดาวน์โหลดมีเฉพาะโหมด "ตารางกิจกรรม" — โหมดปฏิทินไม่ให้มี (ตามที่ noeysod สั่ง)
+      var exportBtn = view === 'table'
+        ? '<button type="button" data-export-open class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-1.5 shrink-0">' +
+          '<i data-lucide="printer" class="w-4 h-4"></i> <span class="sr-only sm:not-sr-only">พิมพ์ / ดาวน์โหลด</span></button>'
+        : '';
       return '<div class="flex items-center gap-2">' + exportBtn + segmented + '</div>';
     }
 
@@ -166,13 +169,13 @@
     function renderHeader(ym) {
       var monthName = THAI_MONTHS_FULL[ym.m - 1] + ' ' + (ym.y + 543);
       return '<div class="flex items-center justify-between mb-4">' +
-        '<button type="button" id="btn-prev-month" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">' +
+        '<button type="button" id="btn-prev-month" aria-label="เดือนก่อนหน้า" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">' +
         '<i data-lucide="chevron-left" class="w-4 h-4"></i></button>' +
         '<div class="flex items-center gap-3">' +
         '<h2 class="text-lg font-semibold text-card-foreground">' + monthName + '</h2>' +
         '<button type="button" id="btn-today" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm">วันนี้</button>' +
         '</div>' +
-        '<button type="button" id="btn-next-month" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">' +
+        '<button type="button" id="btn-next-month" aria-label="เดือนถัดไป" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">' +
         '<i data-lucide="chevron-right" class="w-4 h-4"></i></button>' +
         '</div>';
     }
@@ -423,11 +426,11 @@
       var rows = buildTableRows(year, events);
 
       var headerHtml = '<div class="flex items-center justify-between mb-4">' +
-        '<button type="button" data-year-prev' + (idx <= 0 ? ' disabled' : '') +
+        '<button type="button" data-year-prev aria-label="ปีการศึกษาก่อนหน้า"' + (idx <= 0 ? ' disabled' : '') +
         ' class="border border-border text-card-foreground hover:bg-secondary disabled:opacity-40 disabled:hover:bg-transparent rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">' +
         '<i data-lucide="chevron-left" class="w-4 h-4"></i></button>' +
         '<h2 class="text-lg font-semibold text-card-foreground">กิจกรรมการศึกษา ประจำปีการศึกษา ' + ParentUI.escapeHtml(year.year) + '</h2>' +
-        '<button type="button" data-year-next' + (idx >= years.length - 1 ? ' disabled' : '') +
+        '<button type="button" data-year-next aria-label="ปีการศึกษาถัดไป"' + (idx >= years.length - 1 ? ' disabled' : '') +
         ' class="border border-border text-card-foreground hover:bg-secondary disabled:opacity-40 disabled:hover:bg-transparent rounded-lg px-3 py-1.5 text-sm flex items-center gap-1">' +
         '<i data-lucide="chevron-right" class="w-4 h-4"></i></button>' +
         '</div>';
@@ -513,29 +516,19 @@
       if (exportBtn) exportBtn.addEventListener('click', openExport);
     }
 
+    // มีเฉพาะโหมด "ตารางกิจกรรม" เท่านั้น (ปุ่มถูกซ่อนในโหมดปฏิทินแล้ว แต่กันไว้อีกชั้น)
     function openExport() {
-      if (getView() === 'table') {
-        var years = window.SchoolStore.get('school_academic_years') || [];
-        var year = years[getTableYearIdx(years)];
-        var tableSource = document.querySelector('[data-export-source="table"]');
-        if (!tableSource || !year) return;
-        window.ParentExport.open({
-          title: 'ตารางกิจกรรมการศึกษา ประจำปีการศึกษา ' + year.year,
-          filename: 'ปฏิทินกิจกรรม-' + year.year,
-          orientation: 'portrait',
-          node: tableSource
-        });
-      } else {
-        var ym = getYM();
-        var gridSource = document.querySelector('[data-export-source="grid"]');
-        if (!gridSource) return;
-        window.ParentExport.open({
-          title: 'ปฏิทิน ' + THAI_MONTHS_FULL[ym.m - 1] + ' ' + (ym.y + 543),
-          filename: 'ปฏิทิน-' + ym.y + '-' + pad2(ym.m),
-          orientation: 'landscape',
-          node: gridSource
-        });
-      }
+      if (getView() !== 'table') return;
+      var years = window.SchoolStore.get('school_academic_years') || [];
+      var year = years[getTableYearIdx(years)];
+      var tableSource = document.querySelector('[data-export-source="table"]');
+      if (!tableSource || !year) return;
+      window.ParentExport.open({
+        title: 'ตารางกิจกรรมการศึกษา ประจำปีการศึกษา ' + year.year,
+        filename: 'ปฏิทินกิจกรรม-' + year.year,
+        orientation: 'portrait',
+        node: tableSource
+      });
     }
 
     function bindEvents(root, ym) {

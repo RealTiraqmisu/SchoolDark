@@ -19,7 +19,7 @@
     { file: 'calendar.html', label: 'ปฏิทิน', icon: 'calendar-days' },
     { file: 'reports.html', label: 'รายงาน', icon: 'file-bar-chart' },
     { id: 'services', label: 'บริการอื่น ๆ', icon: 'layout-grid', children: [
-      { file: 'leave.html', label: 'แจ้งลาเรียน', icon: 'file-pen-line', desc: 'แจ้งลาเรียนแทนบุตรและดูประวัติคำขอลา' },
+      { file: 'leave.html', alsoActive: ['leave-history.html'], label: 'แจ้งลาเรียน', icon: 'file-pen-line', desc: 'แจ้งลาเรียนแทนบุตรและดูประวัติคำขอลา' },
       { file: 'sdq.html', label: 'แบบประเมิน SDQ', icon: 'clipboard-list', desc: 'แบบประเมินพฤติกรรมเด็ก ฉบับผู้ปกครองและนักเรียน' },
       { file: 'home-visit.html', label: 'การเยี่ยมบ้าน', icon: 'house-heart', desc: 'ข้อมูลการเยี่ยมบ้านนักเรียนโดยครูที่ปรึกษา' }
     ] }
@@ -70,9 +70,15 @@
     var bg = type === 'error' ? 'bg-destructive' : (type === 'info' ? 'bg-info' : 'bg-success');
     var el = document.createElement('div');
     el.className = 'fixed bottom-4 right-4 z-50 ' + bg + ' text-white rounded-lg shadow-lg px-4 py-3 text-sm transition-opacity duration-300';
+    el.setAttribute('role', 'status');
+    el.setAttribute('aria-live', 'polite');
     el.style.opacity = '0';
     el.textContent = msg;
-    document.body.appendChild(el);
+    // ถ้ามี <dialog> เปิดอยู่ (modal จาก createDialog/confirm) ให้แปะ toast ไว้ข้างในตัวที่เปิดล่าสุด
+    // ไม่งั้น toast จะถูกบัง top layer ของ dialog
+    var openDialogs = document.querySelectorAll('dialog[open]');
+    var host = openDialogs.length ? openDialogs[openDialogs.length - 1] : document.body;
+    host.appendChild(el);
     requestAnimationFrame(function () { el.style.opacity = '1'; });
     setTimeout(function () {
       el.style.opacity = '0';
@@ -80,6 +86,69 @@
         if (el.parentNode) el.parentNode.removeChild(el);
       }, 300);
     }, 3000);
+  }
+
+  /* ---------------------------------------------------------------------
+   * createDialog / confirm — มาตรฐานกลางสำหรับ modal ทุกหน้าใน parent/
+   * ใช้ <dialog> แทน div.fixed ที่เขียนเอง — ได้ focus trap, คืน focus,
+   * และ Esc ปิดฟรีจากเบราว์เซอร์ ไม่ต้องเขียน keydown listener เอง
+   * ------------------------------------------------------------------- */
+
+  function createDialog(opts) {
+    opts = opts || {};
+    var dialog = document.createElement('dialog');
+    if (opts.id) dialog.id = opts.id;
+    dialog.className = 'p-0 border-0 rounded-xl shadow-lg bg-card text-card-foreground backdrop:bg-black/40' +
+      (opts.className ? ' ' + opts.className : '');
+    if (opts.labelledBy) dialog.setAttribute('aria-labelledby', opts.labelledBy);
+    dialog.setAttribute('closedby', 'any');
+    dialog.innerHTML = opts.html || '';
+
+    document.body.appendChild(dialog);
+
+    dialog.addEventListener('close', function () {
+      if (dialog.parentNode) dialog.parentNode.removeChild(dialog);
+    });
+
+    dialog.querySelectorAll('[data-dialog-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () { dialog.close(); });
+    });
+
+    // fallback: เบราว์เซอร์ที่ไม่รู้จัก closedby (เช่น Safari ปัจจุบัน) จะไม่ปิดเองตอนคลิก backdrop
+    // ต้องเช็คเองว่าคลิกอยู่นอกกรอบเนื้อหาจริงหรือไม่ (คลิกที่ <dialog> เองเท่ากับคลิก backdrop)
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      dialog.addEventListener('click', function (e) {
+        if (e.target !== dialog) return;
+        var r = dialog.getBoundingClientRect();
+        var inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+        if (!inside) dialog.close();
+      });
+    }
+
+    dialog.showModal();
+    return dialog;
+  }
+
+  function confirmDialog(message, opts) {
+    opts = opts || {};
+    return new Promise(function (resolve) {
+      var msgId = 'confirm-msg-' + Math.random().toString(36).slice(2, 9);
+      var confirmCls = opts.danger
+        ? 'bg-destructive hover:bg-destructive/90 text-white'
+        : 'bg-primary hover:bg-primary-hover text-primary-foreground';
+      var html =
+        '<form method="dialog" class="p-5 w-[min(28rem,calc(100vw-2rem))]">' +
+          '<p id="' + msgId + '" class="text-sm text-card-foreground mb-4">' + escapeHtml(message) + '</p>' +
+          '<div class="flex items-center justify-end gap-2">' +
+            '<button type="submit" value="cancel" autofocus class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-4 py-2 text-sm font-medium">ยกเลิก</button>' +
+            '<button type="submit" value="confirm" class="' + confirmCls + ' rounded-lg px-4 py-2 text-sm font-medium">' + escapeHtml(opts.confirmText || 'ยืนยัน') + '</button>' +
+          '</div>' +
+        '</form>';
+      var dialog = createDialog({ labelledBy: msgId, className: 'max-w-md', html: html });
+      dialog.addEventListener('close', function () {
+        resolve(dialog.returnValue === 'confirm');
+      }, { once: true });
+    });
   }
 
   function statusBadge(status) {
@@ -115,6 +184,8 @@
     fmtDate: fmtDate,
     fmtDateLong: fmtDateLong,
     toast: toast,
+    createDialog: createDialog,
+    confirm: confirmDialog,
     statusBadge: statusBadge,
     initials: initials,
     schoolName: schoolName,
@@ -135,6 +206,32 @@
       return; // หยุดการทำงานที่เหลือของไฟล์นี้ทันที — หน้าใหม่กำลังจะถูกโหลดแทน (ถูกต้องเพราะทั้งไฟล์อยู่ใน IIFE)
     }
   }
+
+  /* ---------------------------------------------------------------------
+   * ปุ่มย้อนกลับ: <a data-back href="fallback.html"> — ใช้ history.back() เมื่อแท็บนี้เคยเปิด
+   * หน้าอื่นใน parent/ มาก่อน ไม่งั้น fallback ไปตาม href เดิม (กันเคสเปิดแท็บใหม่/deep-link ตรง ๆ)
+   * ------------------------------------------------------------------- */
+
+  var cameFromParentPage = false;
+  try {
+    cameFromParentPage = sessionStorage.getItem('parent_nav_seen') === '1';
+    sessionStorage.setItem('parent_nav_seen', '1');
+  } catch (e) {}
+
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('a[data-back]');
+    if (!link || event.defaultPrevented || event.button !== 0 ||
+        event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (cameFromParentPage && history.length > 1) {
+      event.preventDefault();
+      history.back();
+    }
+  });
+
+  // ย้อนกลับมาจาก bfcache = หน้าค้างสถานะเก่า (เช่น เปลี่ยนบุตร/ยกเลิกคำขอลาในหน้าถัดไป) → โหลดใหม่
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) location.reload();
+  });
 
   /* ---------------------------------------------------------------------
    * Navbar rendering
@@ -169,7 +266,7 @@
     }).join('');
 
     return '<div class="relative" data-dropdown="child">' +
-      '<button type="button" data-dropdown-toggle="child" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-secondary">' +
+      '<button type="button" data-dropdown-toggle="child" aria-expanded="false" aria-haspopup="true" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-secondary">' +
       childAvatarHtml(activeChild) +
       '<span class="hidden sm:flex flex-col leading-tight text-left">' +
       '<span class="text-sm font-medium text-card-foreground">' + escapeHtml(activeChild.nickname) + '</span>' +
@@ -188,7 +285,7 @@
       ? '<img src="' + escapeHtml(parent.avatar) + '" alt="" class="w-full h-full object-cover">'
       : escapeHtml(initials(parent.firstName));
     return '<div class="relative" data-dropdown="user">' +
-      '<button type="button" data-dropdown-toggle="user" class="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold overflow-hidden">' +
+      '<button type="button" data-dropdown-toggle="user" aria-expanded="false" aria-haspopup="true" aria-label="บัญชีผู้ใช้" class="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold overflow-hidden">' +
       avatarHtml +
       '</button>' +
       '<div data-dropdown-menu="user" class="hidden absolute right-0 mt-2 w-64 bg-card border border-border rounded-lg shadow-lg p-1 z-50">' +
@@ -213,14 +310,18 @@
     return p.file + (p.hash ? ('#' + p.hash) : '');
   }
 
+  function matchesCurrentFile(c) {
+    return c.file === currentFile || (c.alsoActive || []).indexOf(currentFile) !== -1;
+  }
+
   function isItemActive(c) {
-    if (c.file !== currentFile) return false;
+    if (!matchesCurrentFile(c)) return false;
     if (!c.hash) return true;
     return location.hash.replace('#', '') === c.hash;
   }
 
   function isGroupActive(group) {
-    return group.children.some(function (c) { return c.file === currentFile; });
+    return group.children.some(function (c) { return matchesCurrentFile(c); });
   }
 
   function buildDesktopGroupHtml(group) {
@@ -230,14 +331,14 @@
       : 'text-secondary-foreground hover:bg-secondary';
     var items = group.children.map(function (c) {
       var itemActive = isItemActive(c);
-      return '<a href="' + pageHref(c) + '" class="flex items-start gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary' + (itemActive ? ' bg-secondary/70' : '') + '">' +
+      return '<a href="' + pageHref(c) + '"' + (itemActive ? ' aria-current="page"' : '') + ' class="flex items-start gap-2 px-3 py-2 text-sm rounded-lg hover:bg-secondary' + (itemActive ? ' bg-secondary/70' : '') + '">' +
         '<i data-lucide="' + c.icon + '" class="w-4 h-4 mt-0.5 text-primary"></i>' +
         '<span class="flex flex-col"><span class="text-card-foreground font-medium">' + escapeHtml(c.label) + '</span>' +
         (c.desc ? '<span class="text-xs text-muted-foreground">' + escapeHtml(c.desc) + '</span>' : '') +
         '</span></a>';
     }).join('');
     return '<div class="relative" data-dropdown="' + group.id + '">' +
-      '<button type="button" data-dropdown-toggle="' + group.id + '" class="rounded-lg px-3 py-2 text-sm flex items-center gap-2 ' + cls + '">' +
+      '<button type="button" data-dropdown-toggle="' + group.id + '" aria-expanded="false" aria-haspopup="true" class="rounded-lg px-3 py-2 text-sm flex items-center gap-2 ' + cls + '">' +
         '<i data-lucide="' + group.icon + '" class="w-4 h-4"></i><span>' + escapeHtml(group.label) + '</span>' +
         '<i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>' +
       '</button>' +
@@ -250,7 +351,7 @@
     var items = group.children.map(function (c) {
       var itemActive = isItemActive(c);
       var cls = itemActive ? 'bg-primary/10 text-primary font-semibold' : 'text-secondary-foreground hover:bg-secondary';
-      return '<a href="' + pageHref(c) + '" class="rounded-lg pl-7 pr-3 py-2 text-sm flex items-center gap-2 w-full ' + cls + '">' +
+      return '<a href="' + pageHref(c) + '"' + (itemActive ? ' aria-current="page"' : '') + ' class="rounded-lg pl-7 pr-3 py-2 text-sm flex items-center gap-2 w-full ' + cls + '">' +
         '<i data-lucide="' + c.icon + '" class="w-4 h-4"></i><span>' + escapeHtml(c.label) + '</span></a>';
     }).join('');
     return '<div class="px-3 pt-2 pb-1 text-xs font-semibold text-muted-foreground uppercase">' + escapeHtml(group.label) + '</div>' + items;
@@ -266,7 +367,7 @@
         ? 'bg-primary/10 text-primary font-semibold'
         : 'text-secondary-foreground hover:bg-secondary';
       var extra = vertical ? ' w-full' : '';
-      return '<a href="' + pageHref(p) + '" class="rounded-lg px-3 py-2 text-sm flex items-center gap-2' + extra + ' ' + cls + '">' +
+      return '<a href="' + pageHref(p) + '"' + (active ? ' aria-current="page"' : '') + ' class="rounded-lg px-3 py-2 text-sm flex items-center gap-2' + extra + ' ' + cls + '">' +
         '<i data-lucide="' + p.icon + '" class="w-4 h-4"></i><span>' + escapeHtml(p.label) + '</span></a>';
     }).join('');
   }
@@ -279,7 +380,16 @@
     var children = window.ParentStore.getChildren();
     var activeChild = window.ParentStore.getActiveChild();
 
+    // skip link ต้องรู้ id ของ <main> ก่อนสร้าง navbar — ใส่ id/tabindex ให้ <main> ถ้ายังไม่มี
+    var mainEl = document.querySelector('main');
+    var mainId = (mainEl && mainEl.id) || 'main-content';
+    if (mainEl) {
+      mainEl.id = mainId;
+      mainEl.setAttribute('tabindex', '-1');
+    }
+
     var html =
+      '<a href="#' + mainId + '" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] bg-card text-primary px-3 py-2 rounded-lg shadow">ข้ามไปเนื้อหาหลัก</a>' +
       '<header class="sticky top-0 z-40 bg-card border-b border-border shadow-sm">' +
       '<div class="h-16 flex items-center">' +
       '<div class="max-w-6xl mx-auto px-4 flex items-center justify-between gap-4 w-full">' +
@@ -292,19 +402,19 @@
             '<span class="text-xs text-muted-foreground">พอร์ทัลผู้ปกครอง</span>' +
           '</span>' +
         '</a>' +
-        '<nav class="hidden md:flex items-center gap-1">' + buildNavLinksHtml(false) + '</nav>' +
+        '<nav aria-label="เมนูหลัก" class="hidden md:flex items-center gap-1">' + buildNavLinksHtml(false) + '</nav>' +
         '<div class="flex items-center gap-2">' +
           buildChildSwitcherHtml(children, activeChild) +
           buildUserMenuHtml(parent) +
-          '<button type="button" data-action="toggle-mobile-menu" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-secondary text-card-foreground">' +
+          '<button type="button" data-action="toggle-mobile-menu" aria-expanded="false" aria-controls="parent-mobile-menu" aria-label="เมนู" class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-secondary text-card-foreground">' +
             '<i data-lucide="menu" class="w-5 h-5"></i>' +
           '</button>' +
         '</div>' +
       '</div>' +
       '</div>' +
-      '<div data-mobile-menu class="hidden md:hidden border-t border-border px-4 py-2 flex flex-col gap-1">' +
+      '<nav id="parent-mobile-menu" aria-label="เมนูหลัก (มือถือ)" data-mobile-menu class="hidden md:hidden border-t border-border px-4 py-2 flex flex-col gap-1">' +
         buildNavLinksHtml(true) +
-      '</div>' +
+      '</nav>' +
       '</header>';
 
     mount.innerHTML = html;
@@ -318,6 +428,9 @@
     mount.querySelectorAll('[data-dropdown-menu]').forEach(function (el) {
       el.classList.add('hidden');
     });
+    mount.querySelectorAll('[data-dropdown-toggle]').forEach(function (btn) {
+      btn.setAttribute('aria-expanded', 'false');
+    });
   }
 
   function bindNavbarEvents(mount) {
@@ -326,7 +439,9 @@
     if (mobileToggle && mobileMenu) {
       mobileToggle.addEventListener('click', function (e) {
         e.stopPropagation();
+        var willOpen = mobileMenu.classList.contains('hidden');
         mobileMenu.classList.toggle('hidden');
+        mobileToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
       });
     }
 
@@ -338,7 +453,10 @@
         if (!menu) return;
         var wasHidden = menu.classList.contains('hidden');
         closeAllDropdowns(mount);
-        if (wasHidden) menu.classList.remove('hidden');
+        if (wasHidden) {
+          menu.classList.remove('hidden');
+          btn.setAttribute('aria-expanded', 'true');
+        }
       });
     });
 
@@ -421,7 +539,7 @@
       '<div data-demo-card class="bg-card rounded-xl border border-border shadow-lg p-4 w-72' + (open ? '' : ' hidden') + '">' +
         '<div class="flex items-center justify-between mb-2">' +
           '<span class="text-sm font-semibold text-card-foreground">โหมดทดสอบ: วันที่จำลอง</span>' +
-          '<button type="button" data-demo-close class="text-muted-foreground hover:text-card-foreground"><i data-lucide="x" class="w-4 h-4"></i></button>' +
+          '<button type="button" data-demo-close aria-label="ปิด" class="text-muted-foreground hover:text-card-foreground"><i data-lucide="x" class="w-4 h-4"></i></button>' +
         '</div>' +
         '<div class="text-sm text-card-foreground">วันที่ที่ระบบใช้: ' + escapeHtml(fmtDate(today, true)) + '</div>' +
         '<div class="text-xs text-muted-foreground mb-3">ที่มา: ' + escapeHtml(sourceLabel) + '</div>' +

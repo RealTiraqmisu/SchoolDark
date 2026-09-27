@@ -14,6 +14,7 @@
 <body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
   <div id="parent-nav"></div>
   <main class="max-w-6xl mx-auto px-4 py-6">
+    <h1 class="sr-only">แจ้งลาเรียน</h1>
     <div class="bg-warning/10 border border-warning/30 text-warning-foreground rounded-lg p-3 text-sm flex gap-2 items-start mb-6">
       <i data-lucide="info" class="w-4 h-4 mt-0.5 shrink-0"></i>
       <span>คำขอจะส่งถึงครูประจำชั้นเพื่อพิจารณา (โปรโตไทป์: ยังไม่เชื่อมกับระบบการลาเรียนของโรงเรียน)</span>
@@ -55,8 +56,8 @@
 
         var typeCardsHtml = ParentStore.LEAVE_TYPES.map(function (t) {
           var remaining = t.quota - ParentStore.leaveUsed(selectedChildId, t.name);
-          return '<label data-type-card="' + esc(t.name) + '" class="block border border-border rounded-lg p-3 cursor-pointer hover:border-primary/50">' +
-            '<input type="radio" name="leave-type" value="' + esc(t.name) + '" class="hidden">' +
+          return '<label data-type-card="' + esc(t.name) + '" class="block border border-border rounded-lg p-3 cursor-pointer hover:border-primary/50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary">' +
+            '<input type="radio" name="leave-type" value="' + esc(t.name) + '" class="sr-only">' +
             '<div class="font-medium text-card-foreground text-sm">' + esc(t.name) + '</div>' +
             '<div class="text-xs text-muted-foreground mt-0.5">' + esc(t.desc) + '</div>' +
             '<div class="text-xs text-muted-foreground mt-1">คงเหลือ ' + remaining + ' / ' + t.quota + ' วัน</div>' +
@@ -68,48 +69,48 @@
             '<h2 class="font-bold text-card-foreground mb-4">แจ้งขอลาเรียน</h2>' +
             '<form id="leave-form" novalidate>' +
               '<div class="mb-4">' +
-                '<label class="block text-sm font-medium text-card-foreground mb-1">บุตร</label>' +
+                '<label for="lf-child" class="block text-sm font-medium text-card-foreground mb-1">บุตร</label>' +
                 '<select id="lf-child" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' + childOptionsHtml + '</select>' +
               '</div>' +
 
-              '<div class="mb-4">' +
-                '<label class="block text-sm font-medium text-card-foreground mb-1">ประเภทการลา</label>' +
+              '<fieldset class="mb-4">' +
+                '<legend class="block text-sm font-medium text-card-foreground mb-1">ประเภทการลา</legend>' +
                 '<div id="lf-type-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-2">' + typeCardsHtml + '</div>' +
-                '<div id="lf-type-error" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกประเภทการลา</div>' +
-              '</div>' +
+                '<div id="lf-type-error" role="alert" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกประเภทการลา</div>' +
+              '</fieldset>' +
 
               '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-1">' +
                 '<div>' +
-                  '<label class="block text-sm font-medium text-card-foreground mb-1">วันเริ่ม</label>' +
-                  '<input type="date" id="lf-start" min="' + today + '" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' +
-                  '<div id="lf-start-error" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกวันเริ่ม</div>' +
+                  '<label for="lf-start" class="block text-sm font-medium text-card-foreground mb-1">วันเริ่ม</label>' +
+                  '<input type="date" id="lf-start" min="' + today + '" aria-describedby="lf-start-error" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' +
+                  '<div id="lf-start-error" role="alert" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกวันเริ่ม</div>' +
                 '</div>' +
                 '<div>' +
-                  '<label class="block text-sm font-medium text-card-foreground mb-1">วันสิ้นสุด</label>' +
-                  '<input type="date" id="lf-end" min="' + today + '" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' +
-                  '<div id="lf-end-error" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกวันสิ้นสุด</div>' +
+                  '<label for="lf-end" class="block text-sm font-medium text-card-foreground mb-1">วันสิ้นสุด</label>' +
+                  '<input type="date" id="lf-end" min="' + today + '" aria-describedby="lf-end-error" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' +
+                  '<div id="lf-end-error" role="alert" class="text-destructive text-xs mt-1 hidden">กรุณาเลือกวันสิ้นสุด</div>' +
                 '</div>' +
               '</div>' +
               '<div id="lf-days-text" class="text-sm text-muted-foreground mb-4"></div>' +
 
               '<div class="mb-4">' +
-                '<label class="block text-sm font-medium text-card-foreground mb-1">เหตุผล</label>' +
-                '<textarea id="lf-reason" required rows="3" class="w-full rounded-lg border border-border px-3 py-2 text-sm"></textarea>' +
-                '<div id="lf-reason-error" class="text-destructive text-xs mt-1 hidden">กรุณาระบุเหตุผลอย่างน้อย 5 ตัวอักษร</div>' +
+                '<label for="lf-reason" class="block text-sm font-medium text-card-foreground mb-1">เหตุผล</label>' +
+                '<textarea id="lf-reason" required rows="3" aria-describedby="lf-reason-error" class="w-full rounded-lg border border-border px-3 py-2 text-sm"></textarea>' +
+                '<div id="lf-reason-error" role="alert" class="text-destructive text-xs mt-1 hidden">กรุณาระบุเหตุผลอย่างน้อย 5 ตัวอักษร</div>' +
               '</div>' +
 
               '<div class="mb-4">' +
-                '<label class="block text-sm font-medium text-card-foreground mb-1">แนบไฟล์</label>' +
+                '<label for="lf-file" class="block text-sm font-medium text-card-foreground mb-1">แนบไฟล์</label>' +
                 '<input type="file" id="lf-file" class="w-full text-sm">' +
                 '<div id="lf-file-name" class="text-xs text-muted-foreground mt-1"></div>' +
               '</div>' +
 
               '<div class="mb-4">' +
-                '<label class="block text-sm font-medium text-card-foreground mb-1">เบอร์ติดต่อ</label>' +
+                '<label for="lf-phone" class="block text-sm font-medium text-card-foreground mb-1">เบอร์ติดต่อ</label>' +
                 '<input type="tel" id="lf-phone" value="' + esc(parent.phone) + '" class="w-full rounded-lg border border-border px-3 py-2 text-sm">' +
               '</div>' +
 
-              '<div id="lf-form-error" class="text-destructive text-sm mb-3 hidden"></div>' +
+              '<div id="lf-form-error" role="alert" class="text-destructive text-sm mb-3 hidden"></div>' +
 
               '<button type="submit" class="w-full bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 font-medium">ส่งคำขอลา</button>' +
             '</form>' +
@@ -143,16 +144,26 @@
           renderHistory();
         });
 
+        function selectType(name) {
+          selectedType = name;
+          document.querySelectorAll('[data-type-card]').forEach(function (l) {
+            var isSel = l.getAttribute('data-type-card') === selectedType;
+            l.className = 'block border rounded-lg p-3 cursor-pointer hover:border-primary/50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary' +
+              (isSel ? ' border-primary ring-1 ring-primary' : ' border-border');
+            l.querySelector('input').checked = isSel;
+          });
+          document.getElementById('lf-type-error').classList.add('hidden');
+        }
+
         document.querySelectorAll('[data-type-card]').forEach(function (label) {
           label.addEventListener('click', function () {
-            selectedType = label.getAttribute('data-type-card');
-            document.querySelectorAll('[data-type-card]').forEach(function (l) {
-              var isSel = l.getAttribute('data-type-card') === selectedType;
-              l.className = 'block border rounded-lg p-3 cursor-pointer hover:border-primary/50' +
-                (isSel ? ' border-primary ring-1 ring-primary' : ' border-border');
-              l.querySelector('input').checked = isSel;
-            });
-            document.getElementById('lf-type-error').classList.add('hidden');
+            selectType(label.getAttribute('data-type-card'));
+          });
+        });
+        // เลือกด้วยคีย์บอร์ดได้ด้วย (radio ซ่อนเป็น sr-only แต่ยัง tab/arrow key ไปได้ตามปกติ)
+        document.querySelectorAll('input[name="leave-type"]').forEach(function (input) {
+          input.addEventListener('change', function () {
+            if (input.checked) selectType(input.value);
           });
         });
 
@@ -187,23 +198,37 @@
         var phone = document.getElementById('lf-phone').value.trim();
 
         var ok = true;
+        var firstInvalid = null;
 
-        document.getElementById('lf-type-error').classList.toggle('hidden', !!selectedType);
-        if (!selectedType) ok = false;
+        var typeValid = !!selectedType;
+        document.getElementById('lf-type-error').classList.toggle('hidden', typeValid);
+        if (!typeValid) { ok = false; if (!firstInvalid) firstInvalid = document.querySelector('input[name="leave-type"]'); }
 
-        document.getElementById('lf-start-error').classList.toggle('hidden', !!start);
-        if (!start) ok = false;
+        var startInput = document.getElementById('lf-start');
+        var startValid = !!start;
+        document.getElementById('lf-start-error').classList.toggle('hidden', startValid);
+        startInput.setAttribute('aria-invalid', startValid ? 'false' : 'true');
+        if (!startValid) { ok = false; if (!firstInvalid) firstInvalid = startInput; }
 
-        document.getElementById('lf-end-error').classList.toggle('hidden', !!end);
-        if (!end) ok = false;
+        var endInput = document.getElementById('lf-end');
+        var endValid = !!end;
+        document.getElementById('lf-end-error').classList.toggle('hidden', endValid);
+        endInput.setAttribute('aria-invalid', endValid ? 'false' : 'true');
+        if (!endValid) { ok = false; if (!firstInvalid) firstInvalid = endInput; }
 
-        document.getElementById('lf-reason-error').classList.toggle('hidden', reason.length >= 5);
-        if (reason.length < 5) ok = false;
+        var reasonInput = document.getElementById('lf-reason');
+        var reasonValid = reason.length >= 5;
+        document.getElementById('lf-reason-error').classList.toggle('hidden', reasonValid);
+        reasonInput.setAttribute('aria-invalid', reasonValid ? 'false' : 'true');
+        if (!reasonValid) { ok = false; if (!firstInvalid) firstInvalid = reasonInput; }
 
         var formError = document.getElementById('lf-form-error');
         formError.classList.add('hidden');
 
-        if (!ok || !child) return;
+        if (!ok || !child) {
+          if (firstInvalid) firstInvalid.focus();
+          return;
+        }
 
         if (end < start) {
           document.getElementById('lf-days-text').textContent = 'วันสิ้นสุดต้องไม่ก่อนวันเริ่ม';
@@ -242,9 +267,10 @@
       /* ============================== HISTORY ============================== */
 
       function renderHistory() {
-        var list = ParentStore.get('parent_leave_requests')
+        var fullList = ParentStore.get('parent_leave_requests')
           .filter(function (r) { return r.childId === selectedChildId; })
           .sort(function (a, b) { return a.submitDate < b.submitDate ? 1 : (a.submitDate > b.submitDate ? -1 : 0); });
+        var list = fullList.slice(0, 5);
 
         var itemsHtml = '<p class="text-muted-foreground">ยังไม่มีประวัติคำขอลา</p>';
 
@@ -269,20 +295,34 @@
           }).join('');
         }
 
+        var seeAllLinkHtml = fullList.length
+          ? '<a href="leave-history.html" class="text-sm text-primary hover:underline shrink-0">ดูทั้งหมด →</a>'
+          : '';
+        var moreTextHtml = fullList.length > 5
+          ? '<p class="text-xs text-muted-foreground mt-2">แสดง 5 จาก ' + fullList.length + ' รายการ</p>'
+          : '';
+
         document.getElementById('leave-history-wrap').innerHTML =
           '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
-            '<h2 class="font-bold text-card-foreground mb-3">ประวัติคำขอลาเรียน</h2>' +
+            '<div class="flex items-center justify-between mb-3">' +
+              '<h2 class="font-bold text-card-foreground">ประวัติคำขอลาเรียน</h2>' +
+              seeAllLinkHtml +
+            '</div>' +
             '<div>' + itemsHtml + '</div>' +
+            moreTextHtml +
           '</div>';
 
         if (window.lucide) lucide.createIcons();
 
         document.querySelectorAll('[data-cancel-id]').forEach(function (btn) {
           btn.addEventListener('click', function () {
-            if (!confirm('ยืนยันยกเลิกคำขอลานี้?')) return;
-            ParentStore.cancelLeave(btn.getAttribute('data-cancel-id'));
-            ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
-            renderHistory();
+            var id = btn.getAttribute('data-cancel-id');
+            ParentUI.confirm('ยืนยันยกเลิกคำขอลานี้?', { danger: true, confirmText: 'ยกเลิกคำขอ' }).then(function (confirmed) {
+              if (!confirmed) return;
+              ParentStore.cancelLeave(id);
+              ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
+              renderHistory();
+            });
           });
         });
       }
@@ -295,7 +335,8 @@
       if (location.hash === '#history') {
         var historyCard = document.getElementById('leave-history-wrap').firstElementChild;
         if (historyCard) {
-          historyCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+          historyCard.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
           historyCard.classList.add('ring-2', 'ring-primary');
           setTimeout(function () {
             historyCard.classList.remove('ring-2', 'ring-primary');

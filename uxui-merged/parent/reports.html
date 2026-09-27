@@ -50,7 +50,7 @@
       bar.innerHTML = tabs.map(function (t) {
         var active = t.id === tab;
         var cls = active ? 'bg-primary text-white' : 'text-card-foreground hover:bg-secondary';
-        return '<button type="button" data-tab="' + t.id + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' +
+        return '<button type="button" data-tab="' + t.id + '" aria-pressed="' + (active ? 'true' : 'false') + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' +
           ParentUI.escapeHtml(t.label) + '</button>';
       }).join('');
       bar.querySelectorAll('[data-tab]').forEach(function (btn) {
@@ -336,7 +336,7 @@
       return '<div class="overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
         '<div class="flex items-center justify-between mb-3 gap-3">' +
         '<h3 class="font-semibold text-card-foreground">คำขอลา</h3>' +
-        '<a href="leave.html#history" class="text-sm text-primary hover:underline shrink-0">ดูเพิ่มเติม →</a>' +
+        '<a href="leave-history.html" class="text-sm text-primary hover:underline shrink-0">ดูเพิ่มเติม →</a>' +
         '</div>' +
         '<table class="min-w-full border-collapse text-left">' +
         '<thead><tr>' +
@@ -395,10 +395,13 @@
 
       container.querySelectorAll('[data-cancel-id]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          if (!confirm('ยืนยันยกเลิกคำขอลานี้?')) return;
-          ParentStore.cancelLeave(btn.getAttribute('data-cancel-id'));
-          ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
-          renderLeaveTab(container, child);
+          var id = btn.getAttribute('data-cancel-id');
+          ParentUI.confirm('ยืนยันยกเลิกคำขอลานี้?', { danger: true, confirmText: 'ยกเลิกคำขอ' }).then(function (ok) {
+            if (!ok) return;
+            ParentStore.cancelLeave(id);
+            ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
+            renderLeaveTab(container, child);
+          });
         });
       });
 

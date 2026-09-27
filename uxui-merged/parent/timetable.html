@@ -107,7 +107,7 @@
       bar.innerHTML = tabs.map(function (t) {
         var active = t.id === tab;
         var cls = active ? 'bg-primary text-white' : 'text-card-foreground hover:bg-secondary';
-        return '<button type="button" data-tab="' + t.id + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' +
+        return '<button type="button" data-tab="' + t.id + '" aria-pressed="' + (active ? 'true' : 'false') + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' +
           ParentUI.escapeHtml(t.label) + '</button>';
       }).join('');
       bar.querySelectorAll('[data-tab]').forEach(function (btn) {
@@ -138,17 +138,19 @@
         var mapped = mapPeriodsToSlots(periods, daySlots);
         var isToday = dk === todayKey;
         var ringCls = isToday ? ' ring-2 ring-inset ring-primary/30' : '';
+        // ไฮไลต์ "วันนี้" ใช้เฉพาะตอนดูบนจอ — เวลาพิมพ์/ดาวน์โหลดจะถูกถอดออกผ่าน data-export-strip
+        var stripAttr = isToday ? ' data-export-strip="ring-2 ring-inset ring-primary/30 text-primary bg-primary/10"' : '';
 
         var cells = mapped.map(function (m) {
           if (m.isLunch) {
-            return '<td class="p-2 border border-border bg-secondary text-center text-xs text-muted-foreground' + ringCls + '">' +
+            return '<td class="p-2 border border-border bg-secondary text-center text-xs text-muted-foreground' + ringCls + '"' + stripAttr + '>' +
               ParentUI.escapeHtml(m.period.label) + '</td>';
           }
           var s = m.slot;
           if (!s) {
-            return '<td class="p-2 border border-border text-center text-muted-foreground' + ringCls + '">–</td>';
+            return '<td class="p-2 border border-border text-center text-muted-foreground' + ringCls + '"' + stripAttr + '>–</td>';
           }
-          return '<td class="p-2 border border-border align-top ' + groupColor(s.code) + ringCls + '">' +
+          return '<td class="p-2 border border-border align-top ' + groupColor(s.code) + ringCls + '"' + stripAttr + '>' +
             '<div class="text-xs font-semibold text-card-foreground">' + ParentUI.escapeHtml(s.code) + ' ' + ParentUI.escapeHtml(s.subject) + '</div>' +
             '<div class="text-xs text-muted-foreground mt-0.5">' + ParentUI.escapeHtml(s.teacher) + ' · ' + ParentUI.escapeHtml(s.room) + '</div>' +
             '</td>';
@@ -157,7 +159,7 @@
         var dayCellCls = 'p-2 border border-border font-medium bg-muted text-card-foreground' +
           (isToday ? ' text-primary bg-primary/10' + ringCls : '');
 
-        return '<tr><td class="' + dayCellCls + '">' + DAY_LABELS_FULL[i] + '</td>' + cells + '</tr>';
+        return '<tr><td class="' + dayCellCls + '"' + stripAttr + '>' + DAY_LABELS_FULL[i] + '</td>' + cells + '</tr>';
       }).join('');
 
       return '<table class="min-w-full border-collapse text-sm">' +
@@ -202,29 +204,6 @@
         '</div>';
     }
 
-    function weeklySubjectCounts(timetable) {
-      var counts = {};
-      DAY_KEYS.forEach(function (dk) {
-        (timetable[dk] || []).forEach(function (s) {
-          if (s) counts[s.subject] = (counts[s.subject] || 0) + 1;
-        });
-      });
-      return counts;
-    }
-
-    function buildWeeklySummary(timetable) {
-      var counts = weeklySubjectCounts(timetable);
-      var keys = Object.keys(counts);
-      var chips = keys.length ? keys.map(function (k) {
-        return '<span class="inline-flex items-center rounded-full bg-secondary text-card-foreground px-3 py-1 text-xs mr-2 mb-2">' +
-          ParentUI.escapeHtml(k) + ' × ' + counts[k] + '</span>';
-      }).join('') : '<span class="text-sm text-muted-foreground">ไม่มีข้อมูล</span>';
-
-      return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mt-4">' +
-        '<h3 class="font-semibold text-card-foreground mb-3">จำนวนคาบต่อวิชาในสัปดาห์นี้</h3>' +
-        '<div class="flex flex-wrap">' + chips + '</div></div>';
-    }
-
     function renderClassTab(container, child) {
       var periods = ParentStore.get('parent_periods');
       var timetables = ParentStore.get('parent_timetables');
@@ -235,8 +214,7 @@
       container.innerHTML =
         '<div data-export-source="class" class="hidden md:block overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4">' +
         buildDesktopTable(periods, timetable) + '</div>' +
-        '<div class="md:hidden">' + buildMobileView(periods, timetable) + '</div>' +
-        buildWeeklySummary(timetable);
+        '<div class="md:hidden">' + buildMobileView(periods, timetable) + '</div>';
 
       container.querySelectorAll('[data-day]').forEach(function (btn) {
         btn.addEventListener('click', function () {

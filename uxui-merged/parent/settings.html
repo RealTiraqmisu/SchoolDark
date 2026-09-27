@@ -36,35 +36,31 @@
 
         <div data-section="account" class="bg-card rounded-xl border border-border shadow-sm p-5">
           <h2 class="text-lg font-semibold text-card-foreground pb-3 mb-4 border-b border-border">บัญชีผู้ใช้</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            <div>
-              <div class="text-muted-foreground">ชื่อผู้ใช้ (เบอร์โทรศัพท์)</div>
-              <div id="acc-username" class="text-card-foreground font-medium mt-0.5"></div>
-            </div>
-            <div>
-              <div class="text-muted-foreground">อีเมลกู้คืนบัญชี</div>
-              <div id="acc-email" class="text-card-foreground font-medium mt-0.5"></div>
-            </div>
-          </div>
-          <a href="profile.html" class="inline-block mt-4 text-sm text-primary hover:underline">แก้ไขข้อมูลส่วนตัว →</a>
+          <div id="account-parent-editor"></div>
+
+          <div class="h-px bg-border my-5"></div>
+
+          <h3 class="font-semibold text-card-foreground mb-3">บุตรในบัญชีนี้</h3>
+          <div id="account-children" class="space-y-3"></div>
         </div>
 
         <div data-section="password" class="bg-card rounded-xl border border-border shadow-sm p-5">
           <h2 class="text-lg font-semibold text-card-foreground pb-3 mb-4 border-b border-border">เปลี่ยนรหัสผ่าน</h2>
           <form id="pwd-form">
+            <input type="text" id="pwd-username" name="username" autocomplete="username" class="sr-only" tabindex="-1" aria-hidden="true">
             <div class="mb-4">
-              <label class="block text-sm font-medium text-card-foreground mb-1">รหัสผ่านเดิม</label>
-              <input type="password" id="pw-old" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+              <label for="pw-old" class="block text-sm font-medium text-card-foreground mb-1">รหัสผ่านเดิม</label>
+              <input type="password" id="pw-old" autocomplete="current-password" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
             </div>
             <div class="mb-4">
-              <label class="block text-sm font-medium text-card-foreground mb-1">รหัสผ่านใหม่</label>
-              <input type="password" id="pw-new" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-              <div id="pw-new-error" class="text-destructive text-xs mt-1 hidden">รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร</div>
+              <label for="pw-new" class="block text-sm font-medium text-card-foreground mb-1">รหัสผ่านใหม่</label>
+              <input type="password" id="pw-new" autocomplete="new-password" aria-describedby="pw-new-error" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+              <div id="pw-new-error" role="alert" class="text-destructive text-xs mt-1 hidden">รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร</div>
             </div>
             <div class="mb-4">
-              <label class="block text-sm font-medium text-card-foreground mb-1">ยืนยันรหัสผ่านใหม่</label>
-              <input type="password" id="pw-confirm" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
-              <div id="pw-confirm-error" class="text-destructive text-xs mt-1 hidden">รหัสผ่านยืนยันไม่ตรงกัน</div>
+              <label for="pw-confirm" class="block text-sm font-medium text-card-foreground mb-1">ยืนยันรหัสผ่านใหม่</label>
+              <input type="password" id="pw-confirm" autocomplete="new-password" aria-describedby="pw-confirm-error" class="w-full rounded-lg border border-border px-3 py-2 text-sm">
+              <div id="pw-confirm-error" role="alert" class="text-destructive text-xs mt-1 hidden">รหัสผ่านยืนยันไม่ตรงกัน</div>
             </div>
             <button type="submit" class="bg-primary hover:bg-primary-hover text-white rounded-lg px-4 py-2 font-medium">เปลี่ยนรหัสผ่าน</button>
           </form>
@@ -73,38 +69,40 @@
         <div data-section="notify" class="bg-card rounded-xl border border-border shadow-sm p-5">
           <h2 class="text-lg font-semibold text-card-foreground pb-3 mb-4 border-b border-border">การแจ้งเตือน</h2>
 
-          <div class="text-sm font-medium text-card-foreground mb-2">ช่องทางการแจ้งเตือน</div>
-          <div class="space-y-3 mb-5">
-            <label class="flex items-center justify-between">
-              <span class="text-sm text-card-foreground">แจ้งเตือนผ่าน LINE</span>
-              <input type="checkbox" id="ntf-line" data-notify-key="line" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
-            </label>
-            <label class="flex items-center justify-between">
-              <span class="text-sm text-card-foreground">แจ้งเตือนผ่าน SMS</span>
-              <input type="checkbox" id="ntf-sms" data-notify-key="sms" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
-            </label>
-            <label class="flex items-center justify-between">
-              <span class="text-sm text-card-foreground">แจ้งเตือนผ่านอีเมล</span>
-              <input type="checkbox" id="ntf-email" data-notify-key="email" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
-            </label>
-          </div>
+          <div aria-disabled="true" class="opacity-50 pointer-events-none select-none">
+            <div class="text-sm font-medium text-card-foreground mb-2">ช่องทางการแจ้งเตือน</div>
+            <div class="space-y-3 mb-5">
+              <label class="flex items-center justify-between">
+                <span class="text-sm text-card-foreground">แจ้งเตือนผ่าน LINE</span>
+                <input type="checkbox" id="ntf-line" data-notify-key="line" disabled class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+              </label>
+              <label class="flex items-center justify-between">
+                <span class="text-sm text-card-foreground">แจ้งเตือนผ่าน SMS</span>
+                <input type="checkbox" id="ntf-sms" data-notify-key="sms" disabled class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+              </label>
+              <label class="flex items-center justify-between">
+                <span class="text-sm text-card-foreground">แจ้งเตือนผ่านอีเมล</span>
+                <input type="checkbox" id="ntf-email" data-notify-key="email" disabled class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+              </label>
+            </div>
 
-          <div class="h-px bg-border my-4"></div>
+            <div class="h-px bg-border my-4"></div>
 
-          <div class="text-sm font-medium text-card-foreground mb-2">ประเภทการแจ้งเตือน</div>
-          <div class="space-y-3">
-            <label class="flex items-center justify-between">
-              <span class="text-sm text-card-foreground">ประกาศจากโรงเรียน</span>
-              <input type="checkbox" id="ntf-announcements" data-notify-key="announcements" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
-            </label>
-            <label class="flex items-center justify-between">
-              <span class="text-sm text-card-foreground">ผลคำขอลา</span>
-              <input type="checkbox" id="ntf-leaveResult" data-notify-key="leaveResult" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
-            </label>
-            <label class="flex items-center justify-between">
-              <span class="text-sm text-card-foreground">การมาเรียน/ขาด/มาสาย</span>
-              <input type="checkbox" id="ntf-attendance" data-notify-key="attendance" class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
-            </label>
+            <div class="text-sm font-medium text-card-foreground mb-2">ประเภทการแจ้งเตือน</div>
+            <div class="space-y-3">
+              <label class="flex items-center justify-between">
+                <span class="text-sm text-card-foreground">ประกาศจากโรงเรียน</span>
+                <input type="checkbox" id="ntf-announcements" data-notify-key="announcements" disabled class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+              </label>
+              <label class="flex items-center justify-between">
+                <span class="text-sm text-card-foreground">ผลคำขอลา</span>
+                <input type="checkbox" id="ntf-leaveResult" data-notify-key="leaveResult" disabled class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+              </label>
+              <label class="flex items-center justify-between">
+                <span class="text-sm text-card-foreground">การมาเรียน/ขาด/มาสาย</span>
+                <input type="checkbox" id="ntf-attendance" data-notify-key="attendance" disabled class="w-5 h-5 rounded border-border text-primary focus:ring-primary">
+              </label>
+            </div>
           </div>
         </div>
 
@@ -146,14 +144,51 @@
 
   <script src="js/parent-store.js"></script>
   <script src="js/parent-nav.js"></script>
+  <script src="js/parent-profile-editor.js"></script>
   <script>
     (function () {
       var esc = ParentUI.escapeHtml;
       var parent = ParentStore.getParent();
 
-      /* ---------------- บัญชีผู้ใช้ ---------------- */
-      document.getElementById('acc-username').textContent = parent.phone || '—';
-      document.getElementById('acc-email').textContent = parent.email || '—';
+      /* ---------------- บัญชีผู้ใช้: ข้อมูลผู้ปกครอง + รูปโปรไฟล์ ---------------- */
+      ParentProfileEditor.mount(document.getElementById('account-parent-editor'));
+      document.getElementById('pwd-username').value = parent.phone || '';
+
+      /* ---------------- บุตรในบัญชีนี้ (อ่านอย่างเดียว + ลบออกจากบัญชีได้) ---------------- */
+      function renderAccountChildren() {
+        var children = ParentStore.getChildren();
+        document.getElementById('account-children').innerHTML = children.map(function (c) {
+          var fullName = esc(c.prefix) + esc(c.firstName) + ' ' + esc(c.lastName) + ' (' + esc(c.nickname) + ')';
+          var onlyOne = children.length <= 1;
+          var btnAttrs = onlyOne
+            ? ' disabled title="ต้องมีบุตรในบัญชีอย่างน้อย 1 คน"'
+            : '';
+          return '<div class="flex items-center justify-between gap-3 border border-border rounded-lg p-3">' +
+            '<div class="text-sm">' +
+              '<div class="font-medium text-card-foreground">' + fullName + '</div>' +
+              '<div class="text-muted-foreground mt-0.5">รหัสนักเรียน ' + esc(c.studentId) + ' · ห้อง ' + esc(c.classroom) + '/' + esc(c.no) + ' · ครูประจำชั้น ' + esc(c.homeroomTeacher) + '</div>' +
+            '</div>' +
+            '<button type="button" data-remove-child="' + esc(c.id) + '" class="shrink-0 text-xs border border-destructive text-destructive rounded-lg px-3 py-1.5 hover:bg-destructive/10 disabled:opacity-50 disabled:hover:bg-transparent disabled:cursor-not-allowed"' + btnAttrs + '>ลบออกจากบัญชี</button>' +
+          '</div>';
+        }).join('');
+
+        document.querySelectorAll('[data-remove-child]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var childId = btn.getAttribute('data-remove-child');
+            ParentUI.confirm('ยืนยันลบบุตรคนนี้ออกจากบัญชีผู้ปกครองนี้? การกระทำนี้ไม่ได้ลบข้อมูลนักเรียน เพียงแค่ตัดออกจากบัญชีของคุณ', { danger: true, confirmText: 'ลบออกจากบัญชี' }).then(function (confirmed) {
+              if (!confirmed) return;
+              var ok = ParentStore.removeChild(childId);
+              if (!ok) {
+                ParentUI.toast('ต้องมีบุตรในบัญชีอย่างน้อย 1 คน', 'error');
+                return;
+              }
+              ParentUI.toast('ลบบุตรออกจากบัญชีแล้ว', 'success');
+              location.reload();
+            });
+          });
+        });
+      }
+      renderAccountChildren();
 
       /* ---------------- เปลี่ยนรหัสผ่าน (จำลอง) ---------------- */
       document.getElementById('pwd-form').addEventListener('submit', function (e) {
@@ -163,9 +198,19 @@
         var newErr = document.getElementById('pw-new-error');
         var confirmErr = document.getElementById('pw-confirm-error');
 
+        var newInput = document.getElementById('pw-new');
+        var confirmInput = document.getElementById('pw-confirm');
+
         var ok = true;
-        if (newPw.length < 8) { newErr.classList.remove('hidden'); ok = false; } else { newErr.classList.add('hidden'); }
-        if (confirmPw !== newPw || !confirmPw) { confirmErr.classList.remove('hidden'); ok = false; } else { confirmErr.classList.add('hidden'); }
+        var newValid = newPw.length >= 8;
+        newErr.classList.toggle('hidden', newValid);
+        newInput.setAttribute('aria-invalid', newValid ? 'false' : 'true');
+        if (!newValid) ok = false;
+
+        var confirmValid = confirmPw === newPw && !!confirmPw;
+        confirmErr.classList.toggle('hidden', confirmValid);
+        confirmInput.setAttribute('aria-invalid', confirmValid ? 'false' : 'true');
+        if (!confirmValid) ok = false;
 
         if (!ok) return;
 
@@ -190,16 +235,20 @@
 
       /* ---------------- อุปกรณ์ ---------------- */
       document.getElementById('btn-logout-all').addEventListener('click', function () {
-        if (!confirm('ยืนยันออกจากระบบทุกอุปกรณ์?')) return;
-        ParentStore.logout();
-        location.href = 'login.html';
+        ParentUI.confirm('ยืนยันออกจากระบบทุกอุปกรณ์?', { danger: true, confirmText: 'ออกจากระบบ' }).then(function (confirmed) {
+          if (!confirmed) return;
+          ParentStore.logout();
+          location.href = 'login.html';
+        });
       });
 
       /* ---------------- รีเซ็ตข้อมูลตัวอย่าง ---------------- */
       document.getElementById('btn-reset-data').addEventListener('click', function () {
-        if (!confirm('ยืนยันรีเซ็ตข้อมูลตัวอย่างทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้')) return;
-        ParentStore.resetAll();
-        location.href = 'login.html';
+        ParentUI.confirm('ยืนยันรีเซ็ตข้อมูลตัวอย่างทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้', { danger: true, confirmText: 'รีเซ็ตข้อมูล' }).then(function (confirmed) {
+          if (!confirmed) return;
+          ParentStore.resetAll();
+          location.href = 'login.html';
+        });
       });
 
       /* ---------------- สลับหมวด 2 คอลัมน์ ด้วย hash ---------------- */
@@ -220,6 +269,7 @@
           link.classList.toggle('border-primary', isActive);
           ACTIVE_CLS.forEach(function (c) { link.classList.toggle(c, isActive); });
           INACTIVE_CLS.forEach(function (c) { link.classList.toggle(c, !isActive); });
+          if (isActive) { link.setAttribute('aria-current', 'page'); } else { link.removeAttribute('aria-current'); }
         });
         window.scrollTo(0, 0);
       }
