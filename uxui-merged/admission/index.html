@@ -13,53 +13,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom Tailwind Config to match original OKLCH theme -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              DEFAULT: '#3e63dd',
-              foreground: '#ffffff',
-              hover: '#2f51c7'
-            },
-            secondary: {
-              DEFAULT: '#f1f3f9',
-              foreground: '#1e293b'
-            },
-            success: {
-              DEFAULT: '#10b981',
-              foreground: '#ffffff'
-            },
-            warning: {
-              DEFAULT: '#f59e0b',
-              foreground: '#78350f'
-            },
-            info: {
-              DEFAULT: '#0284c7',
-              foreground: '#ffffff'
-            },
-            destructive: {
-              DEFAULT: '#ef4444',
-              foreground: '#ffffff'
-            },
-            muted: {
-              DEFAULT: '#f8fafc',
-              foreground: '#64748b'
-            },
-            card: {
-              DEFAULT: '#ffffff',
-              foreground: '#0f172a'
-            },
-            border: '#e2e8f0'
-          },
-          fontFamily: {
-            sans: ['Sarabun', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <script src="js/tailwind-config.js"></script>
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -105,16 +59,16 @@
           <a href="index.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold bg-primary text-primary-foreground shadow">
             <i data-lucide="layout-dashboard" class="h-3.5 w-3.5"></i> บอร์ดรับสมัคร
           </a>
-          <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-650 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+          <a href="students.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
             <i data-lucide="users" class="h-3.5 w-3.5"></i> ข้อมูลนักเรียน
           </a>
-          <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-650 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+          <a href="settings.html" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
             <i data-lucide="settings" class="h-3.5 w-3.5"></i> ตั้งค่าฟอร์ม
           </a>
         </div>
       </div>
       <div class="ml-auto flex items-center gap-2">
-        <a href="status.html" class="inline-flex items-center gap-2 rounded-md bg-sky-50 border border-sky-200 px-3.5 py-1.5 text-sm font-medium hover:bg-sky-100 text-sky-700 transition-colors shadow-sm">
+        <a href="../apply/status.html" class="inline-flex items-center gap-2 rounded-md bg-sky-50 border border-sky-200 px-3.5 py-1.5 text-sm font-medium hover:bg-sky-100 text-sky-700 transition-colors shadow-sm">
           <i data-lucide="search" class="h-4 w-4"></i> ระบบตรวจสอบสถานะผู้สมัคร
         </a>
         <button id="btn-notify" class="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-3.5 py-1.5 text-sm font-medium hover:bg-primary-hover disabled:opacity-50 disabled:pointer-events-none transition-colors" disabled>
@@ -123,7 +77,7 @@
         <button id="btn-print" class="inline-flex items-center gap-2 rounded-md bg-secondary text-secondary-foreground border border-border px-3.5 py-1.5 text-sm font-medium hover:bg-slate-200 disabled:opacity-50 disabled:pointer-events-none transition-colors" disabled>
           <i data-lucide="printer" class="h-4 w-4"></i> พิมพ์ (<span id="print-count">0</span>)
         </button>
-        <a href="apply.html" class="inline-flex items-center gap-2 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+        <a href="../apply/register.html" class="inline-flex items-center gap-2 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
           <i data-lucide="user-plus" class="h-4 w-4"></i> ลงทะเบียนผู้สมัครใหม่
         </a>
       </div>
@@ -153,20 +107,20 @@
 
         <!-- Node 2 -->
         <button onclick="changePhase(2)" id="roadmap-node-2" class="flex flex-col items-center group focus:outline-none transition-all duration-300 transform hover:scale-105" style="width: 180px;">
-          <div id="roadmap-circle-2" class="w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 transition-all duration-300 group-hover:border-primary group-hover:text-primary">
+          <div id="roadmap-circle-2" class="w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-500 transition-all duration-300 group-hover:border-primary group-hover:text-primary">
             <i data-lucide="edit-3" class="h-6 w-6"></i>
           </div>
           <span class="mt-2.5 text-xs font-semibold text-slate-500 transition-colors" id="roadmap-label-2">ประกาศผลสอบ</span>
-          <span class="text-[10px] text-slate-400" id="roadmap-sub-2">เฟสที่ 2</span>
+          <span class="text-[10px] text-slate-500" id="roadmap-sub-2">เฟสที่ 2</span>
         </button>
 
         <!-- Node 3 -->
         <button onclick="changePhase(3)" id="roadmap-node-3" class="flex flex-col items-center group focus:outline-none transition-all duration-300 transform hover:scale-105" style="width: 180px;">
-          <div id="roadmap-circle-3" class="w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 transition-all duration-300 group-hover:border-primary group-hover:text-primary">
+          <div id="roadmap-circle-3" class="w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-500 transition-all duration-300 group-hover:border-primary group-hover:text-primary">
             <i data-lucide="school" class="h-6 w-6"></i>
           </div>
           <span class="mt-2.5 text-xs font-semibold text-slate-500 transition-colors" id="roadmap-label-3">รายงานตัวและมอบตัว</span>
-          <span class="text-[10px] text-slate-400" id="roadmap-sub-3">เฟสที่ 3</span>
+          <span class="text-[10px] text-slate-500" id="roadmap-sub-3">เฟสที่ 3</span>
         </button>
       </div>
     </div>
@@ -179,7 +133,7 @@
     <!-- Filters & Search Bar -->
     <div class="flex flex-wrap gap-3 items-center justify-between mb-4 bg-card p-4 rounded-lg border border-border shadow-sm">
       <div class="relative w-full max-w-sm">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
           <i data-lucide="search" class="h-4 w-4"></i>
         </span>
         <input type="text" id="search-input" oninput="handleFilterChange()" placeholder="ค้นหาชื่อหรือรหัสผู้สมัคร..." class="block w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
@@ -192,13 +146,10 @@
           <option value="ม.4">ม.4</option>
         </select>
 
+        <!-- ตัวเลือกแผนการเรียนเติมจาก window.STUDY_PLAN_OPTIONS ตอนโหลดหน้า (ดู DOMContentLoaded)
+             แทนการฮาร์ดโค้ดไว้ตรงนี้ — ไม่งั้นแผนใหม่ที่เพิ่มจาก course_settings.html จะไม่โผล่ -->
         <select id="filter-plan" onchange="handleFilterChange()" class="h-9 text-sm rounded-md border border-slate-200 bg-card px-3 focus:outline-none focus:ring-1 focus:ring-primary">
           <option value="">ทุกแผนการเรียน</option>
-          <option value="วิทย์-คณิต">วิทย์-คณิต</option>
-          <option value="ศิลป์-คำนวณ">ศิลป์-คำนวณ</option>
-          <option value="ศิลป์-ภาษา">ศิลป์-ภาษา</option>
-          <option value="คอมพิวเตอร์และเทคโนโลยี">คอมพิวเตอร์และเทคโนโลยี</option>
-          <option value="ทั่วไป">ทั่วไป</option>
         </select>
         
         <button onclick="resetStoreData()" class="h-9 text-xs rounded-md border border-slate-200 px-3 hover:bg-slate-50 text-slate-500 font-medium inline-flex items-center gap-1 transition-colors">
@@ -240,7 +191,7 @@
 
   <!-- Floating Bulk Action Bar -->
   <div id="bulk-action-bar" class="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 hidden">
-    <div class="flex flex-wrap items-center gap-2.5 rounded-full border border-border bg-card px-4 py-2.5 shadow-lg ring-1 ring-black/5 animate-bounce-short">
+    <div class="flex flex-wrap items-center gap-2.5 rounded-full border border-border bg-card px-4 py-2.5 shadow-lg ring-1 ring-black/5 animate-bounce">
       <span class="flex items-center gap-2 pl-1 pr-2 text-sm font-medium">
         <span id="bulk-selected-count" class="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs text-primary-foreground font-semibold">
           0
@@ -260,7 +211,7 @@
       <button onclick="triggerBulkExport()" class="inline-flex items-center justify-center rounded-md bg-secondary border border-border px-3 py-1.5 text-xs font-semibold hover:bg-slate-200 transition-colors text-secondary-foreground">
         <i data-lucide="printer" class="mr-1.5 h-3.5 w-3.5"></i> พิมพ์
       </button>
-      <button onclick="clearAllSelections()" class="p-1 rounded-full text-slate-400 hover:text-slate-600 transition-colors" aria-label="ยกเลิกการเลือก">
+      <button onclick="clearAllSelections()" class="p-1 rounded-full text-slate-500 hover:text-slate-600 transition-colors" aria-label="ยกเลิกการเลือก">
         <i data-lucide="x" class="h-4 w-4"></i>
       </button>
     </div>
@@ -268,7 +219,7 @@
 
   <!-- Single Status Change Modal -->
   <div id="modal-status" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
-    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden">
       <div class="px-5 py-4 border-b border-border">
         <h3 class="text-base font-semibold text-slate-900">ยืนยันการอัปเดตสถานะ?</h3>
       </div>
@@ -281,7 +232,7 @@
         <div id="modal-status-move-warning" class="hidden rounded-md border border-sky-100 bg-sky-50 px-3 py-2 text-xs text-sky-700">
           ⓘ รายการนี้จะถูกย้ายไปยังแท็บ "<span id="modal-status-target-phase">...</span>"
         </div>
-        <p class="text-xs text-slate-400">
+        <p class="text-xs text-slate-500">
           ระบบจะส่งอีเมลแจ้งผู้ปกครองตาม Template ทันทีหากกดยืนยัน
         </p>
       </div>
@@ -294,7 +245,7 @@
 
   <!-- Bulk Status Change Modal -->
   <div id="modal-bulk-status" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
-    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden">
       <div class="px-5 py-4 border-b border-border">
         <h3 class="text-base font-semibold text-slate-900">ยืนยันการอัปเดตสถานะแบบกลุ่ม?</h3>
       </div>
@@ -308,12 +259,12 @@
         </div>
         
         <div class="rounded-md border bg-slate-50 p-3 max-h-36 overflow-y-auto">
-          <div class="mb-1.5 text-xs font-medium text-slate-400">รายชื่อผู้สมัคร (แสดงสูงสุด 5 รายการ)</div>
+          <div class="mb-1.5 text-xs font-medium text-slate-500">รายชื่อผู้สมัคร (แสดงสูงสุด 5 รายการ)</div>
           <ul id="modal-bulk-status-list" class="space-y-1 text-xs text-slate-700 divide-y divide-slate-100">
             <!-- Bulk list items -->
           </ul>
         </div>
-        <p class="text-xs text-slate-400">
+        <p class="text-xs text-slate-500">
           ระบบจะส่งอีเมลแจ้งผู้ปกครองทุกคนตาม Template ทันที (สามารถกดย้อนกลับรายการทั้งหมดได้หลังจากการอัปเดตเสร็จสิ้น)
         </p>
       </div>
@@ -326,13 +277,13 @@
 
   <!-- Documents Modal -->
   <div id="modal-docs" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
-    <div class="bg-card w-full max-w-lg rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-card w-full max-w-lg rounded-lg shadow-xl border border-border overflow-hidden">
       <div class="px-5 py-4 border-b border-border flex justify-between items-center">
         <div>
           <h3 class="text-base font-semibold text-slate-900">เอกสารแนบของผู้สมัคร</h3>
-          <p id="modal-docs-subtitle" class="text-xs text-slate-400">...</p>
+          <p id="modal-docs-subtitle" class="text-xs text-slate-500">...</p>
         </div>
-        <button onclick="closeModal('modal-docs')" class="p-1 rounded-full text-slate-400 hover:bg-slate-100 transition-colors">
+        <button onclick="closeModal('modal-docs')" class="p-1 rounded-full text-slate-500 hover:bg-slate-100 transition-colors">
           <i data-lucide="x" class="h-5 w-5"></i>
         </button>
       </div>
@@ -366,10 +317,10 @@
 
   <!-- Score Modal -->
   <div id="modal-score" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
-    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden">
       <div class="px-5 py-4 border-b border-border">
         <h3 class="text-base font-semibold text-slate-900">กรอก/แก้ไขคะแนนสอบ</h3>
-        <p id="modal-score-subtitle" class="text-xs text-slate-400">...</p>
+        <p id="modal-score-subtitle" class="text-xs text-slate-500">...</p>
       </div>
       <div class="p-5 space-y-4">
         <div>
@@ -390,7 +341,7 @@
 
   <!-- Delete Modal -->
   <div id="modal-delete" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
-    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden">
       <div class="px-5 py-4 border-b border-border">
         <h3 class="text-base font-semibold text-slate-900 text-destructive">ลบข้อมูลผู้สมัคร?</h3>
       </div>
@@ -408,19 +359,19 @@
 
   <!-- Print Selection Modal -->
   <div id="modal-print-select" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
-    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden">
       <div class="px-5 py-4 border-b border-border">
         <h3 class="text-base font-semibold text-slate-900 font-sans">เลือกเอกสารที่ต้องการพิมพ์</h3>
-        <p class="text-[11px] text-slate-400 font-sans mt-0.5">สำหรับผู้สมัครจำนวน <span id="print-select-count" class="font-bold text-primary">0</span> ราย</p>
+        <p class="text-[11px] text-slate-500 font-sans mt-0.5">สำหรับผู้สมัครจำนวน <span id="print-select-count" class="font-bold text-primary">0</span> ราย</p>
       </div>
       <div class="p-5 space-y-3 font-sans">
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ประเภทเอกสาร</p>
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ประเภทเอกสาร</p>
         
         <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
           <input type="checkbox" id="print-doc-app" checked class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
           <div>
             <span class="text-xs font-bold text-slate-800 block">ใบสมัครและแสดงความจำนง</span>
-            <span class="text-[10px] text-slate-400">ข้อมูลประวัติและสาขาแผนการเรียนที่เลือกสมัคร</span>
+            <span class="text-[10px] text-slate-500">ข้อมูลประวัติและสาขาแผนการเรียนที่เลือกสมัคร</span>
           </div>
         </label>
         
@@ -428,7 +379,7 @@
           <input type="checkbox" id="print-doc-receipt" checked class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
           <div>
             <span class="text-xs font-bold text-slate-800 block">ใบแจ้งยอดและหลักฐานการจ่ายเงินค่าสอบ</span>
-            <span class="text-[10px] text-slate-400">หลักฐานจำลองการชำระเงินค่าสมัครสอบคัดเลือก</span>
+            <span class="text-[10px] text-slate-500">หลักฐานจำลองการชำระเงินค่าสมัครสอบคัดเลือก</span>
           </div>
         </label>
 
@@ -436,7 +387,7 @@
           <input type="checkbox" id="print-doc-enroll" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
           <div>
             <span class="text-xs font-bold text-slate-800 block">ใบมอบตัวและข้อมูลห้องเรียน</span>
-            <span class="text-[10px] text-slate-400">แบบฟอร์มยืนยันสิทธิ์รายงานตัว (สำหรับเฟส 3)</span>
+            <span class="text-[10px] text-slate-500">แบบฟอร์มยืนยันสิทธิ์รายงานตัว (สำหรับเฟส 3)</span>
           </div>
         </label>
       </div>
@@ -449,15 +400,15 @@
 
   <!-- Print Preview Modal -->
   <div id="modal-print-preview" class="fixed inset-0 z-50 flex items-center justify-center bg-black/45 hidden">
-    <div class="bg-slate-100 w-full max-w-4xl h-[90vh] rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+    <div class="bg-slate-100 w-full max-w-4xl h-[90vh] rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col">
       
       <!-- Top Action Bar -->
       <div class="bg-white border-b px-5 py-3 flex items-center justify-between z-10 font-sans">
         <div>
           <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-            <i data-lucide="eye" class="text-primary h-4.5 w-4.5"></i> ตัวอย่างเอกสารก่อนพิมพ์ (จำลอง)
+            <i data-lucide="eye" class="text-primary h-[18px] w-[18px]"></i> ตัวอย่างเอกสารก่อนพิมพ์ (จำลอง)
           </h3>
-          <p class="text-[10px] text-slate-400">แสดงผลเอกสารที่เลือกพิมพ์จำลองรวม <span id="print-preview-sheets-count" class="font-bold text-slate-700">0</span> แผ่น</p>
+          <p class="text-[10px] text-slate-500">แสดงผลเอกสารที่เลือกพิมพ์จำลองรวม <span id="print-preview-sheets-count" class="font-bold text-slate-700">0</span> แผ่น</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="mockDownloadPrintFiles()" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 border border-indigo-200 px-3 py-1.5 text-xs font-bold hover:bg-indigo-100 text-primary transition-colors">
@@ -466,7 +417,7 @@
           <button onclick="mockSendToPrinter()" class="inline-flex items-center gap-1.5 rounded-lg bg-primary text-white px-3.5 py-1.5 text-xs font-bold hover:bg-primary-hover transition-colors shadow-sm">
             <i data-lucide="printer" class="h-3.5 w-3.5"></i> สั่งพิมพ์เอกสาร (จำลอง)
           </button>
-          <button onclick="closeModal('modal-print-preview')" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors ml-2">
+          <button onclick="closeModal('modal-print-preview')" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors ml-2">
             <i data-lucide="x" class="h-5 w-5"></i>
           </button>
         </div>
@@ -479,10 +430,7 @@
     </div>
   </div>
 
-  <!-- Toast Notification Template -->
-  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none">
-    <!-- Toasts injected dynamically -->
-  </div>
+  <!-- toast container ถูกสร้างอัตโนมัติโดย js/ui.js (#admission-toast-container) -->
 
   <!-- Row Actions Dropdown Overlay Context -->
   <div id="dropdown-menu" class="fixed bg-white border border-border rounded-md shadow-lg py-1 w-52 hidden z-40 scale-95 duration-100 origin-top-right">
@@ -491,6 +439,7 @@
 
   <!-- Load database script -->
   <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
 
   <!-- Dashboard Controller Script -->
   <script>
@@ -500,6 +449,11 @@
 
     // Load initial values
     window.addEventListener('DOMContentLoaded', () => {
+      const planSelect = document.getElementById('filter-plan');
+      (window.STUDY_PLAN_OPTIONS || []).forEach(p => {
+        planSelect.innerHTML += `<option value="${window.escapeHtml(p)}">${window.escapeHtml(p)}</option>`;
+      });
+
       changePhase(1);
       document.addEventListener('click', closeDropdownHandler);
       document.getElementById('btn-print').onclick = triggerBulkPrint;
@@ -510,6 +464,7 @@
       const dropdown = document.getElementById('dropdown-menu');
       if (!dropdown.contains(e.target) && !e.target.closest('.dropdown-trigger')) {
         dropdown.classList.add('hidden');
+        document.querySelectorAll('.dropdown-trigger[aria-expanded="true"]').forEach(btn => btn.setAttribute('aria-expanded', 'false'));
       }
     }
 
@@ -542,9 +497,9 @@
           sub.className = "text-[10px] text-emerald-500 font-medium transition-colors";
         } else {
           // Pending/Future
-          circle.className = "w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-400 transition-all duration-300";
+          circle.className = "w-14 h-14 rounded-full flex items-center justify-center border-2 border-slate-200 bg-white text-slate-500 transition-all duration-300";
           label.className = "mt-2.5 text-xs font-semibold text-slate-500 transition-colors";
-          sub.className = "text-[10px] text-slate-400 transition-colors";
+          sub.className = "text-[10px] text-slate-500 transition-colors";
         }
       });
 
@@ -609,20 +564,7 @@
       showToast("รีเซ็ตฐานข้อมูลเรียบร้อยแล้ว", "ข้อมูลผู้สมัครถูกตั้งกลับเป็นค่าเริ่มต้น", "success");
     }
 
-    function getBadgeClass(status) {
-      const map = {
-        unpaid_exam_fee: "bg-amber-100 text-amber-800 border-amber-200",
-        paid_exam_fee: "bg-emerald-100 text-emerald-800 border-emerald-200",
-        awaiting_results: "bg-slate-100 text-slate-600 border-slate-200",
-        passed: "bg-emerald-100 text-emerald-800 border-emerald-200",
-        reserve: "bg-amber-100 text-amber-800 border-amber-200",
-        failed: "bg-rose-100 text-rose-800 border-rose-200",
-        not_reported: "bg-slate-100 text-slate-600 border-slate-200",
-        reported: "bg-sky-100 text-sky-800 border-sky-200",
-        enrolled: "bg-emerald-100 text-emerald-800 border-emerald-200",
-      };
-      return map[status] || "bg-slate-100 text-slate-800";
-    }
+    // getBadgeClass ย้ายไป js/store.js แล้ว (window.getBadgeClass) — ใช้ร่วมกันทุกหน้า
 
     function renderTable() {
       const rows = getFilteredApplicants();
@@ -657,7 +599,7 @@
         const visibleColCount = document.querySelectorAll('thead th:not(.hidden)').length;
         body.innerHTML = `
           <tr>
-            <td colspan="${visibleColCount}" class="py-12 text-center text-slate-400">
+            <td colspan="${visibleColCount}" class="py-12 text-center text-slate-500">
               ไม่มีข้อมูลผู้สมัครที่ตรงตามเงื่อนไขในแท็บนี้
             </td>
           </tr>
@@ -711,15 +653,15 @@
           <td class="p-3 text-center">
             <input type="checkbox" data-id="${a.id}" ${isChecked ? 'checked' : ''} onchange="toggleSelectOne('${a.id}', this.checked, event)" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300">
           </td>
-          <td class="p-3 text-slate-400 font-medium">${index + 1}</td>
+          <td class="p-3 text-slate-500 font-medium">${index + 1}</td>
           <td class="p-3">
-            <div class="text-[11px] text-slate-400 font-medium">${window.escapeHtml(a.studentId ?? a.applicantCode)}</div>
+            <div class="text-[11px] text-slate-500 font-medium">${window.escapeHtml(a.studentId ?? a.applicantCode)}</div>
             <a href="profile.html?id=${a.id}" class="font-semibold text-slate-800 hover:text-primary hover:underline transition-colors">${window.escapeHtml(a.firstName)} ${window.escapeHtml(a.lastName)}</a>
           </td>
           <td class="p-3 whitespace-nowrap text-slate-500 text-xs">${formatDate(a.appliedAt)}</td>
           <td class="p-3">
             <div class="font-medium text-slate-700">${window.escapeHtml(a.gradeLevel)}</div>
-            <div class="text-[11px] text-slate-400">${window.escapeHtml(a.studyPlan)}</div>
+            <div class="text-[11px] text-slate-500">${window.escapeHtml(a.studyPlan)}</div>
           </td>
           
           ${dynamicCols}
@@ -731,7 +673,7 @@
                   ${window.STATUS_LABEL[a.status]} ${a.reserveRank ? `#${a.reserveRank}` : ''}
                 </span>
               </div>
-              ${a.examScore ? `<div class="text-[11px] text-slate-400 font-semibold">คะแนน ${a.examScore.raw} / GPA ${a.examScore.gpa}</div>` : '<div class="text-[11px] text-slate-300 italic">ไม่มีข้อมูลคะแนน</div>'}
+              ${a.examScore ? `<div class="text-[11px] text-slate-500 font-semibold">คะแนน ${a.examScore.raw} / GPA ${a.examScore.gpa}</div>` : '<div class="text-[11px] text-slate-300 italic">ไม่มีข้อมูลคะแนน</div>'}
             ` : `
               <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${getBadgeClass(a.status)}">
                 ${window.STATUS_LABEL[a.status]}
@@ -744,8 +686,8 @@
             </select>
           </td>
           <td class="p-3 text-right">
-            <button onclick="toggleDropdown('${a.id}', this, event)" class="dropdown-trigger p-1.5 text-slate-400 hover:bg-slate-100 rounded-md transition-colors">
-              <i data-lucide="more-horizontal" class="h-4.5 w-4.5"></i>
+            <button onclick="toggleDropdown('${a.id}', this, event)" aria-label="เมนูเพิ่มเติม" aria-haspopup="true" aria-expanded="false" class="dropdown-trigger p-1.5 text-slate-500 hover:bg-slate-100 rounded-md transition-colors">
+              <i data-lucide="more-horizontal" class="h-[18px] w-[18px]"></i>
             </button>
           </td>
         `;
@@ -764,33 +706,37 @@
       const dropdown = document.getElementById('dropdown-menu');
       const rect = trigger.getBoundingClientRect();
       const a = window.AdmitifyStore.getById(id);
+      document.querySelectorAll('.dropdown-trigger[aria-expanded="true"]').forEach(btn => {
+        if (btn !== trigger) btn.setAttribute('aria-expanded', 'false');
+      });
+      trigger.setAttribute('aria-expanded', 'true');
 
       let menuItemsHtml = '';
       if (currentPhase === 1) {
         menuItemsHtml += `
-          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-400"></i> ดูโปรไฟล์นักเรียน</a>
-          <button onclick="viewDocuments('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="eye" class="h-3.5 w-3.5 text-slate-400"></i> ดูเอกสารที่อัปโหลด</button>
-          <a href="edit.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="pencil" class="h-3.5 w-3.5 text-slate-400"></i> แก้ไขข้อมูลนักเรียน</a>
-          <button onclick="openPrintPreviewSingle('${a.id}', 'app')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="printer" class="h-3.5 w-3.5 text-slate-400"></i> พิมพ์ใบสมัคร</button>
+          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-500"></i> ดูโปรไฟล์นักเรียน</a>
+          <button onclick="viewDocuments('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="eye" class="h-3.5 w-3.5 text-slate-500"></i> ดูเอกสารที่อัปโหลด</button>
+          <a href="edit.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="pencil" class="h-3.5 w-3.5 text-slate-500"></i> แก้ไขข้อมูลนักเรียน</a>
+          <button onclick="openPrintPreviewSingle('${a.id}', 'app')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="printer" class="h-3.5 w-3.5 text-slate-500"></i> พิมพ์ใบสมัคร</button>
           <hr class="my-1 border-slate-100">
           <button onclick="confirmDelete('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2"><i data-lucide="trash-2" class="h-3.5 w-3.5 text-rose-400"></i> ลบข้อมูลนักเรียน</button>
         `;
       } else if (currentPhase === 2) {
         menuItemsHtml += `
-          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-400"></i> ดูโปรไฟล์นักเรียน</a>
-          <button onclick="openScoreModal('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="clipboard-edit" class="h-3.5 w-3.5 text-slate-400"></i> กรอก/แก้ไขคะแนนสอบ</button>
-          <a href="notify.html?to=${encodeURIComponent(a.parentEmail)}&template=passed" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="mail" class="h-3.5 w-3.5 text-slate-400"></i> ส่งอีเมลแจ้งผลเดี่ยว</a>
+          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-500"></i> ดูโปรไฟล์นักเรียน</a>
+          <button onclick="openScoreModal('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="clipboard-edit" class="h-3.5 w-3.5 text-slate-500"></i> กรอก/แก้ไขคะแนนสอบ</button>
+          <a href="notify.html?to=${encodeURIComponent(a.parentEmail)}&template=passed" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="mail" class="h-3.5 w-3.5 text-slate-500"></i> ส่งอีเมลแจ้งผลเดี่ยว</a>
         `;
       } else { // Phase 3
         menuItemsHtml += `
-          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-400"></i> ดูโปรไฟล์นักเรียน</a>
-          <button onclick="openPrintPreviewSingle('${a.id}', 'enroll')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="printer" class="h-3.5 w-3.5 text-slate-400"></i> พิมพ์ใบมอบตัว</button>
-          <button onclick="mockFinanceCheck('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="receipt" class="h-3.5 w-3.5 text-slate-400"></i> ตรวจสอบประวัติการเงิน</button>
+          <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-500"></i> ดูโปรไฟล์นักเรียน</a>
+          <button onclick="openPrintPreviewSingle('${a.id}', 'enroll')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="printer" class="h-3.5 w-3.5 text-slate-500"></i> พิมพ์ใบมอบตัว</button>
+          <button onclick="mockFinanceCheck('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="receipt" class="h-3.5 w-3.5 text-slate-500"></i> ตรวจสอบประวัติการเงิน</button>
         `;
       }
 
       dropdown.innerHTML = menuItemsHtml;
-      lucide.createIcons({ attrs: { class: 'h-3.5 w-3.5 text-slate-400' } });
+      lucide.createIcons({ attrs: { class: 'h-3.5 w-3.5 text-slate-500' } });
 
       // Positioning Dropdown (dropdown is position:fixed, so use viewport-relative rect directly)
       dropdown.style.top = `${rect.bottom}px`;
@@ -959,12 +905,12 @@
         list.innerHTML += `
           <li class="py-1 flex justify-between">
             <span class="font-medium">${window.escapeHtml(item.firstName)} ${window.escapeHtml(item.lastName)}</span>
-            <span class="text-[10px] text-slate-400 font-mono">${window.escapeHtml(item.applicantCode)}</span>
+            <span class="text-[10px] text-slate-500 font-mono">${window.escapeHtml(item.applicantCode)}</span>
           </li>
         `;
       });
       if (count > 5) {
-        list.innerHTML += `<li class="py-1 text-slate-400 italic">และอีก ${count - 5} รายการ...</li>`;
+        list.innerHTML += `<li class="py-1 text-slate-500 italic">และอีก ${count - 5} รายการ...</li>`;
       }
 
       // Confirm button
@@ -1021,7 +967,7 @@
         const raw = rawInput.value.trim();
         const gpa = gpaInput.value.trim();
         if (raw === '' || gpa === '') {
-          alert('กรุณากรอกคะแนนดิบและ GPA');
+          AdmissionUI.alert('กรุณากรอกคะแนนดิบและ GPA');
           return;
         }
 
@@ -1085,7 +1031,7 @@
       const renderEnroll = document.getElementById('print-doc-enroll').checked;
       
       if (!renderApp && !renderReceipt && !renderEnroll) {
-        alert('กรุณาเลือกประเภทเอกสารอย่างน้อย 1 รายการ');
+        AdmissionUI.alert('กรุณาเลือกประเภทเอกสารอย่างน้อย 1 รายการ');
         return;
       }
       
@@ -1125,7 +1071,7 @@
                 </div>
                 <div class="text-right">
                   <h4 class="text-xs font-bold text-slate-900 font-mono">${applicant.applicantCode}</h4>
-                  <p class="text-[8px] text-slate-400">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
+                  <p class="text-[8px] text-slate-500">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
                 </div>
               </div>
               
@@ -1135,18 +1081,18 @@
               </div>
 
               <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 border p-4 rounded-lg bg-slate-50/50 mb-6">
-                <div><span class="text-slate-400 font-medium block">รหัสผู้สมัคร:</span> <span class="font-bold text-slate-800 text-sm font-mono">${applicant.applicantCode}</span></div>
-                <div><span class="text-slate-400 font-medium block">ระดับชั้น:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
-                <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${applicant.firstName} ${applicant.lastName}</span></div>
-                <div><span class="text-slate-400 font-medium block">แผนการเรียนอันดับ 1:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
-                <div><span class="text-slate-400 font-medium block">ห้องสอบจำลอง:</span> <span class="font-bold text-slate-800 font-mono">${applicant.examRoom || '—'} / ที่นั่ง ${applicant.seatNumber || '—'}</span></div>
+                <div><span class="text-slate-500 font-medium block">รหัสผู้สมัคร:</span> <span class="font-bold text-slate-800 text-sm font-mono">${applicant.applicantCode}</span></div>
+                <div><span class="text-slate-500 font-medium block">ระดับชั้น:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
+                <div class="col-span-2"><span class="text-slate-500 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${applicant.firstName} ${applicant.lastName}</span></div>
+                <div><span class="text-slate-500 font-medium block">แผนการเรียนอันดับ 1:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
+                <div><span class="text-slate-500 font-medium block">ห้องสอบจำลอง:</span> <span class="font-bold text-slate-800 font-mono">${applicant.examRoom || '—'} / ที่นั่ง ${applicant.seatNumber || '—'}</span></div>
               </div>
 
               <div class="space-y-4">
                 <h4 class="font-bold border-b pb-1 text-slate-900 text-[10px] uppercase tracking-wider">เอกสารประกอบการสมัครที่ได้ตรวจสอบ</h4>
                 <table class="w-full text-left">
                   <thead>
-                    <tr class="border-b text-[9px] text-slate-400 uppercase">
+                    <tr class="border-b text-[9px] text-slate-500 uppercase">
                       <th class="py-1">รายการหลักฐาน</th>
                       <th class="py-1">สถานะ</th>
                       <th class="py-1 text-right">ผู้ตรวจสอบ</th>
@@ -1173,14 +1119,14 @@
               </div>
 
               <div class="mt-24 flex justify-between items-end">
-                <div class="text-left font-mono text-[8px] text-slate-400">
+                <div class="text-left font-mono text-[8px] text-slate-500">
                   <div>SECURITY IDENTIFIER:</div>
                   <div>HASH_APP_${applicant.id.toUpperCase()}_2568</div>
                 </div>
                 <div class="text-center space-y-1.5">
                   <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
                   <div class="text-[9px] font-bold text-slate-700">ลงชื่อเจ้าหน้าที่ตรวจสอบประวัติ</div>
-                  <div class="text-[8px] text-slate-400">ฝ่ายรับสมัครและวัดผลการศึกษา</div>
+                  <div class="text-[8px] text-slate-500">ฝ่ายรับสมัครและวัดผลการศึกษา</div>
                 </div>
               </div>
             </div>
@@ -1205,7 +1151,7 @@
                 </div>
                 <div class="text-right">
                   <h4 class="text-xs font-bold text-slate-900 font-mono">REC-2568-${applicant.applicantCode.substring(9)}</h4>
-                  <p class="text-[8px] text-slate-400">วันที่ออกใบเสร็จ: ${new Date(applicant.appliedAt).toLocaleDateString('th-TH')}</p>
+                  <p class="text-[8px] text-slate-500">วันที่ออกใบเสร็จ: ${new Date(applicant.appliedAt).toLocaleDateString('th-TH')}</p>
                 </div>
               </div>
               
@@ -1218,7 +1164,7 @@
               <div class="border rounded-lg overflow-hidden my-6">
                 <table class="w-full text-left border-collapse">
                   <thead>
-                    <tr class="bg-slate-50 text-[9px] text-slate-400 uppercase border-b">
+                    <tr class="bg-slate-50 text-[9px] text-slate-500 uppercase border-b">
                       <th class="p-3">รายการชำระ</th>
                       <th class="p-3 text-right">จำนวนเงิน (บาท)</th>
                     </tr>
@@ -1245,14 +1191,14 @@
               </div>
 
               <div class="mt-32 flex justify-between items-end">
-                <div class="text-left text-[9px] text-slate-400 font-mono">
+                <div class="text-left text-[9px] text-slate-500 font-mono">
                   <div>* ใบชำระเงินนี้เป็นการจำลองสถานะ</div>
                   <div>ระบบ Admitify Spark Demo</div>
                 </div>
                 <div class="text-center space-y-1.5">
                   <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
                   <div class="text-[9px] font-bold text-slate-700">นายสมชาย ปัญญาไว</div>
-                  <div class="text-[8px] text-slate-400">ฝ่ายการเงินโรงเรียนแอดมิทิฟายวิทยา</div>
+                  <div class="text-[8px] text-slate-500">ฝ่ายการเงินโรงเรียนแอดมิทิฟายวิทยา</div>
                 </div>
               </div>
             </div>
@@ -1277,7 +1223,7 @@
                 </div>
                 <div class="text-right">
                   <h4 class="text-xs font-bold text-slate-900 font-mono">${applicant.studentId || 'STD-2568-PENDING'}</h4>
-                  <p class="text-[8px] text-slate-400">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
+                  <p class="text-[8px] text-slate-500">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
                 </div>
               </div>
               
@@ -1287,11 +1233,11 @@
               </div>
 
               <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 border p-4 rounded-lg bg-emerald-50/20 mb-6 border-emerald-100">
-                <div><span class="text-slate-400 font-medium block">รหัสนักเรียนใหม่:</span> <span class="font-bold text-emerald-800 text-sm font-mono">${applicant.studentId || 'STD-2568-XXXX'}</span></div>
-                <div><span class="text-slate-400 font-medium block">ระดับชั้นเรียน:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
-                <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${applicant.firstName} ${applicant.lastName}</span></div>
-                <div><span class="text-slate-400 font-medium block">แผนการเรียนจัดสรร:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
-                <div><span class="text-slate-400 font-medium block">ห้องเรียนที่จัดได้:</span> <span class="font-bold text-emerald-700 font-mono text-sm">${window.effectiveClassroom(applicant)}</span></div>
+                <div><span class="text-slate-500 font-medium block">รหัสนักเรียนใหม่:</span> <span class="font-bold text-emerald-800 text-sm font-mono">${applicant.studentId || 'STD-2568-XXXX'}</span></div>
+                <div><span class="text-slate-500 font-medium block">ระดับชั้นเรียน:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
+                <div class="col-span-2"><span class="text-slate-500 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${applicant.firstName} ${applicant.lastName}</span></div>
+                <div><span class="text-slate-500 font-medium block">แผนการเรียนจัดสรร:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
+                <div><span class="text-slate-500 font-medium block">ห้องเรียนที่จัดได้:</span> <span class="font-bold text-emerald-700 font-mono text-sm">${window.effectiveClassroom(applicant)}</span></div>
               </div>
 
               <div class="space-y-4">
@@ -1304,14 +1250,14 @@
               </div>
 
               <div class="mt-40 flex justify-between items-end">
-                <div class="text-left text-[9px] text-slate-400 font-mono">
+                <div class="text-left text-[9px] text-slate-500 font-mono">
                   <div>* ข้อมูลจำลองสถานะการรายงานตัว</div>
                   <div>ระบบจัดการ Admitify Spark</div>
                 </div>
                 <div class="text-center space-y-1.5">
                   <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
                   <div class="text-[9px] font-bold text-slate-700">นายสมชาย ปัญญาไว</div>
-                  <div class="text-[8px] text-slate-400">นายทะเบียนฝ่ายรับเข้าศึกษาต่อ</div>
+                  <div class="text-[8px] text-slate-500">นายทะเบียนฝ่ายรับเข้าศึกษาต่อ</div>
                 </div>
               </div>
             </div>
@@ -1351,92 +1297,7 @@
       triggerBulkPrint();
     }
 
-    // Modal Helpers
-    function openModal(modalId) {
-      document.getElementById(modalId).classList.remove('hidden');
-    }
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.add('hidden');
-    }
-
-    // Toast Notifications Engine
-    function showToast(title, description, type = 'success', undoCallback = null) {
-      const container = document.getElementById('toast-container');
-      const toastId = 'toast_' + Math.random().toString(36).substr(2, 9);
-      
-      let borderClass = 'border-slate-100 bg-white';
-      let iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-500"></i>';
-      
-      if (type === 'success') {
-        borderClass = 'border-emerald-100 bg-emerald-50/90 backdrop-blur-sm';
-        iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
-      } else if (type === 'info') {
-        borderClass = 'border-sky-100 bg-sky-50/90 backdrop-blur-sm';
-        iconHtml = '<i data-lucide="info" class="h-5 w-5 text-sky-600"></i>';
-      } else if (type === 'warning') {
-        borderClass = 'border-amber-100 bg-amber-50/90 backdrop-blur-sm';
-        iconHtml = '<i data-lucide="alert-triangle" class="h-5 w-5 text-amber-600"></i>';
-      }
-
-      const toast = document.createElement('div');
-      toast.id = toastId;
-      toast.className = `p-4 rounded-lg border shadow-lg flex gap-3 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 max-w-sm ${borderClass}`;
-      
-      let undoBtnHtml = '';
-      if (undoCallback) {
-        undoBtnHtml = `
-          <button id="${toastId}_undo" class="text-xs text-primary font-bold hover:underline shrink-0 ml-auto select-none">
-            ย้อนกลับ
-          </button>
-        `;
-      }
-
-      toast.innerHTML = `
-        <div class="shrink-0">${iconHtml}</div>
-        <div class="space-y-0.5 w-full">
-          <div class="text-xs font-bold text-slate-800">${title}</div>
-          <div class="text-[11px] text-slate-500">${description}</div>
-        </div>
-        ${undoBtnHtml}
-      `;
-
-      container.appendChild(toast);
-      
-      // Initialize icons
-      lucide.createIcons();
-
-      // Trigger animation entry
-      setTimeout(() => {
-        toast.classList.remove('translate-y-2', 'opacity-0');
-      }, 10);
-
-      // Event listener for Undo button
-      if (undoCallback) {
-        document.getElementById(`${toastId}_undo`).onclick = () => {
-          undoCallback();
-          dismissToast(toastId);
-        };
-      }
-
-      // Auto dismiss after 8 seconds
-      const timeout = setTimeout(() => {
-        dismissToast(toastId);
-      }, 8000);
-
-      toast.setAttribute('data-timeout', timeout);
-    }
-
-    function dismissToast(toastId) {
-      const toast = document.getElementById(toastId);
-      if (!toast) return;
-      
-      clearTimeout(Number(toast.getAttribute('data-timeout')));
-      
-      toast.classList.add('translate-y-2', 'opacity-0');
-      setTimeout(() => {
-        toast.remove();
-      }, 300);
-    }
+    // openModal/closeModal/showToast ย้ายไป js/ui.js แล้ว (window.openModal/closeModal/showToast)
   </script>
 
 <!-- เมนูข้ามระบบ (ปุ่ม "ระบบอื่น" บนแถบหัวหน้า) -->

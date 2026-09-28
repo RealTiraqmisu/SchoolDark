@@ -98,12 +98,32 @@ mock ของตัวเอง) — เช็ค override `parent_demo_today` 
 **พิมพ์ / ดาวน์โหลด**: โมดูลกลาง `js/parent-export.js`
 (`ParentExport.open({ title, subtitle, filename, node, orientation })`) เปิด modal preview
 กระดาษ A4 ก่อนพิมพ์/ดาวน์โหลดเสมอ (PDF ผ่าน `html2pdf.js`, JPG ผ่าน `toCanvas()`) ใช้แล้วใน
-`timetable.html` และ `calendar.html` (เฉพาะโหมด "ตารางกิจกรรม") — หน้าใหม่ที่จะพิมพ์/ดาวน์โหลด
-ให้เรียกโมดูลนี้ซ้ำ ไม่ต้องสร้าง modal เอง
+`timetable.html`, `calendar.html` (เฉพาะโหมด "ตารางกิจกรรม") และ `reports.html` (แท็บ
+"ผลการเรียน" — พิมพ์ผ่าน `ParentExport.open()` เช่นกัน ลบ `@media print` เดิมออกแล้ว) —
+หน้าใหม่ที่จะพิมพ์/ดาวน์โหลด ให้เรียกโมดูลนี้ซ้ำ ไม่ต้องสร้าง modal เองหรือเขียน `@media print` เอง
 
 **โมดัล/confirm มาตรฐาน**: `js/parent-nav.js` export `ParentUI.createDialog()` (สร้าง `<dialog>`
 จริง) และ `ParentUI.confirm()` (แทน `window.confirm()`) — ทุกหน้าต้องใช้ 2 ตัวนี้ ห้ามเขียน
 modal/`confirm()` เอง
+
+**Utility อื่นบน `ParentUI`** (ทั้งหมด export จาก `js/parent-nav.js`):
+- `THAI_MONTHS_SHORT`/`THAI_MONTHS_LONG`, `THAI_WEEKDAYS_SHORT` — ชื่อเดือน/วันแบบไทย ใช้แทนการ
+  ประกาศ array ซ้ำในแต่ละหน้า (เดิม `calendar.html` มีของตัวเอง — ย้ายมาที่นี่แล้ว)
+- `fmtMonth(ym)` — แปลง `'2025-08'` → `'ส.ค. 2568'` (ใช้ใน `reports.html` ตัวเลือกเดือน/ตาราง)
+- `TAG_COLOR` — แม็ปสีตามแท็กประกาศ (ทั้งหมด/สำคัญ/กิจกรรม/ทั่วไป) ใช้ร่วมกันระหว่าง `index.html`
+  และ `announcements.html` แทนที่จะก็อปแม็ปสีซ้ำ
+- `byDateDesc(key)` / `byDateAsc(key)` — คืน comparator สำหรับ `Array.prototype.sort` เรียงตามฟิลด์
+  วันที่ที่ระบุ (เช่น `byDateDesc('date')`, `byDateDesc('submitDate')`) แทนการเขียน comparator inline
+  ซ้ำในหลายหน้า
+- `rerender(fn)` — helper รักษาโฟกัสคีย์บอร์ดตอน re-render ส่วนหนึ่งของหน้า (เช่นสลับแท็บ/กรอง/
+  เปลี่ยนเดือนใน `calendar.html`/`announcements.html`/`timetable.html`/`reports.html`): จำ element
+  ที่โฟกัสอยู่ผ่าน `data-*` attribute ที่ระบุตัวตนได้ (`data-date`/`data-tag`/`data-day`/
+  `data-filter`/`data-view-btn`/`data-tab`/`id`) ก่อนเรียก `fn()` แล้ว query หา element ที่มี
+  attribute เดียวกันหลัง re-render เพื่อคืนโฟกัส — ใช้ทุกจุดที่ re-render ปุ่ม/การ์ดที่ผู้ใช้อาจ
+  กำลังโฟกัสอยู่ด้วยคีย์บอร์ด ห้าม re-render แบบเขียน `innerHTML` ทับตรงๆ โดยไม่ผ่านฟังก์ชันนี้
+- `flash(message, type)` — เก็บข้อความ toast ไว้ใน `sessionStorage.parent_flash` แล้ว
+  `renderNavbar()` จะโชว์ toast นี้หลังโหลดหน้าใหม่แล้วลบทิ้ง (ใช้กรณีต้อง reload หน้าหลังทำ action
+  เช่น "ลบบุตรออกจากบัญชี" ใน `settings.html` — toast ปกติที่ไม่ reload ไม่หายไปพร้อมหน้าเดิม)
 
 `parent_student_profiles` เก็บข้อมูลประวัติส่วนตัวของบุตรแต่ละคน (keyed by child id เช่น `c1`/`c2`) —
 แยกคีย์จาก `parent_children` (ข้อมูลพื้นฐาน/วิชาการที่หน้าอื่นใช้อยู่แล้ว) เพื่อไม่ชนกัน ใช้ผ่าน

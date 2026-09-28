@@ -54,15 +54,7 @@
             esc(c.nickname) + ' (' + esc(c.classroom) + ')</option>';
         }).join('');
 
-        var typeCardsHtml = ParentStore.LEAVE_TYPES.map(function (t) {
-          var remaining = t.quota - ParentStore.leaveUsed(selectedChildId, t.name);
-          return '<label data-type-card="' + esc(t.name) + '" class="block border border-border rounded-lg p-3 cursor-pointer hover:border-primary/50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary">' +
-            '<input type="radio" name="leave-type" value="' + esc(t.name) + '" class="sr-only">' +
-            '<div class="font-medium text-card-foreground text-sm">' + esc(t.name) + '</div>' +
-            '<div class="text-xs text-muted-foreground mt-0.5">' + esc(t.desc) + '</div>' +
-            '<div class="text-xs text-muted-foreground mt-1">คงเหลือ ' + remaining + ' / ' + t.quota + ' วัน</div>' +
-          '</label>';
-        }).join('');
+        var typeCardsHtml = buildTypeCardsHtml();
 
         var html =
           '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
@@ -121,6 +113,48 @@
         bindFormEvents();
       }
 
+      // การ์ดประเภทการลา (โควตา "คงเหลือ" ต่อบุตร) แยกออกมาจาก renderForm() เพื่อให้
+      // สลับบุตรหรือยกเลิกคำขอลาแล้วรีเฟรชแค่ส่วนนี้ + ประวัติได้ โดยไม่ต้องล้างทั้งฟอร์ม
+      // (วันที่/เหตุผล/เบอร์ติดต่อ/ไฟล์แนบที่กรอกค้างอยู่จะไม่หายไปด้วย)
+      function buildTypeCardsHtml() {
+        return ParentStore.LEAVE_TYPES.map(function (t) {
+          var remaining = t.quota - ParentStore.leaveUsed(selectedChildId, t.name);
+          var isSel = t.name === selectedType;
+          return '<label data-type-card="' + esc(t.name) + '" class="block border rounded-lg p-3 cursor-pointer hover:border-primary/50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary' +
+            (isSel ? ' border-primary ring-1 ring-primary' : ' border-border') + '">' +
+            '<input type="radio" name="leave-type" value="' + esc(t.name) + '" class="sr-only"' + (isSel ? ' checked' : '') + '>' +
+            '<div class="font-medium text-card-foreground text-sm">' + esc(t.name) + '</div>' +
+            '<div class="text-xs text-muted-foreground mt-0.5">' + esc(t.desc) + '</div>' +
+            '<div class="text-xs text-muted-foreground mt-1">คงเหลือ ' + remaining + ' / ' + t.quota + ' วัน</div>' +
+          '</label>';
+        }).join('');
+      }
+
+      function bindTypeCardEvents() {
+        function selectType(name) {
+          selectedType = name;
+          document.querySelectorAll('[data-type-card]').forEach(function (l) {
+            var isSel = l.getAttribute('data-type-card') === selectedType;
+            l.className = 'block border rounded-lg p-3 cursor-pointer hover:border-primary/50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary' +
+              (isSel ? ' border-primary ring-1 ring-primary' : ' border-border');
+            l.querySelector('input').checked = isSel;
+          });
+          document.getElementById('lf-type-error').classList.add('hidden');
+        }
+        document.querySelectorAll('[data-type-card]').forEach(function (label) {
+          label.addEventListener('click', function () { selectType(label.getAttribute('data-type-card')); });
+        });
+        document.querySelectorAll('input[name="leave-type"]').forEach(function (input) {
+          input.addEventListener('change', function () { if (input.checked) selectType(input.value); });
+        });
+      }
+
+      function refreshTypeCards() {
+        document.getElementById('lf-type-cards').innerHTML = buildTypeCardsHtml();
+        if (window.lucide) lucide.createIcons();
+        bindTypeCardEvents();
+      }
+
       function updateDaysText() {
         var start = document.getElementById('lf-start').value;
         var end = document.getElementById('lf-end').value;
@@ -140,32 +174,17 @@
         var childSelect = document.getElementById('lf-child');
         childSelect.addEventListener('change', function () {
           selectedChildId = childSelect.value;
-          renderForm();
+          // sync ค่าบุตรที่เลือกกลับเข้า ParentStore ด้วย ไม่งั้น navbar/leave-history.html
+          // (ซึ่งอ่าน getActiveChild() เอง) จะยังอ้างอิงบุตรคนเดิมอยู่ ไม่ตรงกับที่เลือกในฟอร์มนี้
+          window.ParentStore.setActiveChild(selectedChildId);
+          // รีเฟรชแค่การ์ดโควตา (ต่างกันตามบุตร) + ประวัติ — ไม่ renderForm() ทั้งก้อน
+          // กันวันที่/เหตุผล/เบอร์ติดต่อ/ไฟล์แนบที่กรอกค้างอยู่หายไปโดยไม่จำเป็น
+          refreshTypeCards();
           renderHistory();
         });
 
-        function selectType(name) {
-          selectedType = name;
-          document.querySelectorAll('[data-type-card]').forEach(function (l) {
-            var isSel = l.getAttribute('data-type-card') === selectedType;
-            l.className = 'block border rounded-lg p-3 cursor-pointer hover:border-primary/50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary' +
-              (isSel ? ' border-primary ring-1 ring-primary' : ' border-border');
-            l.querySelector('input').checked = isSel;
-          });
-          document.getElementById('lf-type-error').classList.add('hidden');
-        }
-
-        document.querySelectorAll('[data-type-card]').forEach(function (label) {
-          label.addEventListener('click', function () {
-            selectType(label.getAttribute('data-type-card'));
-          });
-        });
         // เลือกด้วยคีย์บอร์ดได้ด้วย (radio ซ่อนเป็น sr-only แต่ยัง tab/arrow key ไปได้ตามปกติ)
-        document.querySelectorAll('input[name="leave-type"]').forEach(function (input) {
-          input.addEventListener('change', function () {
-            if (input.checked) selectType(input.value);
-          });
-        });
+        bindTypeCardEvents();
 
         var startInput = document.getElementById('lf-start');
         var endInput = document.getElementById('lf-end');
@@ -281,7 +300,7 @@
       function renderHistory() {
         var fullList = ParentStore.get('parent_leave_requests')
           .filter(function (r) { return r.childId === selectedChildId; })
-          .sort(function (a, b) { return a.submitDate < b.submitDate ? 1 : (a.submitDate > b.submitDate ? -1 : 0); });
+          .sort(ParentUI.byDateDesc('submitDate'));
         var list = fullList.slice(0, 5);
 
         var itemsHtml = '<p class="text-muted-foreground">ยังไม่มีประวัติคำขอลา</p>';
@@ -334,7 +353,7 @@
               ParentStore.cancelLeave(id);
               ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
               renderHistory();
-              renderForm(); // โควตา "คงเหลือ" ในการ์ดประเภทการลาต้องคืนตามคำขอที่เพิ่งยกเลิก
+              refreshTypeCards(); // โควตา "คงเหลือ" ต้องคืนตามคำขอที่เพิ่งยกเลิก (ไม่ล้างฟอร์มทั้งก้อน)
             });
           });
         });

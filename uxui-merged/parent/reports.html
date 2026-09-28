@@ -10,11 +10,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="js/tailwind-config.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    @media print {
-      #parent-nav, .no-print { display: none !important; }
-    }
-  </style>
 </head>
 <body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
   <div id="parent-nav"></div>
@@ -27,6 +22,7 @@
   <script src="../settings/js/school-store.js"></script>
   <script src="js/parent-store.js"></script>
   <script src="js/parent-nav.js"></script>
+  <script src="js/parent-export.js"></script>
   <script>
   (function () {
     'use strict';
@@ -119,12 +115,12 @@
       }).join('');
 
       container.innerHTML =
-        '<div class="flex flex-col md:flex-row gap-4">' +
+        '<div data-export-source="grades" class="flex flex-col md:flex-row gap-4">' +
         '<div class="flex-1 bg-card rounded-xl border border-border shadow-sm p-5">' +
-        '<div class="flex items-center justify-between mb-4 gap-3">' +
+        '<div class="flex items-center justify-between mb-4 gap-3 no-export">' +
         '<select id="grade-select" aria-label="ปีการศึกษาและภาคเรียน" class="border border-border rounded-lg px-3 py-1.5 text-sm bg-card">' + options + '</select>' +
-        '<button type="button" id="btn-print" class="no-print border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">' +
-        '<i data-lucide="printer" class="w-4 h-4"></i><span>พิมพ์</span></button>' +
+        '<button type="button" id="btn-print" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">' +
+        '<i data-lucide="printer" class="w-4 h-4"></i><span>พิมพ์ / ดาวน์โหลด</span></button>' +
         '</div>' +
         '<div id="grade-table"></div>' +
         '</div>' +
@@ -146,7 +142,20 @@
       renderSelected();
       select.addEventListener('change', renderSelected);
 
-      document.getElementById('btn-print').addEventListener('click', function () { window.print(); });
+      // ปุ่มพิมพ์/ดาวน์โหลด ใช้โมดูลกลาง ParentExport (มี preview ก่อนเสมอ) แทน
+      // window.print() ธรรมดา — ให้ตรงมาตรฐานเดียวกับ timetable.html/calendar.html
+      document.getElementById('btn-print').addEventListener('click', function () {
+        var idx = parseInt(select.value, 10);
+        var r = records[idx];
+        var fullName = (child.prefix || '') + (child.firstName || '') + ' ' + (child.lastName || '');
+        window.ParentExport.open({
+          title: 'ผลการเรียน',
+          subtitle: fullName + ' · ปีการศึกษา ' + r.year + ' เทอม ' + r.term,
+          filename: 'ผลการเรียน-' + (child.studentId || child.id),
+          orientation: 'portrait',
+          node: document.querySelector('[data-export-source="grades"]')
+        });
+      });
     }
 
     /* ===================================================================
@@ -215,7 +224,7 @@
         var total = recs.length || 1;
         var pct = ((counts.present / total) * 100).toFixed(1);
         return '<tr>' +
-          '<td class="p-2 border border-border text-sm">' + ym + '</td>' +
+          '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(ParentUI.fmtMonth(ym)) + '</td>' +
           '<td class="p-2 border border-border text-sm text-center">' + counts.present + '</td>' +
           '<td class="p-2 border border-border text-sm text-center">' + counts.late + '</td>' +
           '<td class="p-2 border border-border text-sm text-center">' + counts.absent + '</td>' +
@@ -250,7 +259,7 @@
       var latestMonth = months[months.length - 1];
 
       var monthOptions = months.map(function (ym) {
-        return '<option value="' + ym + '">' + ym + '</option>';
+        return '<option value="' + ym + '">' + ParentUI.escapeHtml(ParentUI.fmtMonth(ym)) + '</option>';
       }).join('');
 
       container.innerHTML =
@@ -270,7 +279,7 @@
 
       function renderDaily() {
         var ym = select.value;
-        var recs = (map[ym] || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+        var recs = (map[ym] || []).slice().sort(ParentUI.byDateDesc('date'));
         listMount.innerHTML = recs.length
           ? '<ul class="divide-y divide-border">' + recs.map(function (r) {
               return '<li class="py-2 flex items-center justify-between gap-3">' +
@@ -311,7 +320,7 @@
     function buildLeaveRequestsTable(child) {
       var rows = (ParentStore.get('parent_leave_requests') || [])
         .filter(function (r) { return r.childId === child.id; })
-        .sort(function (a, b) { return a.submitDate < b.submitDate ? 1 : (a.submitDate > b.submitDate ? -1 : 0); });
+        .sort(ParentUI.byDateDesc('submitDate'));
 
       if (!rows.length) {
         return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mt-3 text-center text-muted-foreground text-sm">ยังไม่มีคำขอลา</div>';
@@ -354,7 +363,7 @@
     function buildTicketsTable(child) {
       var rows = (ParentStore.get('parent_tickets') || [])
         .filter(function (t) { return t.childId === child.id; })
-        .sort(function (a, b) { return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+        .sort(ParentUI.byDateDesc('date'));
 
       if (!rows.length) {
         return '<div class="bg-card rounded-xl border border-border shadow-sm p-5 mt-3 text-center text-muted-foreground text-sm">ยังไม่มีบัตรขออนุญาต</div>';
@@ -419,7 +428,7 @@
     }
 
     function buildBehaviorTable(records) {
-      var sorted = records.slice().sort(function (a, b) { return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+      var sorted = records.slice().sort(ParentUI.byDateDesc('date'));
       var rows = sorted.map(function (r) {
         var positive = r.points > 0;
         var pointsCls = positive ? 'text-success' : 'text-destructive';
@@ -472,7 +481,13 @@
      * render หลัก
      * =================================================================== */
 
+    // ห่อด้วย ParentUI.rerender เพื่อคง focus ไว้ที่ปุ่มแท็บ/ตัวกรองเดิม หลัง #tab-bar และ
+    // #tab-content ถูกแทนที่ทั้งก้อน (เดิม focus หลุดไป <body> ทุกครั้งที่สลับแท็บ)
     function render() {
+      window.ParentUI.rerender(renderImpl);
+    }
+
+    function renderImpl() {
       var tab = getTab();
       renderTabBar(tab);
       var child = ParentStore.getActiveChild();

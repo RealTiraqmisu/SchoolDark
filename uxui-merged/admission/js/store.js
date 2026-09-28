@@ -17,6 +17,29 @@ const STATUS_LABEL = {
   on_leave: "พักการเรียน",
 };
 
+// สีป้ายสถานะ — ย้ายมารวมจาก index.html (เดิมมี 2 ชุดไม่ตรงกัน: index.html ใช้ object
+// map นี้, profile.html ใช้ switch คนละสี) เป็นชุดเดียวที่นี่ + เพิ่มสถานะที่ขาดไป
+// (graduated/resigned/transferred/dismissed/on_leave — เดิมไม่มีสีเลย ตกไปใช้ fallback)
+function getBadgeClass(status) {
+  const map = {
+    unpaid_exam_fee: "bg-amber-100 text-amber-800 border-amber-200",
+    paid_exam_fee: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    awaiting_results: "bg-slate-100 text-slate-600 border-slate-200",
+    passed: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    reserve: "bg-amber-100 text-amber-800 border-amber-200",
+    failed: "bg-rose-100 text-rose-800 border-rose-200",
+    not_reported: "bg-slate-100 text-slate-600 border-slate-200",
+    reported: "bg-sky-100 text-sky-800 border-sky-200",
+    enrolled: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    graduated: "bg-violet-100 text-violet-800 border-violet-200",
+    resigned: "bg-orange-100 text-orange-800 border-orange-200",
+    transferred: "bg-cyan-100 text-cyan-800 border-cyan-200",
+    dismissed: "bg-rose-100 text-rose-800 border-rose-200",
+    on_leave: "bg-amber-100 text-amber-800 border-amber-200",
+  };
+  return map[status] || "bg-slate-100 text-slate-800";
+}
+
 const PHASE_LABEL = {
   1: "เฟสรับสมัครและคัดเลือก",
   2: "เฟสประกาศผลสอบ",
@@ -29,13 +52,9 @@ const PHASE_OPTIONS = {
   3: ["not_reported", "reported", "enrolled"],
 };
 
-const STUDY_PLAN_OPTIONS = [
-  "วิทย์-คณิต",
-  "ศิลป์-คำนวณ",
-  "ศิลป์-ภาษา",
-  "คอมพิวเตอร์และเทคโนโลยี",
-  "ทั่วไป",
-];
+// STUDY_PLAN_OPTIONS แบบ static เดิมถูกลบออก — ไม่มีจุดไหนอ้างอิงเลย (แค่ค้างไว้เฉย ๆ)
+// ตัวจริงที่ใช้ทั้งระบบคือ window.STUDY_PLAN_OPTIONS (dynamic จาก defaultCoursePlans/
+// admitify_course_plans ด้านล่าง — ดู resetCoursePlans()/saveCoursePlans())
 
 const EMAIL_TEMPLATES = {
   passed: {
@@ -491,6 +510,24 @@ const defaultCoursePlans = [
       report: "2026-07-28",
       enroll: "2026-07-30"
     }
+  },
+  {
+    // เดิมแผนนี้ใช้ในข้อมูลจำลอง (seedFullClassrooms/PLAN_BY_SECTION, ห้อง 5 ทุกชั้น) แต่ไม่เคย
+    // อยู่ใน defaultCoursePlans เลย ทำให้ STUDY_PLAN_OPTIONS (ที่มาจากรายการนี้) ไม่มีตัวเลือกนี้
+    // ให้เลือกในฟอร์มต่าง ๆ (edit.html/add student ฯลฯ) เพิ่มเข้ามาให้ตรงกับข้อมูลจริง
+    id: "p6",
+    level: "ม.4",
+    name: "คอมพิวเตอร์และเทคโนโลยี",
+    capacity: 40,
+    regulations: "รับสมัครนักเรียนที่สำเร็จการศึกษาชั้น ม.3 หรือเทียบเท่า เกรดเฉลี่ยวิชาคอมพิวเตอร์ ไม่ต่ำกว่า 2.75",
+    regDates: {
+      applyStart: "2026-07-01",
+      applyEnd: "2026-07-15",
+      exam: "2026-07-20",
+      announce: "2026-07-25",
+      report: "2026-07-28",
+      enroll: "2026-07-30"
+    }
   }
 ];
 
@@ -519,7 +556,7 @@ const defaultExamRooms = [
 //   field   — key ในเรคคอร์ดนักเรียน รองรับ path ตื้นๆ เช่น "examScore.gpa"
 const defaultStudentColumns = [
   { id: "seq",        labelTh: "ลำดับ",             field: "__seq__",  visible: true, primary: false, locked: true,  align: "center" },
-  { id: "seat",       labelTh: "เลขที่",             field: "seatNumber", visible: true, primary: false, locked: true,  align: "center" },
+  { id: "seat",       labelTh: "เลขที่",             field: "classNo", visible: true, primary: false, locked: true,  align: "center" },
   { id: "studentId",  labelTh: "รหัสนักเรียน (Username)", field: "studentId", visible: true, primary: false, locked: true, align: "left" },
   { id: "prefix",     labelTh: "คำนำหน้า",           field: "prefix",     visible: true, primary: false, locked: true,  align: "left" },
   { id: "firstName",  labelTh: "ชื่อ",               field: "firstName",  visible: true, primary: true,  locked: true,  align: "left" },
@@ -532,7 +569,10 @@ const defaultStudentColumns = [
   { id: "citizenId",  labelTh: "เลขประจำตัวประชาชน",  field: "citizenId",       visible: false, primary: false, locked: false, align: "left" },
   { id: "parentEmail",labelTh: "อีเมลผู้ปกครอง",       field: "parentEmail",     visible: false, primary: false, locked: false, align: "left" },
   { id: "gpax",       labelTh: "เกรดเฉลี่ย (GPAX)",   field: "examScore.gpa",  visible: false, primary: false, locked: false, align: "center" },
-  { id: "examRoom",   labelTh: "ห้องสอบ",            field: "examRoom",       visible: false, primary: false, locked: false, align: "left" }
+  { id: "examRoom",   labelTh: "ห้องสอบ",            field: "examRoom",       visible: false, primary: false, locked: false, align: "left" },
+  // แยกออกจาก "เลขที่" (classNo) ข้างบนแล้ว — เดิมทั้งสองใช้ seatNumber ปนกัน (เลขที่นั่งสอบ
+  // เปลี่ยนทุกรอบสอบ แต่เลขที่ในห้องต้องคงที่ต่อห้อง ไม่ควรเป็นฟิลด์เดียวกัน)
+  { id: "examSeat",   labelTh: "เลขที่นั่งสอบ",       field: "seatNumber",     visible: false, primary: false, locked: false, align: "center" }
 ];
 
 const schoolRooms = [
@@ -1000,6 +1040,171 @@ function classroomOptions(grade) {
   return names.sort().map((name) => ({ name, count: counts[name] || 0 }));
 }
 
+// ==========================================================================
+// รหัสนักเรียน / เลขที่ในห้อง / เพศ-คำนำหน้า / ข้อมูลผู้ปกครองจำลอง
+// (schema v2 — noeysod สั่งปรับ 2026-09-28: รอบก่อนหน้าใช้ studentId แบบ STD-YYYY-NNNN
+// สุ่มและชนกันได้ + เลขที่ในห้องปนกับเลขที่นั่งสอบ ใช้ migrateApplicants() ด้านล่างแปลง
+// ข้อมูลเดิมให้อัตโนมัติครั้งเดียว ไม่ต้องแก้ seedApplicants/seedFullClassrooms ทีละคน)
+// ==========================================================================
+
+const SCHEMA_VERSION = 2;
+// ปีการศึกษาปัจจุบันของข้อมูลจำลองทั้งหมด (พ.ศ.) — ใช้จุดเดียวแทนที่จะ hardcode 2568
+// กระจายอยู่หลายจุดเหมือนเดิม (seed, updateStatus, executeAddStudent เดิม)
+const CURRENT_ACADEMIC_YEAR_BE = 2568;
+// สถานะที่ต้องมีรหัสนักเรียน (เข้าเรียนแล้วไม่ว่าจะยังอยู่หรือจบ/ออกไปแล้วก็ตาม)
+const ENROLLED_LIKE_STATUSES = ["enrolled", "graduated", "resigned", "transferred", "dismissed", "on_leave"];
+
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+function pad3(n) {
+  return String(n).padStart(3, "0");
+}
+
+// hash ข้อความสั้น ๆ แบบ deterministic — ใช้เลือกข้อมูลผู้ปกครองจำลองให้คงที่ทุกครั้งที่โหลด
+// (ไม่ใช้ Math.random ตรง ๆ เพราะ migrate ซ้ำแล้วต้องได้ผลเดิม)
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+// รหัสนักเรียนรูปแบบใหม่ (ตามที่ noeysod ขอ): เลข พ.ศ. ปีที่เข้าเรียน 2 หลักท้าย +
+// เลขไล่ 3 หลักในปีนั้น เช่น เข้าปี 2568 คนแรก = 68001 — สั้นกว่า STD-YYYY-NNNN เดิม และ
+// ตรวจไม่ให้ชนกับ usedIds ที่ส่งเข้ามา (สะสมมาจากทั้งฐานข้อมูล ไม่ใช่แค่ปีเดียวกัน)
+function generateStudentId(entryYear, usedIds) {
+  const prefix = pad2((entryYear || 2568) % 100);
+  for (let n = 1; n <= 999; n++) {
+    const id = prefix + pad3(n);
+    if (!usedIds.has(id)) {
+      usedIds.add(id);
+      return id;
+    }
+  }
+  // เผื่อกรณีปีนั้นเต็ม 999 คนพอดี (ไม่น่าเกิดในข้อมูลจำลอง) — fallback กันโค้ดพัง
+  let id;
+  do {
+    id = prefix + pad3(Math.floor(Math.random() * 1000));
+  } while (usedIds.has(id));
+  usedIds.add(id);
+  return id;
+}
+
+// เดาเพศจากชื่อจริง (ยกมาจาก 3 จุดที่เคย copy กันไว้ใน students.html) — ใช้เฉพาะตอน
+// migrate ข้อมูลเก่าที่ไม่มี gender บันทึกไว้เท่านั้น ข้อมูลใหม่ทุกจุดควรบันทึก gender ตรง ๆ
+function guessGender(firstName) {
+  const name = firstName || "";
+  if (/หญิง|อร|พิช|กนก|ศิริ|พัช|เบญจ|อภิษ/.test(name)) return "female";
+  return "male";
+}
+
+// คำนำหน้าชื่อ: ใช้ค่าที่บันทึกไว้ตรง ๆ ถ้ามี ไม่งั้นคำนวณจากเพศ + ระดับชั้น (ม.1-3 = เด็ก.., ม.4-6 = นาย/นางสาว)
+function studentTitle(s) {
+  if (s.prefix) return s.prefix;
+  const junior = s.gradeLevel === "ม.1" || s.gradeLevel === "ม.2" || s.gradeLevel === "ม.3";
+  const female = s.gender === "female";
+  return female ? (junior ? "เด็กหญิง" : "นางสาว") : (junior ? "เด็กชาย" : "นาย");
+}
+
+// ดึงปี พ.ศ. จากรหัสรูปแบบเดิม เช่น "STD-2568-0001" หรือ "APP-2568-0001" -> 2568
+function yearFromLegacyCode(code) {
+  const m = /-(\d{4})-/.exec(code || "");
+  return m ? parseInt(m[1], 10) : null;
+}
+
+// เรียงคนในห้องเดียวกัน: ชายก่อน → หญิง แต่ละกลุ่มเรียงชื่อจริง ก-ฮ แล้วนับ 1..N ใหม่ทั้งห้อง
+// (ตามที่ noeysod เลือก) เขียนทับ classNo ของทุกคนในห้องนั้นเสมอ ไม่ใช่แค่คนที่เพิ่งย้ายเข้ามา
+// ไม่งั้นเลขที่จะไม่เรียงต่อเนื่องหลังมีคนออก/ย้ายเข้าใหม่
+function renumberRoom(list, room) {
+  const inRoom = list.filter((s) => s.status === "enrolled" && effectiveClassroom(s) === room);
+  inRoom.sort((a, b) => {
+    if ((a.gender || "male") !== (b.gender || "male")) return (a.gender || "male") === "male" ? -1 : 1;
+    return (a.firstName || "").localeCompare(b.firstName || "", "th");
+  });
+  inRoom.forEach((s, i) => {
+    s.classNo = i + 1;
+  });
+}
+
+// จัดเลขที่ใหม่ทุกห้องที่มีคนกำลังศึกษาอยู่ — เรียกหลัง import/ย้ายห้อง/เลื่อนชั้น/เพิ่มนักเรียนใหม่
+function renumberAll(list) {
+  const rooms = new Set();
+  list.forEach((s) => {
+    if (s.status === "enrolled") rooms.add(effectiveClassroom(s));
+  });
+  rooms.forEach((room) => renumberRoom(list, room));
+}
+
+const MOCK_FATHER_FIRST = ["สมศักดิ์", "วิรัตน์", "ประดิษฐ์", "สุชาติ", "อนันต์", "ชูชาติ", "ไพศาล", "บุญมี"];
+const MOCK_MOTHER_FIRST = ["สมศรี", "วิไล", "ประภา", "สุนีย์", "อรพิน", "ชูศรี", "ไพลิน", "บุญมา"];
+const MOCK_JOBS = ["รับราชการ", "ค้าขาย", "พนักงานบริษัท", "เกษตรกร", "ธุรกิจส่วนตัว", "รับจ้างทั่วไป"];
+
+// เติมข้อมูลบิดา/มารดา/ผู้ปกครองจำลองให้ระเบียนที่ยังไม่มี (เดิม profile.html อ่านฟิลด์พวกนี้
+// อยู่แล้วแต่ไม่มีระเบียนไหนเคยบันทึกไว้เลย แท็บครอบครัวเลยโชว์ "—" ทุกคน) ใช้ hash ของ id
+// เลือกค่าให้คงที่ทุกครั้งที่โหลด ไม่ใช่ข้อมูลจริง — เห็นชัดจาก pattern ชื่อ/เบอร์ที่ซ้ำกันเป็นชุด
+// เบอร์มือถือจำลองรูปแบบ 0XX-XXX-XXXX ให้ดูสมจริง — คำนวณจาก seed ตัวเลขที่ส่งเข้ามา
+function mockPhone(seed) {
+  const d = pad3(seed % 1000) + pad3((seed >> 10) % 1000) + pad3((seed >> 20) % 1000);
+  return "08" + d.slice(0, 1) + "-" + d.slice(1, 4) + "-" + d.slice(4, 8);
+}
+
+function fillMockFamily(a) {
+  const h = hashStr(a.id);
+  if (!a.fatherName) {
+    a.fatherName = "นาย" + MOCK_FATHER_FIRST[h % MOCK_FATHER_FIRST.length] + " " + (a.lastName || "");
+    a.fatherPhone = mockPhone(h);
+    a.fatherJob = MOCK_JOBS[(h >> 3) % MOCK_JOBS.length];
+  }
+  if (!a.motherName) {
+    a.motherName = "นาง" + MOCK_MOTHER_FIRST[h % MOCK_MOTHER_FIRST.length] + " " + (a.lastName || "");
+    a.motherPhone = mockPhone(h ^ 0x5bd1e995);
+    a.motherJob = MOCK_JOBS[(h >> 7) % MOCK_JOBS.length];
+  }
+  if (!a.guardianName) {
+    a.guardianName = a.fatherName;
+    a.guardianPhone = a.fatherPhone;
+    a.guardianRelation = "บิดา";
+  }
+}
+
+// แปลงข้อมูลเดิม (schemaVersion < 2) ให้มีฟิลด์ใหม่ครบ — รันครั้งเดียวต่อระเบียน แก้ list ในที่
+// (mutate ตรง ๆ) แล้ว AdmitifyStore.getApplicants() เป็นคน save กลับ localStorage ให้
+function migrateApplicants(list) {
+  const needsMigration = list.some((a) => a.schemaVersion !== SCHEMA_VERSION);
+  if (!needsMigration) return false;
+
+  const usedIds = new Set();
+  list.forEach((a) => {
+    if (a.studentId && /^\d{5}$/.test(a.studentId)) usedIds.add(a.studentId);
+  });
+
+  // เรียงตาม id เดิมก่อน migrate ให้ deterministic — migrate ซ้ำ (หรือเปิดจากเครื่องอื่น) แล้วได้
+  // รหัสนักเรียนชุดเดิมเป๊ะ ๆ ไม่ใช่สุ่มลำดับใหม่ทุกครั้ง
+  const order = list.slice().sort((a, b) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
+
+  order.forEach((a) => {
+    if (a.schemaVersion === SCHEMA_VERSION) return;
+
+    if (!a.entryYear) {
+      a.entryYear = yearFromLegacyCode(a.studentId) || yearFromLegacyCode(a.applicantCode) || CURRENT_ACADEMIC_YEAR_BE;
+    }
+    if (!a.gender) a.gender = guessGender(a.firstName);
+    if (!a.prefix) a.prefix = studentTitle(a);
+
+    const hasNewId = a.studentId && /^\d{5}$/.test(a.studentId);
+    if (ENROLLED_LIKE_STATUSES.includes(a.status) && !hasNewId) {
+      a.studentId = generateStudentId(a.entryYear, usedIds);
+    }
+
+    fillMockFamily(a);
+
+    a.schemaVersion = SCHEMA_VERSION;
+  });
+
+  renumberAll(list);
+  return true;
+}
+
 // Escape user-entered data before it goes into innerHTML/template strings — names, addresses,
 // emails etc. can contain characters (', ", <, >, &) that would otherwise break markup or inject
 // script. Never use this on ids/keys the system itself generates.
@@ -1019,11 +1224,23 @@ function phaseForStatus(status) {
   return 3;
 }
 
+// ตรวจเลขบัตรประชาชนไทย 13 หลักด้วย checksum จริง (เดิมทุกฟอร์มเช็คแค่ "ยาว 13 ตัวเลขไหม" —
+// พิมพ์ผิดเลขเดียวก็ผ่านการตรวจ) สูตร: หลักที่ 13 = (11 - (ผลรวม หลัก1-12 คูณ 13,12,...,2 mod 11)) mod 10
+function isValidThaiId(id) {
+  const digits = String(id || "").replace(/\D/g, "");
+  if (digits.length !== 13) return false;
+  let sum = 0;
+  for (let i = 0; i < 12; i++) sum += parseInt(digits[i], 10) * (13 - i);
+  const checkDigit = (11 - (sum % 11)) % 10;
+  return checkDigit === parseInt(digits[12], 10);
+}
+
 // Store implementation using localStorage
 const AdmitifyStore = {
   getApplicants() {
     const data = localStorage.getItem("admitify_applicants");
     if (!data) {
+      migrateApplicants(seedApplicants); // ข้อมูลใหม่เอี่ยมก็ต้องผ่าน migrate ครั้งแรกเหมือนกัน
       localStorage.setItem("admitify_applicants", JSON.stringify(seedApplicants));
       return seedApplicants;
     }
@@ -1038,11 +1255,13 @@ const AdmitifyStore = {
           hasNew = true;
         }
       });
-      if (hasNew) {
+      const migrated = migrateApplicants(current);
+      if (hasNew || migrated) {
         localStorage.setItem("admitify_applicants", JSON.stringify(current));
       }
       return current;
     } catch (e) {
+      migrateApplicants(seedApplicants);
       localStorage.setItem("admitify_applicants", JSON.stringify(seedApplicants));
       return seedApplicants;
     }
@@ -1059,15 +1278,21 @@ const AdmitifyStore = {
 
   updateStatus(id, newStatus) {
     const applicants = this.getApplicants();
+    const usedIds = new Set();
+    applicants.forEach((a) => {
+      if (a.studentId && /^\d{5}$/.test(a.studentId)) usedIds.add(a.studentId);
+    });
     const updated = applicants.map((a) => {
       if (a.id !== id) return a;
-      const u = { ...a, status: newStatus };
+      const u = { ...a, status: newStatus, statusChangedAt: new Date().toISOString() };
       if (newStatus === "paid_exam_fee") u.feePaid = true;
       if (newStatus === "enrolled" && !u.studentId) {
-        u.studentId = `STD-2568-${Math.floor(Math.random() * 9000) + 1000}`;
+        if (!u.entryYear) u.entryYear = CURRENT_ACADEMIC_YEAR_BE;
+        u.studentId = generateStudentId(u.entryYear, usedIds);
       }
       return u;
     });
+    renumberAll(updated); // สถานะเปลี่ยนอาจกระทบว่าใครอยู่/ไม่อยู่ในห้องที่ต้องนับเลขที่
     this.saveApplicants(updated);
     return updated;
   },
@@ -1093,6 +1318,7 @@ const AdmitifyStore = {
         lastEditedAt: new Date().toISOString(),
       };
     });
+    renumberAll(updated); // เผื่อ patch แก้ classroom/status (เช่น ย้ายออก/กลับเข้าศึกษา)
     this.saveApplicants(updated);
     return updated;
   },
@@ -1113,6 +1339,7 @@ const AdmitifyStore = {
         lastEditedAt: now,
       };
     });
+    renumberAll(updated); // เผื่อ patch แก้ classroom/status (ย้ายห้อง/เลื่อนชั้น/เปลี่ยนสถานะเป็นกลุ่ม)
     this.saveApplicants(updated);
     return updated;
   },
@@ -1149,7 +1376,28 @@ const AdmitifyStore = {
       ...patch
     };
 
+    // เดา gender จาก prefix ถ้าฟอร์มส่งมาให้ (เช่น เพิ่มนักเรียนใหม่ใน students.html ที่มี
+    // #as-prefix อยู่แล้ว) ไม่งั้นเดาจากชื่อจริงเป็น fallback สุดท้าย
+    if (!newApplicant.gender) {
+      if (newApplicant.prefix === 'เด็กหญิง' || newApplicant.prefix === 'นางสาว') newApplicant.gender = 'female';
+      else if (newApplicant.prefix === 'เด็กชาย' || newApplicant.prefix === 'นาย') newApplicant.gender = 'male';
+      else newApplicant.gender = guessGender(newApplicant.firstName);
+    }
+    if (!newApplicant.prefix) newApplicant.prefix = studentTitle(newApplicant);
+
+    const hasNewId = newApplicant.studentId && /^\d{5}$/.test(newApplicant.studentId);
+    if (ENROLLED_LIKE_STATUSES.includes(newApplicant.status) && !hasNewId) {
+      if (!newApplicant.entryYear) newApplicant.entryYear = CURRENT_ACADEMIC_YEAR_BE;
+      const usedIds = new Set();
+      applicants.forEach((a) => {
+        if (a.studentId && /^\d{5}$/.test(a.studentId)) usedIds.add(a.studentId);
+      });
+      newApplicant.studentId = generateStudentId(newApplicant.entryYear, usedIds);
+    }
+    newApplicant.schemaVersion = SCHEMA_VERSION;
+
     applicants.push(newApplicant);
+    renumberAll(applicants); // นักเรียนใหม่/ย้ายเข้าต้องได้เลขที่ในห้องด้วย
     this.saveApplicants(applicants);
     return newApplicant;
   },
@@ -1261,6 +1509,8 @@ const STUDY_PLAN_OPTIONS_DYNAMIC = Array.from(new Set(loadedPlans.map(p => p.nam
 // Export to window object for usage in static HTML scripts
 window.AdmitifyStore = AdmitifyStore;
 window.escapeHtml = escapeHtml;
+window.isValidThaiId = isValidThaiId;
+window.getBadgeClass = getBadgeClass;
 window.STATUS_LABEL = STATUS_LABEL;
 window.PHASE_LABEL = PHASE_LABEL;
 window.PHASE_OPTIONS = PHASE_OPTIONS;
@@ -1270,6 +1520,11 @@ window.PLACEHOLDERS = PLACEHOLDERS;
 window.classroomFor = classroomFor;
 window.effectiveClassroom = effectiveClassroom;
 window.classroomOptions = classroomOptions;
+window.studentTitle = studentTitle;
+window.guessGender = guessGender;
+window.generateStudentId = generateStudentId;
+window.renumberRoom = renumberRoom;
+window.renumberAll = renumberAll;
 window.phaseForStatus = phaseForStatus;
 window.defaultFieldSettings = defaultFieldSettings;
 window.defaultCoursePlans = defaultCoursePlans;

@@ -14,53 +14,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom Tailwind Config to match theme -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              DEFAULT: '#3e63dd',
-              foreground: '#ffffff',
-              hover: '#2f51c7'
-            },
-            secondary: {
-              DEFAULT: '#f1f3f9',
-              foreground: '#1e293b'
-            },
-            success: {
-              DEFAULT: '#10b981',
-              foreground: '#ffffff'
-            },
-            warning: {
-              DEFAULT: '#f59e0b',
-              foreground: '#78350f'
-            },
-            info: {
-              DEFAULT: '#0284c7',
-              foreground: '#ffffff'
-            },
-            destructive: {
-              DEFAULT: '#ef4444',
-              foreground: '#ffffff'
-            },
-            muted: {
-              DEFAULT: '#f8fafc',
-              foreground: '#64748b'
-            },
-            card: {
-              DEFAULT: '#ffffff',
-              foreground: '#0f172a'
-            },
-            border: '#e2e8f0'
-          },
-          fontFamily: {
-            sans: ['Sarabun', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <script src="js/tailwind-config.js"></script>
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -127,7 +81,7 @@
         <i data-lucide="alert-triangle" class="h-6 w-6"></i>
       </div>
       <h3 class="text-base font-bold text-slate-800">ไม่พบข้อมูลผู้สมัคร</h3>
-      <p class="text-xs text-slate-400">ลิงก์อาจไม่ถูกต้อง หรือนักเรียนรายนี้ถูกลบออกจากระบบแล้ว</p>
+      <p class="text-xs text-slate-500">ลิงก์อาจไม่ถูกต้อง หรือนักเรียนรายนี้ถูกลบออกจากระบบแล้ว</p>
       <a href="index.html" class="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-hover shadow-sm">
         กลับหน้าหลัก
       </a>
@@ -138,7 +92,7 @@
       
       <!-- Top Overview Card -->
       <div class="bg-card border border-border rounded-2xl shadow-sm p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div class="flex items-center gap-4.5">
+        <div class="flex items-center gap-[18px]">
           <div class="h-20 w-20 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-primary relative">
             <i data-lucide="user" class="h-10 w-10"></i>
             <span class="absolute -bottom-1.5 -right-1.5 px-2 py-0.5 rounded-full bg-primary text-white text-[9px] font-bold font-mono shadow" id="profile-badge-grade">ม.1</span>
@@ -148,12 +102,12 @@
               <h2 class="text-xl font-bold text-slate-800" id="profile-full-name">...</h2>
               <span id="profile-badge-status" class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold">...</span>
             </div>
-            <p class="text-xs text-slate-400 mt-1 flex items-center gap-4">
+            <p class="text-xs text-slate-500 mt-1 flex items-center gap-4">
               <span>รหัสใบสมัคร: <strong class="font-mono text-slate-700 font-bold" id="profile-code">APP-XXXX</strong></span>
               <span id="profile-span-std-id" class="hidden">รหัสนักเรียนใหม่: <strong class="font-mono text-emerald-600 font-bold" id="profile-std-id">STD-XXXX</strong></span>
             </p>
             <p class="text-xs text-slate-500 mt-1 flex items-center gap-1.5">
-              <i data-lucide="book-open" class="h-3.5 w-3.5 text-slate-400"></i> แผนการเรียน: <span class="font-semibold text-slate-700" id="profile-plan">...</span>
+              <i data-lucide="book-open" class="h-3.5 w-3.5 text-slate-500"></i> แผนการเรียน: <span class="font-semibold text-slate-700" id="profile-plan">...</span>
             </p>
           </div>
         </div>
@@ -173,7 +127,7 @@
 
       <!-- Admission Progress Steps Timeline -->
       <div class="bg-card border border-border rounded-2xl shadow-sm p-6">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">ขั้นตอนกระบวนการคัดเลือก (Admission Lifecycle)</h3>
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">ขั้นตอนกระบวนการคัดเลือก (Admission Lifecycle)</h3>
         
         <!-- Horizontal Timeline -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-6 relative">
@@ -181,66 +135,66 @@
           <!-- Step 1 -->
           <div class="flex flex-col items-center text-center space-y-2 relative" id="timeline-step-1">
             <div class="w-9 h-9 rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold border border-emerald-500 text-xs shadow-sm z-10">
-              <i data-lucide="check" class="h-4.5 w-4.5"></i>
+              <i data-lucide="check" class="h-[18px] w-[18px]"></i>
             </div>
             <div>
               <p class="text-xs font-bold text-slate-700 leading-tight">สมัครออนไลน์</p>
-              <p class="text-[10px] text-slate-400 mt-0.5" id="timeline-time-1">บันทึกสำเร็จ</p>
+              <p class="text-[10px] text-slate-500 mt-0.5" id="timeline-time-1">บันทึกสำเร็จ</p>
             </div>
           </div>
 
           <!-- Step 2 -->
           <div class="flex flex-col items-center text-center space-y-2 relative" id="timeline-step-2">
             <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shadow-sm z-10" id="timeline-circle-2">
-              <i data-lucide="credit-card" class="h-4.5 w-4.5"></i>
+              <i data-lucide="credit-card" class="h-[18px] w-[18px]"></i>
             </div>
             <div>
               <p class="text-xs font-bold text-slate-700 leading-tight">ชำระค่าธรรมเนียมสอบ</p>
-              <p class="text-[10px] text-slate-400 mt-0.5" id="timeline-time-2">รอตรวจเงิน</p>
+              <p class="text-[10px] text-slate-500 mt-0.5" id="timeline-time-2">รอตรวจเงิน</p>
             </div>
           </div>
 
           <!-- Step 3 -->
           <div class="flex flex-col items-center text-center space-y-2 relative" id="timeline-step-3">
             <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shadow-sm z-10" id="timeline-circle-3">
-              <i data-lucide="map-pin" class="h-4.5 w-4.5"></i>
+              <i data-lucide="map-pin" class="h-[18px] w-[18px]"></i>
             </div>
             <div>
               <p class="text-xs font-bold text-slate-700 leading-tight">จัดสรรสนามและที่นั่งสอบ</p>
-              <p class="text-[10px] text-slate-400 mt-0.5" id="timeline-time-3">ยังไม่กำหนด</p>
+              <p class="text-[10px] text-slate-500 mt-0.5" id="timeline-time-3">ยังไม่กำหนด</p>
             </div>
           </div>
 
           <!-- Step 4 -->
           <div class="flex flex-col items-center text-center space-y-2 relative" id="timeline-step-4">
             <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shadow-sm z-10" id="timeline-circle-4">
-              <i data-lucide="award" class="h-4.5 w-4.5"></i>
+              <i data-lucide="award" class="h-[18px] w-[18px]"></i>
             </div>
             <div>
               <p class="text-xs font-bold text-slate-700 leading-tight">ผลสอบคัดเลือก</p>
-              <p class="text-[10px] text-slate-400 mt-0.5" id="timeline-time-4">รอสอบเสร็จ</p>
+              <p class="text-[10px] text-slate-500 mt-0.5" id="timeline-time-4">รอสอบเสร็จ</p>
             </div>
           </div>
 
           <!-- Step 5 -->
           <div class="flex flex-col items-center text-center space-y-2 relative" id="timeline-step-5">
             <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shadow-sm z-10" id="timeline-circle-5">
-              <i data-lucide="user-check" class="h-4.5 w-4.5"></i>
+              <i data-lucide="user-check" class="h-[18px] w-[18px]"></i>
             </div>
             <div>
               <p class="text-xs font-bold text-slate-700 leading-tight">รายงานตัวนักเรียนใหม่</p>
-              <p class="text-[10px] text-slate-400 mt-0.5" id="timeline-time-5">ยังไม่ยืนยัน</p>
+              <p class="text-[10px] text-slate-500 mt-0.5" id="timeline-time-5">ยังไม่ยืนยัน</p>
             </div>
           </div>
 
           <!-- Step 6 -->
           <div class="flex flex-col items-center text-center space-y-2 relative" id="timeline-step-6">
             <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shadow-sm z-10" id="timeline-circle-6">
-              <i data-lucide="school" class="h-4.5 w-4.5"></i>
+              <i data-lucide="school" class="h-[18px] w-[18px]"></i>
             </div>
             <div>
               <p class="text-xs font-bold text-slate-700 leading-tight">มอบตัวและจัดชั้นเรียน</p>
-              <p class="text-[10px] text-slate-400 mt-0.5" id="timeline-time-6">ยังไม่เริ่ม</p>
+              <p class="text-[10px] text-slate-500 mt-0.5" id="timeline-time-6">ยังไม่เริ่ม</p>
             </div>
           </div>
 
@@ -261,6 +215,9 @@
           <button onclick="switchTab('tab-academic')" id="btn-tab-academic" class="profile-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-xs font-semibold hover:bg-slate-50 text-slate-600 transition-colors flex items-center gap-2">
             <i data-lucide="book-open" class="h-4 w-4"></i> ประวัติการศึกษาและสุขภาพ
           </button>
+          <button onclick="switchTab('tab-grades')" id="btn-tab-grades" class="profile-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-xs font-semibold hover:bg-slate-50 text-slate-600 transition-colors flex items-center gap-2">
+            <i data-lucide="graduation-cap" class="h-4 w-4"></i> ผลการเรียน
+          </button>
           <button onclick="switchTab('tab-documents')" id="btn-tab-documents" class="profile-tab-btn w-full text-left px-4 py-2.5 rounded-lg text-xs font-semibold hover:bg-slate-50 text-slate-600 transition-colors flex items-center gap-2 flex items-center justify-between">
             <span class="flex items-center gap-2">
               <i data-lucide="file-text" class="h-4 w-4"></i> หลักฐานใบสมัคร
@@ -276,24 +233,24 @@
           <div id="panel-tab-personal" class="profile-panel bg-card border border-border rounded-2xl shadow-sm p-6 space-y-6">
             <div>
               <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
-                <i data-lucide="user" class="text-primary h-4.5 w-4.5"></i> ประวัติและข้อมูลส่วนตัวผู้สมัคร
+                <i data-lucide="user" class="text-primary h-[18px] w-[18px]"></i> ประวัติและข้อมูลส่วนตัวผู้สมัคร
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 py-4 text-xs">
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">ชื่อ-นามสกุล (ภาษาไทย)</span><span class="font-semibold text-slate-800 mt-1" id="info-name-th">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">ชื่อ-นามสกุล (ภาษาอังกฤษ)</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-name-en">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">เลขประจำตัวประชาชน 13 หลัก</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-citizen-id">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">วัน/เดือน/ปี เกิด (อายุ)</span><span class="font-semibold text-slate-800 mt-1" id="info-dob">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">เพศ</span><span class="font-semibold text-slate-800 mt-1" id="info-gender">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">สัญชาติ / ศาสนา</span><span class="font-semibold text-slate-800 mt-1" id="info-nat-rel">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ชื่อ-นามสกุล (ภาษาไทย)</span><span class="font-semibold text-slate-800 mt-1" id="info-name-th">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ชื่อ-นามสกุล (ภาษาอังกฤษ)</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-name-en">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">เลขประจำตัวประชาชน 13 หลัก</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-citizen-id">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">วัน/เดือน/ปี เกิด (อายุ)</span><span class="font-semibold text-slate-800 mt-1" id="info-dob">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">เพศ</span><span class="font-semibold text-slate-800 mt-1" id="info-gender">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">สัญชาติ / ศาสนา</span><span class="font-semibold text-slate-800 mt-1" id="info-nat-rel">...</span></div>
               </div>
             </div>
 
             <div>
               <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
-                <i data-lucide="map-pin" class="text-primary h-4.5 w-4.5"></i> รายละเอียดข้อมูลที่อยู่ปัจจุบัน
+                <i data-lucide="map-pin" class="text-primary h-[18px] w-[18px]"></i> รายละเอียดข้อมูลที่อยู่ปัจจุบัน
               </h3>
               <div class="py-4 text-xs">
-                <span class="text-slate-400 font-medium block">ที่อยู่ปัจจุบันตามทะเบียนบ้าน</span>
+                <span class="text-slate-500 font-medium block">ที่อยู่ปัจจุบันตามทะเบียนบ้าน</span>
                 <span class="font-semibold text-slate-800 mt-1.5 block leading-relaxed" id="info-address">...</span>
               </div>
             </div>
@@ -304,38 +261,38 @@
             <!-- Father details -->
             <div>
               <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
-                <i data-lucide="user-check" class="text-primary h-4.5 w-4.5"></i> ประวัติและที่อยู่บิดา
+                <i data-lucide="user-check" class="text-primary h-[18px] w-[18px]"></i> ประวัติและที่อยู่บิดา
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-6 py-4 text-xs">
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">ชื่อ-นามสกุล บิดา</span><span class="font-semibold text-slate-800 mt-1" id="info-father-name">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">เบอร์โทรศัพท์บิดา</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-father-phone">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">อาชีพ</span><span class="font-semibold text-slate-800 mt-1" id="info-father-job">...</span></div>
-                <div class="col-span-3 flex flex-col"><span class="text-slate-400 font-medium">ที่อยู่ติดต่อบิดา</span><span class="font-semibold text-slate-800 mt-1" id="info-father-address">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ชื่อ-นามสกุล บิดา</span><span class="font-semibold text-slate-800 mt-1" id="info-father-name">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">เบอร์โทรศัพท์บิดา</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-father-phone">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">อาชีพ</span><span class="font-semibold text-slate-800 mt-1" id="info-father-job">...</span></div>
+                <div class="col-span-3 flex flex-col"><span class="text-slate-500 font-medium">ที่อยู่ติดต่อบิดา</span><span class="font-semibold text-slate-800 mt-1" id="info-father-address">...</span></div>
               </div>
             </div>
 
             <!-- Mother details -->
             <div>
               <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
-                <i data-lucide="user-check" class="text-primary h-4.5 w-4.5"></i> ประวัติและที่อยู่มารดา
+                <i data-lucide="user-check" class="text-primary h-[18px] w-[18px]"></i> ประวัติและที่อยู่มารดา
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-6 py-4 text-xs">
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">ชื่อ-นามสกุล มารดา</span><span class="font-semibold text-slate-800 mt-1" id="info-mother-name">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">เบอร์โทรศัพท์มารดา</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-mother-phone">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">อาชีพ</span><span class="font-semibold text-slate-800 mt-1" id="info-mother-job">...</span></div>
-                <div class="col-span-3 flex flex-col"><span class="text-slate-400 font-medium">ที่อยู่ติดต่อมารดา</span><span class="font-semibold text-slate-800 mt-1" id="info-mother-address">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ชื่อ-นามสกุล มารดา</span><span class="font-semibold text-slate-800 mt-1" id="info-mother-name">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">เบอร์โทรศัพท์มารดา</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-mother-phone">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">อาชีพ</span><span class="font-semibold text-slate-800 mt-1" id="info-mother-job">...</span></div>
+                <div class="col-span-3 flex flex-col"><span class="text-slate-500 font-medium">ที่อยู่ติดต่อมารดา</span><span class="font-semibold text-slate-800 mt-1" id="info-mother-address">...</span></div>
               </div>
             </div>
 
             <!-- Guardian details -->
             <div>
               <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
-                <i data-lucide="users" class="text-primary h-4.5 w-4.5"></i> ข้อมูลผู้ปกครองหลัก (ผู้ติดต่อประสานงาน)
+                <i data-lucide="users" class="text-primary h-[18px] w-[18px]"></i> ข้อมูลผู้ปกครองหลัก (ผู้ติดต่อประสานงาน)
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-6 py-4 text-xs">
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">ชื่อ-นามสกุล ผู้ปกครอง</span><span class="font-semibold text-slate-800 mt-1" id="info-guardian-name">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">เบอร์โทรศัพท์ผู้ปกครอง</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-guardian-phone">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">ความสัมพันธ์ / อีเมล</span><span class="font-semibold text-slate-800 mt-1" id="info-guardian-email">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ชื่อ-นามสกุล ผู้ปกครอง</span><span class="font-semibold text-slate-800 mt-1" id="info-guardian-name">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">เบอร์โทรศัพท์ผู้ปกครอง</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-guardian-phone">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ความสัมพันธ์ / อีเมล</span><span class="font-semibold text-slate-800 mt-1" id="info-guardian-email">...</span></div>
               </div>
             </div>
           </div>
@@ -345,34 +302,56 @@
             <!-- Academic -->
             <div>
               <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
-                <i data-lucide="award" class="text-primary h-4.5 w-4.5"></i> ประวัติการศึกษาและการสอบสะสม
+                <i data-lucide="award" class="text-primary h-[18px] w-[18px]"></i> ประวัติการศึกษาและการสอบสะสม
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 py-4 text-xs">
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">โรงเรียนเดิมล่าสุด</span><span class="font-semibold text-slate-800 mt-1" id="info-school-name">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">จังหวัดที่ตั้งโรงเรียน</span><span class="font-semibold text-slate-800 mt-1" id="info-school-province">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">วุฒิระดับการศึกษาล่าสุด</span><span class="font-semibold text-slate-800 mt-1" id="info-school-degree">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">คะแนนเฉลี่ยสะสม (GPAX)</span><span class="font-semibold text-slate-800 mt-1 font-mono text-emerald-600 font-bold" id="info-school-gpax">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">โรงเรียนเดิมล่าสุด</span><span class="font-semibold text-slate-800 mt-1" id="info-school-name">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">จังหวัดที่ตั้งโรงเรียน</span><span class="font-semibold text-slate-800 mt-1" id="info-school-province">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">วุฒิระดับการศึกษาล่าสุด</span><span class="font-semibold text-slate-800 mt-1" id="info-school-degree">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">GPAX จากโรงเรียนเดิม (ตอนสมัคร)</span><span class="font-semibold text-slate-800 mt-1 font-mono text-emerald-600 font-bold" id="info-school-gpax">...</span></div>
               </div>
             </div>
 
             <!-- Health details -->
             <div>
               <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
-                <i data-lucide="heart" class="text-primary h-4.5 w-4.5"></i> ข้อมูลสุขภาพผู้สมัคร
+                <i data-lucide="heart" class="text-primary h-[18px] w-[18px]"></i> ข้อมูลสุขภาพผู้สมัคร
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-4 gap-y-4 gap-x-6 py-4 text-xs">
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">หมู่โลหิต (Blood Type)</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-health-blood">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">น้ำหนัก (กิโลกรัม)</span><span class="font-semibold text-slate-800 mt-1" id="info-health-weight">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">ส่วนสูง (เซนติเมตร)</span><span class="font-semibold text-slate-800 mt-1" id="info-health-height">...</span></div>
-                <div class="flex flex-col"><span class="text-slate-400 font-medium">โรคประจำตัว / แพ้ยา</span><span class="font-semibold text-slate-800 mt-1" id="info-health-congenital">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">หมู่โลหิต (Blood Type)</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-health-blood">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">น้ำหนัก (กิโลกรัม)</span><span class="font-semibold text-slate-800 mt-1" id="info-health-weight">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ส่วนสูง (เซนติเมตร)</span><span class="font-semibold text-slate-800 mt-1" id="info-health-height">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">โรคประจำตัว / แพ้ยา</span><span class="font-semibold text-slate-800 mt-1" id="info-health-congenital">...</span></div>
               </div>
+            </div>
+          </div>
+
+          <!-- Panel: ผลการเรียน (หลังเข้าเรียน) — รอ Team C ต่อข้อมูลเกรดรายวิชาจริง ตอนนี้โชว์
+               เฉพาะข้อมูลที่มีอยู่แล้ว (รหัสนักเรียน/เลขที่/ห้อง) ส่วนตารางเกรดเป็น placeholder -->
+          <div id="panel-tab-grades" class="profile-panel bg-card border border-border rounded-2xl shadow-sm p-6 space-y-6 hidden">
+            <div>
+              <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
+                <i data-lucide="graduation-cap" class="text-primary h-[18px] w-[18px]"></i> ข้อมูลนักเรียน
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-y-4 gap-x-6 py-4 text-xs">
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">รหัสประจำตัว</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-grades-studentid">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ห้องเรียน</span><span class="font-semibold text-slate-800 mt-1" id="info-grades-classroom">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">เลขที่</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-grades-classno">...</span></div>
+                <div class="flex flex-col"><span class="text-slate-500 font-medium">ปีที่เข้าเรียน</span><span class="font-semibold text-slate-800 mt-1 font-mono" id="info-grades-entryyear">...</span></div>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
+                <i data-lucide="clipboard-list" class="text-primary h-[18px] w-[18px]"></i> ผลการเรียนรายวิชา
+              </h3>
+              <div class="py-4" id="grades-placeholder"></div>
             </div>
           </div>
 
           <!-- Panel 4: Documents Uploaded -->
           <div id="panel-tab-documents" class="profile-panel bg-card border border-border rounded-2xl shadow-sm p-6 space-y-6 hidden">
             <h3 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center gap-2">
-              <i data-lucide="file-text" class="text-primary h-4.5 w-4.5"></i> เอกสารหลักฐานประกอบการสมัคร
+              <i data-lucide="file-text" class="text-primary h-[18px] w-[18px]"></i> เอกสารหลักฐานประกอบการสมัคร
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -434,19 +413,19 @@
 
   <!-- Print Selection Modal -->
   <div id="modal-print-select" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 hidden">
-    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-card w-full max-w-md rounded-lg shadow-xl border border-border overflow-hidden">
       <div class="px-5 py-4 border-b border-border">
         <h3 class="text-base font-semibold text-slate-900 font-sans">เลือกเอกสารที่ต้องการพิมพ์</h3>
-        <p class="text-[11px] text-slate-400 font-sans mt-0.5">จำลองการสร้างเอกสารทางการของนักเรียน</p>
+        <p class="text-[11px] text-slate-500 font-sans mt-0.5">จำลองการสร้างเอกสารทางการของนักเรียน</p>
       </div>
       <div class="p-5 space-y-3 font-sans">
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ประเภทเอกสาร</p>
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">ประเภทเอกสาร</p>
         
         <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
           <input type="checkbox" id="print-doc-app" checked class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
           <div>
             <span class="text-xs font-bold text-slate-800 block">ใบสมัครและแสดงความจำนง</span>
-            <span class="text-[10px] text-slate-400">ข้อมูลประวัติและสาขาแผนการเรียนที่เลือกสมัคร</span>
+            <span class="text-[10px] text-slate-500">ข้อมูลประวัติและสาขาแผนการเรียนที่เลือกสมัคร</span>
           </div>
         </label>
         
@@ -454,7 +433,7 @@
           <input type="checkbox" id="print-doc-receipt" checked class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
           <div>
             <span class="text-xs font-bold text-slate-800 block">ใบแจ้งยอดและหลักฐานการจ่ายเงินค่าสอบ</span>
-            <span class="text-[10px] text-slate-400">หลักฐานจำลองการชำระเงินค่าสมัครสอบคัดเลือก</span>
+            <span class="text-[10px] text-slate-500">หลักฐานจำลองการชำระเงินค่าสมัครสอบคัดเลือก</span>
           </div>
         </label>
 
@@ -462,7 +441,7 @@
           <input type="checkbox" id="print-doc-enroll" class="rounded text-primary focus:ring-primary h-4 w-4 border-slate-300 mt-0.5">
           <div>
             <span class="text-xs font-bold text-slate-800 block">ใบมอบตัวและข้อมูลห้องเรียน</span>
-            <span class="text-[10px] text-slate-400">แบบฟอร์มยืนยันสิทธิ์รายงานตัว (สำหรับเฟส 3)</span>
+            <span class="text-[10px] text-slate-500">แบบฟอร์มยืนยันสิทธิ์รายงานตัว (สำหรับเฟส 3)</span>
           </div>
         </label>
       </div>
@@ -475,15 +454,15 @@
 
   <!-- Print Preview Modal -->
   <div id="modal-print-preview" class="fixed inset-0 z-50 flex items-center justify-center bg-black/45 hidden">
-    <div class="bg-slate-100 w-full max-w-4xl h-[90vh] rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+    <div class="bg-slate-100 w-full max-w-4xl h-[90vh] rounded-xl shadow-2xl border border-slate-300 overflow-hidden flex flex-col">
       
       <!-- Top Action Bar -->
       <div class="bg-white border-b px-5 py-3 flex items-center justify-between z-10 font-sans">
         <div>
           <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-            <i data-lucide="eye" class="text-primary h-4.5 w-4.5"></i> ตัวอย่างเอกสารก่อนพิมพ์ (จำลอง)
+            <i data-lucide="eye" class="text-primary h-[18px] w-[18px]"></i> ตัวอย่างเอกสารก่อนพิมพ์ (จำลอง)
           </h3>
-          <p class="text-[10px] text-slate-400">แสดงผลเอกสารที่เลือกพิมพ์จำลองรวม <span id="print-preview-sheets-count" class="font-bold text-slate-700">0</span> แผ่น</p>
+          <p class="text-[10px] text-slate-500">แสดงผลเอกสารที่เลือกพิมพ์จำลองรวม <span id="print-preview-sheets-count" class="font-bold text-slate-700">0</span> แผ่น</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="mockDownloadPrintFiles()" class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 border border-indigo-200 px-3 py-1.5 text-xs font-bold hover:bg-indigo-100 text-primary transition-colors">
@@ -492,7 +471,7 @@
           <button onclick="mockSendToPrinter()" class="inline-flex items-center gap-1.5 rounded-lg bg-primary text-white px-3.5 py-1.5 text-xs font-bold hover:bg-primary-hover transition-colors shadow-sm">
             <i data-lucide="printer" class="h-3.5 w-3.5"></i> สั่งพิมพ์เอกสาร (จำลอง)
           </button>
-          <button onclick="closeModal('modal-print-preview')" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors ml-2">
+          <button onclick="closeModal('modal-print-preview')" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors ml-2">
             <i data-lucide="x" class="h-5 w-5"></i>
           </button>
         </div>
@@ -505,11 +484,11 @@
     </div>
   </div>
 
-  <!-- Toast Container -->
-  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+  <!-- toast container ถูกสร้างอัตโนมัติโดย js/ui.js (#admission-toast-container) -->
 
   <!-- Load database script -->
   <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
 
   <script>
     let applicant = null;
@@ -609,6 +588,13 @@
       document.getElementById('info-health-height').innerText = applicant.height ? `${applicant.height} ซม.` : '—';
       document.getElementById('info-health-congenital').innerText = applicant.congenitalDisease || 'ไม่มี';
 
+      // Tab: ผลการเรียน
+      document.getElementById('info-grades-studentid').innerText = applicant.studentId || '—';
+      document.getElementById('info-grades-classroom').innerText = window.effectiveClassroom ? (window.effectiveClassroom(applicant) || '—') : '—';
+      document.getElementById('info-grades-classno').innerText = applicant.classNo != null ? applicant.classNo : '—';
+      document.getElementById('info-grades-entryyear').innerText = applicant.entryYear || '—';
+      document.getElementById('grades-placeholder').innerHTML = window.AdmissionUI.teamCPlaceholder('ผลการเรียนรายวิชา/เกรดเฉลี่ยรายภาค');
+
       // Tab 4 Documents
       const badgeDocs = document.getElementById('profile-badge-docs');
       const doc4Card = document.getElementById('info-card-doc-4');
@@ -674,27 +660,14 @@
 
       if (isCompleted) {
         circle.className = "w-9 h-9 rounded-full flex items-center justify-center bg-emerald-50 text-emerald-600 font-bold border border-emerald-500 text-xs shadow-sm z-10";
-        circle.innerHTML = `<i data-lucide="check" class="h-4.5 w-4.5"></i>`;
+        circle.innerHTML = `<i data-lucide="check" class="h-[18px] w-[18px]"></i>`;
       } else {
-        circle.className = "w-9 h-9 rounded-full flex items-center justify-center bg-white text-slate-400 font-bold border border-slate-200 text-xs shadow-sm z-10";
-        circle.innerHTML = `<i data-lucide="${iconName}" class="h-4.5 w-4.5"></i>`;
+        circle.className = "w-9 h-9 rounded-full flex items-center justify-center bg-white text-slate-500 font-bold border border-slate-200 text-xs shadow-sm z-10";
+        circle.innerHTML = `<i data-lucide="${iconName}" class="h-[18px] w-[18px]"></i>`;
       }
     }
 
-    function getBadgeClass(status) {
-      switch (status) {
-        case 'unpaid_exam_fee': return 'bg-rose-50 text-rose-700 border-rose-200';
-        case 'paid_exam_fee': return 'bg-indigo-50 text-indigo-700 border-indigo-200';
-        case 'awaiting_results': return 'bg-amber-50 text-amber-700 border-amber-200';
-        case 'passed': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-        case 'reserve': return 'bg-sky-50 text-sky-700 border-sky-200';
-        case 'failed': return 'bg-slate-50 text-slate-600 border-slate-200';
-        case 'not_reported': return 'bg-amber-50 text-amber-700 border-amber-200';
-        case 'reported': return 'bg-indigo-50 text-indigo-700 border-indigo-200';
-        case 'enrolled': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-        default: return 'bg-slate-50 text-slate-700 border-slate-200';
-      }
-    }
+    // getBadgeClass ย้ายไป js/store.js แล้ว (window.getBadgeClass) — ใช้ร่วมกันทุกหน้า
 
     function formatDate(isoStr) {
       if (!isoStr) return '—';
@@ -715,13 +688,7 @@
       document.getElementById(`btn-${tabId}`).classList.add('active');
     }
 
-    // Modal helpers
-    function openModal(modalId) {
-      document.getElementById(modalId).classList.remove('hidden');
-    }
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.add('hidden');
-    }
+    // openModal/closeModal ย้ายไป js/ui.js แล้ว (window.openModal/closeModal)
 
     // Print Logic
     function triggerPrintProfile() {
@@ -738,7 +705,7 @@
       const renderEnroll = document.getElementById('print-doc-enroll').checked;
       
       if (!renderApp && !renderReceipt && !renderEnroll) {
-        alert('กรุณาเลือกเอกสารอย่างน้อย 1 รายการ');
+        AdmissionUI.alert('กรุณาเลือกเอกสารอย่างน้อย 1 รายการ');
         return;
       }
       
@@ -772,7 +739,7 @@
               </div>
               <div class="text-right">
                 <h4 class="text-xs font-bold text-slate-900 font-mono">${applicant.applicantCode}</h4>
-                <p class="text-[8px] text-slate-400">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
+                <p class="text-[8px] text-slate-500">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
               </div>
             </div>
             
@@ -782,18 +749,18 @@
             </div>
 
             <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 border p-4 rounded-lg bg-slate-50/50 mb-6">
-              <div><span class="text-slate-400 font-medium block">รหัสผู้สมัคร:</span> <span class="font-bold text-slate-800 text-sm font-mono">${applicant.applicantCode}</span></div>
-              <div><span class="text-slate-400 font-medium block">ระดับชั้น:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
-              <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-955 text-sm">${window.escapeHtml(applicant.firstName)} ${window.escapeHtml(applicant.lastName)}</span></div>
-              <div><span class="text-slate-400 font-medium block">แผนการเรียนอันดับ 1:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
-              <div><span class="text-slate-400 font-medium block">ห้องสอบจำลอง:</span> <span class="font-bold text-slate-800 font-mono">${applicant.examRoom || '—'} / ที่นั่ง ${applicant.seatNumber || '—'}</span></div>
+              <div><span class="text-slate-500 font-medium block">รหัสผู้สมัคร:</span> <span class="font-bold text-slate-800 text-sm font-mono">${applicant.applicantCode}</span></div>
+              <div><span class="text-slate-500 font-medium block">ระดับชั้น:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
+              <div class="col-span-2"><span class="text-slate-500 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${window.escapeHtml(applicant.firstName)} ${window.escapeHtml(applicant.lastName)}</span></div>
+              <div><span class="text-slate-500 font-medium block">แผนการเรียนอันดับ 1:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
+              <div><span class="text-slate-500 font-medium block">ห้องสอบจำลอง:</span> <span class="font-bold text-slate-800 font-mono">${applicant.examRoom || '—'} / ที่นั่ง ${applicant.seatNumber || '—'}</span></div>
             </div>
 
             <div class="space-y-4">
               <h4 class="font-bold border-b pb-1 text-slate-900 text-[10px] uppercase tracking-wider">เอกสารประกอบการสมัครที่ได้ตรวจสอบ</h4>
               <table class="w-full text-left">
                 <thead>
-                  <tr class="border-b text-[9px] text-slate-400 uppercase">
+                  <tr class="border-b text-[9px] text-slate-500 uppercase">
                     <th class="py-1">รายการหลักฐาน</th>
                     <th class="py-1">สถานะ</th>
                     <th class="py-1 text-right">ผู้ตรวจสอบ</th>
@@ -820,14 +787,14 @@
             </div>
 
             <div class="mt-24 flex justify-between items-end">
-              <div class="text-left font-mono text-[8px] text-slate-400">
+              <div class="text-left font-mono text-[8px] text-slate-500">
                 <div>SECURITY IDENTIFIER:</div>
                 <div>HASH_APP_${applicant.id.toUpperCase()}_2568</div>
               </div>
               <div class="text-center space-y-1.5">
                 <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
                 <div class="text-[9px] font-bold text-slate-700">ลงชื่อเจ้าหน้าที่ตรวจสอบประวัติ</div>
-                <div class="text-[8px] text-slate-400">ฝ่ายรับสมัครและวัดผลการศึกษา</div>
+                <div class="text-[8px] text-slate-500">ฝ่ายรับสมัครและวัดผลการศึกษา</div>
               </div>
             </div>
           </div>
@@ -851,7 +818,7 @@
               </div>
               <div class="text-right">
                 <h4 class="text-xs font-bold text-slate-900 font-mono">REC-2568-${applicant.applicantCode.substring(9)}</h4>
-                <p class="text-[8px] text-slate-400">วันที่ออกใบเสร็จ: ${new Date(applicant.appliedAt).toLocaleDateString('th-TH')}</p>
+                <p class="text-[8px] text-slate-500">วันที่ออกใบเสร็จ: ${new Date(applicant.appliedAt).toLocaleDateString('th-TH')}</p>
               </div>
             </div>
             
@@ -864,7 +831,7 @@
             <div class="border rounded-lg overflow-hidden my-6">
               <table class="w-full text-left border-collapse">
                 <thead>
-                  <tr class="bg-slate-50 text-[9px] text-slate-400 uppercase border-b">
+                  <tr class="bg-slate-50 text-[9px] text-slate-500 uppercase border-b">
                     <th class="p-3">รายการชำระ</th>
                     <th class="p-3 text-right">จำนวนเงิน (บาท)</th>
                   </tr>
@@ -891,14 +858,14 @@
             </div>
 
             <div class="mt-32 flex justify-between items-end">
-              <div class="text-left text-[9px] text-slate-400 font-mono">
+              <div class="text-left text-[9px] text-slate-500 font-mono">
                 <div>* ใบชำระเงินนี้เป็นการจำลองสถานะ</div>
                 <div>ระบบ Admitify Spark Demo</div>
               </div>
               <div class="text-center space-y-1.5">
                 <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
                 <div class="text-[9px] font-bold text-slate-700">นายสมชาย ปัญญาไว</div>
-                <div class="text-[8px] text-slate-400">ฝ่ายการเงินโรงเรียนแอดมิทิฟายวิทยา</div>
+                <div class="text-[8px] text-slate-500">ฝ่ายการเงินโรงเรียนแอดมิทิฟายวิทยา</div>
               </div>
             </div>
           </div>
@@ -922,7 +889,7 @@
               </div>
               <div class="text-right">
                 <h4 class="text-xs font-bold text-slate-900 font-mono">${applicant.studentId || 'STD-2568-PENDING'}</h4>
-                <p class="text-[8px] text-slate-400">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
+                <p class="text-[8px] text-slate-500">พิมพ์เมื่อ: ${new Date().toLocaleDateString('th-TH')}</p>
               </div>
             </div>
             
@@ -932,11 +899,11 @@
             </div>
 
             <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 border p-4 rounded-lg bg-emerald-50/20 mb-6 border-emerald-100">
-              <div><span class="text-slate-400 font-medium block">รหัสนักเรียนใหม่:</span> <span class="font-bold text-emerald-800 text-sm font-mono">${applicant.studentId || 'STD-2568-XXXX'}</span></div>
-              <div><span class="text-slate-400 font-medium block">ระดับชั้นเรียน:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
-              <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${window.escapeHtml(applicant.firstName)} ${window.escapeHtml(applicant.lastName)}</span></div>
-              <div><span class="text-slate-400 font-medium block">แผนการเรียนจัดสรร:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
-              <div><span class="text-slate-400 font-medium block">ห้องเรียนที่จัดได้:</span> <span class="font-bold text-emerald-700 font-mono text-sm">${window.effectiveClassroom ? window.effectiveClassroom(applicant) : '—'}</span></div>
+              <div><span class="text-slate-500 font-medium block">รหัสนักเรียนใหม่:</span> <span class="font-bold text-emerald-800 text-sm font-mono">${applicant.studentId || 'STD-2568-XXXX'}</span></div>
+              <div><span class="text-slate-500 font-medium block">ระดับชั้นเรียน:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
+              <div class="col-span-2"><span class="text-slate-500 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${window.escapeHtml(applicant.firstName)} ${window.escapeHtml(applicant.lastName)}</span></div>
+              <div><span class="text-slate-500 font-medium block">แผนการเรียนจัดสรร:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
+              <div><span class="text-slate-500 font-medium block">ห้องเรียนที่จัดได้:</span> <span class="font-bold text-emerald-700 font-mono text-sm">${window.effectiveClassroom ? window.effectiveClassroom(applicant) : '—'}</span></div>
             </div>
 
             <div class="space-y-4">
@@ -949,14 +916,14 @@
             </div>
 
             <div class="mt-40 flex justify-between items-end">
-              <div class="text-left text-[9px] text-slate-400 font-mono">
+              <div class="text-left text-[9px] text-slate-500 font-mono">
                 <div>* ข้อมูลจำลองสถานะการรายงานตัว</div>
                 <div>ระบบจัดการ Admitify Spark</div>
               </div>
               <div class="text-center space-y-1.5">
                 <div class="w-40 border-b border-dashed border-slate-400 mx-auto"></div>
                 <div class="text-[9px] font-bold text-slate-700">นายสมชาย ปัญญาไว</div>
-                <div class="text-[8px] text-slate-400">นายทะเบียนฝ่ายรับเข้าศึกษาต่อ</div>
+                <div class="text-[8px] text-slate-500">นายทะเบียนฝ่ายรับเข้าศึกษาต่อ</div>
               </div>
             </div>
           </div>
@@ -976,49 +943,7 @@
       showToast('สั่งพิมพ์สำเร็จ', 'ส่งคำสั่งพิมพ์ไปยังเครื่องพิมพ์เครือข่ายเรียบร้อย (จำลอง)', 'success');
     }
 
-    // Toast Engine
-    function showToast(title, description, type = 'success') {
-      const container = document.getElementById('toast-container');
-      const toastId = 'toast_' + Math.random().toString(36).substr(2, 9);
-      
-      let borderClass = 'border-slate-100 bg-white';
-      let iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-500"></i>';
-      
-      if (type === 'success') {
-        borderClass = 'border-emerald-100 bg-emerald-50/90 backdrop-blur-sm';
-        iconHtml = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
-      } else if (type === 'info') {
-        borderClass = 'border-sky-100 bg-sky-50/90 backdrop-blur-sm';
-        iconHtml = '<i data-lucide="info" class="h-5 w-5 text-sky-600"></i>';
-      } else if (type === 'warning') {
-        borderClass = 'border-amber-100 bg-amber-50/90 backdrop-blur-sm';
-        iconHtml = '<i data-lucide="alert-triangle" class="h-5 w-5 text-amber-600"></i>';
-      }
-
-      const toast = document.createElement('div');
-      toast.id = toastId;
-      toast.className = `p-4 rounded-lg border shadow-lg flex gap-3 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 max-w-sm ${borderClass}`;
-      
-      toast.innerHTML = `
-        <div class="shrink-0">${iconHtml}</div>
-        <div class="space-y-0.5 w-full">
-          <div class="text-xs font-bold text-slate-800">${title}</div>
-          <div class="text-[11px] text-slate-500">${description}</div>
-        </div>
-      `;
-
-      container.appendChild(toast);
-      lucide.createIcons();
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-2', 'opacity-0');
-      }, 10);
-
-      setTimeout(() => {
-        toast.classList.add('translate-y-2', 'opacity-0');
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
-    }
+    // showToast ย้ายไป js/ui.js แล้ว (window.showToast)
   </script>
 
 <!-- เมนูข้ามระบบ (ปุ่ม "ระบบอื่น" บนแถบหัวหน้า) -->

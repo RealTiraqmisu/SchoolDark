@@ -13,53 +13,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom Tailwind Config to match original OKLCH theme -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              DEFAULT: '#3e63dd',
-              foreground: '#ffffff',
-              hover: '#2f51c7'
-            },
-            secondary: {
-              DEFAULT: '#f1f3f9',
-              foreground: '#1e293b'
-            },
-            success: {
-              DEFAULT: '#10b981',
-              foreground: '#ffffff'
-            },
-            warning: {
-              DEFAULT: '#f59e0b',
-              foreground: '#78350f'
-            },
-            info: {
-              DEFAULT: '#0284c7',
-              foreground: '#ffffff'
-            },
-            destructive: {
-              DEFAULT: '#ef4444',
-              foreground: '#ffffff'
-            },
-            muted: {
-              DEFAULT: '#f8fafc',
-              foreground: '#64748b'
-            },
-            card: {
-              DEFAULT: '#ffffff',
-              foreground: '#0f172a'
-            },
-            border: '#e2e8f0'
-          },
-          fontFamily: {
-            sans: ['Sarabun', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <script src="js/tailwind-config.js"></script>
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -115,7 +69,7 @@
         </div>
         <div>
           <h2 class="text-2xl font-bold leading-tight text-slate-800">ส่งอีเมลแจ้งเตือนนักเรียน</h2>
-          <p class="text-sm text-slate-400">
+          <p class="text-sm text-slate-500">
             เครื่องมือสื่อสารประกาศผลสอบและติดตามเอกสารการสมัครเรียนสำหรับฝ่ายประชาสัมพันธ์
           </p>
         </div>
@@ -124,7 +78,7 @@
       <div class="flex items-center gap-2 rounded-lg border bg-card px-4 py-2 shadow-sm">
         <i data-lucide="users" class="h-4 w-4 text-primary"></i>
         <div class="text-sm">
-          <span class="text-slate-400">ผู้รับทั้งหมด</span>
+          <span class="text-slate-500">ผู้รับทั้งหมด</span>
           <span id="recipient-count" class="font-bold text-slate-800">0 ราย</span>
         </div>
       </div>
@@ -165,14 +119,14 @@
 
           <!-- Placeholder insert tag helper -->
           <div>
-            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">แท็กแทนที่ข้อมูลผู้สมัครอัตโนมัติ (Placeholder Tags)</span>
+            <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">แท็กแทนที่ข้อมูลผู้สมัครอัตโนมัติ (Placeholder Tags)</span>
             <div class="flex flex-wrap gap-1.5">
               <button onclick="insertPlaceholder('[ชื่อนักเรียน]')" class="px-2.5 py-1 text-xs rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors font-medium text-slate-600">[ชื่อนักเรียน]</button>
               <button onclick="insertPlaceholder('[แผนการเรียน]')" class="px-2.5 py-1 text-xs rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors font-medium text-slate-600">[แผนการเรียน]</button>
               <button onclick="insertPlaceholder('[คะแนนรวม]')" class="px-2.5 py-1 text-xs rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors font-medium text-slate-600">[คะแนนรวม]</button>
               <button onclick="insertPlaceholder('[ห้องเรียน]')" class="px-2.5 py-1 text-xs rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors font-medium text-slate-600">[ห้องเรียน]</button>
             </div>
-            <p class="text-[10px] text-slate-400 mt-1.5">ⓘ เมื่อส่งอีเมลจริง ระบบจะนำข้อมูลจริงของนักเรียนแต่ละคนไปใส่แทนที่ข้อความแท็กเหล่านี้ตามผู้รับ</p>
+            <p class="text-[10px] text-slate-500 mt-1.5">ⓘ เมื่อส่งอีเมลจริง ระบบจะนำข้อมูลจริงของนักเรียนแต่ละคนไปใส่แทนที่ข้อความแท็กเหล่านี้ตามผู้รับ</p>
           </div>
 
           <!-- Body -->
@@ -188,8 +142,8 @@
               <div id="attachment-1" class="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50/50 px-3 py-1.5 text-xs text-slate-600 shadow-sm">
                 <i data-lucide="paperclip" class="h-3.5 w-3.5 text-primary"></i>
                 <span class="font-medium text-slate-700">ประกาศผลการสอบคัดเลือก_2568.pdf</span>
-                <span class="text-slate-400 text-[10px] font-semibold">(1.2 MB)</span>
-                <button onclick="removeAttachment('attachment-1')" class="ml-1 text-slate-400 hover:text-slate-600 focus:outline-none">
+                <span class="text-slate-500 text-[10px] font-semibold">(1.2 MB)</span>
+                <button onclick="removeAttachment('attachment-1')" class="ml-1 text-slate-500 hover:text-slate-600 focus:outline-none">
                   <i data-lucide="x" class="h-3 w-3"></i>
                 </button>
               </div>
@@ -231,11 +185,11 @@
     </div>
   </main>
 
-  <!-- Simulation Toast Notify screen overlay -->
-  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+  <!-- toast container ถูกสร้างอัตโนมัติโดย js/ui.js (#admission-toast-container) -->
 
   <!-- Load script -->
   <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
 
   <script>
     let recipients = [];
@@ -322,19 +276,15 @@
       document.getElementById(id).remove();
     }
 
-    function maskCid(cid) {
-      if (!cid) return "1-1002-XXXXX-XX-1";
-      const c = cid.replace(/\D/g, "");
-      if (c.length < 5) return cid;
-      return `${c.slice(0, 1)}-${c.slice(1, 5)}-XXXXX-XX-${c.slice(-1)}`;
-    }
+    // maskCid ของไฟล์นี้ไม่มีจุดไหนเรียกใช้จริง (dead code) ลบทิ้ง — ถ้าต้องใช้
+    // ในอนาคตมี window.maskCid จาก js/ui.js ให้เรียกได้เลย
 
     function renderRecipients() {
       const list = document.getElementById('recipients-list');
       list.innerHTML = '';
 
       if (recipients.length === 0) {
-        list.innerHTML = `<div class="text-slate-400 italic text-xs py-4 text-center">ไม่มีข้อมูลผู้รับจดหมาย</div>`;
+        list.innerHTML = `<div class="text-slate-500 italic text-xs py-4 text-center">ไม่มีข้อมูลผู้รับจดหมาย</div>`;
         return;
       }
 
@@ -343,13 +293,13 @@
         list.innerHTML += `
           <div class="py-2.5 space-y-1">
             <div class="flex items-center justify-between text-xs font-semibold text-slate-800">
-              <span>ผู้ปกครองของ ${item.firstName} ${item.lastName}</span>
-              <span class="text-[10px] text-slate-400 font-mono">${item.applicantCode}</span>
+              <span>ผู้ปกครองของ ${window.escapeHtml(item.firstName)} ${window.escapeHtml(item.lastName)}</span>
+              <span class="text-[10px] text-slate-500 font-mono">${item.applicantCode}</span>
             </div>
-            <div class="text-[11px] text-slate-500 font-mono break-all">${item.parentEmail}</div>
+            <div class="text-[11px] text-slate-500 font-mono break-all">${window.escapeHtml(item.parentEmail)}</div>
             <div class="grid grid-cols-2 gap-1 mt-1 text-[10px] bg-slate-50 p-1.5 rounded border border-slate-100">
-              <div><span class="text-slate-400 font-medium">แผน:</span> <span class="font-semibold text-slate-600">${item.studyPlan}</span></div>
-              <div><span class="text-slate-400 font-medium">คะแนน:</span> <span class="font-semibold text-slate-600">${rawScore}</span></div>
+              <div><span class="text-slate-500 font-medium">แผน:</span> <span class="font-semibold text-slate-600">${window.escapeHtml(item.studyPlan)}</span></div>
+              <div><span class="text-slate-500 font-medium">คะแนน:</span> <span class="font-semibold text-slate-600">${rawScore}</span></div>
             </div>
           </div>
         `;
@@ -361,48 +311,28 @@
       const body = document.getElementById('email-body').value.trim();
       
       if (!subject || !body) {
-        alert('กรุณากรอกหัวข้อจดหมายและเนื้อหาก่อนการจำลองส่งข้อความ');
+        AdmissionUI.alert('กรุณากรอกหัวข้อจดหมายและเนื้อหาก่อนการจำลองส่งข้อความ');
         return;
       }
-      
+
       if (recipients.length === 0) {
-        alert('ไม่มีผู้รับอีเมลปลายทาง');
+        AdmissionUI.alert('ไม่มีผู้รับอีเมลปลายทาง');
         return;
       }
 
       const templateLabel = activeTemplateId ? window.EMAIL_TEMPLATES[activeTemplateId].label : "เทมเพลตอิสระ (Custom)";
-      
-      // Simulate toast
-      showSimulationToast(
+
+      // Simulate toast (showSimulationToast ย้ายไปใช้ showToast กลางจาก js/ui.js แล้ว)
+      showToast(
         `จำลองการส่งอีเมลสำเร็จ!`,
-        `ส่งอีเมลหาผู้ปกครองนักเรียนจำนวน ${recipients.length} คน ผ่านเทมเพลต "${templateLabel}" เรียบร้อยแล้ว ระบบจะพากลับหน้าหลักใน 1.5 วินาที`
+        `ส่งอีเมลหาผู้ปกครองนักเรียนจำนวน ${recipients.length} คน ผ่านเทมเพลต "${templateLabel}" เรียบร้อยแล้ว ระบบจะพากลับหน้าหลักใน 1.5 วินาที`,
+        'success'
       );
 
       // Redirect back after delay
       setTimeout(() => {
         window.location.href = 'index.html';
       }, 2000);
-    }
-
-    function showSimulationToast(title, description) {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = 'p-4 rounded-lg border border-emerald-100 bg-emerald-50 text-emerald-800 shadow-lg flex gap-3 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 max-w-sm';
-      
-      toast.innerHTML = `
-        <div class="shrink-0"><i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i></div>
-        <div class="space-y-0.5">
-          <div class="text-xs font-bold">${title}</div>
-          <div class="text-[11px] text-emerald-700">${description}</div>
-        </div>
-      `;
-
-      container.appendChild(toast);
-      lucide.createIcons();
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-2', 'opacity-0');
-      }, 10);
     }
   </script>
 

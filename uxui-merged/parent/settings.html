@@ -182,7 +182,10 @@
                 ParentUI.toast('ต้องมีบุตรในบัญชีอย่างน้อย 1 คน', 'error');
                 return;
               }
-              ParentUI.toast('ลบบุตรออกจากบัญชีแล้ว', 'success');
+              // location.reload() ทันทีทำให้ toast ปกติ (DOM element ที่หายไปพร้อมหน้าเดิม)
+              // ไม่มีเวลาให้คนทันเห็น — ใช้ ParentUI.flash() เก็บข้อความไว้ก่อน แล้ว
+              // renderNavbar() ของหน้าใหม่จะเป็นคนโชว์ให้เองหลัง reload
+              ParentUI.flash('ลบบุตรออกจากบัญชีแล้ว', 'success');
               location.reload();
             });
           });

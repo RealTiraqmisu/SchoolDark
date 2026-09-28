@@ -179,16 +179,93 @@
     }
   }
 
+  // 'YYYY-MM' -> 'ส.ค. 2568' (เดิมหลายหน้าโชว์ '2025-08' ดิบ ๆ ไม่ผ่าน fmt ภาษาไทยแบบที่อื่น)
+  function fmtMonth(ym) {
+    if (!ym) return '';
+    var p = ym.split('-');
+    var y = parseInt(p[0], 10), m = parseInt(p[1], 10);
+    if (!y || !m) return ym;
+    return THAI_MONTHS_SHORT[m - 1] + ' ' + (y + 543);
+  }
+
+  // สีป้ายแท็กประกาศ — เดิม copy ซ้ำกันระหว่าง index.html/announcements.html
+  var TAG_COLOR = {
+    'สำคัญ': 'bg-destructive/10 text-destructive',
+    'กิจกรรม': 'bg-info/10 text-info',
+    'ทั่วไป': 'bg-secondary text-secondary-foreground'
+  };
+
+  // comparator เรียงใหม่→เก่า/เก่า→ใหม่ตามฟิลด์วันที่ที่ระบุ — เดิม copy ซ้ำ ๆ กันราว 8 จุด
+  function byDateDesc(key) {
+    return function (a, b) {
+      var av = a[key], bv = b[key];
+      return av < bv ? 1 : (av > bv ? -1 : 0);
+    };
+  }
+  function byDateAsc(key) {
+    return function (a, b) {
+      var av = a[key], bv = b[key];
+      return av > bv ? 1 : (av < bv ? -1 : 0);
+    };
+  }
+
+  // เก็บข้อความไว้โชว์เป็น toast หลัง reload (ต่างจาก toast() ตรง ๆ ที่ element จะหายไปพร้อม
+  // การ reload ก่อนคนจะทันเห็น) — renderNavbar() เป็นคนอ่าน/เคลียร์ค่านี้ทุกครั้งที่โหลดหน้า
+  function flash(msg, type) {
+    try {
+      sessionStorage.setItem('parent_flash', JSON.stringify({ msg: msg, type: type || 'success' }));
+    } catch (e) {}
+  }
+
+  // เรียก fn() (ที่มักจะแทนที่ innerHTML ของส่วนใดส่วนหนึ่งของหน้า) โดยพยายามคง focus ไว้ที่
+  // element เดิมหลัง re-render — จำ element ที่โฟกัสอยู่ผ่าน id หรือ data-attribute ที่มักใช้
+  // ระบุปุ่มซ้ำได้ (data-date/data-tag/data-day/data-filter/data-view-btn/data-tab) แล้วโฟกัส
+  // กลับ element ที่ตรงกันหลัง fn() รันเสร็จ — ป้องกันปัญหา focus หลุดไป <body> ทุกครั้งที่กด
+  // วัน/ตัวกรอง/แท็บแล้วเนื้อหาถูกแทนที่ทั้งก้อน
+  var RERENDER_ID_ATTRS = ['data-date', 'data-tag', 'data-day', 'data-filter', 'data-view-btn', 'data-tab', 'data-year-prev', 'data-year-next'];
+  function rerender(fn) {
+    var active = document.activeElement;
+    var selector = null;
+    if (active && active !== document.body) {
+      if (active.id) {
+        selector = '#' + (window.CSS && CSS.escape ? CSS.escape(active.id) : active.id);
+      } else {
+        for (var i = 0; i < RERENDER_ID_ATTRS.length; i++) {
+          var name = RERENDER_ID_ATTRS[i];
+          if (active.hasAttribute(name)) {
+            selector = '[' + name + '="' + String(active.getAttribute(name) || '').replace(/"/g, '\\"') + '"]';
+            break;
+          }
+        }
+      }
+    }
+    fn();
+    if (!selector) return;
+    try {
+      var el = document.querySelector(selector);
+      if (el && typeof el.focus === 'function') el.focus();
+    } catch (e) {}
+  }
+
   window.ParentUI = {
     escapeHtml: escapeHtml,
     fmtDate: fmtDate,
     fmtDateLong: fmtDateLong,
+    fmtMonth: fmtMonth,
     toast: toast,
     createDialog: createDialog,
     confirm: confirmDialog,
     statusBadge: statusBadge,
     initials: initials,
     schoolName: schoolName,
+    flash: flash,
+    rerender: rerender,
+    byDateDesc: byDateDesc,
+    byDateAsc: byDateAsc,
+    TAG_COLOR: TAG_COLOR,
+    THAI_MONTHS_SHORT: THAI_MONTHS_SHORT,
+    THAI_MONTHS_LONG: THAI_MONTHS_LONG,
+    THAI_WEEKDAYS_SHORT: THAI_WEEKDAYS_SHORT,
     SERVICES: (PARENT_PAGES.filter(function (p) { return p.id === 'services'; })[0] || {}).children || []
   };
 
@@ -422,6 +499,17 @@
     if (window.lucide) lucide.createIcons();
 
     bindNavbarEvents(mount);
+
+    // แสดง toast ที่ค้างไว้ก่อน reload (ดู ParentUI.flash) — เช่นข้อความยืนยันหลังลบบุตร
+    // ใน settings.html ที่ reload ทันทีจน toast แบบ DOM element เดิมไม่มีเวลาให้เห็น
+    try {
+      var pendingFlash = sessionStorage.getItem('parent_flash');
+      if (pendingFlash) {
+        sessionStorage.removeItem('parent_flash');
+        var flashData = JSON.parse(pendingFlash);
+        toast(flashData.msg, flashData.type);
+      }
+    } catch (e) {}
   }
 
   function closeAllDropdowns(mount) {
@@ -433,7 +521,32 @@
     });
   }
 
+  function setMobileMenuIcon(toggleBtn, opened) {
+    var icon = toggleBtn.querySelector('[data-lucide]');
+    if (!icon) return;
+    icon.setAttribute('data-lucide', opened ? 'x' : 'menu');
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  function closeMobileMenu(mount, returnFocus) {
+    var toggleBtn = mount.querySelector('[data-action="toggle-mobile-menu"]');
+    var menu = mount.querySelector('[data-mobile-menu]');
+    if (!toggleBtn || !menu || menu.classList.contains('hidden')) return;
+    menu.classList.add('hidden');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    setMobileMenuIcon(toggleBtn, false);
+    if (returnFocus) toggleBtn.focus();
+  }
+
+  // renderNavbar() ปัจจุบันเรียกครั้งเดียวต่อการโหลดหน้า แต่กันไว้เผื่ออนาคตเรียกซ้ำ
+  // (เช่น รีเฟรชทั้ง navbar หลังแก้ข้อมูล) — ผูก listener ระดับ document แค่ครั้งเดียว
+  // แล้วอ้างอิง mount ล่าสุดผ่านตัวแปรนี้แทนการผูกซ้ำทุกครั้งที่ bindNavbarEvents รัน
+  var documentListenersBound = false;
+  var currentNavMount = null;
+
   function bindNavbarEvents(mount) {
+    currentNavMount = mount;
+
     var mobileToggle = mount.querySelector('[data-action="toggle-mobile-menu"]');
     var mobileMenu = mount.querySelector('[data-mobile-menu]');
     if (mobileToggle && mobileMenu) {
@@ -442,6 +555,12 @@
         var willOpen = mobileMenu.classList.contains('hidden');
         mobileMenu.classList.toggle('hidden');
         mobileToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        setMobileMenuIcon(mobileToggle, willOpen);
+      });
+      // เลือกลิงก์ในเมนูมือถือแล้วปิดเมนูให้เอง (ลิงก์ข้ามหน้าโหลดหน้าใหม่อยู่แล้ว แต่ปิด
+      // ไว้ก่อนกันเห็นเมนูค้างระหว่างรอโหลด)
+      mobileMenu.addEventListener('click', function (e) {
+        if (e.target.closest('a')) closeMobileMenu(mount, false);
       });
     }
 
@@ -476,13 +595,22 @@
       });
     }
 
+    if (documentListenersBound) return;
+    documentListenersBound = true;
+
     document.addEventListener('click', function (event) {
+      if (!currentNavMount) return;
       if (event.target.closest('[data-dropdown]')) return;
-      closeAllDropdowns(mount);
+      closeAllDropdowns(currentNavMount);
+      if (!event.target.closest('[data-mobile-menu]') && !event.target.closest('[data-action="toggle-mobile-menu"]')) {
+        closeMobileMenu(currentNavMount, false);
+      }
     });
 
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') closeAllDropdowns(mount);
+      if (event.key !== 'Escape' || !currentNavMount) return;
+      closeAllDropdowns(currentNavMount);
+      closeMobileMenu(currentNavMount, true);
     });
   }
 

@@ -14,53 +14,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom Tailwind Config to match theme -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              DEFAULT: '#3e63dd',
-              foreground: '#ffffff',
-              hover: '#2f51c7'
-            },
-            secondary: {
-              DEFAULT: '#f1f3f9',
-              foreground: '#1e293b'
-            },
-            success: {
-              DEFAULT: '#10b981',
-              foreground: '#ffffff'
-            },
-            warning: {
-              DEFAULT: '#f59e0b',
-              foreground: '#78350f'
-            },
-            info: {
-              DEFAULT: '#0284c7',
-              foreground: '#ffffff'
-            },
-            destructive: {
-              DEFAULT: '#ef4444',
-              foreground: '#ffffff'
-            },
-            muted: {
-              DEFAULT: '#f8fafc',
-              foreground: '#64748b'
-            },
-            card: {
-              DEFAULT: '#ffffff',
-              foreground: '#0f172a'
-            },
-            border: '#e2e8f0'
-          },
-          fontFamily: {
-            sans: ['Sarabun', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <script src="js/tailwind-config.js"></script>
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -119,10 +73,10 @@
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
           ONLINE
         </div>
-        <a href="status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
+        <a href="../apply/status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
           <i data-lucide="search" class="h-3.5 w-3.5"></i> ตรวจสอบสถานะ
         </a>
-        <a href="apply.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+        <a href="../apply/register.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
           <i data-lucide="user-plus" class="h-3.5 w-3.5"></i> ลงทะเบียนนักเรียนใหม่
         </a>
       </div>
@@ -134,9 +88,9 @@
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
       <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">ข้อมูลบุคคล</span>
-      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-500"></i>
       <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">รับสมัครนักเรียนออนไลน์</span>
-      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-500"></i>
       <span class="text-slate-700 font-medium">ตั้งค่าแผนการเรียน</span>
     </div>
 
@@ -153,7 +107,7 @@
       </div>
       
       <button onclick="openPlanModal()" class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-4.5 py-2.5 text-sm font-semibold transition-all shadow-md cursor-pointer active:scale-95">
-        <i data-lucide="plus-circle" class="h-4.5 w-4.5"></i> เพิ่มแผนการเรียนใหม่
+        <i data-lucide="plus-circle" class="h-[18px] w-[18px]"></i> เพิ่มแผนการเรียนใหม่
       </button>
     </div>
 
@@ -203,7 +157,7 @@
   </main>
 
   <!-- Add/Edit Plan Modal -->
-  <div id="plan-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200 p-4">
+  <div id="plan-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden p-4">
     <div class="custom-card border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col">
       <!-- Modal Header -->
       <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -290,7 +244,7 @@
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200">
+  <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden">
     <div class="custom-card border rounded-2xl p-6 shadow-2xl max-w-sm w-full space-y-4 text-center">
       <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-600">
         <i data-lucide="alert-triangle" class="h-6 w-6"></i>
@@ -310,14 +264,11 @@
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50">
-    <div id="toast-icon"></div>
-    <p id="toast-message" class="text-sm font-semibold text-slate-700"></p>
-  </div>
+  <!-- toast container ถูกสร้างอัตโนมัติโดย js/ui.js (#admission-toast-container) -->
 
   <!-- Store Logic Integration -->
   <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
   <script>
     // State
     let plansList = [];
@@ -337,8 +288,8 @@
       if (plansList.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" class="p-8 text-center text-xs text-slate-400">
-              <i data-lucide="folder-open" class="h-8 w-8 mx-auto mb-2 text-slate-400 block"></i>
+            <td colspan="6" class="p-8 text-center text-xs text-slate-500">
+              <i data-lucide="folder-open" class="h-8 w-8 mx-auto mb-2 text-slate-500 block"></i>
               ไม่มีแผนการเรียนที่ระบุในระบบ กดปุ่มด้านบนเพื่อเพิ่มแผนใหม่
             </td>
           </tr>
@@ -362,12 +313,12 @@
           <td class="p-4 font-mono font-bold text-xs text-slate-700">${plan.level}</td>
           <td class="p-4">
             <div class="font-bold text-slate-100">${plan.name}</div>
-            <div class="text-[11px] text-slate-400 truncate max-w-sm mt-0.5">${plan.regulations || 'ไม่มีเกณฑ์การรับสมัครระบุ'}</div>
+            <div class="text-[11px] text-slate-500 truncate max-w-sm mt-0.5">${plan.regulations || 'ไม่มีเกณฑ์การรับสมัครระบุ'}</div>
           </td>
           <td class="p-4 text-center font-mono font-bold text-indigo-600">${plan.capacity}</td>
           <td class="p-4 text-xs text-slate-700">
             <div class="flex items-center gap-1">
-              <i data-lucide="calendar" class="h-3 w-3 text-slate-400"></i>
+              <i data-lucide="calendar" class="h-3 w-3 text-slate-500"></i>
               ${formatDate(plan.regDates.applyStart)} - ${formatDate(plan.regDates.applyEnd)}
             </div>
           </td>
@@ -379,10 +330,10 @@
           </td>
           <td class="p-4 text-center">
             <div class="flex items-center justify-center gap-2">
-              <button onclick="openPlanModal('${plan.id}')" class="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-sky-600 border border-slate-200 transition-all active:scale-90 cursor-pointer" title="แก้ไข">
+              <button onclick="openPlanModal('${plan.id}')" class="p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-sky-600 border border-slate-200 transition-all active:scale-90 cursor-pointer" title="แก้ไข" aria-label="แก้ไข">
                 <i data-lucide="edit-3" class="h-4 w-4"></i>
               </button>
-              <button onclick="confirmDelete('${plan.id}')" class="p-2 rounded-lg bg-slate-50 hover:bg-rose-100 text-rose-600 border border-slate-200 transition-all active:scale-90 cursor-pointer" title="ลบ">
+              <button onclick="confirmDelete('${plan.id}')" class="p-2 rounded-lg bg-slate-50 hover:bg-rose-100 text-rose-600 border border-slate-200 transition-all active:scale-90 cursor-pointer" title="ลบ" aria-label="ลบ">
                 <i data-lucide="trash-2" class="h-4 w-4"></i>
               </button>
             </div>
@@ -472,11 +423,11 @@
       };
 
       if (!name) {
-        showToast("กรุณากรอกชื่อแผนการเรียน", "error");
+        showToast("กรุณากรอกชื่อแผนการเรียน", "", "error");
         return;
       }
       if (isNaN(capacity) || capacity <= 0) {
-        showToast("จำนวนที่นั่งรับสมัครต้องมากกว่า 0", "error");
+        showToast("จำนวนที่นั่งรับสมัครต้องมากกว่า 0", "", "error");
         return;
       }
 
@@ -486,14 +437,14 @@
         if (idx !== -1) {
           plansList[idx] = { id: editId, level, name, capacity, regulations, regDates };
           AdmitifyStore.saveCoursePlans(plansList);
-          showToast(`ปรับปรุงแผนการเรียน "${name}" สำเร็จเรียบร้อยแล้ว`, "success");
+          showToast(`ปรับปรุงแผนการเรียน "${name}" สำเร็จเรียบร้อยแล้ว`, "", "success");
         }
       } else {
         // Create Operation
         const newId = "p" + (Date.now());
         plansList.push({ id: newId, level, name, capacity, regulations, regDates });
         AdmitifyStore.saveCoursePlans(plansList);
-        showToast(`สร้างแผนการเรียน "${name}" สำเร็จเรียบร้อยแล้ว`, "success");
+        showToast(`สร้างแผนการเรียน "${name}" สำเร็จเรียบร้อยแล้ว`, "", "success");
       }
 
       loadPlans();
@@ -528,35 +479,14 @@
           AdmitifyStore.saveExamRooms(rooms);
         }
         
-        showToast(`ลบแผนการเรียน "${name}" เรียบร้อยแล้ว`, "success");
+        showToast(`ลบแผนการเรียน "${name}" เรียบร้อยแล้ว`, "", "success");
         loadPlans();
         renderPlans();
       }
       closeDeleteModal();
     });
 
-    // Toast Utility
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById("toast");
-      const toastMsg = document.getElementById("toast-message");
-      const toastIcon = document.getElementById("toast-icon");
-      
-      toastMsg.innerText = message;
-      
-      if (type === 'success') {
-        toastIcon.innerHTML = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
-        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-emerald-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
-      } else {
-        toastIcon.innerHTML = '<i data-lucide="alert-circle" class="h-5 w-5 text-rose-600"></i>';
-        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-rose-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
-      }
-      
-      lucide.createIcons();
-      
-      setTimeout(() => {
-        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50';
-      }, 3500);
-    }
+    // showToast ย้ายไป js/ui.js แล้ว (window.showToast)
 
     // Initialize Page
     window.addEventListener("DOMContentLoaded", () => {

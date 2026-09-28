@@ -382,7 +382,87 @@ html.xnav-fixed-layout.xnav-collapsed body {
     html.xnav-fixed-layout aside.sidebar:not(.collapsed) .menu-item span,
     html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-footer .user-info { display: none; }
     html.xnav-fixed-layout aside.sidebar:not(.collapsed) .menu-item { justify-content: center; padding: 12px; }
+    /* เดิมช่องค้นหา/เมนูย่อยไม่ถูกซ่อนตอนบีบเป็น rail 72px เลยยังโชว์เต็มความกว้าง
+       บีบอยู่ในแถบแคบ ๆ ดูแปลก ๆ — ซ่อนให้เหมือนสถานะ .collapsed แบบเดียวกัน */
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-search-input,
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-search-kbd { display: none; }
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-search { margin: -16px 0 8px; height: 40px; }
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-search-icon { width: 100%; border-radius: var(--border-radius-md); }
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .submenu,
+    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .submenu-toggle { display: none; }
     html.xnav-fixed-layout body { padding-left: 72px; }
+}
+
+/* ----------------------------------------------------------------------
+   4) มือถือ (≤768px): sidebar กลายเป็น off-canvas เต็มอัน (ไม่ใช่ rail 72px
+      แบบ tablet ด้านบน) ซ่อนไว้นอกจอด้วย transform จนกว่าจะกดปุ่มแฮมเบอร์เกอร์
+      (สร้าง + bind ใน cross-nav.js) เปิด — ใช้ transform อย่างเดียว (compositor-only
+      ไม่บังคับ reflow) ตามแนวทางแก้แลคเดิมของไฟล์นี้ทั้งไฟล์ ไม่ผูกกับ localStorage
+      ของปุ่มย่อ/ขยายเดิม (เริ่มปิดเสมอทุกครั้งที่โหลดหน้าใหม่)
+      ---------------------------------------------------------------- */
+/* z-index ทั้ง 3 ตัวของกลุ่มนี้ (toggle/backdrop/sidebar ตอนเปิดมือถือ) ตั้งใจให้อยู่
+   ต่ำกว่า 50 เสมอ — ให้ต่ำกว่า overlay/modal ของ admission (z-50 ขึ้นไป) เหมือนกับที่
+   aside.sidebar ปกติตั้งใจไว้ (z-index: 45 ด้านบน) ไม่งั้นเมนูมือถือจะไปทับ modal ที่
+   เปิดอยู่ */
+.xnav-mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 48;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-sidebar, #fff);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+.xnav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .4);
+    z-index: 46;
+}
+
+@media (max-width: 768px) {
+    /* ช่วง ≤768px นี้ยังอยู่ในเงื่อนไข ≤1024px ข้างบนด้วย (rail 72px + ซ่อนช่องค้นหา/
+       เมนูย่อย) — ต้องแปะ !important ทับเฉพาะจุดที่ query 1024px ไปบีบ/ซ่อนไว้ ไม่งั้น
+       ตอนเปิดเมนูมือถือ (sidebar เต็ม 280px) เนื้อหาข้างในจะยังโดนบีบเป็น rail อยู่ดี
+       (เหมือนกับ !important จุดเดียวที่มีอยู่แล้วในไฟล์นี้ ใช้จุดนี้เพื่อ "จบ" การ cascade
+       ของ breakpoint ที่แคบสุด ไม่ใช่ !important สุ่ม ๆ) */
+    html.xnav-fixed-layout .xnav-mobile-toggle { display: flex; }
+
+    html.xnav-fixed-layout aside.sidebar {
+        width: 280px !important;
+        padding: 24px !important;
+        transform: translateX(-100%);
+        transition: transform 200ms ease;
+        z-index: 47;
+    }
+    /* บนมือถือกางเต็มอันเสมอตอนเปิด ไม่สนสถานะ .collapsed ของปุ่มย่อ/ขยายเดิม
+       (ปุ่มนั้นซ่อนไปแล้วด้านล่าง ใช้ปุ่มแฮมเบอร์เกอร์แทนอย่างเดียว) */
+    html.xnav-fixed-layout aside.sidebar .logo-group { display: flex !important; }
+    html.xnav-fixed-layout aside.sidebar .menu-label { display: block !important; }
+    html.xnav-fixed-layout aside.sidebar .menu-item span { display: inline !important; }
+    html.xnav-fixed-layout aside.sidebar .sidebar-footer .user-info { display: block !important; }
+    html.xnav-fixed-layout aside.sidebar .menu-item { justify-content: flex-start !important; padding: 10px 14px !important; }
+    html.xnav-fixed-layout aside.sidebar .sidebar-search-input,
+    html.xnav-fixed-layout aside.sidebar .sidebar-search-kbd { display: revert !important; }
+    html.xnav-fixed-layout aside.sidebar .sidebar-search { margin: -16px 0 12px !important; height: auto !important; }
+    html.xnav-fixed-layout aside.sidebar .sidebar-search-icon { width: 36px !important; border-radius: 0 !important; }
+    html.xnav-fixed-layout aside.sidebar .submenu { display: grid !important; }
+    html.xnav-fixed-layout aside.sidebar .submenu-toggle { display: flex !important; }
+    html.xnav-fixed-layout aside.sidebar #sidebar-toggle-btn { display: none; }
+
+    html.xnav-fixed-layout body { padding-left: 0 !important; }
+
+    html.xnav-mobile-open aside.sidebar { transform: translateX(0); }
+    html.xnav-mobile-open .xnav-backdrop { display: block; }
+    html.xnav-mobile-open body { overflow: hidden; }
 }
 
 /* shortcut ในแต่ละหมวด → พาไปศูนย์รวมการตั้งค่า (settings/index.html) */

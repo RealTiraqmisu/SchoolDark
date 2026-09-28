@@ -85,13 +85,13 @@ uxui-merged/admission/         # (เดิมคือโฟลเดอร์ 
 ├── gemini.md / GEMINI.md      # pointer สั้นๆ ชี้กลับมาที่ AGENTS.md
 ├── CLAUDE.md                  # pointer สั้นๆ ชี้กลับมาที่ AGENTS.md
 ├── js/
-│   └── store.js              # ตัวจัดการข้อมูลส่วนกลาง (LocalStorage Database) และ Utility functions
+│   ├── store.js               # ตัวจัดการข้อมูลส่วนกลาง (LocalStorage Database) และ Utility functions
+│   ├── ui.js                  # `window.AdmissionUI` — dialog/confirm/alert/toast กลาง + compat globals (`openModal`/`closeModal`/`maskCid`/`showToast`) ใช้ร่วมทุกหน้าแทนของที่เคยก็อปวางซ้ำ 9 จุด
+│   └── tailwind-config.js     # ก้อน `tailwind.config = {...}` เดียวที่ทุกหน้าโหลดร่วมกัน (สีคอนทราสต์เข้มขึ้นตาม parent/) — ห้ามกลับไปแปะ inline ในแต่ละไฟล์
 ├── index.html                 # หน้า Dashboard หลัก สำหรับสลับเฟส กรองผลลัพธ์ และจัดการรายชื่อ
-├── apply.html                 # พอร์ทัลสมัครเรียนออนไลน์ (ผู้ปกครอง/นักเรียน)
 ├── edit.html                  # หน้าแบบฟอร์มแก้ไขประวัติข้อมูลส่วนตัวและแผนการศึกษาของนักเรียน
 ├── students.html               # หน้าข้อมูลนักเรียน (ตารางจัดการรายชื่อหลัก)
-├── profile.html                # โปรไฟล์ผู้สมัครแบบละเอียด (ประวัติ, ที่อยู่, ผู้ปกครอง, การศึกษา, สุขภาพ, เอกสาร)
-├── status.html                 # หน้าตรวจสอบสถานะผู้สมัคร
+├── profile.html                # โปรไฟล์ผู้สมัครแบบละเอียด (ประวัติ, ที่อยู่, ผู้ปกครอง, การศึกษา, สุขภาพ, เอกสาร, ผลการเรียน)
 ├── notify.html                 # ระบบแต่งข้อความและจำลองส่งอีเมลแจ้งเตือน/ประกาศผลหาผู้ปกครอง
 ├── settings.html                # ตั้งค่าฟอร์มรับสมัคร (field settings)
 ├── course_settings.html          # ตั้งค่าแผนหลักสูตร/แผนการเรียน
@@ -110,7 +110,16 @@ uxui-merged/admission/         # (เดิมคือโฟลเดอร์ 
     ../index.html               # หน้า hub รวมลิงก์ทุกระบบ
     ../shared/cross-nav.js      # แหล่งข้อมูลเมนูรวม — เพิ่มหน้าใหม่ต้องมาแก้ที่นี่ด้วย
     ../schooldark/              # โปรโตไทป์อีกระบบ (บุคลากร/การลา) คนละ design system
+    ../apply/                   # พอร์ทัลสมัครเรียนออนไลน์สำหรับผู้สมัคร/ผู้ปกครอง (ย้ายออกมาจาก admission/ — ดูหัวข้อ "apply/ แยกออกมาแล้ว" ด้านล่าง)
 ```
+
+> [!IMPORTANT]
+> **`apply.html` และ `status.html` ย้ายออกจากโฟลเดอร์นี้ไปแล้ว** → ตอนนี้อยู่ที่ `../apply/register.html` และ
+> `../apply/status.html` (พร้อม `../apply/index.html` เป็นหน้า landing ของพอร์ทัล) เหตุผล: เป็นคนละกลุ่มผู้ใช้/เลย์เอาต์
+> กับหน้าเจ้าหน้าที่ในโฟลเดอร์นี้ (ไม่มี sidebar เจ้าหน้าที่, ไม่โหลด `../shared/cross-nav.*`) แต่ยังใช้ข้อมูลก้อนเดียวกัน
+> — สคริปต์ใน `apply/*.html` อ้าง `../admission/js/store.js`, `../admission/js/ui.js`,
+> `../admission/js/tailwind-config.js` ตรงๆ (คนละโฟลเดอร์แต่ data layer เดียวกัน) ห้ามลบ/ย้าย `js/` ต่อโดยไม่แก้ path
+> ฝั่ง `apply/` ตาม ดู `../CLAUDE.md` หัวข้อ NAV_GROUPS กลุ่ม `public`
 
 ---
 
@@ -122,7 +131,7 @@ uxui-merged/admission/         # (เดิมคือโฟลเดอร์ 
 * **LocalStorage DB:** ระบบจะมองหา key ต่างๆ เช่น `admitify_applicants`, `admitify_field_settings`, `admitify_course_plans`, `admitify_exam_rooms` หากไม่มีค่าอยู่จะดึงข้อมูล Seed ชุดเริ่มต้นไปบันทึกเก็บไว้ทันที (มีผู้สมัครตัวอย่าง, แผนหลักสูตร, ห้องสอบ ฝังไว้เพื่อ demo)
 * **ฟังก์ชัน API ภายในที่สำคัญ:**
   - `getApplicants()`: ดึงข้อมูลล่าสุด
-  - `updateStatus(id, newStatus)`: เปลี่ยนสถานะนักเรียน และมีเงื่อนไขพิเศษ เช่น หากเปลี่ยนสถานะเป็น `enrolled` (มอบตัวเสร็จสิ้น) จะสุ่มเจนรหัสนักเรียนในรูปแบบ `STD-2568-XXXX` ให้อัตโนมัติ
+  - `updateStatus(id, newStatus)`: เปลี่ยนสถานะนักเรียน และมีเงื่อนไขพิเศษ เช่น หากเปลี่ยนสถานะเป็น `enrolled` (มอบตัวเสร็จสิ้น) จะเจนรหัสนักเรียนรูปแบบใหม่ (`generateStudentId`, ดูหัวข้อ "รหัสนักเรียนรูปแบบใหม่" ด้านล่าง) ให้อัตโนมัติ พร้อมจัดเลขที่ในห้อง (`renumberRoom`) ใหม่
   - `updateScore(id, raw, gpa)`: บันทึกคะแนนดิบและ GPAX
   - `updateApplicant(id, data)`: อัปเดตข้อมูลผู้สมัครจากหน้าแก้ไขข้อมูล พร้อมลงประวัติผู้แก้ (`lastEditedBy`, `lastEditedAt`)
   - `deleteApplicant(id)`: ลบรายชื่อผู้สมัครรายบุคคล
@@ -130,6 +139,35 @@ uxui-merged/admission/         # (เดิมคือโฟลเดอร์ 
   - `classroomOptions(grade?)`: รายชื่อห้องเรียนมาตรฐานทั้งโรงเรียน (6 ระดับชั้น × 5 ห้อง) พร้อมจำนวนคนที่ `enrolled` จริงต่อห้อง — ใช้จุดเดียวกันทั้ง chip filter, โมดัลย้ายห้องเรียน, โมดัลเลื่อนชั้น ฯลฯ ห้ามฮาร์ดโค้ดรายชื่อห้องซ้ำที่อื่น
   - `getStudentColumns()` / `saveStudentColumns()` / `resetStudentColumns()`: config คอลัมน์ตาราง `students.html` (คล้ายแพตเทิร์นเดียวกับ `admitify_exam_rooms`) — แก้ที่ `student_field_settings.html`, `students.html` เรนเดอร์หัวตาราง/เซลล์ตาม config นี้แบบ data-driven ไม่ใช่ `<th>`/`<td>` ฮาร์ดโค้ด
 * แต่ละหน้า HTML เรียกใช้ `AdmitifyStore` ตรงในสคริปต์ inline โดยตรง ไม่มี routing/build system ใดๆ
+
+#### รหัสนักเรียนรูปแบบใหม่ + การ migrate ข้อมูลเก่า
+
+* **รูปแบบใหม่ (`generateStudentId(entryYear, usedIds)`):** เลขปี พ.ศ. ที่เข้าเรียน 2 หลักท้าย + เลขรัน 3 หลัก
+  รวม 5 หลัก เช่นเข้าปี 2568 → `68001`, `68002`, ... (เลขรันนับแยกต่อปีเข้าเรียน ไม่ต่อเนื่องข้ามปี) — มาจากที่ noeysod
+  ขอให้ใช้รูปแบบคล้ายรหัสนักเรียนจริงของโรงเรียน (ปี + เลขรัน) แทนของเดิมที่เป็น `STD-YYYY-NNNN` แบบสุ่ม
+* **Schema version:** `SCHEMA_VERSION = 2` ใน `store.js`; ทุกเรคอร์ดที่ไม่มี `schemaVersion: 2` จะถูก
+  `migrateApplicants(list)` แปลงให้อัตโนมัติทุกครั้งที่เรียก `AdmitifyStore.getApplicants()` (แปลง `STD-YYYY-NNNN`
+  เดิม → รูปแบบใหม่ตาม `entryYear` ที่ derive จากรหัส/ปีเดิม, เติม `prefix`/`gender`/`classNo`/ข้อมูลครอบครัว mock
+  ที่ยังขาด) — **ห้ามเขียนโค้ดใหม่ที่ parse รูปแบบ `STD-YYYY-NNNN` ตรงๆ** ให้เรียก `getApplicants()` ก่อนเสมอเพื่อให้
+  ข้อมูลผ่าน migration แล้ว
+* **`entryYear`** (พ.ศ.): ปีที่เข้าเรียน ใช้กรองปีใน `students.html` (ตัวกรองปีของหน้านี้ = ปีที่เข้าเรียน ไม่ใช่ปีการศึกษา
+  ปัจจุบัน — ตัวกรองภาคเรียนยังเป็น label เฉยๆ พร้อมข้อความ "ยังไม่แยกตามภาคเรียน" เพราะยังไม่มีข้อมูลภาคเรียนจริง)
+* **`prefix`/`gender`** (`'male'|'female'`): `studentTitle(s)` คืนคำนำหน้าจาก `prefix` ถ้ามี ไม่งั้นคำนวณจาก
+  `gender`+ระดับชั้น (เด็กชาย/เด็กหญิง ม.ต้น, นาย/นางสาว ม.ปลาย) — ใช้แทนการเดาเพศจากชื่อ (`guessGender(firstName)`,
+  ใช้แค่ตอน migrate ข้อมูลเก่าที่ไม่มี `gender` เท่านั้น อย่าเรียกที่อื่น)
+* **`classNo`** (เลขที่ในห้อง) แยกจาก `seatNumber` (เลขที่นั่งสอบ) โดยเจตนา — `renumberRoom(list, room)` จัดเรียง
+  นักเรียนที่ enrolled ในห้องนั้น **ผู้ชายก่อน แล้วผู้หญิง เรียงตามชื่อ (`localeCompare('th')`)** ตามธรรมเนียมโรงเรียนไทย
+  แล้วเลขที่ 1..N ให้อัตโนมัติ; `renumberAll(list)` เรียก `renumberRoom` ทุกห้อง — เรียกซ้ำทุกครั้งหลังย้ายห้อง/
+  เลื่อนชั้น/เพิ่มนักเรียนใหม่ในห้อง อย่าคำนวณเลขที่เองที่อื่น
+
+#### Team C placeholder (เอกสารทะเบียน ปพ.1/3/7 ฯลฯ)
+
+* ตามข้อตกลงกับ noeysod: ปพ.1/ปพ.2 เป็นงานของ Team B (ทำ mockup เต็ม), ส่วนผลการเรียน/เกรด/เอกสารอื่นๆ ที่ต้องใช้
+  ข้อมูลจาก backend เป็นงานของ Team C — หน้านี้เป็นแค่ **mockup ฝั่ง frontend เท่านั้น** ไม่มีการประมวลผลจริง
+* `window.AdmissionUI.teamCPlaceholder(label)` (ใน `js/ui.js`) คืน HTML กล่องเส้นประ "รอข้อมูลจาก Team C — {label}"
+  — ใช้จุดเดียวทุกที่ที่ต้องโชว์พื้นที่รอข้อมูลจาก Team C (ตาราง ปพ.1 ส่วนผลการเรียนรายวิชา, แท็บ "ผลการเรียน" ใน
+  `profile.html`, ฟิลด์เกรด/ลายเซ็นใน ปพ.3/ปพ.7/ใบรับรองการเป็นนักเรียน) **ห้ามเปลี่ยนข้อความเป็นทีมอื่น** (noeysod
+  ยืนยันให้เขียน "Team C" ตรงๆ แม้ scope ของเกรด/วิชาการจะอยู่ในเอกสาร scope ของ Team A ก็ตาม)
 
 ### 2. ฟังก์ชันเด่นบนหน้าเว็บหลัก (Core UI Features - index.html / students.html)
 

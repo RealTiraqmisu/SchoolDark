@@ -58,7 +58,7 @@
         return ParentStore.get('parent_leave_requests')
           .filter(function (r) { return r.childId === selectedChildId; })
           .filter(function (r) { return !selectedStatus || r.status === selectedStatus; })
-          .sort(function (a, b) { return a.submitDate < b.submitDate ? 1 : (a.submitDate > b.submitDate ? -1 : 0); });
+          .sort(ParentUI.byDateDesc('submitDate'));
       }
 
       /* ---------------- ตัวกรอง: บุตร / สถานะ ---------------- */

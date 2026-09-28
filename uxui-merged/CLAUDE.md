@@ -41,6 +41,7 @@ uxui-merged/
 │   └── CLAUDE.md     # ← รายละเอียดของระบบนี้อยู่ในไฟล์นี้
 ├── admission/        # ระบบรับสมัครนักเรียน + ทะเบียน/ข้อมูลนักเรียน (Admitify Spark)
 │   └── AGENTS.md     # ← รายละเอียดของระบบนี้อยู่ในไฟล์นี้ (source of truth ของฝั่งนั้น)
+├── apply/            # พอร์ทัลสมัครเรียนออนไลน์สำหรับผู้สมัคร/ผู้ปกครอง (ย้ายออกมาจาก admission/) — ดูหัวข้อ "พอร์ทัลสมัครเรียน (apply/)" ด้านล่าง
 ├── settings/         # ศูนย์รวมการตั้งค่าของทั้ง 2 ระบบ (โฟลเดอร์กลาง ไม่ใช่ของฝั่งใด)
 │   ├── index.html    # การ์ดรวมทุกหมวดตั้งค่า (อ่านจาก NAV_GROUPS กลุ่ม id "settings")
 │   ├── school.html   # ตั้งค่าโรงเรียน (master data) 5 แท็บ — ดูหัวข้อถัดไป
@@ -99,6 +100,7 @@ uxui-merged/
 | `index.html` (hub) | `<div id="cross-nav-hub">` (เหมือนเดิม) | การ์ดของแต่ละระบบพร้อมลิสต์ลิงก์ — หน้านี้**ไม่มี sidebar ซ้าย** ตั้งใจเก็บดีไซน์การ์ดกลางหน้าแบบเดิมไว้ |
 | `settings/*.html` | เหมือน `admission/*.html` (script เป็นสิ่งแรกหลัง `<body>`, ไม่มี `<aside>` มาก่อน) | ได้ sidebar fixed แบบเดียวกับ admission; `settings/index.html` มี `<div id="settings-hub">` เพิ่มเติมที่อ่าน `window.CrossNav.NAV_GROUPS` เอง (ดูย่อหน้าถัดไป) |
 | `parent/*.html` | **ไม่โหลด** `shared/cross-nav.js`/`cross-nav.css` เลย (ข้อยกเว้นตั้งใจ) — ใช้ `parent/js/parent-nav.js` เรนเดอร์ navbar บนสุดของตัวเองแทน | navbar เต็มความกว้างด้านบน (ไม่ใช่ sidebar), เข้าถึงจากหน้า hub ผ่าน item `hubOnly: true` ในกลุ่ม `id: 'parent'` ของ `NAV_GROUPS` |
+| `apply/*.html` | **ไม่โหลด** `shared/cross-nav.js`/`cross-nav.css` เลย (ข้อยกเว้นตั้งใจ เหมือน `parent/`) — เป็นพอร์ทัลสำหรับผู้สมัคร ไม่ใช่เจ้าหน้าที่ จึงไม่มี sidebar แอดมิน มีแค่ header เรียบๆ ของตัวเองลิงก์กลับ `apply/index.html` | เข้าถึงจากหน้า hub ผ่านกลุ่ม `id: 'public'` (`hubOnly: true` ทั้งกลุ่ม, การ์ดขึ้นก่อนการ์ดอื่นด้วยคลาส `hub-card--featured`) — สคริปต์อ้าง `../admission/js/*` ตรงๆ (คนละโฟลเดอร์แต่ data layer เดียวกับ admission) |
 
 ทุกหน้าต้องโหลด `shared/cross-nav.css` คู่กับ `cross-nav.js` เสมอ (ยกเว้น hub ที่ไม่จำเป็น)
 เมนูที่แสดงจะเป็น**ชุดเดียวกันทุกหน้า** (ไม่ตัดกลุ่มของระบบตัวเองออกอีกต่อไป) — ต่างกันแค่ไฮไลต์
@@ -108,7 +110,7 @@ uxui-merged/
 ใน `NAV_GROUPS` เมนูย่อย (`children`) มีได้ 2 แบบ: `{ label, step|tab|subtab }` = สลับ view ในหน้า
 เดียวกัน (schooldark) หรือ `{ label, page }` = ลิงก์ไปคนละไฟล์ (เช่น "ตั้งค่ารับสมัคร" ของ admission
 ที่รวม 4 หน้าตั้งค่าไว้ใต้เมนูเดียว) ส่วน item ที่ใส่ `hubOnly: true` จะแสดงแค่ในการ์ดหน้า hub
-ไม่แสดงใน sidebar (ตอนนี้มี "พอร์ทัลสมัครเรียน" / `apply.html` ที่เข้าได้จากปุ่มบนบอร์ดรับสมัครอยู่แล้ว)
+ไม่แสดงใน sidebar (กลุ่ม `id: 'parent'` และกลุ่ม `id: 'public'` ทั้งกลุ่มเป็น `hubOnly: true` ทั้งหมด)
 
 หมวดใน sidebar **จัดตามงานที่ผู้ใช้ทำ ไม่ได้จัดตามไฟล์**: ภาพรวม → บุคลากร → การลาของบุคลากร →
 การมาเรียนของนักเรียน (แดชบอร์ดการมาเรียน + เช็คชื่อ + รายงานการมาเรียน) → การลาเรียนของนักเรียน (ยื่นขอลา + อนุมัติการลานักเรียน) → บัตรขออนุญาตนักเรียน → รับสมัคร & ทะเบียน
@@ -175,6 +177,33 @@ module?, view?, hash?, desc?}` — ถ้า child มี `view` และ `page
 > ข้อยกเว้นเดียวตอนนี้: `schooldark/leave-features.html` โหลด `settings/js/school-store.js` เพื่ออ่าน
 > วันเปิด-ปิดภาคเรียน (`school_academic_years`) ให้ปุ่ม "ภาคเรียนนี้" ในแดชบอร์ดการมาเรียน (อ่านอย่างเดียว)
 
+### พอร์ทัลสมัครเรียน (`apply/`)
+
+`apply.html`/`status.html` ย้ายออกจาก `admission/` มาเป็นโฟลเดอร์แยก `apply/` แล้ว (เหตุผล: คนละกลุ่ม
+ผู้ใช้ — ผู้สมัคร/ผู้ปกครอง ไม่ใช่เจ้าหน้าที่ — และคนละเลย์เอาต์ ไม่มี sidebar แอดมิน) มี 3 ไฟล์:
+`apply/index.html` (หน้า landing ของพอร์ทัล, การ์ด "สมัครเรียน"/"ตรวจสอบสถานะ"), `apply/register.html`
+(เดิมคือ `admission/apply.html`), `apply/status.html` (เดิมคือ `admission/status.html`) — ทั้ง 3 ไฟล์
+**ไม่โหลด** `shared/cross-nav.*` (ดูตาราง "จุดเชื่อมของเมนูรวม" ด้านบน) แต่สคริปต์ยังอ้าง
+`../admission/js/store.js` / `js/ui.js` / `js/tailwind-config.js` ตรงๆ เพราะยังใช้ data layer เดียว
+กับ `admission/` (`AdmitifyStore`, คีย์ localStorage `admitify_*` ชุดเดียวกัน) — ย้าย/ลบ `admission/js/`
+ต่อจากนี้ต้องแก้ path ฝั่ง `apply/` ตามด้วยเสมอ
+
+`NAV_GROUPS` มีกลุ่มใหม่ `id: 'public'` (label "พอร์ทัลสมัครเรียน (สำหรับผู้สมัคร)") วางไว้**กลุ่มแรก**
+ของ array, ทุก item เป็น `hubOnly: true` (ชี้ไปหน้า 3 หน้าของ `apply/`) — หน้า hub เรนเดอร์การ์ดของ
+กลุ่มนี้**ก่อน**การ์ดอื่นเสมอ พร้อม class เพิ่ม `hub-card--featured` (สไตล์เด่นกว่าการ์ดปกติ อยู่ใน
+`index.html` ของ hub) เพื่อให้เห็นชัดว่าเป็นพอร์ทัลสาธิตแยกต่างหาก
+
+### Off-canvas sidebar บนมือถือ (≤768px)
+
+`shared/cross-nav.css`/`cross-nav.js` มี breakpoint ใหม่ที่ ≤768px: sidebar เปลี่ยนจากย่อเป็นแถบแคบ
+(แบบ ≤1024px เดิม) ไปเป็น **off-canvas เต็มความกว้าง** แทน (`transform: translateX(-100%)` ซ่อนไว้,
+เลื่อนเข้าด้วยคลาส `html.xnav-mobile-open`) — `cross-nav.js` สร้างปุ่มแฮมเบอร์เกอร์
+`.xnav-mobile-toggle` (มุมซ้ายบน) และฉากหลัง `.xnav-backdrop` ให้เอง, ปิดได้ด้วยคลิกฉากหลัง/Esc/กด
+ลิงก์เมนู — **มีผลเฉพาะหน้าที่ใช้ class `xnav-fixed-layout` บน `<html>`** คือ `admission/*`,
+`settings/*` (และตอนนี้คือ hub ที่ไม่ได้ใช้ class นี้จึงไม่มีผล) — **`schooldark/*` ไม่ได้ใช้ class นี้
+จึงไม่ได้รับผลกระทบจากการเปลี่ยนนี้เลย** (sidebar ของ schooldark ยังเป็นพฤติกรรมเดิมทุกอย่างที่
+ทุก breakpoint) ส่วน `parent/*`/`apply/*` ไม่โหลด cross-nav อยู่แล้วจึงไม่เกี่ยวข้องเช่นกัน
+
 ## ประวัติการรวม
 
 - โฟลเดอร์เดิม `uxui/` → `schooldark/`, `uxui-noeysod/` → `admission/` (ย้ายด้วย `git mv` ประวัติไม่ขาด)
@@ -183,7 +212,8 @@ module?, view?, hash?, desc?}` — ถ้า child มี `view` และ `page
   `settings.js` ยังอยู่** เพราะ `app.html` ยังโหลดใช้เป็นสมองของแต่ละโมดูล
 - `admission/` เป็นโปรเจกต์ที่เคยเชื่อมกับ Lovable (`.lovable/project.json` ถูกย้ายมาด้วย) —
   ถ้า Lovable sync ไม่เจอหลังย้าย ให้ย้อน commit ที่ย้ายโฟลเดอร์ (ห้าม force push / rewrite history)
-- **รวม sidebar ซ้าย** (หลังรวมเมนูครั้งแรก): `admission/*` ทุกหน้า (รวม `apply.html`/`status.html`)
+- **รวม sidebar ซ้าย** (หลังรวมเมนูครั้งแรก): `admission/*` ทุกหน้า (รวม `apply.html`/`status.html`
+  เดิม ก่อนที่จะย้ายออกไปเป็น `apply/` แยกต่างหากในภายหลัง — ดูหัวข้อ "พอร์ทัลสมัครเรียน (apply/)" ด้านบน)
   เปลี่ยนจากแถบแท็บบน header มาใช้ sidebar ซ้ายแบบเดียวกับ `schooldark/*` — `shared/cross-nav.js`
   เขียนใหม่ให้เป็นคนสร้าง `<aside class="sidebar">` ทั้งก้อน (ไม่ใช่แค่เติมท้ายเมนูเดิม) และย้าย
   สไตล์ sidebar section 4 เดิมของ `schooldark/app.css` ไปเป็น `shared/cross-nav.css` พร้อมแก้จุดที่

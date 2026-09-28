@@ -14,53 +14,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Custom Tailwind Config to match theme -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              DEFAULT: '#3e63dd',
-              foreground: '#ffffff',
-              hover: '#2f51c7'
-            },
-            secondary: {
-              DEFAULT: '#f1f3f9',
-              foreground: '#1e293b'
-            },
-            success: {
-              DEFAULT: '#10b981',
-              foreground: '#ffffff'
-            },
-            warning: {
-              DEFAULT: '#f59e0b',
-              foreground: '#78350f'
-            },
-            info: {
-              DEFAULT: '#0284c7',
-              foreground: '#ffffff'
-            },
-            destructive: {
-              DEFAULT: '#ef4444',
-              foreground: '#ffffff'
-            },
-            muted: {
-              DEFAULT: '#f8fafc',
-              foreground: '#64748b'
-            },
-            card: {
-              DEFAULT: '#ffffff',
-              foreground: '#0f172a'
-            },
-            border: '#e2e8f0'
-          },
-          fontFamily: {
-            sans: ['Sarabun', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <script src="js/tailwind-config.js"></script>
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -119,10 +73,10 @@
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
           ONLINE
         </div>
-        <a href="status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
+        <a href="../apply/status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
           <i data-lucide="search" class="h-3.5 w-3.5"></i> ตรวจสอบสถานะ
         </a>
-        <a href="apply.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+        <a href="../apply/register.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
           <i data-lucide="user-plus" class="h-3.5 w-3.5"></i> ลงทะเบียนนักเรียนใหม่
         </a>
       </div>
@@ -134,9 +88,9 @@
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
       <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">ข้อมูลบุคคล</span>
-      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-500"></i>
       <span class="hover:underline cursor-pointer" onclick="location.href='students.html'">นักเรียน</span>
-      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-500"></i>
       <span class="text-slate-700 font-medium">ตั้งค่าคอลัมน์ตาราง</span>
     </div>
 
@@ -153,7 +107,7 @@
       </div>
 
       <button onclick="openColModal()" class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover text-white px-4.5 py-2.5 text-sm font-semibold transition-all shadow-md cursor-pointer active:scale-95">
-        <i data-lucide="plus-circle" class="h-4.5 w-4.5"></i> เพิ่มคอลัมน์ใหม่
+        <i data-lucide="plus-circle" class="h-[18px] w-[18px]"></i> เพิ่มคอลัมน์ใหม่
       </button>
     </div>
 
@@ -207,7 +161,7 @@
   </main>
 
   <!-- Add/Edit Column Modal -->
-  <div id="col-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200 p-4">
+  <div id="col-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden p-4">
     <div class="custom-card border rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto flex flex-col">
       <!-- Modal Header -->
       <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -263,7 +217,7 @@
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200">
+  <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden">
     <div class="custom-card border rounded-2xl p-6 shadow-2xl max-w-sm w-full space-y-4 text-center">
       <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-rose-600">
         <i data-lucide="alert-triangle" class="h-6 w-6"></i>
@@ -283,14 +237,11 @@
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50">
-    <div id="toast-icon"></div>
-    <p id="toast-message" class="text-sm font-semibold text-slate-700"></p>
-  </div>
+  <!-- toast container ถูกสร้างอัตโนมัติโดย js/ui.js (#admission-toast-container) -->
 
   <!-- Store Logic Integration -->
   <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
   <script>
     // รายการ field ในเรคคอร์ดนักเรียนที่เลือกผูกกับคอลัมน์ใหม่ได้ (ดู js/store.js seedApplicants + IMPORT_TEMPLATE_COLUMNS ใน students.html)
     const AVAILABLE_STUDENT_FIELDS = [
@@ -328,8 +279,8 @@
       if (columnsList.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" class="p-8 text-center text-xs text-slate-400">
-              <i data-lucide="folder-open" class="h-8 w-8 mx-auto mb-2 text-slate-400 block"></i>
+            <td colspan="5" class="p-8 text-center text-xs text-slate-500">
+              <i data-lucide="folder-open" class="h-8 w-8 mx-auto mb-2 text-slate-500 block"></i>
               ไม่มีคอลัมน์ในระบบ กดปุ่ม "คืนค่าเริ่มต้น" เพื่อเริ่มใหม่
             </td>
           </tr>
@@ -348,20 +299,20 @@
         tr.innerHTML = `
           <td class="p-4 text-center">
             <div class="inline-flex flex-col gap-0.5">
-              <button type="button" onclick="moveColumn('${col.id}', -1)" ${idx === 0 ? 'disabled' : ''} class="p-0.5 rounded text-slate-400 hover:text-primary hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors" title="เลื่อนขึ้น">
+              <button type="button" onclick="moveColumn('${col.id}', -1)" ${idx === 0 ? 'disabled' : ''} class="p-0.5 rounded text-slate-500 hover:text-primary hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors" title="เลื่อนขึ้น" aria-label="เลื่อนขึ้น">
                 <i data-lucide="chevron-up" class="h-3.5 w-3.5"></i>
               </button>
-              <button type="button" onclick="moveColumn('${col.id}', 1)" ${idx === columnsList.length - 1 ? 'disabled' : ''} class="p-0.5 rounded text-slate-400 hover:text-primary hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors" title="เลื่อนลง">
+              <button type="button" onclick="moveColumn('${col.id}', 1)" ${idx === columnsList.length - 1 ? 'disabled' : ''} class="p-0.5 rounded text-slate-500 hover:text-primary hover:bg-slate-100 disabled:opacity-30 disabled:pointer-events-none transition-colors" title="เลื่อนลง" aria-label="เลื่อนลง">
                 <i data-lucide="chevron-down" class="h-3.5 w-3.5"></i>
               </button>
             </div>
           </td>
           <td class="p-4">
             <div class="font-bold text-slate-900 text-sm">${col.labelTh}</div>
-            <div class="text-[11px] text-slate-400 font-mono mt-0.5">${fieldLabel}</div>
+            <div class="text-[11px] text-slate-500 font-mono mt-0.5">${fieldLabel}</div>
           </td>
           <td class="p-4 text-center">
-            <button type="button" onclick="toggleVisible('${col.id}')" ${col.primary ? 'disabled title="คอลัมน์หลักซ่อนไม่ได้"' : ''}
+            <button type="button" onclick="toggleVisible('${col.id}')" ${col.primary ? 'disabled title="คอลัมน์หลักซ่อนไม่ได้" aria-label="คอลัมน์หลักซ่อนไม่ได้"' : ''}
               class="relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${col.visible ? 'bg-emerald-500' : 'bg-slate-300'} ${col.primary ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}">
               <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${col.visible ? 'translate-x-5' : 'translate-x-0'}"></span>
             </button>
@@ -375,11 +326,11 @@
           </td>
           <td class="p-4">
             <div class="flex items-center justify-center gap-1.5">
-              <button onclick="openColModal('${col.id}')" class="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all hover:text-indigo-600" title="แก้ไขคอลัมน์">
+              <button onclick="openColModal('${col.id}')" class="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all hover:text-indigo-600" title="แก้ไขคอลัมน์" aria-label="แก้ไขคอลัมน์">
                 <i data-lucide="edit-3" class="h-3.5 w-3.5"></i>
               </button>
               ${col.locked ? '' : `
-              <button onclick="confirmDelete('${col.id}')" class="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all hover:text-rose-600" title="ลบคอลัมน์">
+              <button onclick="confirmDelete('${col.id}')" class="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all hover:text-rose-600" title="ลบคอลัมน์" aria-label="ลบคอลัมน์">
                 <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
               </button>`}
             </div>
@@ -407,7 +358,7 @@
       AdmitifyStore.saveStudentColumns(columnsList);
       loadCols();
       renderCols();
-      showToast('ตั้งคอลัมน์หลักเรียบร้อยแล้ว', 'success');
+      showToast('ตั้งคอลัมน์หลักเรียบร้อยแล้ว', '', 'success');
     }
 
     // เลื่อนลำดับคอลัมน์ขึ้น/ลง — ลำดับนี้คือลำดับซ้าย-ขวาจริงในตารางข้อมูลนักเรียน
@@ -481,7 +432,7 @@
       const labelTh = document.getElementById('col-label').value.trim();
 
       if (!labelTh) {
-        showToast('กรุณากรอกชื่อคอลัมน์', 'error');
+        showToast('กรุณากรอกชื่อคอลัมน์', '', 'error');
         return;
       }
 
@@ -494,7 +445,7 @@
           col.align = document.getElementById('col-align').value;
         }
         AdmitifyStore.saveStudentColumns(columnsList);
-        showToast(`ปรับปรุงคอลัมน์ "${labelTh}" สำเร็จเรียบร้อยแล้ว`, 'success');
+        showToast(`ปรับปรุงคอลัมน์ "${labelTh}" สำเร็จเรียบร้อยแล้ว`, '', 'success');
       } else {
         const field = document.getElementById('col-field').value;
         const align = document.getElementById('col-align').value;
@@ -505,7 +456,7 @@
         };
         columnsList.push(newCol);
         AdmitifyStore.saveStudentColumns(columnsList);
-        showToast(`เพิ่มคอลัมน์ "${labelTh}" สำเร็จเรียบร้อยแล้ว`, 'success');
+        showToast(`เพิ่มคอลัมน์ "${labelTh}" สำเร็จเรียบร้อยแล้ว`, '', 'success');
       }
 
       loadCols();
@@ -528,7 +479,7 @@
       const col = columnsList.find(c => c.id === deleteColId);
       columnsList = columnsList.filter(c => c.id !== deleteColId);
       AdmitifyStore.saveStudentColumns(columnsList);
-      showToast(`ลบคอลัมน์ "${col ? col.labelTh : ''}" เรียบร้อยแล้ว`, 'success');
+      showToast(`ลบคอลัมน์ "${col ? col.labelTh : ''}" เรียบร้อยแล้ว`, '', 'success');
       closeDeleteModal();
       loadCols();
       renderCols();
@@ -538,29 +489,10 @@
       AdmitifyStore.resetStudentColumns();
       loadCols();
       renderCols();
-      showToast('คืนค่าคอลัมน์เริ่มต้นเรียบร้อยแล้ว', 'success');
+      showToast('คืนค่าคอลัมน์เริ่มต้นเรียบร้อยแล้ว', '', 'success');
     }
 
-    // Toast helper (เหมือน course_settings.html — success/error เท่านั้น)
-    let toastTimeout;
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toast');
-      const icon = document.getElementById('toast-icon');
-      const msg = document.getElementById('toast-message');
-
-      icon.innerHTML = type === 'success'
-        ? '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>'
-        : '<i data-lucide="alert-circle" class="h-5 w-5 text-rose-600"></i>';
-      msg.innerText = message;
-
-      toast.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
-      lucide.createIcons();
-
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        toast.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
-      }, 3000);
-    }
+    // showToast ย้ายไป js/ui.js แล้ว (window.showToast)
 
     // Init
     document.addEventListener('DOMContentLoaded', () => {

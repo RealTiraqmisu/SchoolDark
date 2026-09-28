@@ -29,8 +29,10 @@
   (function () {
     'use strict';
 
-    var THAI_MONTHS_FULL = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+    // ใช้ชุดชื่อเดือนจาก ParentUI (เดิม copy ซ้ำไว้เองในไฟล์นี้ ตรงกับ THAI_MONTHS_LONG เป๊ะ ๆ)
+    var THAI_MONTHS_FULL = window.ParentUI.THAI_MONTHS_LONG;
+    // หัวคอลัมน์ปฏิทินตั้งใจให้สั้นกว่า ParentUI.THAI_WEEKDAYS_SHORT (ไม่มีจุด) เพราะพื้นที่
+    // แคบ — ไม่ใช่ตัวเดียวกับที่ใช้โชว์วันที่แบบ inline จึงไม่ได้รวมเป็นตัวเดียวกัน
     var WEEKDAY_HEADERS = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
 
     var TYPE_ORDER = ['term', 'event', 'holiday', 'exam'];
@@ -131,7 +133,7 @@
 
     function examsForDate(exams, dateStr) {
       return exams.filter(function (e) { return e.date === dateStr; })
-        .sort(function (a, b) { return a.start < b.start ? -1 : (a.start > b.start ? 1 : 0); });
+        .sort(window.ParentUI.byDateAsc('start'));
     }
 
     function examsInMonth(exams, ym) {
@@ -468,7 +470,14 @@
      * render หลัก
      * --------------------------------------------------------------- */
 
+    // render() ห่อด้วย ParentUI.rerender เพื่อคง focus ไว้ที่ปุ่มเดิม (วัน/ตัวกรอง/ปุ่ม
+    // สลับปฏิทิน-ตาราง ฯลฯ) หลังแทนที่ #cal-root ทั้งก้อน — ของเดิม focus หลุดไป <body>
+    // ทุกครั้งที่กด เพราะปุ่มที่เพิ่งกดถูกลบทิ้งไปพร้อม innerHTML
     function render() {
+      window.ParentUI.rerender(renderImpl);
+    }
+
+    function renderImpl() {
       var root = document.getElementById('cal-root');
 
       if (!window.SchoolStore) {

@@ -39,6 +39,9 @@
     if (/\/schooldark\//.test(path)) return 'schooldark/' + file;
     if (/\/admission\//.test(path)) return 'admission/' + file;
     if (/\/settings\//.test(path)) return 'settings/' + file;
+    // apply/* (พอร์ทัลสาธารณะผู้สมัคร) ไม่โหลด cross-nav.js เอง (ไม่มี sidebar/navbar ของระบบนี้
+    // ตั้งใจ) แต่กันไว้เผื่ออนาคต — ไม่งั้นจะตกไปเข้าเงื่อนไข IS_HUB ผิด ๆ ด้านล่าง
+    if (/\/apply\//.test(path)) return 'apply/' + file;
     return file; // หน้า hub ที่ root
   }
   var CURRENT = currentPage();
@@ -50,9 +53,10 @@
   var IS_HUB = !CURRENT_DIR && CURRENT === 'index.html';
 
   // หน้าย่อยของ admission ที่เข้าถึงจากเมนู "ข้อมูลนักเรียน" (ไม่มีเมนูของตัวเอง)
+  // apply.html ย้ายออกไปเป็น apply/register.html แล้ว (พอร์ทัลสาธารณะแยกจาก admission/) — ไม่มี
+  // alias มาที่นี่อีกต่อไป
   var ADMISSION_ALIAS = {
-    'profile.html': 'students.html', 'edit.html': 'students.html', 'notify.html': 'students.html',
-    'apply.html': 'index.html' // เปิดจากปุ่ม "ลงทะเบียนผู้สมัครใหม่" บนบอร์ดรับสมัคร
+    'profile.html': 'students.html', 'edit.html': 'students.html', 'notify.html': 'students.html'
   };
 
   // ------------------------------------------------------------------
@@ -133,6 +137,19 @@
   var SD_LEAVE = 'schooldark/leave-features.html';
 
   var NAV_GROUPS = [
+    {
+      // พอร์ทัลสาธารณะสำหรับผู้สมัคร/ผู้ปกครอง (apply/ — แยกจาก admission/ ทั้งโฟลเดอร์ตั้งใจ ไม่มี
+      // sidebar แอดมิน ไม่มีปุ่มของเจ้าหน้าที่ปนอยู่) ทุก item เป็น hubOnly จึงไม่โผล่ในกลุ่ม
+      // sidebar เลย (visible.length === 0 ใน renderGroups()) — วางไว้ตัวแรกใน NAV_GROUPS เพื่อให้
+      // การ์ดในหน้า hub ขึ้นเป็นใบแรก (เด่นสุด) สำหรับสาธิตให้อาจารย์ดู
+      id: 'public',
+      label: 'พอร์ทัลสมัครเรียน (สำหรับผู้สมัคร)',
+      items: [
+        { icon: 'userPlus', label: 'พอร์ทัลสมัครเรียน', page: 'apply/index.html', hubOnly: true },
+        { icon: 'fileText', label: 'สมัครเรียนออนไลน์', page: 'apply/register.html', hubOnly: true },
+        { icon: 'search', label: 'ตรวจสอบสถานะผู้สมัคร', page: 'apply/status.html', hubOnly: true }
+      ]
+    },
     {
       label: 'ภาพรวม',
       items: [
@@ -244,10 +261,9 @@
       label: 'รับสมัคร & ทะเบียนนักเรียน',
       items: [
         { icon: 'clipboardList', label: 'บอร์ดรับสมัคร', page: 'admission/index.html', keywords: 'สมัครเรียน ม.1 ม.4 ผู้สมัคร' },
-        { icon: 'users', label: 'ข้อมูลนักเรียน', page: 'admission/students.html', keywords: 'ทะเบียน นักเรียน' },
-        // hubOnly: แสดงเฉพาะการ์ดในหน้า hub ไม่แสดงใน sidebar (เข้าได้จากปุ่มบนบอร์ดรับสมัครอยู่แล้ว)
-        { icon: 'userPlus', label: 'พอร์ทัลสมัครเรียน', page: 'admission/apply.html', hubOnly: true },
-        { icon: 'search', label: 'ตรวจสอบสถานะผู้สมัคร', page: 'admission/status.html', keywords: 'สถานะ ผลสอบ' }
+        { icon: 'users', label: 'ข้อมูลนักเรียน', page: 'admission/students.html', keywords: 'ทะเบียน นักเรียน' }
+        // พอร์ทัลสมัครเรียน/ตรวจสอบสถานะ ย้ายไปกลุ่ม 'public' แล้ว (แยกเป็น apply/ ทั้งโฟลเดอร์
+        // เป็นพอร์ทัลสาธารณะสำหรับผู้สมัคร ไม่ใช่เมนูของเจ้าหน้าที่อีกต่อไป — ดูกลุ่ม 'public' ด้านบน)
       ]
     },
     {
@@ -518,6 +534,54 @@
     thisScript.insertAdjacentElement('afterend', sidebarEl);
     document.documentElement.classList.add('xnav-fixed-layout');
     if (built.collapsed) document.documentElement.classList.add('xnav-collapsed');
+
+    // ------------------------------------------------------------------
+    // มือถือ (≤768px, ดู cross-nav.css): sidebar ซ่อนเต็มอันไว้นอกจอ มีปุ่ม
+    // แฮมเบอร์เกอร์ + backdrop กดเปิด/ปิด — ไม่ผูกกับ localStorage ของปุ่มย่อ/ขยาย
+    // เดิม (เริ่มปิดเสมอทุกครั้งที่โหลดหน้าใหม่ ปิดตอน resize กลับมาจอกว้างด้วย)
+    // ------------------------------------------------------------------
+    var mobileToggle = document.createElement('button');
+    mobileToggle.type = 'button';
+    mobileToggle.className = 'xnav-mobile-toggle';
+    mobileToggle.setAttribute('aria-label', 'เปิดเมนู');
+    mobileToggle.setAttribute('aria-expanded', 'false');
+    mobileToggle.setAttribute('aria-controls', 'sidebar');
+    mobileToggle.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+
+    var backdrop = document.createElement('div');
+    backdrop.className = 'xnav-backdrop';
+
+    document.body.insertBefore(backdrop, document.body.firstChild);
+    document.body.insertBefore(mobileToggle, document.body.firstChild);
+
+    function isMobileOpen() { return document.documentElement.classList.contains('xnav-mobile-open'); }
+    function openMobileNav() {
+      document.documentElement.classList.add('xnav-mobile-open');
+      mobileToggle.setAttribute('aria-expanded', 'true');
+    }
+    function closeMobileNav(returnFocus) {
+      document.documentElement.classList.remove('xnav-mobile-open');
+      mobileToggle.setAttribute('aria-expanded', 'false');
+      if (returnFocus) mobileToggle.focus();
+    }
+    mobileToggle.addEventListener('click', function () {
+      if (isMobileOpen()) closeMobileNav(false); else openMobileNav();
+    });
+    backdrop.addEventListener('click', function () { closeMobileNav(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isMobileOpen()) closeMobileNav(true);
+    });
+    // เลือกเมนู/เมนูย่อยแล้วปิดเมนูมือถือให้เอง (ลิงก์ข้ามหน้าโหลดหน้าใหม่อยู่แล้ว
+    // แต่ปิดไว้ก่อนกันเห็นเมนูค้างระหว่างรอโหลด, ส่วน SPA view ในหน้าเดียวกันของ
+    // schooldark ไม่ผ่านบล็อกนี้เพราะ !IS_SCHOOLDARK เท่านั้นที่สร้างปุ่มนี้)
+    sidebarEl.addEventListener('click', function (e) {
+      if (e.target.closest('a')) closeMobileNav(false);
+    });
+    // resize กลับมาจอกว้าง (เช่น หมุนจอ/ย่อ-ขยายหน้าต่าง) แล้วยังค้างสถานะเปิดอยู่ —
+    // ปิดทิ้งกันเนื้อหาโดน overflow:hidden ค้างจาก body ทั้งที่ปุ่มแฮมเบอร์เกอร์หายไปแล้ว
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 768 && isMobileOpen()) closeMobileNav(false);
+    });
   }
 
   // ------------------------------------------------------------------
@@ -810,14 +874,14 @@
   // ------------------------------------------------------------------
   var hubMount = document.getElementById('cross-nav-hub');
   if (hubMount) {
-    var bySystemLabel = { schooldark: 'บุคลากร & การลา', admission: 'รับสมัคร & ทะเบียนนักเรียน', settings: 'การตั้งค่า', parent: 'พอร์ทัลผู้ปกครอง' };
+    var bySystemLabel = { schooldark: 'บุคลากร & การลา', admission: 'รับสมัคร & ทะเบียนนักเรียน', settings: 'การตั้งค่า', parent: 'พอร์ทัลผู้ปกครอง', public: 'พอร์ทัลสมัครเรียน (สำหรับผู้สมัคร)' };
     var seen = {};
     var cards = [];
     NAV_GROUPS.forEach(function (group) {
       group.items.forEach(function (item) {
         if (item.shortcut) return; // ทางลัดในหมวดอื่นซ้ำกับที่อยู่ในหมวด "การตั้งค่า" อยู่แล้ว
-        var sys = group.id === 'settings' ? 'settings' : group.id === 'parent' ? 'parent' : (item.page.indexOf('schooldark/') === 0 ? 'schooldark' : 'admission');
-        if (!seen[sys]) { seen[sys] = { label: bySystemLabel[sys], links: [] }; cards.push(seen[sys]); }
+        var sys = group.id === 'settings' ? 'settings' : group.id === 'parent' ? 'parent' : group.id === 'public' ? 'public' : (item.page.indexOf('schooldark/') === 0 ? 'schooldark' : 'admission');
+        if (!seen[sys]) { seen[sys] = { sys: sys, label: bySystemLabel[sys], links: [] }; cards.push(seen[sys]); }
         var pageChildren = (item.children || []).filter(function (c) { return c.page; });
         if (pageChildren.length) {
           // เช่น "ตั้งค่ารับสมัคร" → แสดงหน้าย่อยทั้งหมดเป็นลิงก์แยกกันในการ์ด
@@ -828,7 +892,10 @@
       });
     });
     hubMount.innerHTML = cards.map(function (card) {
-      return '<section class="hub-card"><h2>' + escapeHtml(card.label) + '</h2><ul>' +
+      // การ์ด public (พอร์ทัลสมัครเรียน) เด่นกว่าใบอื่นเล็กน้อย — เอาไว้ให้เห็นชัดตอนสาธิตให้
+      // อาจารย์ดูว่านี่คือทางเข้าของ "ผู้สมัคร" แยกจากฝั่งเจ้าหน้าที่ใบอื่น ๆ
+      var cls = 'hub-card' + (card.sys === 'public' ? ' hub-card--featured' : '');
+      return '<section class="' + cls + '"><h2>' + escapeHtml(card.label) + '</h2><ul>' +
         card.links.map(function (l) { return '<li><a href="' + escapeHtml(l.href) + '">' + escapeHtml(l.label) + '</a></li>'; }).join('') +
         '</ul></section>';
     }).join('');

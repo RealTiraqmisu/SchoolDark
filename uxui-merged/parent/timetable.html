@@ -10,18 +10,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="js/tailwind-config.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    @media print {
-      #parent-nav, .no-print { display: none !important; }
-    }
-  </style>
 </head>
 <body class="font-sans antialiased bg-muted text-card-foreground min-h-screen">
   <div id="parent-nav"></div>
   <main class="max-w-6xl mx-auto px-4 py-6">
     <div class="flex items-center justify-between mb-4 gap-3">
       <h1 class="text-xl font-bold text-card-foreground">ตารางเรียน</h1>
-      <button type="button" id="btn-print" class="no-print border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">
+      <button type="button" id="btn-print" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">
         <i data-lucide="printer" class="w-4 h-4"></i>
         <span>พิมพ์ / ดาวน์โหลด</span>
       </button>
@@ -219,8 +214,10 @@
       container.querySelectorAll('[data-day]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           mobileDay = btn.getAttribute('data-day');
-          renderClassTab(container, child);
-          lucide.createIcons();
+          ParentUI.rerender(function () {
+            renderClassTab(container, child);
+            lucide.createIcons();
+          });
         });
       });
     }

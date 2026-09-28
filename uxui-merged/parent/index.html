@@ -108,7 +108,7 @@
           var upcoming = cal.filter(function (e) {
             var endD = e.endDate || e.date;
             return endD >= today;
-          }).sort(function (a, b) { return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0); }).slice(0, 5);
+          }).sort(ParentUI.byDateAsc('date')).slice(0, 5);
 
           if (upcoming.length) {
             itemsHtml = upcoming.map(function (e) {
@@ -155,15 +155,12 @@
 
       /* ---------------- 5. ประกาศจากโรงเรียน ---------------- */
       (function renderAnnouncements() {
-        var tagColor = { 'สำคัญ': 'bg-destructive/10 text-destructive', 'กิจกรรม': 'bg-info/10 text-info', 'ทั่วไป': 'bg-secondary text-secondary-foreground' };
-        var list = ParentStore.get('parent_announcements').slice().sort(function (a, b) {
-          return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0);
-        });
+        var list = ParentStore.get('parent_announcements').slice().sort(ParentUI.byDateDesc('date'));
         var latest = list.slice(0, 3);
 
         var itemsHtml = latest.length
           ? latest.map(function (a) {
-              var tagCls = tagColor[a.tag] || 'bg-secondary text-secondary-foreground';
+              var tagCls = ParentUI.TAG_COLOR[a.tag] || 'bg-secondary text-secondary-foreground';
               return '<div class="py-3 border-b border-border last:border-b-0">' +
                 '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium mb-1 ' + tagCls + '">' + esc(a.tag) + '</span>' +
                 '<div class="font-bold text-card-foreground text-sm mt-1">' + esc(a.title) + '</div>' +

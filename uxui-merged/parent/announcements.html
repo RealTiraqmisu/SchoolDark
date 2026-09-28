@@ -27,10 +27,7 @@
   <script>
     (function () {
       var esc = ParentUI.escapeHtml;
-      var tagColor = { 'สำคัญ': 'bg-destructive/10 text-destructive', 'กิจกรรม': 'bg-info/10 text-info', 'ทั่วไป': 'bg-secondary text-secondary-foreground' };
-      var allList = ParentStore.get('parent_announcements').slice().sort(function (a, b) {
-        return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0);
-      });
+      var allList = ParentStore.get('parent_announcements').slice().sort(ParentUI.byDateDesc('date'));
       var tags = ['ทั้งหมด', 'สำคัญ', 'กิจกรรม', 'ทั่วไป'];
       var activeTag = 'ทั้งหมด';
 
@@ -38,14 +35,16 @@
         document.getElementById('tag-filter').innerHTML = tags.map(function (t) {
           var active = t === activeTag;
           var cls = active ? 'bg-primary text-white' : 'bg-card border border-border text-card-foreground hover:bg-secondary';
-          return '<button type="button" data-tag="' + esc(t) + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' + esc(t) + '</button>';
+          return '<button type="button" data-tag="' + esc(t) + '" aria-pressed="' + active + '" class="px-4 py-2 rounded-lg text-sm font-medium ' + cls + '">' + esc(t) + '</button>';
         }).join('');
 
         document.querySelectorAll('[data-tag]').forEach(function (btn) {
           btn.addEventListener('click', function () {
             activeTag = btn.getAttribute('data-tag');
-            renderFilter();
-            renderList();
+            ParentUI.rerender(function () {
+              renderFilter();
+              renderList();
+            });
           });
         });
       }
@@ -55,7 +54,7 @@
 
         var html = list.length
           ? list.map(function (a) {
-              var tagCls = tagColor[a.tag] || 'bg-secondary text-secondary-foreground';
+              var tagCls = ParentUI.TAG_COLOR[a.tag] || 'bg-secondary text-secondary-foreground';
               return '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
                 '<div class="flex items-center justify-between gap-2">' +
                   '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ' + tagCls + '">' + esc(a.tag) + '</span>' +

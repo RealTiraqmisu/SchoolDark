@@ -14,53 +14,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom Tailwind Config to match theme -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: {
-              DEFAULT: '#3e63dd',
-              foreground: '#ffffff',
-              hover: '#2f51c7'
-            },
-            secondary: {
-              DEFAULT: '#f1f3f9',
-              foreground: '#1e293b'
-            },
-            success: {
-              DEFAULT: '#10b981',
-              foreground: '#ffffff'
-            },
-            warning: {
-              DEFAULT: '#f59e0b',
-              foreground: '#78350f'
-            },
-            info: {
-              DEFAULT: '#0284c7',
-              foreground: '#ffffff'
-            },
-            destructive: {
-              DEFAULT: '#ef4444',
-              foreground: '#ffffff'
-            },
-            muted: {
-              DEFAULT: '#f8fafc',
-              foreground: '#64748b'
-            },
-            card: {
-              DEFAULT: '#ffffff',
-              foreground: '#0f172a'
-            },
-            border: '#e2e8f0'
-          },
-          fontFamily: {
-            sans: ['Sarabun', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <script src="js/tailwind-config.js"></script>
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -110,10 +64,10 @@
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
           ONLINE
         </div>
-        <a href="status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
+        <a href="../apply/status.html" class="inline-flex items-center gap-1.5 rounded-md bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-medium hover:bg-slate-100 text-sky-600 transition-colors">
           <i data-lucide="search" class="h-3.5 w-3.5"></i> ตรวจสอบสถานะ
         </a>
-        <a href="apply.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
+        <a href="../apply/register.html" class="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 text-white px-3.5 py-1.5 text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm">
           <i data-lucide="user-plus" class="h-3.5 w-3.5"></i> ลงทะเบียนนักเรียนใหม่
         </a>
       </div>
@@ -125,9 +79,9 @@
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
       <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">ข้อมูลบุคคล</span>
-      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-500"></i>
       <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">รับสมัครนักเรียนออนไลน์</span>
-      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-400"></i>
+      <i data-lucide="chevron-right" class="h-3.5 w-3.5 text-slate-500"></i>
       <span class="text-slate-700 font-medium">ตั้งค่าฟอร์มรับสมัคร</span>
     </div>
 
@@ -171,22 +125,19 @@
     <!-- Buttons Panel -->
     <div class="flex items-center justify-center gap-3 mt-10 border-t border-slate-200 pt-8 max-w-4xl">
       <button id="btn-save" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3.5 font-semibold transition-all shadow-md active:scale-95 text-sm cursor-pointer">
-        <i data-lucide="save" class="h-4.5 w-4.5"></i> บันทึกการตั้งค่า
+        <i data-lucide="save" class="h-[18px] w-[18px]"></i> บันทึกการตั้งค่า
       </button>
       <button id="btn-cancel" class="inline-flex items-center gap-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 px-8 py-3.5 font-semibold border border-slate-200 transition-all shadow-md active:scale-95 text-sm cursor-pointer">
-        <i data-lucide="rotate-ccw" class="h-4.5 w-4.5"></i> คืนค่าเดิม
+        <i data-lucide="rotate-ccw" class="h-[18px] w-[18px]"></i> คืนค่าเดิม
       </button>
     </div>
   </main>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50">
-    <div id="toast-icon"></div>
-    <p id="toast-message" class="text-sm font-semibold text-slate-700"></p>
-  </div>
+  <!-- toast container ถูกสร้างอัตโนมัติโดย js/ui.js (#admission-toast-container) -->
 
   <!-- Store Script Integration -->
   <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
   <script>
     // Constants mapping for Tabs
     const TABS = {
@@ -288,14 +239,14 @@
           
           // 1. Order Number
           const numSpan = document.createElement("span");
-          numSpan.className = "w-9 text-slate-400 text-xs font-mono font-bold shrink-0";
+          numSpan.className = "w-9 text-slate-500 text-xs font-mono font-bold shrink-0";
           numSpan.innerText = field.num;
           leftSec.appendChild(numSpan);
           
           // 2. iOS-style Colored Icon Container
           const iconDiv = document.createElement("div");
           iconDiv.className = `flex h-8 w-8 items-center justify-center rounded-lg text-slate-900 mr-3 shrink-0 shadow-sm bg-${field.color}-500`;
-          iconDiv.innerHTML = `<i data-lucide="${field.icon}" class="h-4.5 w-4.5"></i>`;
+          iconDiv.innerHTML = `<i data-lucide="${field.icon}" class="h-[18px] w-[18px]"></i>`;
           leftSec.appendChild(iconDiv);
           
           // 3. Label Details
@@ -382,41 +333,17 @@
     // Save Settings configuration
     function saveSettings() {
       AdmitifyStore.saveFieldSettings(settingsState);
-      showToast("บันทึกการตั้งค่าโครงสร้างฟอร์มสำเร็จเรียบร้อยแล้ว", "success");
+      showToast("บันทึกการตั้งค่าโครงสร้างฟอร์มสำเร็จเรียบร้อยแล้ว", "", "success");
     }
 
     // Cancel Changes and reset local copy
     function cancelEdits() {
       loadSettings();
       renderContent();
-      showToast("คืนค่าการตั้งค่าแบบฟอร์มเดิมเรียบร้อยแล้ว", "info");
+      showToast("คืนค่าการตั้งค่าแบบฟอร์มเดิมเรียบร้อยแล้ว", "", "info");
     }
 
-    // Dynamic Toast Notification utility
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById("toast");
-      const toastMsg = document.getElementById("toast-message");
-      const toastIcon = document.getElementById("toast-icon");
-      
-      toastMsg.innerText = message;
-      
-      if (type === 'success') {
-        toastIcon.innerHTML = '<i data-lucide="check-circle-2" class="h-5 w-5 text-emerald-600"></i>';
-        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-emerald-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
-      } else if (type === 'info') {
-        toastIcon.innerHTML = '<i data-lucide="info" class="h-5 w-5 text-sky-600"></i>';
-        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-sky-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
-      } else {
-        toastIcon.innerHTML = '<i data-lucide="alert-circle" class="h-5 w-5 text-rose-600"></i>';
-        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-rose-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-0 opacity-100 z-50';
-      }
-      
-      lucide.createIcons();
-      
-      setTimeout(() => {
-        toast.className = 'fixed bottom-5 right-5 flex items-center gap-3 bg-white border border-slate-200 px-5 py-4 rounded-xl shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none z-50';
-      }, 3500);
-    }
+    // showToast ย้ายไป js/ui.js แล้ว (window.showToast)
   </script>
 
 <!-- เมนูข้ามระบบ (ปุ่ม "ระบบอื่น" บนแถบหัวหน้า) -->
