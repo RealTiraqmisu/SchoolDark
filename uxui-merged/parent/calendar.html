@@ -229,6 +229,7 @@
       var cellsHtml = cells.map(function (c) {
         var dateStr = c.y + '-' + pad2(c.m) + '-' + pad2(c.d);
         var isToday = dateStr === today;
+        var isSelected = dateStr === selectedDate;
         var dayEvents = eventsForDate(events, dateStr);
         var dayExams = examsForDate(exams, dateStr);
 
@@ -256,6 +257,7 @@
         if (!c.inMonth) boxCls += ' bg-muted/60 text-muted-foreground';
         else boxCls += ' bg-card';
         if (isToday) boxCls += ' ring-2 ring-inset ring-primary bg-primary/5';
+        if (isSelected) boxCls += ' ring-2 ring-inset ring-offset-1 ring-primary bg-primary/10';
 
         var dayNumHtml;
         if (isToday) {
@@ -264,7 +266,9 @@
           dayNumHtml = '<span class="text-xs font-medium ' + (c.inMonth ? 'text-card-foreground' : 'text-muted-foreground') + '">' + c.d + '</span>';
         }
 
-        return '<button type="button" data-date="' + dateStr + '" class="' + boxCls + '">' +
+        var dayLabel = ParentUI.fmtDate(dateStr, true) + (isToday ? ' (วันนี้)' : '');
+
+        return '<button type="button" data-date="' + dateStr + '" aria-pressed="' + (isSelected ? 'true' : 'false') + '" aria-label="' + ParentUI.escapeHtml(dayLabel) + '" class="' + boxCls + '">' +
           '<div class="self-start mb-1">' + dayNumHtml + '</div>' +
           tagsHtml +
           '</button>';
@@ -538,7 +542,13 @@
 
       if (prevBtn) prevBtn.addEventListener('click', function () { setYM(shiftYM(ym, -1)); });
       if (nextBtn) nextBtn.addEventListener('click', function () { setYM(shiftYM(ym, 1)); });
-      if (todayBtn) todayBtn.addEventListener('click', function () { selectedDate = null; setYM(currentYM()); });
+      if (todayBtn) todayBtn.addEventListener('click', function () {
+        selectedDate = null;
+        var todayYm = currentYM();
+        // ถ้า hash ไม่เปลี่ยน (อยู่เดือนปัจจุบันอยู่แล้ว) setYM จะไม่ trigger hashchange/render ให้เอง
+        if ('#' + buildHash(todayYm, getView()) === location.hash) render();
+        else setYM(todayYm);
+      });
 
       root.querySelectorAll('[data-filter]').forEach(function (cb) {
         cb.addEventListener('change', function () {
@@ -549,8 +559,13 @@
 
       root.querySelectorAll('[data-date]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          selectedDate = btn.getAttribute('data-date');
-          render();
+          var date = btn.getAttribute('data-date');
+          selectedDate = date;
+          var dateYm = { y: parseInt(date.substring(0, 4), 10), m: parseInt(date.substring(5, 7), 10) };
+          // คลิกวันของเดือนก่อน/ถัดไป (สีจาง) ต้องเปลี่ยนเดือนไปเดือนนั้นด้วย ไม่งั้น render()
+          // จะเห็นว่า selectedDate อยู่คนละเดือนกับ ym ปัจจุบันแล้วเคลียร์ selection ทิ้งทันที
+          if (dateYm.y !== ym.y || dateYm.m !== ym.m) setYM(dateYm);
+          else render();
         });
       });
     }

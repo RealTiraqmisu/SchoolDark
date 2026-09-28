@@ -1865,11 +1865,11 @@
           break;
         case 'firstName':
           classes = '';
-          content = `${student.firstName}<span class="block text-[10px] text-slate-400 font-normal">${student.studyPlan || ''}</span>`;
+          content = `${window.escapeHtml(student.firstName)}<span class="block text-[10px] text-slate-400 font-normal">${window.escapeHtml(student.studyPlan || '')}</span>`;
           break;
         case 'lastName':
           classes = '';
-          content = student.lastName;
+          content = window.escapeHtml(student.lastName);
           break;
         case 'classroom':
           classes = 'font-bold text-indigo-600 font-mono';
@@ -1888,7 +1888,9 @@
           if (column.id === 'gpax' && value !== undefined && value !== null && value !== '') {
             value = Number(value).toFixed(2);
           }
-          content = (value === undefined || value === null || value === '') ? '<span class="text-slate-300">—</span>' : value;
+          // ค่าจากคอลัมน์ที่ตั้งค่าได้อิสระ (student_field_settings.html) เช่น เบอร์โทร/ที่อยู่/
+          // อีเมล อาจเป็นข้อมูลที่ผู้ใช้กรอกเอง ต้อง escape ก่อนต่อเข้า innerHTML เสมอ
+          content = (value === undefined || value === null || value === '') ? '<span class="text-slate-300">—</span>' : window.escapeHtml(value);
           classes = column.align === 'center' ? 'text-center text-slate-700' : column.align === 'right' ? 'text-right text-slate-700' : 'text-slate-700';
         }
       }
@@ -1976,7 +1978,7 @@
                 <i data-lucide="qr-code" class="h-3.5 w-3.5"></i>
               </button>
               <!-- Delete Action -->
-              <button onclick="confirmDelete('${student.id}', '${student.firstName} ${student.lastName}')" class="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all hover:text-rose-600" title="ลบออกจากระบบ">
+              <button onclick="confirmDelete('${student.id}')" class="p-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all hover:text-rose-600" title="ลบออกจากระบบ">
                 <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
               </button>
             </div>
@@ -2270,15 +2272,17 @@
       closeModal('modal-qr');
     }
 
-    function confirmDelete(id, name) {
+    function confirmDelete(id) {
+      const student = window.AdmitifyStore.getById(id);
+      const name = student ? `${student.firstName} ${student.lastName}` : '';
       document.getElementById('modal-delete-name').innerText = name;
       document.getElementById('modal-delete-confirm-btn').onclick = () => {
         window.AdmitifyStore.deleteApplicant(id);
         selectedStudentIds.delete(id);
         closeModal('modal-delete');
         renderTable();
-        addLog(`ลบข้อมูลนักเรียนรายชื่อ: ${name}`, 'destructive');
-        showToast('ลบข้อมูลเรียบร้อย', `ลบข้อมูลนักเรียน ${name} เรียบร้อยแล้ว`, 'success');
+        addLog(`ลบข้อมูลนักเรียนรายชื่อ: ${window.escapeHtml(name)}`, 'destructive');
+        showToast('ลบข้อมูลเรียบร้อย', `ลบข้อมูลนักเรียน ${window.escapeHtml(name)} เรียบร้อยแล้ว`, 'success');
       };
       openModal('modal-delete');
     }
@@ -4415,11 +4419,11 @@
           <div class="space-y-2">
             <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
               <span class="text-slate-500">ชื่อ-นามสกุล</span>
-              <span class="font-bold text-slate-900">${firstName} ${lastName}</span>
+              <span class="font-bold text-slate-900">${window.escapeHtml(firstName)} ${window.escapeHtml(lastName)}</span>
             </div>
             <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
               <span class="text-slate-500">ชั้น / ห้องเรียน</span>
-              <span class="font-bold text-emerald-600 font-mono">${grade} / ${classroom}</span>
+              <span class="font-bold text-emerald-600 font-mono">${window.escapeHtml(grade)} / ${window.escapeHtml(classroom)}</span>
             </div>
             <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
               <span class="text-slate-500">ประเภท</span>
@@ -4467,7 +4471,7 @@
 
       const actionLabel = addStudentMode === 'transfer' ? 'รับย้ายเข้านักเรียนใหม่' : 'เพิ่มนักเรียนใหม่';
       addLog(`${actionLabel} ${prefix}${firstName} ${lastName} เข้าชั้น ${classroom} (${studyPlan})`, 'success');
-      showToast('เพิ่มนักเรียนสำเร็จ', `บันทึกข้อมูลนักเรียน ${prefix}${firstName} ${lastName} (${randomStdId}) เข้าสู่ระบบเรียบร้อยแล้ว`, 'success');
+      showToast('เพิ่มนักเรียนสำเร็จ', `บันทึกข้อมูลนักเรียน ${prefix}${window.escapeHtml(firstName)} ${window.escapeHtml(lastName)} (${randomStdId}) เข้าสู่ระบบเรียบร้อยแล้ว`, 'success');
 
       renderTable();
     }
@@ -5739,7 +5743,9 @@
       const logs = JSON.parse(localStorage.getItem('admitify_student_activity_log') || '[]');
       const newLog = {
         time: new Date().toISOString(),
-        action,
+        // action often embeds a student's name/free-text field — loadActivityLogs() renders it
+        // via innerHTML, so escape once here at the source rather than at every call site
+        action: window.escapeHtml(action),
         status,
         user: 'ADMIN'
       };

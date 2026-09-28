@@ -353,6 +353,11 @@
       var child = ParentStore.getActiveChild();
       var content = document.getElementById('tab-content');
 
+      if (!child) {
+        content.innerHTML = '<div class="bg-card rounded-xl border border-border shadow-sm p-5 text-muted-foreground">ไม่พบข้อมูลบุตร</div>';
+        return;
+      }
+
       if (tab === 'exam') {
         var exams = (ParentStore.get('parent_exams') || {})[child.id] || [];
         renderExamTab(content, exams);
@@ -366,6 +371,7 @@
     function openExport() {
       var tab = getTab();
       var child = ParentStore.getActiveChild();
+      if (!child) return;
       var fullName = (child.prefix || '') + (child.firstName || '') + ' ' + (child.lastName || '');
 
       if (tab === 'exam') {

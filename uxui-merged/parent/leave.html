@@ -233,6 +233,8 @@
         if (end < start) {
           document.getElementById('lf-days-text').textContent = 'วันสิ้นสุดต้องไม่ก่อนวันเริ่ม';
           document.getElementById('lf-days-text').className = 'text-sm text-destructive mb-4';
+          startInput.setAttribute('aria-invalid', 'true');
+          startInput.focus();
           return;
         }
 
@@ -240,9 +242,19 @@
         var typeInfo = ParentStore.LEAVE_TYPES.filter(function (t) { return t.name === selectedType; })[0];
         var remaining = typeInfo.quota - ParentStore.leaveUsed(selectedChildId, selectedType);
 
-        if (days <= 0 || days > remaining) {
+        if (days <= 0) {
+          formError.textContent = 'ช่วงวันที่เลือกไม่มีวันเรียน (เสาร์–อาทิตย์/วันหยุด) กรุณาเลือกช่วงวันที่ใหม่';
+          formError.classList.remove('hidden');
+          startInput.setAttribute('aria-invalid', 'true');
+          startInput.focus();
+          return;
+        }
+
+        if (days > remaining) {
           formError.textContent = 'จำนวนวันลาเกินโควตาคงเหลือ';
           formError.classList.remove('hidden');
+          startInput.setAttribute('aria-invalid', 'true');
+          startInput.focus();
           return;
         }
 
@@ -322,6 +334,7 @@
               ParentStore.cancelLeave(id);
               ParentUI.toast('ยกเลิกคำขอลาแล้ว', 'success');
               renderHistory();
+              renderForm(); // โควตา "คงเหลือ" ในการ์ดประเภทการลาต้องคืนตามคำขอที่เพิ่งยกเลิก
             });
           });
         });

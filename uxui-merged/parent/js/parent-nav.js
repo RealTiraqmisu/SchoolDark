@@ -544,7 +544,7 @@
         '<div class="text-sm text-card-foreground">วันที่ที่ระบบใช้: ' + escapeHtml(fmtDate(today, true)) + '</div>' +
         '<div class="text-xs text-muted-foreground mb-3">ที่มา: ' + escapeHtml(sourceLabel) + '</div>' +
         '<div class="flex items-center gap-2 mb-3">' +
-          '<input type="date" data-demo-input value="' + escapeHtml(today) + '" class="flex-1 rounded-lg border border-border px-2 py-1.5 text-sm">' +
+          '<input type="date" data-demo-input aria-label="เลือกวันที่จำลอง" value="' + escapeHtml(today) + '" class="flex-1 rounded-lg border border-border px-2 py-1.5 text-sm">' +
           '<button type="button" data-demo-apply class="rounded-lg bg-primary text-primary-foreground text-sm px-3 py-1.5">ใช้วันนี้</button>' +
         '</div>' +
         '<div class="grid grid-cols-1 gap-1 mb-2">' + shortcutsHtml + '</div>' +

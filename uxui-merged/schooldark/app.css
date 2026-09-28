@@ -674,21 +674,28 @@ table.premium-table tbody tr:hover { background-color: rgba(0, 0, 0, 0.01); }
     inset: 0;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity var(--transition-speed);
+    transition: opacity var(--transition-speed), visibility var(--transition-speed);
 }
 .modal-overlay.active {
     opacity: 1;
+    visibility: visible;
     pointer-events: all;
+    backdrop-filter: blur(6px);
 }
 
 /* Old settings.css uses display:flex style */
-.modal-overlay[style*="display: flex"] { opacity: 1; pointer-events: all; }
+.modal-overlay[style*="display: flex"] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    backdrop-filter: blur(6px);
+}
 
 .modal-box, .modal-content, .modal-card {
     background: #0f172a;

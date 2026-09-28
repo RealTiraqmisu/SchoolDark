@@ -13,6 +13,19 @@
 > ทั้งสองไฟล์มีผลพร้อมกัน — `CLAUDE.md` คือกฎโปรเจกต์ (มีผลกับทุกคน), ไฟล์นี้คือกฎการทำงาน
 > ส่วนตัวที่ครอบทับ/เสริมเฉพาะตอนที่ noeysod เป็นคนคุย session
 
+## ผู้พัฒนาในโปรเจกต์นี้
+
+โปรเจกต์นี้มีผู้พัฒนา 2 คน:
+
+- **noeysod** (เนยสด, ตัวเอง): ดูแล `admission/` (รับสมัคร + ฝ่ายทะเบียน/ข้อมูลนักเรียน) และ
+  `parent/` (พอร์ทัลผู้ปกครอง)
+- **care** (แคร์): ดูแล `schooldark/` (บุคลากร, การลา, บัตรขออนุญาต, การมาเรียน/ลาเรียนนักเรียน)
+
+ส่วนกลาง (`shared/`, `settings/`, หน้า hub `index.html`) ใช้ร่วมกัน แก้แล้วกระทบทั้งคู่
+
+**ถ้าต้องแก้ `schooldark/` ให้ถือว่าเป็นของ care** — แก้เฉพาะที่ noeysod สั่งชัดเจนเท่านั้น
+และบันทึกไว้ในไฟล์นี้ให้ noeysod เอาไปแจ้ง care ต่อ
+
 ## กฎเหล็ก: Opus วางแผน → Sonnet ลงมือเสมอ
 
 เหตุผล: Opus แพงกว่า Sonnet มาก งานที่ให้ Opus ลงมือแก้โค้ดเองทั้งหมดจะแพงกว่าการแบ่งงานเป็น
@@ -117,7 +130,8 @@ noeysod เขียนงานเป็น to-do list ใน `uxui-merged/noey
   `announcements`, `student`) ใช้ `max-w-3xl`/`max-w-4xl` แคบกว่าหน้าเดิมที่ใช้ `max-w-6xl` ทำให้
   เนื้อหาไม่ตรงแนวกับ navbar เป๊ะ ๆ
 - `reports.html` แท็บการลา: ตาราง "คำขอลา" แสดงสูงสุด 4 แถวล่าสุด มี "ดูเพิ่มเติม →" มุมขวาบนไป
-  `leave.html#history` (ประวัติเต็ม) และแถวสถานะ "รอตรวจสอบ" กดยกเลิกได้ (ใช้ `ParentStore.cancelLeave`)
+  `leave-history.html` (ประวัติเต็ม — ดูรายละเอียดการเปลี่ยนที่ (2026-09-27) ด้านล่าง) และแถวสถานะ
+  "รอตรวจสอบ" กดยกเลิกได้ (ใช้ `ParentStore.cancelLeave`)
 - (2026-09-25) `reports.html` เพิ่มแท็บที่ 4 "ความประพฤติ" (`#tab=behavior`) — การ์ดสรุปคะแนน
   (เริ่ม 100 หักตามพฤติกรรม สีตามเกณฑ์เดียวกับ % มาเรียน: ≥90 เขียว/≥80 เหลือง/ต่ำกว่านั้นแดง)
   ไม่มีหลอด progress + ตารางบันทึกพฤติกรรมเรียงใหม่→เก่า ข้อมูล mock คีย์ใหม่ `parent_behavior`
@@ -272,6 +286,47 @@ noeysod เขียนงานเป็น to-do list ใน `uxui-merged/noey
   `announcements.html` (ป้ายข้อความเปลี่ยนเป็น "ย้อนกลับ" ทั้ง 3) ไม่แตะ `login.html`/เมนู
   "กลับหน้ารวมระบบ" เพราะปลายทางตายตัวโดยตั้งใจอยู่แล้ว — หน้าใหม่ที่จะมีปุ่มกลับแบบนี้ ใส่
   `data-back` บน `<a href="fallback.html">` เดิมก็พอ ไม่ต้องเขียน handler เอง
+- (2026-09-28) **สแกน modern-web-guidance ทั้งโปรเจกต์ตามที่ noeysod สั่ง** — รายละเอียดเต็มอยู่ที่
+  `noeysod-stuff/audit-2026-09-28.md` (ฝ่ายทะเบียนครบไหม, ที่เหลือของ `admission/`/`parent/`,
+  ส่งต่อสาเหตุแลคที่เหลือให้ care) สรุปที่แก้จริงรอบนี้:
+  - **`admission/js/store.js`**: เพิ่ม `escapeHtml()` (export `window.escapeHtml`) ใช้ครอบชื่อ/
+    ที่อยู่/ค่าคอลัมน์ที่ตั้งเองได้ก่อนต่อเข้า `innerHTML` ใน `index.html`/`students.html`/
+    `profile.html` (จุดหลัก ไม่ใช่ทุกจุดในไฟล์ — จุดที่เหลือส่วนใหญ่เป็น modal/ใบพิมพ์ที่ซ้ำกันหลาย
+    ที่ ยังไม่ได้ไล่ครบ) — `deleteApplicant()` เพิ่ม tracking คีย์ `admitify_deleted_ids` กัน
+    `getApplicants()` ดึง seed data ตัวที่ถูกลบไปแล้วกลับมาใหม่ (`reset()` ล้างคีย์นี้ด้วย)
+  - **`admission/index.html`**: บอร์ดรับสมัคร (`getFilteredApplicants`) แท็บ 3 กรองเหลือเฉพาะสถานะ
+    ใน `PHASE_OPTIONS[3]` + เฉพาะ ม.1/ม.4 (เดิมโชว์นักเรียนทุกชั้น/สถานะจบ-ลาออก-ย้ายด้วยเพราะ
+    `phaseForStatus()` default เป็น phase 3), เพิ่ม `<th>` "เปลี่ยนสถานะ" ที่ขาดไป, colspan แถวว่าง
+    คำนวณจากจำนวนคอลัมน์ที่โชว์จริงแทนเลข 11 ตายตัว, dropdown เมนูแถวตัดการบวก `scrollY/scrollX`
+    ออก (เมนูเป็น `position:fixed` อยู่แล้ว), ปุ่ม "ยกเลิก" ของ modal เปลี่ยนสถานะเรียก
+    `renderTable()` ด้วย (เดิมค้างค่าใหม่ในตารางถ้าไม่ได้กด backdrop)
+  - **`admission/edit.html`**: เพิ่ม option ม.2/3/5/6 ใน `#form-grade` (เดิมมีแค่ ม.1/ม.4 — บันทึก
+    นักเรียนชั้นอื่นแล้วชั้นหาย), แผนการเรียนใช้ `window.STUDY_PLAN_OPTIONS` (dynamic) อยู่แล้วแต่ถ้า
+    ค่าเดิมของนักเรียนไม่อยู่ในลิสต์ตอนนี้จะเติมเป็น option พิเศษกันหายตอนเซฟซ้ำ, ตัด fallback ข้อมูล
+    ปลอม (`|| '1120023455981'`, เบอร์/ที่อยู่ปลอม) ออกทั้งหมด → เหลือค่าว่างแทน
+  - **`schooldark/app.css`+`app.html`** (ของ care, แก้เฉพาะที่ noeysod สั่ง): `.modal-overlay`
+    ย้าย `backdrop-filter: blur(6px)` ออกจาก state ปิด ไปไว้แค่ตอน `.active`/`display:flex` +
+    เพิ่ม `visibility:hidden` ตอนปิด — แก้สาเหตุหลักของอาการแลคทุกหน้า (~16 popup เบลอเต็มจอค้างไว้
+    แม้ปิดอยู่); ลบ `<link>` Font Awesome CDN ที่ grep แล้วไม่มีใครใช้เลยในโฟลเดอร์ทิ้ง
+  - **`parent/leave.html`**: แยก error "ช่วงวันไม่มีวันเรียน" ออกจาก "เกินโควตา" (เดิมสองเคสรวมเป็น
+    ข้อความเดียวทำให้เข้าใจผิด), error ทั้งสองเคส + `end < start` โฟกัสกลับไปช่องวันเริ่ม +
+    `aria-invalid` ให้ตรงแพตเทิร์นฟิลด์อื่น, ยกเลิกคำขอลาใน `renderHistory` เรียก `renderForm()`
+    ต่อด้วยเพื่อรีเฟรชเลข "คงเหลือ" ในการ์ดประเภทการลา (เดิมค้างจนกว่าจะ reload)
+  - **`parent/calendar.html`**: ช่องวันที่เลือกมีสไตล์ ring ไฮไลต์ + `aria-pressed`/`aria-label`
+    (เดิมไม่มีตัวบอกเลยว่าเลือกวันไหนอยู่), คลิกวันของเดือนก่อน/ถัดไป (สีจาง) ตอนนี้เปลี่ยนเดือนไปหา
+    วันนั้นจริง (เดิม `render()` เห็นว่า selectedDate อยู่คนละเดือนกับ ym แล้วเคลียร์ทิ้งทันที คลิกแล้ว
+    ไม่มีอะไรเกิดขึ้น), ปุ่ม "วันนี้" ทำงานแม้อยู่เดือนปัจจุบันอยู่แล้ว (เดิมพึ่ง `hashchange` อย่างเดียว
+    ซึ่งไม่ยิงถ้า hash ไม่เปลี่ยน)
+  - **`parent/reports.html`**: เพิ่ม `aria-label` ให้ `#grade-select`/`#att-month-select`, `render()`
+    กัน crash เมื่อไม่มีบุตร active (โชว์ "ไม่พบข้อมูลบุตร" แบบเดียวกับ `index.html` แทน)
+  - **`parent/timetable.html`**: `render()`/`openExport()` กัน crash เมื่อไม่มีบุตร active เช่นกัน
+    (ปุ่มพิมพ์อยู่นอก `#tab-content` เลย validate เองไม่พอ)
+  - **`parent/js/parent-nav.js`**: เพิ่ม `aria-label` ให้ input วันที่ใน Demo panel
+  - **`parent/CLAUDE.md`**: แก้ให้ตรงโค้ดปัจจุบัน (เพิ่มหน้า `leave-history.html`/`home-visit.html`,
+    reports 4 แท็บ, settings#account ใช้ `ParentProfileEditor`, settings#notify ถูก disable,
+    เอกสารโมดูล `parent-export.js`/`parent-profile-editor.js`/demo panel)
+  - เพิ่มหัวข้อ "ผู้พัฒนาในโปรเจกต์นี้" ใน `CLAUDE.md` (root) และไฟล์นี้ — noeysod ดูแล
+    `admission/`+`parent/`, care ดูแล `schooldark/`
 
 ## ความชอบด้าน UI ของ noeysod
 

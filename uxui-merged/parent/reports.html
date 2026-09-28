@@ -122,7 +122,7 @@
         '<div class="flex flex-col md:flex-row gap-4">' +
         '<div class="flex-1 bg-card rounded-xl border border-border shadow-sm p-5">' +
         '<div class="flex items-center justify-between mb-4 gap-3">' +
-        '<select id="grade-select" class="border border-border rounded-lg px-3 py-1.5 text-sm bg-card">' + options + '</select>' +
+        '<select id="grade-select" aria-label="ปีการศึกษาและภาคเรียน" class="border border-border rounded-lg px-3 py-1.5 text-sm bg-card">' + options + '</select>' +
         '<button type="button" id="btn-print" class="no-print border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">' +
         '<i data-lucide="printer" class="w-4 h-4"></i><span>พิมพ์</span></button>' +
         '</div>' +
@@ -260,7 +260,7 @@
         '<div class="bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
         '<div class="flex items-center justify-between mb-3 gap-3">' +
         '<h3 class="font-semibold text-card-foreground">รายวันของเดือน</h3>' +
-        '<select id="att-month-select" class="border border-border rounded-lg px-3 py-1.5 text-sm bg-card">' + monthOptions + '</select>' +
+        '<select id="att-month-select" aria-label="เลือกเดือน" class="border border-border rounded-lg px-3 py-1.5 text-sm bg-card">' + monthOptions + '</select>' +
         '</div>' +
         '<div id="att-daily-list"></div>' +
         '</div>';
@@ -477,6 +477,11 @@
       renderTabBar(tab);
       var child = ParentStore.getActiveChild();
       var content = document.getElementById('tab-content');
+
+      if (!child) {
+        content.innerHTML = '<div class="bg-card rounded-xl border border-border shadow-sm p-5 text-muted-foreground">ไม่พบข้อมูลบุตร</div>';
+        return;
+      }
 
       if (tab === 'attendance') renderAttendanceTab(content, child);
       else if (tab === 'leave') renderLeaveTab(content, child);

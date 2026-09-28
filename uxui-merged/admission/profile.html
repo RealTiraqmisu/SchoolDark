@@ -784,7 +784,7 @@
             <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 border p-4 rounded-lg bg-slate-50/50 mb-6">
               <div><span class="text-slate-400 font-medium block">รหัสผู้สมัคร:</span> <span class="font-bold text-slate-800 text-sm font-mono">${applicant.applicantCode}</span></div>
               <div><span class="text-slate-400 font-medium block">ระดับชั้น:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
-              <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-955 text-sm">${applicant.firstName} ${applicant.lastName}</span></div>
+              <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-955 text-sm">${window.escapeHtml(applicant.firstName)} ${window.escapeHtml(applicant.lastName)}</span></div>
               <div><span class="text-slate-400 font-medium block">แผนการเรียนอันดับ 1:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
               <div><span class="text-slate-400 font-medium block">ห้องสอบจำลอง:</span> <span class="font-bold text-slate-800 font-mono">${applicant.examRoom || '—'} / ที่นั่ง ${applicant.seatNumber || '—'}</span></div>
             </div>
@@ -857,7 +857,7 @@
             
             <div class="my-6">
               <div class="text-slate-500">ได้รับชำระเงินจาก:</div>
-              <div class="text-sm font-bold text-slate-900 mt-1">${applicant.firstName} ${applicant.lastName} (${applicant.applicantCode})</div>
+              <div class="text-sm font-bold text-slate-900 mt-1">${window.escapeHtml(applicant.firstName)} ${window.escapeHtml(applicant.lastName)} (${applicant.applicantCode})</div>
               <div class="text-xs text-slate-500">ผู้สมัครระดับชั้น ${applicant.gradeLevel} แผนการเรียน ${applicant.studyPlan}</div>
             </div>
 
@@ -934,7 +934,7 @@
             <div class="grid grid-cols-2 gap-y-3.5 gap-x-6 border p-4 rounded-lg bg-emerald-50/20 mb-6 border-emerald-100">
               <div><span class="text-slate-400 font-medium block">รหัสนักเรียนใหม่:</span> <span class="font-bold text-emerald-800 text-sm font-mono">${applicant.studentId || 'STD-2568-XXXX'}</span></div>
               <div><span class="text-slate-400 font-medium block">ระดับชั้นเรียน:</span> <span class="font-bold text-slate-800 text-sm">${applicant.gradeLevel}</span></div>
-              <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${applicant.firstName} ${applicant.lastName}</span></div>
+              <div class="col-span-2"><span class="text-slate-400 font-medium block">ชื่อ-นามสกุล:</span> <span class="font-bold text-slate-950 text-sm">${window.escapeHtml(applicant.firstName)} ${window.escapeHtml(applicant.lastName)}</span></div>
               <div><span class="text-slate-400 font-medium block">แผนการเรียนจัดสรร:</span> <span class="font-bold text-slate-800">${applicant.studyPlan}</span></div>
               <div><span class="text-slate-400 font-medium block">ห้องเรียนที่จัดได้:</span> <span class="font-bold text-emerald-700 font-mono text-sm">${window.effectiveClassroom ? window.effectiveClassroom(applicant) : '—'}</span></div>
             </div>

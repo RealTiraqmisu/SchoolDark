@@ -226,6 +226,7 @@
               <th id="col-header-3" class="p-3">สถานะค่าสมัคร</th>
               <th id="col-header-4" class="p-3">ห้องเรียน</th>
               <th class="p-3">สถานะหลัก</th>
+              <th class="w-44 p-3">เปลี่ยนสถานะ</th>
               <th class="w-16 p-3 text-right">จัดการ</th>
             </tr>
           </thead>
@@ -285,7 +286,7 @@
         </p>
       </div>
       <div class="px-5 py-3.5 border-t border-border flex justify-end gap-2 bg-slate-50">
-        <button onclick="closeModal('modal-status')" class="px-4 py-1.5 text-xs font-semibold rounded-md border hover:bg-slate-100 transition-colors">ยกเลิก</button>
+        <button onclick="closeModal('modal-status'); renderTable();" class="px-4 py-1.5 text-xs font-semibold rounded-md border hover:bg-slate-100 transition-colors">ยกเลิก</button>
         <button id="modal-status-confirm-btn" class="px-4 py-1.5 text-xs font-semibold rounded-md bg-primary text-primary-foreground hover:bg-primary-hover transition-colors">ยืนยัน</button>
       </div>
     </div>
@@ -567,9 +568,13 @@
       const planFilter = document.getElementById('filter-plan').value;
 
       return all.filter(a => {
-        // Tab Phase match
-        if (window.phaseForStatus(a.status) !== currentPhase) return false;
-        
+        // Tab Phase match — only statuses that belong to this phase (phaseForStatus() defaults
+        // unknown/graduated/resigned/transferred statuses to phase 3, which is wrong here)
+        if (!window.PHASE_OPTIONS[currentPhase].includes(a.status)) return false;
+        // This board is admissions-only (ม.1/ม.4) — enrolled students from other grades who
+        // share phase-3 statuses (e.g. after promotion) don't belong on the admission board
+        if (a.gradeLevel !== 'ม.1' && a.gradeLevel !== 'ม.4') return false;
+
         // Search match
         if (searchQuery) {
           const matchName = `${a.firstName} ${a.lastName}`.toLowerCase().includes(searchQuery);
@@ -649,9 +654,10 @@
       body.innerHTML = '';
 
       if (rows.length === 0) {
+        const visibleColCount = document.querySelectorAll('thead th:not(.hidden)').length;
         body.innerHTML = `
           <tr>
-            <td colspan="11" class="py-12 text-center text-slate-400">
+            <td colspan="${visibleColCount}" class="py-12 text-center text-slate-400">
               ไม่มีข้อมูลผู้สมัครที่ตรงตามเงื่อนไขในแท็บนี้
             </td>
           </tr>
@@ -707,13 +713,13 @@
           </td>
           <td class="p-3 text-slate-400 font-medium">${index + 1}</td>
           <td class="p-3">
-            <div class="text-[11px] text-slate-400 font-medium">${a.studentId ?? a.applicantCode}</div>
-            <a href="profile.html?id=${a.id}" class="font-semibold text-slate-800 hover:text-primary hover:underline transition-colors">${a.firstName} ${a.lastName}</a>
+            <div class="text-[11px] text-slate-400 font-medium">${window.escapeHtml(a.studentId ?? a.applicantCode)}</div>
+            <a href="profile.html?id=${a.id}" class="font-semibold text-slate-800 hover:text-primary hover:underline transition-colors">${window.escapeHtml(a.firstName)} ${window.escapeHtml(a.lastName)}</a>
           </td>
           <td class="p-3 whitespace-nowrap text-slate-500 text-xs">${formatDate(a.appliedAt)}</td>
           <td class="p-3">
-            <div class="font-medium text-slate-700">${a.gradeLevel}</div>
-            <div class="text-[11px] text-slate-400">${a.studyPlan}</div>
+            <div class="font-medium text-slate-700">${window.escapeHtml(a.gradeLevel)}</div>
+            <div class="text-[11px] text-slate-400">${window.escapeHtml(a.studyPlan)}</div>
           </td>
           
           ${dynamicCols}
@@ -767,7 +773,7 @@
           <a href="edit.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="pencil" class="h-3.5 w-3.5 text-slate-400"></i> แก้ไขข้อมูลนักเรียน</a>
           <button onclick="openPrintPreviewSingle('${a.id}', 'app')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="printer" class="h-3.5 w-3.5 text-slate-400"></i> พิมพ์ใบสมัคร</button>
           <hr class="my-1 border-slate-100">
-          <button onclick="confirmDelete('${a.id}', '${a.firstName} ${a.lastName}')" class="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2"><i data-lucide="trash-2" class="h-3.5 w-3.5 text-rose-400"></i> ลบข้อมูลนักเรียน</button>
+          <button onclick="confirmDelete('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2"><i data-lucide="trash-2" class="h-3.5 w-3.5 text-rose-400"></i> ลบข้อมูลนักเรียน</button>
         `;
       } else if (currentPhase === 2) {
         menuItemsHtml += `
@@ -779,16 +785,16 @@
         menuItemsHtml += `
           <a href="profile.html?id=${a.id}" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="user" class="h-3.5 w-3.5 text-slate-400"></i> ดูโปรไฟล์นักเรียน</a>
           <button onclick="openPrintPreviewSingle('${a.id}', 'enroll')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="printer" class="h-3.5 w-3.5 text-slate-400"></i> พิมพ์ใบมอบตัว</button>
-          <button onclick="mockFinanceCheck('${a.firstName}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="receipt" class="h-3.5 w-3.5 text-slate-400"></i> ตรวจสอบประวัติการเงิน</button>
+          <button onclick="mockFinanceCheck('${a.id}')" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"><i data-lucide="receipt" class="h-3.5 w-3.5 text-slate-400"></i> ตรวจสอบประวัติการเงิน</button>
         `;
       }
 
       dropdown.innerHTML = menuItemsHtml;
       lucide.createIcons({ attrs: { class: 'h-3.5 w-3.5 text-slate-400' } });
 
-      // Positioning Dropdown
-      dropdown.style.top = `${rect.bottom + window.scrollY}px`;
-      dropdown.style.left = `${rect.right - 208 + window.scrollX}px`; // width is 52 (208px)
+      // Positioning Dropdown (dropdown is position:fixed, so use viewport-relative rect directly)
+      dropdown.style.top = `${rect.bottom}px`;
+      dropdown.style.left = `${rect.right - 208}px`; // width is 52 (208px)
       
       dropdown.classList.remove('hidden');
     }
@@ -900,7 +906,7 @@
         const moved = targetPhase !== currentPhase;
         
         showToast(
-          moved ? `ย้าย ${applicant.firstName} สำเร็จ` : 'อัปเดตสถานะสำเร็จ',
+          moved ? `ย้าย ${window.escapeHtml(applicant.firstName)} สำเร็จ` : 'อัปเดตสถานะสำเร็จ',
           moved ? `ย้ายไปยัง "${window.PHASE_LABEL[targetPhase]}" เรียบร้อยแล้ว` : `เปลี่ยนสถานะเป็น "${window.STATUS_LABEL[newStatus]}" แล้ว`,
           'success',
           () => {
@@ -908,7 +914,7 @@
             window.AdmitifyStore.updateStatus(id, oldStatus);
             renderTable();
             updateSelectedUI();
-            showToast('ย้อนกลับการทำรายการแล้ว', `ย้อนกลับสถานะของ ${applicant.firstName} เป็น "${window.STATUS_LABEL[oldStatus]}"`, 'info');
+            showToast('ย้อนกลับการทำรายการแล้ว', `ย้อนกลับสถานะของ ${window.escapeHtml(applicant.firstName)} เป็น "${window.STATUS_LABEL[oldStatus]}"`, 'info');
           }
         );
         
@@ -952,8 +958,8 @@
       items.slice(0, 5).forEach(item => {
         list.innerHTML += `
           <li class="py-1 flex justify-between">
-            <span class="font-medium">${item.firstName} ${item.lastName}</span>
-            <span class="text-[10px] text-slate-400 font-mono">${item.applicantCode}</span>
+            <span class="font-medium">${window.escapeHtml(item.firstName)} ${window.escapeHtml(item.lastName)}</span>
+            <span class="text-[10px] text-slate-400 font-mono">${window.escapeHtml(item.applicantCode)}</span>
           </li>
         `;
       });
@@ -1022,13 +1028,15 @@
         window.AdmitifyStore.updateScore(id, raw, gpa);
         closeModal('modal-score');
         renderTable();
-        showToast('บันทึกคะแนนสอบเรียบร้อย', `บันทึกคะแนนสอบของ ${a.firstName} สำเร็จ`, 'success');
+        showToast('บันทึกคะแนนสอบเรียบร้อย', `บันทึกคะแนนสอบของ ${window.escapeHtml(a.firstName)} สำเร็จ`, 'success');
       };
 
       openModal('modal-score');
     }
 
-    function confirmDelete(id, name) {
+    function confirmDelete(id) {
+      const applicant = window.AdmitifyStore.getById(id);
+      const name = applicant ? `${applicant.firstName} ${applicant.lastName}` : '';
       document.getElementById('modal-delete-name').innerText = name;
       document.getElementById('modal-delete-confirm-btn').onclick = () => {
         window.AdmitifyStore.deleteApplicant(id);
@@ -1036,7 +1044,7 @@
         selectedIds.delete(id);
         renderTable();
         updateSelectedUI();
-        showToast('ลบข้อมูลเรียบร้อย', `ลบข้อมูลผู้สมัคร ${name} ออกจากระบบแล้ว`, 'success');
+        showToast('ลบข้อมูลเรียบร้อย', `ลบข้อมูลผู้สมัคร ${window.escapeHtml(name)} ออกจากระบบแล้ว`, 'success');
       };
       openModal('modal-delete');
     }
@@ -1324,8 +1332,10 @@
       showToast('สั่งพิมพ์สำเร็จ', 'ส่งคำสั่งพิมพ์ไปยังเครื่องพิมพ์เครือข่ายเรียบร้อย (จำลอง)', 'success');
     }
 
-    function mockFinanceCheck(name) {
-      showToast('ตรวจสอบบัญชีการเงิน', `ไม่พบยอดค้างชำระค่าธรรมเนียมมอบตัวของ ${name}`, 'info');
+    function mockFinanceCheck(id) {
+      const applicant = window.AdmitifyStore.getById(id);
+      const name = applicant ? applicant.firstName : '';
+      showToast('ตรวจสอบบัญชีการเงิน', `ไม่พบยอดค้างชำระค่าธรรมเนียมมอบตัวของ ${window.escapeHtml(name)}`, 'info');
     }
 
     // Bulk Page Redirections

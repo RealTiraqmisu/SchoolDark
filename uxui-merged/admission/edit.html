@@ -209,7 +209,11 @@
                 <label for="form-grade" class="block text-xs font-semibold text-slate-500 mb-1.5">ระดับชั้นสมัคร</label>
                 <select id="form-grade" class="block w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
                   <option value="ม.1">ม.1</option>
+                  <option value="ม.2">ม.2</option>
+                  <option value="ม.3">ม.3</option>
                   <option value="ม.4">ม.4</option>
+                  <option value="ม.5">ม.5</option>
+                  <option value="ม.6">ม.6</option>
                 </select>
               </div>
               
@@ -331,8 +335,14 @@
     function initializePlanSelectors() {
       const plan1 = document.getElementById('form-plan-1');
       const plan2 = document.getElementById('form-plan-2');
-      
-      const options = window.STUDY_PLAN_OPTIONS;
+
+      const options = window.STUDY_PLAN_OPTIONS.slice();
+      // If this student's current plan isn't in the (dynamic, settings-driven) options list,
+      // keep it as an extra option so re-saving the form doesn't silently blank/change it out.
+      const a = applicantData;
+      if (a && a.studyPlan && !options.includes(a.studyPlan)) options.push(a.studyPlan);
+      if (a && a.studyPlanPriority2 && !options.includes(a.studyPlanPriority2)) options.push(a.studyPlanPriority2);
+
       options.forEach(plan => {
         plan1.innerHTML += `<option value="${plan}">${plan}</option>`;
         plan2.innerHTML += `<option value="${plan}">${plan}</option>`;
@@ -370,7 +380,7 @@
       document.getElementById('form-name-en').value = a.fullNameEn || '';
       document.getElementById('form-dob').value = a.dateOfBirth || '';
       
-      rawCitizenId = a.citizenId || '1120023455981'; // Fallback seed citizen if undefined
+      rawCitizenId = a.citizenId || '';
       document.getElementById('form-cid').value = maskCid(rawCitizenId);
       
       // Update form-cid input listener to update rawCitizenId as user types
@@ -386,12 +396,12 @@
         }
       };
 
-      document.getElementById('form-phone').value = a.phone || '081-234-5678';
+      document.getElementById('form-phone').value = a.phone || '';
       document.getElementById('form-email').value = a.parentEmail || '';
-      document.getElementById('form-address').value = a.address || '123/45 ถนนราชดำเนิน แขวงบวรนิเวศ เขตพระนคร กรุงเทพฯ 10200';
-      
+      document.getElementById('form-address').value = a.address || '';
+
       document.getElementById('form-grade').value = a.gradeLevel || 'ม.1';
-      document.getElementById('form-plan-1').value = a.studyPlan || 'วิทย์-คณิต';
+      document.getElementById('form-plan-1').value = a.studyPlan || '';
       document.getElementById('form-plan-2').value = a.studyPlanPriority2 || '';
 
       // Sidebar info

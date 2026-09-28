@@ -29,18 +29,31 @@
   `profile.html`
 - `timetable.html` — ตารางเรียน/ตารางสอบของบุตร
 - `calendar.html` — ปฏิทินโรงเรียน (อ่านข้อมูลปีการศึกษา/วันหยุดจาก `settings/` แบบอ่านอย่างเดียว)
-- `reports.html` — ผลการเรียนและสถิติการมาเรียน/ขาด-ลา-มาสาย เรียงแท็บ การมาเรียน → การลา →
-  ผลการเรียน (`#tab=attendance|leave|grades`, default `attendance`)
+- `reports.html` — ผลการเรียนและสถิติการมาเรียน/ขาด-ลา-มาสาย/ความประพฤติ เรียงแท็บ การมาเรียน →
+  การลา → ผลการเรียน → ความประพฤติ (`#tab=attendance|leave|grades|behavior`, default `attendance`)
 - `announcements.html` — ประกาศจากโรงเรียนทั้งหมด กรองตามแท็กได้ (ทั้งหมด/สำคัญ/กิจกรรม/ทั่วไป)
 - `sdq.html` — แบบประเมิน SDQ หน้าเดียว (ไม่มีแท็บแยกฉบับผู้ปกครอง/นักเรียน — รวมเป็นคำอธิบายเดียว) —
   **placeholder เท่านั้น ยังไม่มี logic จริง — Team C รับผิดชอบพัฒนาต่อ** (ดูคอมเมนต์
   `TODO(Team C)` ในไฟล์)
-- `leave.html` — แจ้งลาเรียนแทนบุตร + ดูประวัติคำขอลาที่เคยแจ้ง (deep-link `#history` เลื่อนไปที่ประวัติ)
-- `profile.html` — จัดการโปรไฟล์ผู้ปกครอง, ข้อมูลบุตร และสลับบุตรที่ดูอยู่ (กรณีมีหลายคน) —
-  รหัสผ่าน/การแจ้งเตือนย้ายไปอยู่ที่ `settings.html` แล้ว
-- `settings.html` — ตั้งค่าบัญชี: ข้อมูลบัญชีผู้ใช้ (อ่านอย่างเดียว), เปลี่ยนรหัสผ่าน (จำลอง),
-  การแจ้งเตือน (ช่องทาง + ประเภท), อุปกรณ์ที่เข้าสู่ระบบ (mock), รีเซ็ตข้อมูลตัวอย่าง — เข้าถึงจาก
-  เมนูรูปโปรไฟล์บน navbar
+- `home-visit.html` — เยี่ยมบ้านนักเรียน — **placeholder เดียวกับ `sdq.html` เป๊ะ ๆ** (ยังไม่มี
+  logic/ข้อมูลจริง, คอมเมนต์ `TODO(Team C)`, Team C รับผิดชอบพัฒนาต่อ) อยู่ในกลุ่ม "บริการอื่น ๆ"
+  เดียวกับแจ้งลาเรียน/SDQ
+- `leave.html` — แจ้งลาเรียนแทนบุตร + การ์ดประวัติคำขอลา 5 รายการล่าสุด (ปุ่ม "ดูทั้งหมด →" ไป
+  `leave-history.html`)
+- `leave-history.html` — ประวัติคำขอลาเรียนแบบเต็ม: กรองตามบุตร/สถานะ, กดแถวเปิด modal ราย
+  ละเอียดครบทุกฟิลด์ ยกเลิกคำขอได้จาก modal เมื่อสถานะ "รอตรวจสอบ" รองรับ deep-link `?id=PL-xxxx`
+  เปิด modal อัตโนมัติ — เข้าถึงจากปุ่ม "ดูทั้งหมด →" ของ `leave.html` และลิงก์ "ดูเพิ่มเติม →" ของ
+  แท็บการลาใน `reports.html`
+- `profile.html` — จัดการโปรไฟล์ผู้ปกครอง (การ์ด "ข้อมูลผู้ปกครอง" เป็นโหมดแสดง/แก้ไข ปุ่มแก้ไข
+  ปุ่มเดียวแก้ได้ทั้งข้อมูลและรูปโปรไฟล์ ผ่านโมดูลกลาง `js/parent-profile-editor.js`
+  `ParentProfileEditor.mount()`), ข้อมูลบุตร และสลับบุตรที่ดูอยู่ (กรณีมีหลายคน) — รหัสผ่าน/
+  การแจ้งเตือนย้ายไปอยู่ที่ `settings.html` แล้ว
+- `settings.html` — ตั้งค่าบัญชีแบบ 2 คอลัมน์ (เมนูซ้าย + การ์ดทีละใบ สลับด้วย
+  `#account|password|notify|devices|prototype`): บัญชีผู้ใช้ (mount `ParentProfileEditor` ตัว
+  เดียวกับ `profile.html` แก้ไขได้จริง + ส่วน "บุตรในบัญชีนี้" อ่านอย่างเดียว มีปุ่ม "ลบออกจาก
+  บัญชี" ต่อคน), เปลี่ยนรหัสผ่าน (จำลอง), **การแจ้งเตือนถูก disable ทั้งกล่องไว้ก่อน** (รอคุยกับ
+  อาจารย์ ไม่มีโน้ตอธิบายในหน้าตามที่ตั้งใจ), อุปกรณ์ที่เข้าสู่ระบบ (mock), รีเซ็ตข้อมูลตัวอย่าง —
+  เข้าถึงจากเมนูรูปโปรไฟล์บน navbar
 
 ## 3. ดีไซน์
 
@@ -58,7 +71,8 @@ sidebar แอดมินของ `../shared/cross-nav.js` เลย) ค่�
 
 `PARENT_PAGES` รองรับ item แบบกลุ่มย่อย (dropdown) ด้วย `{ id, label, icon, children: [...] }`
 เช่นกลุ่ม "บริการอื่น ๆ" (`id: 'services'`) ที่รวม แจ้งลาเรียน + แบบประเมิน SDQ (หน้าเดียว ไม่แยก
-ฉบับผู้ปกครอง/นักเรียนในเมนู) — child แต่ละตัวเป็น `{ file, hash?, label, icon, desc? }`; ปุ่ม dropdown ใช้ pattern
+ฉบับผู้ปกครอง/นักเรียนในเมนู) + เยี่ยมบ้าน (`home-visit.html`) — child แต่ละตัวเป็น
+`{ file, hash?, label, icon, desc? }`; ปุ่ม dropdown ใช้ pattern
 `data-dropdown` / `data-dropdown-toggle` / `data-dropdown-menu` เดียวกับ dropdown อื่น ๆ ในไฟล์นี้
 (child switcher, user menu) ที่ `bindNavbarEvents` bind แบบ generic ให้ทุกตัวอยู่แล้ว ไม่ต้องเขียน
 handler เพิ่ม บนมือถือกลุ่มจะเรนเดอร์เป็นหัวข้อ + ลิงก์ลูกเยื้องเข้าไปแทน dropdown
@@ -72,8 +86,24 @@ user menu (เมนูรูปโปรไฟล์บนขวา) มีล�
 
 `js/parent-store.js` (`window.ParentStore`) เก็บทุกอย่างผ่าน `localStorage` คีย์ขึ้นต้นด้วย
 `parent_` ได้แก่ session, active_child, profile, children, periods, timetables, exams,
-grades, student_profiles, leave_requests, tickets, announcements มีฟังก์ชัน `today()` คืนวัน
-สาธิต (ถ้าไม่มี `SchoolStore` ให้อ้างอิงจะ fallback เป็นวันที่ mock ของตัวเอง)
+grades, student_profiles, leave_requests, tickets, announcements, attendance (สร้างอัตโนมัติ),
+behavior มีฟังก์ชัน `today()` คืนวันสาธิต (ถ้าไม่มี `SchoolStore` ให้อ้างอิงจะ fallback เป็นวันที่
+mock ของตัวเอง) — เช็ค override `parent_demo_today` ก่อนเสมอ (ดู "Demo panel" ด้านล่าง)
+
+**Demo panel เลือกวันที่จำลอง**: ปุ่มลอยมุมซ้ายล่างทุกหน้า (ยกเว้น `login.html`) เรนเดอร์โดย
+`renderDemoPanel()` ใน `js/parent-nav.js` — เลือกวันเองได้ผ่าน `<input type="date">` + ปุ่มลัด
+วันสำคัญ + ปุ่มล้างค่า เก็บ override ที่ `parent_demo_today` **ไม่อยู่ใน `ALL_KEYS`** (ปุ่ม
+"รีเซ็ตข้อมูลตัวอย่าง" ใน `settings.html` จึงไม่ล้างวันจำลองทิ้งโดยตั้งใจ)
+
+**พิมพ์ / ดาวน์โหลด**: โมดูลกลาง `js/parent-export.js`
+(`ParentExport.open({ title, subtitle, filename, node, orientation })`) เปิด modal preview
+กระดาษ A4 ก่อนพิมพ์/ดาวน์โหลดเสมอ (PDF ผ่าน `html2pdf.js`, JPG ผ่าน `toCanvas()`) ใช้แล้วใน
+`timetable.html` และ `calendar.html` (เฉพาะโหมด "ตารางกิจกรรม") — หน้าใหม่ที่จะพิมพ์/ดาวน์โหลด
+ให้เรียกโมดูลนี้ซ้ำ ไม่ต้องสร้าง modal เอง
+
+**โมดัล/confirm มาตรฐาน**: `js/parent-nav.js` export `ParentUI.createDialog()` (สร้าง `<dialog>`
+จริง) และ `ParentUI.confirm()` (แทน `window.confirm()`) — ทุกหน้าต้องใช้ 2 ตัวนี้ ห้ามเขียน
+modal/`confirm()` เอง
 
 `parent_student_profiles` เก็บข้อมูลประวัติส่วนตัวของบุตรแต่ละคน (keyed by child id เช่น `c1`/`c2`) —
 แยกคีย์จาก `parent_children` (ข้อมูลพื้นฐาน/วิชาการที่หน้าอื่นใช้อยู่แล้ว) เพื่อไม่ชนกัน ใช้ผ่าน

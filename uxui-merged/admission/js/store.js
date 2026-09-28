@@ -1000,6 +1000,19 @@ function classroomOptions(grade) {
   return names.sort().map((name) => ({ name, count: counts[name] || 0 }));
 }
 
+// Escape user-entered data before it goes into innerHTML/template strings — names, addresses,
+// emails etc. can contain characters (', ", <, >, &) that would otherwise break markup or inject
+// script. Never use this on ids/keys the system itself generates.
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[c]));
+}
+
 function phaseForStatus(status) {
   if (PHASE_OPTIONS[1].includes(status)) return 1;
   if (PHASE_OPTIONS[2].includes(status)) return 2;
@@ -1017,9 +1030,10 @@ const AdmitifyStore = {
     try {
       const current = JSON.parse(data);
       const existingIds = new Set(current.map(a => a.id));
+      const deletedIds = new Set(JSON.parse(localStorage.getItem("admitify_deleted_ids") || "[]"));
       let hasNew = false;
       seedApplicants.forEach(seed => {
-        if (!existingIds.has(seed.id)) {
+        if (!existingIds.has(seed.id) && !deletedIds.has(seed.id)) {
           current.push(seed);
           hasNew = true;
         }
@@ -1144,6 +1158,10 @@ const AdmitifyStore = {
     const applicants = this.getApplicants();
     const updated = applicants.filter((a) => a.id !== id);
     this.saveApplicants(updated);
+    // Remember this id so getApplicants() doesn't resurrect it from seedApplicants on next read
+    const deletedIds = new Set(JSON.parse(localStorage.getItem("admitify_deleted_ids") || "[]"));
+    deletedIds.add(id);
+    localStorage.setItem("admitify_deleted_ids", JSON.stringify([...deletedIds]));
     return updated;
   },
 
@@ -1226,6 +1244,7 @@ const AdmitifyStore = {
 
   reset() {
     localStorage.setItem("admitify_applicants", JSON.stringify(seedApplicants));
+    localStorage.removeItem("admitify_deleted_ids");
     this.resetFieldSettings();
     this.resetCoursePlans();
     this.resetExamRooms();
@@ -1241,6 +1260,7 @@ const STUDY_PLAN_OPTIONS_DYNAMIC = Array.from(new Set(loadedPlans.map(p => p.nam
 
 // Export to window object for usage in static HTML scripts
 window.AdmitifyStore = AdmitifyStore;
+window.escapeHtml = escapeHtml;
 window.STATUS_LABEL = STATUS_LABEL;
 window.PHASE_LABEL = PHASE_LABEL;
 window.PHASE_OPTIONS = PHASE_OPTIONS;
