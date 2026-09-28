@@ -119,7 +119,7 @@
     .data-table th, .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border-color); text-align: left; white-space: nowrap; }
     .data-table th { color: var(--text-muted); background: rgba(0,0,0,.03); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
     .data-table tr:last-child td { border-bottom: 0; }
-    .data-table tbody tr:hover td { background: rgba(0,0,0,.02); }
+    .data-table tbody tr:hover td { background: rgb(241, 241, 241); }
     .data-table .row-selected td { background: var(--primary-glow) !important; }
     .data-table .no-data { text-align: center; color: var(--text-muted); padding: 28px; }
 
@@ -253,6 +253,19 @@
     .att-summary-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); }
     .att-time-hint, .att-saved-note { font-size: 12px; color: var(--text-muted); }
     .att-filter-btn { border: 0; cursor: pointer; font-family: inherit; }
+    /* ตารางอนุมัติการลานักเรียน (approve-sl-tbody): คอลัมน์สถานะเป็น dropdown เปลี่ยนสถานะได้เลย
+       (แทนคอลัมน์ดำเนินการเดิม), แถวรอตรวจสอบมีแถบสีซ้าย */
+    .sl-approve-table tr.sl-row-pending td:first-child { box-shadow: inset 3px 0 0 var(--warning); }
+    .sl-status-select { appearance: none; -webkit-appearance: none; border: 1px solid transparent; border-radius: 999px; padding: 5px 28px 5px 12px; font-family: var(--font-body); font-size: 12px; font-weight: 700; cursor: pointer;
+      background-repeat: no-repeat; background-position: right 10px center; background-size: 10px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); }
+    .sl-status-select:hover { border-color: currentColor; }
+    .sl-status-select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .sl-status-select.warning { color: var(--warning); background-color: var(--warning-bg); }
+    .sl-status-select.success { color: var(--success); background-color: var(--success-bg); }
+    .sl-status-select.danger { color: var(--danger); background-color: var(--danger-bg); }
+    .sl-status-select option { color: var(--text-primary); background: var(--bg-card); font-weight: 600; }
+    .sl-approve-table .sl-reason { max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
     .att-filter-btn:hover { filter: brightness(0.95); }
     .att-filter-btn.on { box-shadow: 0 0 0 2px currentColor inset; }
     .att-pager { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap; }
@@ -310,8 +323,16 @@
     .sd-chart-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
     @media (max-width: 1000px) { .sd-chart-row { grid-template-columns: 1fr; } }
     .sd-chart-card { padding: 18px 20px; min-width: 0; }
-    .sd-chart-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 12px; margin-bottom: 10px; }
-    .sd-chart-card h4 { margin: 0 0 2px; font-size: 14px; color: var(--text-primary); }
+    .sd-chart-head { display: flex; flex-direction: column; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 12px; margin-bottom: 10px; }
+    .sd-chart-card h4 { margin: 0 0 4px; font-size: 14px; line-height: 1.5; color: var(--text-primary); }
+    .sd-chart-box-list { height: auto; min-height: 240px; }
+    .sd-hbars { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+    .sd-hbar-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 4px; }
+    .sd-hbar-head span { min-width: 0; overflow-wrap: anywhere; }
+    .sd-hbar-head strong { flex-shrink: 0; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .sd-hbar-head strong.zero { color: var(--text-muted); font-weight: 600; }
+    .sd-hbar-track { height: 10px; border-radius: 4px; background: rgba(0,0,0,.05); overflow: hidden; }
+    .sd-hbar-track i { display: block; height: 100%; min-width: 0; border-radius: 4px; background: var(--primary); }
     .sd-chart-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
     .sd-chart-head .sd-chart-sub { margin-bottom: 0; }
     .sd-seg { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--border-color); border-radius: var(--br-md); background: var(--bg-card); }
@@ -341,6 +362,36 @@
     .sd-chip-row .badge { font-size: 12px; padding: 5px 12px; }
     .sd-name-link { color: var(--text-primary); font-weight: 700; text-decoration: none; }
     .sd-name-link:hover { color: var(--primary); text-decoration: underline; }
+    /* drawer รายละเอียดนักเรียนจากแดชบอร์ด (sdOpenStudentDrawer) */
+    .sd-drawer-meta { font-size: 12px; color: var(--text-muted); line-height: 1.7; margin: -6px 0 14px; }
+    .sd-dstat-hero { padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--br-md); background: var(--bg-card); margin-bottom: 10px; }
+    .sd-dstat-hero > div:first-child { display: flex; justify-content: space-between; align-items: baseline; }
+    .sd-dstat-hero span { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .sd-dstat-hero strong { font-family: var(--font-heading); font-size: 28px; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .sd-dstat-hero strong.low { color: var(--danger); }
+    .sd-dstat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .sd-dstat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
+    .sd-dstat { padding: 8px 10px; border: 1px solid var(--border-color); border-radius: var(--br-sm); background: var(--bg-card); }
+    .sd-dstat span { display: block; font-size: 11px; color: var(--text-muted); }
+    .sd-dstat strong { font-size: 16px; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .sd-daystrip { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+    .sd-daystrip i, .sd-daystrip-legend i { display: inline-block; width: 16px; height: 16px; border-radius: 4px; }
+    .sd-daystrip i.early, .sd-daystrip-legend i.early { box-shadow: inset 0 0 0 3px var(--bg-card), inset 0 0 0 5px var(--warning); }
+    .sd-daystrip-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11px; color: var(--text-muted); margin-bottom: 20px; }
+    .sd-daystrip-legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .sd-daystrip-legend i { width: 12px; height: 12px; border-radius: 3px; }
+    .sd-day-list { display: flex; flex-direction: column; border: 1px solid var(--border-color); border-radius: var(--br-md); background: var(--bg-card); margin-bottom: 20px; overflow: hidden; }
+    .sd-day-list:has(.sd-drawer-empty) { border: 0; background: none; }
+    .sd-day-row { display: grid; grid-template-columns: 92px 1fr; gap: 2px 10px; padding: 9px 12px; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+    .sd-day-row:last-child { border-bottom: 0; }
+    .sd-day-date { color: var(--text-secondary); font-weight: 600; }
+    .sd-day-status { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .sd-day-status > span:not(.badge) { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .sd-day-note { grid-column: 2; font-size: 12px; color: var(--text-muted); }
+    .sd-day-note:empty { display: none; }
+    .sd-drawer-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .sd-drawer-empty { font-size: 13px; color: var(--text-muted); padding: 4px 0 8px; }
+    .sd-drawer-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border-color); }
     #view-student-dashboard .view-tabs-sticky { scroll-margin-top: 76px; }
   </style>
 </head>
@@ -662,12 +713,14 @@
               </div>
             </div>
             <div class="data-table-wrap">
-              <table class="data-table">
+              <!-- สถานะอยู่คอลัมน์แรกและเป็น dropdown (slStatusSelectHTML) ให้เห็นและเปลี่ยนได้ทันทีโดยไม่ต้อง
+                   เลื่อนตารางไปทางขวา — ปุ่ม "ดู" (ตรึงขอบขวา) เปิดรายละเอียดคำขอใน #drawer-detail -->
+              <table class="data-table sl-approve-table">
                 <thead>
                   <tr>
-                    <th>วันที่ยื่น</th><th>ชื่อนักเรียน</th><th>ชั้น</th><th>ประเภทการลา</th><th>วันที่ลา</th>
+                    <th>สถานะ</th><th>วันที่ยื่น</th><th>ชื่อนักเรียน</th><th>ชั้น</th><th>ประเภทการลา</th><th>วันที่ลา</th>
                     <th style="text-align:center;">จำนวนวัน</th><th>เหตุผล</th><th style="text-align:center;">เอกสารแนบ</th>
-                    <th>สถานะ</th><th style="width:190px;text-align:center;">ดำเนินการ</th><th style="width:60px;text-align:center;">ดู</th>
+                    <th>ดู</th>
                   </tr>
                 </thead>
                 <tbody id="approve-sl-tbody"></tbody>
@@ -785,9 +838,11 @@
               </div>
             </div>
             <div class="data-table-wrap">
-              <table class="data-table">
+              <!-- แบบเดียวกับตารางอนุมัติการลานักเรียน: สถานะคอลัมน์แรกเป็น dropdown (ticketStatusSelectHTML)
+                   แทนคอลัมน์ดำเนินการเดิม, รอตรวจสอบขึ้นก่อน (ใช้ class sl-approve-table ร่วมกันเพื่อแถบสีแถวรอตรวจสอบ) -->
+              <table class="data-table sl-approve-table">
                 <thead>
-                  <tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>ชั้น</th><th>ประเภท</th><th>วันที่</th><th>ช่วงเวลา</th><th>เหตุผล</th><th>สถานะ</th><th style="width:190px;text-align:center;">ดำเนินการ</th><th style="width:60px;text-align:center;">ดู</th><th style="width:60px;text-align:center;">ประวัติ</th></tr>
+                  <tr><th>สถานะ</th><th>รหัส</th><th>ชื่อ-สกุล</th><th>ชั้น</th><th>ประเภท</th><th>วันที่</th><th>ช่วงเวลา</th><th>เหตุผล</th><th style="width:60px;text-align:center;">ดู</th><th style="width:60px;text-align:center;">ประวัติ</th></tr>
                 </thead>
                 <tbody id="approve-ticket-tbody"></tbody>
               </table>
@@ -1548,7 +1603,7 @@
           <div class="glass-card sd-chart-card">
             <h4>บัตรขออนุญาตแยกประเภท</h4>
             <div class="sd-chart-sub">ไม่นับบัตรที่ไม่อนุมัติ</div>
-            <div class="sd-chart-box" id="sd-chart-tickets-box"><canvas id="sd-chart-tickets"></canvas></div>
+            <div class="sd-chart-box sd-chart-box-list" id="sd-chart-tickets-box"></div>
           </div>
         </div>
 
@@ -4051,29 +4106,31 @@ function setApproveFilter(kind, val, btn) {
   if (kind === 'sl') renderApproveStudentLeaveTable(); else renderApproveTicketTable();
 }
 
-function slRequestActionHTML(r) {
-  if (r.status === 'รอตรวจสอบ') {
-    return `
-      <div style="display:flex;gap:6px;justify-content:center;">
-        <button class="btn-icon" style="border-color:var(--success);color:var(--success);" title="อนุมัติ" onclick="approveStudentLeave('${r.id}')"><svg class="icon"><use href="#i-check"/></svg></button>
-        <button class="btn-icon" style="border-color:var(--danger);color:var(--danger);" title="ไม่อนุมัติ" onclick="rejectStudentLeave('${r.id}')"><svg class="icon"><use href="#i-x"/></svg></button>
-      </div>
-    `;
-  }
-  if (r.status === 'อนุมัติ') {
-    return `
-      <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
-        <span style="font-size:10px;color:var(--text-muted);text-align:center;">อนุมัติโดย: ${CURRENT_APPROVER_NAME}</span>
-        <button class="btn btn-secondary" style="padding:4px 8px;font-size:10px;border-radius:4px;line-height:1;" onclick="resetSLLeaveStatus('${r.id}')">เปลี่ยนสถานะ</button>
-      </div>
-    `;
-  }
-  return `
-    <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
-      <span style="font-size:10px;color:var(--danger);text-align:center;">ปฏิเสธคำขอการลา</span>
-      <button class="btn btn-secondary" style="padding:4px 8px;font-size:10px;border-radius:4px;line-height:1;" onclick="resetSLLeaveStatus('${r.id}')">เปลี่ยนสถานะ</button>
-    </div>
-  `;
+// คอลัมน์สถานะของตาราง approve-sl-tbody — dropdown ทำหน้าที่แทนปุ่มดำเนินการเดิม:
+// เลือก "อนุมัติ"/"ไม่อนุมัติ" → approveStudentLeave/rejectStudentLeave (มี modal ยืนยัน + หมายเหตุ),
+// เลือก "รอตรวจสอบ" → resetSLLeaveStatus (ยกเลิกผลเดิม) — ถ้ากดยกเลิกใน modal สถานะเดิมยังคงอยู่
+const SL_STATUS_OPTIONS = [
+  { value: 'รอตรวจสอบ', cls: 'warning' },
+  { value: 'อนุมัติ', cls: 'success' },
+  { value: 'ไม่อนุมัติ', cls: 'danger' }
+];
+function slStatusSelectHTML(r) {
+  const cur = SL_STATUS_OPTIONS.find(o => o.value === r.status) || SL_STATUS_OPTIONS[0];
+  const tip = r.status === 'รอตรวจสอบ' ? 'เลือกเพื่ออนุมัติหรือไม่อนุมัติ'
+    : `${r.status === 'อนุมัติ' ? 'อนุมัติ' : 'ปฏิเสธ'}โดย: ${CURRENT_APPROVER_NAME}${r.comment ? ' — ' + r.comment : ''}`;
+  return `<select class="sl-status-select ${cur.cls}" aria-label="สถานะคำขอของ ${r.name}" title="${tip}" onchange="onSLStatusSelect('${r.id}', this)">
+    ${SL_STATUS_OPTIONS.map(o => `<option value="${o.value}"${o.value === r.status ? ' selected' : ''}>${o.value}</option>`).join('')}
+  </select>`;
+}
+function onSLStatusSelect(id, sel) {
+  const r = STUDENT_LEAVE_REQUESTS.find(x => x.id === id);
+  if (!r) return;
+  const next = sel.value;
+  sel.value = r.status; // คืนค่าเดิมไว้ก่อน — ตารางจะ render ใหม่เองเมื่อยืนยันแล้ว
+  if (next === r.status) return;
+  if (next === 'อนุมัติ') approveStudentLeave(id);
+  else if (next === 'ไม่อนุมัติ') rejectStudentLeave(id);
+  else resetSLLeaveStatus(id);
 }
 
 function slAttachmentLinkHTML(r) {
@@ -4107,19 +4164,22 @@ function renderApproveStudentLeaveTable() {
     return true;
   });
 
-  tbody.innerHTML = list.length === 0 ? '<tr><td colspan="11" class="no-data">ไม่พบคำขอ</td></tr>' : list.map(r => `
-    <tr>
+  // รอตรวจสอบขึ้นก่อน (งานที่ต้องทำ) แล้วเรียงวันที่ยื่นใหม่ → เก่า
+  const statusOrder = { 'รอตรวจสอบ': 0, 'อนุมัติ': 1, 'ไม่อนุมัติ': 2 };
+  list.sort((a, b) => (statusOrder[a.status] ?? 3) - (statusOrder[b.status] ?? 3) || b.submitDate.localeCompare(a.submitDate));
+
+  tbody.innerHTML = list.length === 0 ? '<tr><td colspan="10" class="no-data">ไม่พบคำขอ</td></tr>' : list.map(r => `
+    <tr class="${r.status === 'รอตรวจสอบ' ? 'sl-row-pending' : ''}">
+      <td>${slStatusSelectHTML(r)}</td>
       <td>${thaiDate(r.submitDate)}</td>
       <td><strong>${r.name}</strong></td>
       <td>${r.cls}</td>
       <td><span class="badge ${studentLeaveTypeBadgeClass(r.type)}">${r.type}</span></td>
       <td>${thaiDate(r.startDate)}${r.endDate !== r.startDate ? ' - ' + thaiDate(r.endDate) : ''}</td>
       <td style="text-align:center;">${r.days}</td>
-      <td>${r.reason}</td>
+      <td class="sl-reason" title="${r.reason}">${r.reason}</td>
       <td style="text-align:center;">${slAttachmentLinkHTML(r)}</td>
-      <td>${statusBadgeHTML(r.status)}</td>
-      <td style="text-align:center;">${slRequestActionHTML(r)}</td>
-      <td style="text-align:center;">
+      <td>
         <button class="btn-icon" title="ดูรายละเอียด" onclick="viewSLRequestDetails('${r.id}')"><svg class="icon"><use href="#i-view"/></svg></button>
       </td>
     </tr>
@@ -4127,29 +4187,26 @@ function renderApproveStudentLeaveTable() {
   renderSLCalendarLegend();
 }
 
-function ticketActionHTML(r) {
-  if (r.status === 'รอตรวจสอบ') {
-    return `
-      <div style="display:flex;gap:6px;justify-content:center;">
-        <button class="btn-icon" style="border-color:var(--success);color:var(--success);" title="อนุมัติ" onclick="approveTicket('${r.reqId}')"><svg class="icon"><use href="#i-check"/></svg></button>
-        <button class="btn-icon" style="border-color:var(--danger);color:var(--danger);" title="ไม่อนุมัติ" onclick="rejectTicket('${r.reqId}')"><svg class="icon"><use href="#i-x"/></svg></button>
-      </div>
-    `;
-  }
-  if (r.status === 'อนุมัติ') {
-    return `
-      <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
-        <span style="font-size:10px;color:var(--text-muted);text-align:center;">อนุมัติโดย: ${CURRENT_APPROVER_NAME}</span>
-        <button class="btn btn-secondary" style="padding:4px 8px;font-size:10px;border-radius:4px;line-height:1;" onclick="resetTicketStatus('${r.reqId}')">เปลี่ยนสถานะ</button>
-      </div>
-    `;
-  }
-  return `
-    <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
-      <span style="font-size:10px;color:var(--danger);text-align:center;">ปฏิเสธคำขอ</span>
-      <button class="btn btn-secondary" style="padding:4px 8px;font-size:10px;border-radius:4px;line-height:1;" onclick="resetTicketStatus('${r.reqId}')">เปลี่ยนสถานะ</button>
-    </div>
-  `;
+// คอลัมน์สถานะของตาราง approve-ticket-tbody — dropdown แบบเดียวกับ slStatusSelectHTML (ใช้ SL_STATUS_OPTIONS
+// และ CSS .sl-status-select ร่วมกัน): อนุมัติ/ไม่อนุมัติ → approveTicket/rejectTicket (modal ยืนยัน + หมายเหตุ),
+// รอตรวจสอบ → resetTicketStatus — กดยกเลิกใน modal แล้วสถานะเดิมยังคงอยู่
+function ticketStatusSelectHTML(r) {
+  const cur = SL_STATUS_OPTIONS.find(o => o.value === r.status) || SL_STATUS_OPTIONS[0];
+  const tip = r.status === 'รอตรวจสอบ' ? 'เลือกเพื่ออนุมัติหรือไม่อนุมัติ'
+    : `${r.status === 'อนุมัติ' ? 'อนุมัติ' : 'ปฏิเสธ'}โดย: ${CURRENT_APPROVER_NAME}${r.comment ? ' — ' + r.comment : ''}`;
+  return `<select class="sl-status-select ${cur.cls}" aria-label="สถานะบัตรขออนุญาตของ ${r.name}" title="${tip}" onchange="onTicketStatusSelect('${r.reqId}', this)">
+    ${SL_STATUS_OPTIONS.map(o => `<option value="${o.value}"${o.value === r.status ? ' selected' : ''}>${o.value}</option>`).join('')}
+  </select>`;
+}
+function onTicketStatusSelect(reqId, sel) {
+  const r = HISTORY.find(x => x.reqId === reqId);
+  if (!r) return;
+  const next = sel.value;
+  sel.value = r.status; // คืนค่าเดิมไว้ก่อน — ตารางจะ render ใหม่เองเมื่อยืนยันแล้ว
+  if (next === r.status) return;
+  if (next === 'อนุมัติ') approveTicket(reqId);
+  else if (next === 'ไม่อนุมัติ') rejectTicket(reqId);
+  else resetTicketStatus(reqId);
 }
 
 function renderApproveTicketTable() {
@@ -4174,17 +4231,20 @@ function renderApproveTicketTable() {
     return true;
   });
 
-  tbody.innerHTML = list.length === 0 ? '<tr><td colspan="11" class="no-data">ไม่พบรายการ</td></tr>' : list.map(r => `
-    <tr>
+  // รอตรวจสอบขึ้นก่อน แล้วเรียงวันที่ใหม่ → เก่า (เหมือนตารางใบลา)
+  const statusOrder = { 'รอตรวจสอบ': 0, 'อนุมัติ': 1, 'ไม่อนุมัติ': 2 };
+  list.sort((a, b) => (statusOrder[a.status] ?? 3) - (statusOrder[b.status] ?? 3) || b.date.localeCompare(a.date));
+
+  tbody.innerHTML = list.length === 0 ? '<tr><td colspan="10" class="no-data">ไม่พบรายการ</td></tr>' : list.map(r => `
+    <tr class="${r.status === 'รอตรวจสอบ' ? 'sl-row-pending' : ''}">
+      <td>${ticketStatusSelectHTML(r)}</td>
       <td>${r.id}</td>
       <td><strong>${r.name}</strong></td>
       <td>${r.cls}</td>
       <td><span class="type-badge ${typeBadgeClass(r.type)}">${r.type}</span></td>
       <td>${thaiDate(r.date)}</td>
       <td>${r.time}</td>
-      <td>${r.reason}</td>
-      <td>${statusBadgeHTML(r.status)}</td>
-      <td style="text-align:center;">${ticketActionHTML(r)}</td>
+      <td class="sl-reason" title="${r.reason}">${r.reason}</td>
       <td style="text-align:center;">
         <button class="btn-icon" title="ดูรายละเอียด" onclick="viewTicketRequestDetails('${r.reqId}')"><svg class="icon"><use href="#i-view"/></svg></button>
       </td>
@@ -6804,6 +6864,100 @@ function sdOpenRoom(cls) {
   sdGoTab('sd-people');
 }
 
+// ---- drawer รายละเอียดนักเรียน (คลิกแถวในแท็บรายบุคคล) — ใช้ #drawer-detail ร่วมกับส่วนอื่นของหน้า
+// เนื้อหาคิดจากช่วงเวลา/ข้อมูลเดียวกับแดชบอร์ดตอนเปิด (sdData) จึงตรงกับตัวเลขในแถวที่กด
+// คลิกบัตร/ใบลาข้างในจะเปิดรายละเอียดใน drawer เดิม พร้อมปุ่ม ‹ กลับมาหน้านักเรียนคนนี้
+const SD_DAY_COLOR = { ontime: '--success', leave: '--info', late: '--warning', absent: '--danger', none: '--text-muted' };
+function sdDrawerGo(studentId, openFn) {
+  openFn();
+  detailDrawerBackTo = () => sdOpenStudentDrawer(studentId);
+  updateDetailDrawerBackBtn();
+}
+function sdOpenStudentDrawer(studentId) {
+  const p = sdData && sdData.people.find(x => x.s.id === studentId);
+  if (!p) return;
+  detailDrawerBackTo = null;
+  updateDetailDrawerBackBtn();
+  const s = p.s, d = sdData;
+
+  const recs = d.days.map(date => ({ date, rec: getAttendance(s, date) }));
+  const tickets = d.tickets.filter(t => t.id === s.id).sort((a, b) => b.date.localeCompare(a.date));
+  const leaves = STUDENT_LEAVE_REQUESTS.filter(r => r.studentId === s.id && r.startDate <= d.to && r.endDate >= d.from)
+    .sort((a, b) => b.startDate.localeCompare(a.startDate));
+  // วันที่ไม่ใช่ "มาตรงเวลาและกลับตามเวลา" — ใหม่ → เก่า
+  const unusual = recs.filter(x => attCategory(x.rec.statusIn) !== 'ontime' || x.rec.statusOut === 'ออกก่อนเวลา').reverse();
+
+  const stat = (label, value, color) => `
+    <div class="sd-dstat"><span>${label}</span><strong${color ? ` style="color:var(${color})"` : ''}>${value}</strong></div>`;
+  const dayStrip = recs.map(x => {
+    const cat = attCategory(x.rec.statusIn), early = x.rec.statusOut === 'ออกก่อนเวลา';
+    return `<i class="${early ? 'early' : ''}" style="background:var(${SD_DAY_COLOR[cat]});" title="${thaiDateLong(x.date)}: ${x.rec.statusIn}${early ? ' · ออกก่อนเวลา' : ''}"></i>`;
+  }).join('');
+  const dateBox = dateStr => {
+    const [, m, dd] = dateStr.split('-').map(Number);
+    return `<div class="history-date-box"><span class="history-date-month">${SD_MONTHS_SHORT[m - 1]}</span><span class="history-date-day">${String(dd).padStart(2, '0')}</span></div>`;
+  };
+  const empty = text => `<div class="sd-drawer-empty">${text}</div>`;
+
+  const unusualHtml = unusual.length ? unusual.map(({ date, rec }) => `
+    <div class="sd-day-row">
+      <div class="sd-day-date">${ATT_DAY_LABELS[attWeekday(date)]}. ${sdShortDate(date)}</div>
+      <div class="sd-day-status">${attBadgeIn(rec.statusIn)}${rec.timeIn && rec.timeIn !== '-' ? `<span>${rec.timeIn}</span>` : ''}
+        ${rec.statusOut === 'ออกก่อนเวลา' ? `${attBadgeOut(rec.statusOut)}<span>${rec.timeOut}</span>` : ''}</div>
+      <div class="sd-day-note">${rec.note || ''}</div>
+    </div>`).join('') : empty('มาเรียนตรงเวลาและกลับตามเวลาทุกวันในช่วงนี้');
+
+  const ticketHtml = tickets.length ? tickets.map(t => `
+    <div class="history-item" style="cursor:pointer;" onclick="sdDrawerGo('${s.id}', () => viewTicketRequestDetails('${t.reqId}'))" title="ดูรายละเอียดบัตร">
+      ${dateBox(t.date)}
+      <div class="history-info"><div class="history-type">${t.type}</div><div class="history-duration">${t.time || '-'} · ${t.reason || '-'}</div></div>
+      ${statusBadgeHTML(t.status)}
+    </div>`).join('') : empty('ไม่มีบัตรขออนุญาตในช่วงนี้');
+
+  const leaveHtml = leaves.length ? leaves.map(r => `
+    <div class="history-item" style="cursor:pointer;" onclick="sdDrawerGo('${s.id}', () => viewSLRequestDetails('${r.id}'))" title="ดูรายละเอียดใบลา">
+      ${dateBox(r.startDate)}
+      <div class="history-info"><div class="history-type">${r.type} · ${r.days} วัน</div>
+        <div class="history-duration">${thaiDate(r.startDate)}${r.endDate !== r.startDate ? ' - ' + thaiDate(r.endDate) : ''}</div></div>
+      ${statusBadgeHTML(r.status)}
+    </div>`).join('') : empty('ไม่มีใบลาในช่วงนี้');
+
+  document.getElementById('drawer-detail-title').textContent = studentFullName(s);
+  document.getElementById('drawer-detail-body').innerHTML = `
+    <div class="sd-drawer-meta">${s.cls} · เลขที่ ${s.no} · รหัส ${s.id}<br>${sdPeriodLabel(sdPeriod)} · ${d.days.length} วันเรียน</div>
+    ${p.flags.length ? `<div class="sd-flags" style="margin-bottom:14px;">${p.flags.map(f => `<span class="badge danger">${f}</span>`).join('')}</div>` : ''}
+    <div class="sd-dstat-hero">
+      <div><span>อัตราการมาเรียน</span><strong class="${p.rate !== null && p.rate < SD_RISK.rate ? 'low' : ''}">${sdPct(p.rate)}</strong></div>
+      <div class="sd-dstat-sub">มา ${p.present} จาก ${p.checked} วันที่เช็คชื่อแล้ว${p.streak > 1 ? ` · ขาดติดกันสูงสุด ${p.streak} วัน` : ''}</div>
+    </div>
+    <div class="sd-dstat-grid">
+      ${stat('ตรงเวลา', p.ontime)}${stat('มาสาย', p.late, p.late ? '--warning' : '')}${stat('ขาดเรียน', p.absent, p.absent ? '--danger' : '')}${stat('ลา', p.leave, p.leave ? '--info' : '')}
+      ${stat('ออกก่อนเวลา', p.early)}${stat('บัตรฯ', p.tickets)}${stat('ยังไม่เช็ค', p.none)}
+    </div>
+    ${d.days.length ? `
+    <div class="setting-section-title">รายวัน</div>
+    <div class="sd-daystrip">${dayStrip}</div>
+    <div class="sd-daystrip-legend">
+      <span><i style="background:var(--success)"></i>ตรงเวลา</span><span><i style="background:var(--warning)"></i>สาย</span>
+      <span><i style="background:var(--danger)"></i>ขาด</span><span><i style="background:var(--info)"></i>ลา</span>
+      <span><i style="background:var(--text-muted)"></i>ยังไม่เช็ค</span><span><i class="early" style="background:var(--success)"></i>ออกก่อนเวลา</span>
+    </div>` : ''}
+    <div class="setting-section-title">วันที่ต้องดู (${unusual.length})</div>
+    <div class="sd-day-list">${unusualHtml}</div>
+    <div class="setting-section-title">บัตรขออนุญาต (${tickets.length})</div>
+    <div class="sd-drawer-list">${ticketHtml}</div>
+    <div class="setting-section-title">ใบลา (${leaves.length})</div>
+    <div class="sd-drawer-list">${leaveHtml}</div>
+    <div class="sd-drawer-actions">
+      <button class="btn btn-secondary btn-sm" onclick="sdDrawerGo('${s.id}', () => openSLProfileDrawer('${s.id}'))"><svg class="icon"><use href="#i-history"/></svg> ประวัติการลาทั้งหมด</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeDetailDrawer(); viewStudentHistory('${s.id}')"><svg class="icon"><use href="#i-ticket"/></svg> ประวัติบัตรขออนุญาตทั้งหมด</button>
+    </div>`;
+
+  detailDrawerRefresh = () => { renderStudentDashboard(); sdOpenStudentDrawer(studentId); };
+  document.getElementById('drawer-overlay').classList.add('active');
+  document.getElementById('drawer-detail').classList.add('active');
+}
+
 // ---- กราฟ (Chart.js) ----
 function sdColor(varName) { return getComputedStyle(document.body).getPropertyValue(varName).trim() || '#888'; }
 function sdChart(id, config, emptyMsg) {
@@ -6961,24 +7115,19 @@ function renderSDTrendChart() {
   canvas.onmouseleave = () => { if (sdCharts['sd-chart-trend']) highlight(sdCharts['sd-chart-trend'], null); };
 }
 
+// บัตรขออนุญาตแยกประเภท — แท่ง HTML (ชื่อประเภท + จำนวนอยู่บรรทัดบน แท่งอยู่ใต้) แทน Chart.js เพราะ
+// ชื่อประเภทภาษาไทยยาว ๆ บนแกน y ของ Chart.js ถูกตัดขอบซ้าย (วัดความกว้างก่อนฟอนต์ Sarabun โหลด
+// และการ์ดแคบ) — HTML ตัดบรรทัด/ขยายตามฟอนต์จริงเองจึงไม่จมหาย
 function renderSDTicketChart() {
+  const box = document.getElementById('sd-chart-tickets-box');
   const types = sdData.ticketTypes;
-  if (!sdData.tickets.length) { sdChart('sd-chart-tickets', null, 'ไม่มีบัตรขออนุญาตในช่วงที่เลือก'); return; }
-  sdChart('sd-chart-tickets', {
-    type: 'bar',
-    data: {
-      labels: types.map(t => t.type),
-      datasets: [{ label: 'จำนวนบัตร', data: types.map(t => t.count), backgroundColor: sdColor('--primary'), borderRadius: 4, borderSkipped: 'start', barThickness: 16 }]
-    },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.x} ใบ` } } },
-      scales: {
-        x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: SD_GRID }, border: { display: false } },
-        y: { grid: { display: false } }
-      }
-    }
-  });
+  if (!sdData.tickets.length) { box.innerHTML = '<div class="sd-chart-empty">ไม่มีบัตรขออนุญาตในช่วงที่เลือก</div>'; return; }
+  const max = Math.max(...types.map(t => t.count));
+  box.innerHTML = '<ul class="sd-hbars">' + [...types].sort((a, b) => b.count - a.count).map(t => `
+    <li title="${t.type}: ${t.count} ใบ">
+      <div class="sd-hbar-head"><span>${t.type}</span><strong${t.count ? '' : ' class="zero"'}>${sdNum(t.count)} ใบ</strong></div>
+      <div class="sd-hbar-track"><i style="width:${max ? t.count / max * 100 : 0}%"></i></div>
+    </li>`).join('') + '</ul>';
 }
 
 function renderSDRoomChart() {
@@ -7114,9 +7263,9 @@ function renderSDPeople() {
   if (sdState.page > pages) sdState.page = pages;
   const pageRows = rows.slice((sdState.page - 1) * SD_PAGE_SIZE, sdState.page * SD_PAGE_SIZE);
   document.getElementById('sd-people-tbody').innerHTML = pageRows.map(p => `
-    <tr>
+    <tr class="sd-room-row" onclick="sdOpenStudentDrawer('${p.s.id}')" title="ดูรายละเอียดการมาเรียนของ ${p.s.name}">
       <td class="num">${p.s.no}</td><td>${p.s.cls}</td><td>${p.s.id}</td>
-      <td><a href="#" class="sd-name-link" onclick="viewStudentHistory('${p.s.id}');return false;" title="ดูประวัติบัตรขออนุญาตรายบุคคล">${studentFullName(p.s)}</a></td>
+      <td><strong>${studentFullName(p.s)}</strong></td>
       ${sdCell(p.ontime)}${sdCell(p.late)}${sdCell(p.absent)}${sdCell(p.leave)}${sdCell(p.early)}${sdCell(p.tickets)}${sdCell(p.none)}
       ${sdRateCell(p.rate)}
       <td><div class="sd-flags">${p.flags.map(f => `<span class="badge danger">${f}</span>`).join('') || '<span class="zero">-</span>'}</div></td>
