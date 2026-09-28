@@ -197,6 +197,7 @@
     {
       label: 'การมาเรียนของนักเรียน',
       items: [
+        { icon: 'dashboard', label: 'แดชบอร์ดการมาเรียน', page: SD_LEAVE, view: 'student-dashboard', keywords: 'สถิติ สรุป กราฟ ขาด สาย ลา บัตรขออนุญาต รายห้อง' },
         { icon: 'check', label: 'เช็คชื่อนักเรียน', page: SD_LEAVE, view: 'attendance-check', keywords: 'เช็คชื่อ มาเรียน ขาด สาย ครูประจำชั้น' },
         { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย' }
       ]

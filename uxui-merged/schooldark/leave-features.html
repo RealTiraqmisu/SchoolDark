@@ -9,6 +9,10 @@
   <!-- เมนูรวมจุดเดียวของทั้งโปรเจกต์ (sidebar) — ดู ../shared/cross-nav.js -->
   <link rel="stylesheet" href="../shared/cross-nav.css">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- กราฟในแดชบอร์ดการมาเรียน (view-student-dashboard) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- ภาคเรียน (ปุ่ม "ภาคเรียนนี้" ในแดชบอร์ด) อ่านจากหน้าตั้งค่าโรงเรียน — ../settings/school.html -->
+  <script src="../settings/js/school-store.js"></script>
   <style>
     /* ===== VIEW TOGGLE ===== */
     .module-view { display: none; }
@@ -253,6 +257,91 @@
     .att-filter-btn.on { box-shadow: 0 0 0 2px currentColor inset; }
     .att-pager { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--text-muted); flex-wrap: wrap; }
     .att-pager span { margin-right: auto; }
+
+    /* ===== แดชบอร์ดการมาเรียนของนักเรียน (view-student-dashboard) ===== */
+    /* แถบตัวกรอง — ติดบนสุดของ .content-body ตอนเลื่อนลง (top ติดลบเท่า padding-top ของ .content-body
+       เพราะ sticky นับจากขอบ content box ของกล่องที่เลื่อน ถ้า top: 0 แถบจะเลื่อนลงมาทับการ์ดด้านล่าง 28px) */
+    .sd-filter-sticky { position: sticky; top: -28px; z-index: 20; margin: -28px -32px 16px; padding: 14px 32px 12px; background: var(--bg-main); border-bottom: 1px solid var(--border-color); }
+    .sd-filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .sd-filter-bar .glass-select { height: 38px; }
+    .sd-period-nav { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--border-color); border-radius: var(--br-md); background: var(--bg-card); padding: 2px; }
+    .sd-nav-btn { width: 32px; height: 32px; border: 0; background: transparent; border-radius: var(--br-sm); cursor: pointer; color: var(--text-secondary); font-size: 18px; line-height: 1; font-family: var(--font-body); }
+    .sd-nav-btn:hover:not(:disabled) { background: var(--primary-glow); color: var(--primary); }
+    .sd-nav-btn:disabled { opacity: .35; cursor: default; }
+    .sd-period-label { padding: 0 10px; font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+    .sd-period-label small { font-weight: 500; color: var(--text-muted); margin-left: 6px; }
+    .sd-custom-range { display: none; align-items: center; gap: 6px; }
+    .sd-custom-range.show { display: inline-flex; }
+    .sd-filter-spacer { flex: 1; }
+    .sd-clear-btn[hidden] { display: none; }
+    .sd-filter-note { font-size: 12px; color: var(--warning); margin-top: 8px; }
+    .sd-filter-note:empty { display: none; }
+
+    /* ภาพรวม 3 ชั้น: ตัวเลขหลัก + แท่งสัดส่วน / แถบต้องติดตาม */
+    .sd-overview { display: grid; grid-template-columns: minmax(240px, 1fr) 2.4fr; gap: 16px; margin-bottom: 16px; }
+    @media (max-width: 1000px) { .sd-overview { grid-template-columns: 1fr; } }
+    .sd-hero, .sd-mix { padding: 18px 22px; }
+    .sd-hero-label, .sd-mix-title { font-size: 13px; font-weight: 700; color: var(--text-secondary); }
+    .sd-hero-value { font-family: var(--font-heading); font-size: 44px; font-weight: 700; color: var(--text-primary); line-height: 1.1; margin: 6px 0 8px; font-variant-numeric: tabular-nums; }
+    .sd-hero-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 12px; color: var(--text-muted); }
+    .sd-delta { display: inline-flex; align-items: center; gap: 3px; font-weight: 700; color: var(--text-primary); }
+    .sd-delta.up svg { stroke: var(--success); }
+    .sd-delta.down svg { stroke: var(--danger); }
+    .sd-hero-foot { margin-top: 10px; }
+    .sd-mix-bar { display: flex; gap: 2px; height: 14px; margin: 12px 0 12px; border-radius: 4px; overflow: hidden; background: var(--bg-card); }
+    .sd-mix-bar span { display: block; min-width: 3px; height: 100%; }
+    .sd-mix-bar span:first-child { border-radius: 4px 0 0 4px; }
+    .sd-mix-bar span:last-child { border-radius: 0 4px 4px 0; }
+    .sd-mix-legend { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+    .sd-mix-item { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; background: transparent; border-radius: var(--br-sm); padding: 4px 8px; margin-left: -8px; cursor: pointer; font-family: var(--font-body); font-size: 13px; color: var(--text-secondary); }
+    .sd-mix-item:hover { border-color: var(--border-color); background: rgba(0,0,0,.02); }
+    .sd-mix-item i { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .sd-mix-item strong { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .sd-mix-avg { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); font-size: 12px; color: var(--text-muted); }
+    .sd-mix-avg strong { color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .sd-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 12px 18px; margin-bottom: 16px; border: 1px solid var(--warning-bg); background: color-mix(in srgb, var(--warning-bg) 55%, var(--bg-card)); border-radius: var(--br-md); }
+    .sd-actions[hidden] { display: none; }
+    .sd-actions-title { font-size: 12px; font-weight: 700; color: var(--warning); display: inline-flex; align-items: center; gap: 6px; margin-right: 4px; }
+    .sd-action { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-family: var(--font-body); font-size: 13px; color: var(--text-primary); }
+    .sd-action:hover { border-color: var(--primary); color: var(--primary); }
+    .sd-action strong { font-variant-numeric: tabular-nums; }
+    .sd-action .icon { width: 14px; height: 14px; stroke: var(--warning); }
+
+    .sd-chart-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+    @media (max-width: 1000px) { .sd-chart-row { grid-template-columns: 1fr; } }
+    .sd-chart-card { padding: 18px 20px; min-width: 0; }
+    .sd-chart-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 12px; margin-bottom: 10px; }
+    .sd-chart-card h4 { margin: 0 0 2px; font-size: 14px; color: var(--text-primary); }
+    .sd-chart-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+    .sd-chart-head .sd-chart-sub { margin-bottom: 0; }
+    .sd-seg { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--border-color); border-radius: var(--br-md); background: var(--bg-card); }
+    .sd-seg button { border: 0; background: transparent; color: var(--text-secondary); border-radius: var(--br-sm); padding: 5px 12px; cursor: pointer; font-family: var(--font-body); font-size: 12px; font-weight: 600; }
+    .sd-seg button:hover { color: var(--text-primary); }
+    .sd-seg button.active { background: var(--primary-glow); color: var(--primary); }
+    .sd-chart-box { position: relative; height: 260px; }
+    .sd-chart-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 16px; font-size: 13px; color: var(--text-muted); }
+
+    .sd-table th.num, .sd-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .sd-table th.sortable { cursor: pointer; user-select: none; }
+    .sd-table th.sortable:hover { color: var(--text-primary); }
+    .sd-table th .sd-sort { font-size: 10px; margin-left: 3px; }
+    .sd-table th, .sd-table td { padding-left: 10px; padding-right: 10px; }
+    .sd-table tr.sd-room-row { cursor: pointer; }
+    .sd-table tr.sd-room-row:hover td { background: var(--primary-glow); }
+    .sd-table tr.sd-total td { font-weight: 700; background: rgba(0,0,0,.03); }
+    .sd-table .zero { color: var(--text-muted); }
+    .sd-rate { display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end; }
+    .sd-rate-bar { width: 48px; height: 6px; border-radius: 3px; background: rgba(0,0,0,.07); overflow: hidden; }
+    .sd-rate-bar i { display: block; height: 100%; border-radius: 3px; background: var(--success); }
+    .sd-rate.low .sd-rate-bar i { background: var(--danger); }
+    .sd-rate.low strong { color: var(--danger); }
+    .sd-flags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .sd-people-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .sd-chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .sd-chip-row .badge { font-size: 12px; padding: 5px 12px; }
+    .sd-name-link { color: var(--text-primary); font-weight: 700; text-decoration: none; }
+    .sd-name-link:hover { color: var(--primary); text-decoration: underline; }
+    #view-student-dashboard .view-tabs-sticky { scroll-margin-top: 76px; }
   </style>
 </head>
 
@@ -1406,6 +1495,114 @@
 
 
       <!-- ================================================================
+           VIEW: แดชบอร์ดการมาเรียนของนักเรียน — สรุปเช็คชื่อ/ยังไม่เช็คชื่อ/ขาด/สาย/ลา/บัตรขออนุญาต
+           แถบตัวกรอง (ช่วงเวลา + ‹ › + ชั้นเรียน) ติดบนสุด → ภาพรวม 3 ชั้น (ตัวเลขหลัก / แท่งสัดส่วน /
+           ต้องติดตาม) → กราฟรายวัน 3 มุมมอง → แท็บ "รายห้อง" / "รายบุคคล" → Export Excel หลายชีต
+           ข้อมูลคำนวณสดจาก getAttendance() + HISTORY (ดู sdCompute) ภาคเรียนอ่านจาก SchoolStore
+      ================================================================= -->
+      <section id="view-student-dashboard" class="module-view">
+        <div class="sd-filter-sticky">
+          <div class="sd-filter-bar">
+            <select class="glass-select" id="sd-period" style="width:150px;" onchange="sdOnPeriodSelect()" aria-label="ช่วงเวลา"></select>
+            <div class="sd-period-nav">
+              <button type="button" class="sd-nav-btn" id="sd-prev" onclick="sdStep(-1)" title="ช่วงก่อนหน้า" aria-label="ช่วงก่อนหน้า">‹</button>
+              <span class="sd-period-label" id="sd-period-label"></span>
+              <button type="button" class="sd-nav-btn" id="sd-next" onclick="sdStep(1)" title="ช่วงถัดไป" aria-label="ช่วงถัดไป">›</button>
+            </div>
+            <div class="sd-custom-range" id="sd-custom-range">
+              <input type="date" class="glass-input" id="sd-from" style="width:160px;" onchange="sdOnCustomDate()" aria-label="ตั้งแต่วันที่">
+              <span style="color:var(--text-muted);font-size:13px;">ถึง</span>
+              <input type="date" class="glass-input" id="sd-to" style="width:160px;" onchange="sdOnCustomDate()" aria-label="ถึงวันที่">
+            </div>
+            <select class="glass-select" id="sd-class" style="width:150px;" onchange="sdOnFilterChange()" aria-label="ชั้นเรียน"></select>
+            <button type="button" class="btn btn-secondary btn-sm sd-clear-btn" id="sd-clear-filters" onclick="sdResetFilters()" hidden><svg class="icon"><use href="#i-x"/></svg> ล้างตัวกรอง</button>
+            <span class="sd-filter-spacer"></span>
+            <button class="btn btn-primary btn-sm" onclick="sdExportExcel()"><svg class="icon"><use href="#i-download"/></svg> Export Excel</button>
+          </div>
+          <div class="sd-filter-note" id="sd-filter-note"></div>
+        </div>
+
+        <!-- ชั้น 1–2: ตัวเลขหลัก + แท่งสัดส่วน -->
+        <div class="sd-overview">
+          <div class="glass-card sd-hero" id="sd-hero"></div>
+          <div class="glass-card sd-mix" id="sd-mix"></div>
+        </div>
+        <!-- ชั้น 3: ต้องติดตาม (ซ่อนเมื่อไม่มีเรื่องค้าง) -->
+        <div class="sd-actions" id="sd-actions" hidden></div>
+
+        <div class="sd-chart-row">
+          <div class="glass-card sd-chart-card">
+            <div class="sd-chart-head">
+              <div>
+                <h4 id="sd-trend-title">อัตราการมาเรียนรายวัน</h4>
+                <div class="sd-chart-sub" id="sd-trend-sub"></div>
+              </div>
+              <div class="sd-seg" id="sd-trend-modes" role="tablist" aria-label="มุมมองกราฟ">
+                <button type="button" data-mode="rate" class="active" onclick="sdSetTrendMode('rate')">อัตรามาเรียน</button>
+                <button type="button" data-mode="status" onclick="sdSetTrendMode('status')">แยกสถานะ</button>
+                <button type="button" data-mode="rooms" onclick="sdSetTrendMode('rooms')">เทียบห้อง</button>
+              </div>
+            </div>
+            <div class="sd-chart-box" id="sd-chart-trend-box"><canvas id="sd-chart-trend"></canvas></div>
+          </div>
+          <div class="glass-card sd-chart-card">
+            <h4>บัตรขออนุญาตแยกประเภท</h4>
+            <div class="sd-chart-sub">ไม่นับบัตรที่ไม่อนุมัติ</div>
+            <div class="sd-chart-box" id="sd-chart-tickets-box"><canvas id="sd-chart-tickets"></canvas></div>
+          </div>
+        </div>
+
+        <div class="view-tabs-sticky">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="sd-rooms">รายห้อง</button>
+            <button class="tab-btn" data-tab="sd-people">รายบุคคล</button>
+          </div>
+        </div>
+
+        <!-- Tab: รายห้อง -->
+        <div class="tab-content active" id="tab-sd-rooms">
+          <div class="glass-card sd-chart-card" style="margin-bottom:16px;">
+            <h4>สัดส่วนการมาเรียนแยกห้อง</h4>
+            <div class="sd-chart-sub">% ของจำนวนคน-วันเรียนทั้งหมดของห้องในช่วงที่เลือก · คลิกแท่งเพื่อดูรายชื่อ</div>
+            <div class="sd-chart-box" id="sd-chart-rooms-box"><canvas id="sd-chart-rooms"></canvas></div>
+          </div>
+          <div class="glass-card" style="padding: 20px 24px;">
+            <div class="card-header" style="margin-bottom: 12px;flex-wrap:wrap;gap:8px;">
+              <h3><svg class="icon" style="stroke: var(--primary);"><use href="#i-building"/></svg> สรุปแยกห้องเรียน</h3>
+              <span class="att-time-hint">คลิกแถวเพื่อดูรายชื่อนักเรียนของห้องนั้น</span>
+            </div>
+            <div class="data-table-wrap">
+              <table class="data-table sd-table">
+                <thead id="sd-room-thead"></thead>
+                <tbody id="sd-room-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab: รายบุคคล -->
+        <div class="tab-content glass-card" id="tab-sd-people" style="padding: 20px 24px;">
+          <div class="card-header" style="margin-bottom: 12px;">
+            <h3><svg class="icon" style="stroke: var(--primary);"><use href="#i-users"/></svg> สถิติรายบุคคล</h3>
+          </div>
+          <div class="sd-people-toolbar">
+            <div class="search-box">
+              <svg><use href="#i-search"/></svg>
+              <input class="glass-input" id="sd-search" placeholder="ค้นหาชื่อหรือรหัสนักเรียน..." oninput="sdState.page=1;renderSDPeople()">
+            </div>
+          </div>
+          <div class="sd-chip-row" id="sd-people-chips"></div>
+          <div class="data-table-wrap">
+            <table class="data-table sd-table">
+              <thead id="sd-people-thead"></thead>
+              <tbody id="sd-people-tbody"></tbody>
+            </table>
+          </div>
+          <div class="att-pager" id="sd-people-pager"></div>
+        </div>
+      </section>
+
+      <!-- ================================================================
            VIEW: เช็คชื่อนักเรียน (ครูประจำชั้นบันทึกการมาเรียน — ยังไม่มีเครื่องสแกน)
            ค่าเริ่มต้นทุกคน "มา" ครูเปลี่ยนเฉพาะคนที่สาย/ขาด/กลับก่อน แล้วกดบันทึกครั้งเดียว
            คนที่มีใบลาอนุมัติแล้วระบบตั้งสถานะให้เองและล็อกไว้
@@ -2238,6 +2435,7 @@ const VIEW_TITLES = {
   'employees':   'รายชื่อบุคลากรและอาจารย์',
   'sl-submit': 'ยื่นขอลาของนักเรียน',
   'student-leave-settings': 'ตั้งค่าการลาเรียน',
+  'student-dashboard': 'แดชบอร์ดการมาเรียน',
   'attendance-check': 'เช็คชื่อนักเรียน',
   'attendance-report': 'รายงานการมาเรียน',
   'attendance-settings': 'เวลาเข้า-เลิกเรียนของนักเรียน'
@@ -2314,6 +2512,7 @@ function showModuleView(view, activeItem = null) {
   // หมวดตรงกับกลุ่มใน sidebar (NAV_GROUPS ใน ../shared/cross-nav.js)
   const BREADCRUMB_GROUP = {
     'sl-submit': 'การลาเรียนของนักเรียน', 'approve': 'การลาเรียนของนักเรียน',
+    'student-dashboard': 'การมาเรียนของนักเรียน',
     'attendance-check': 'การมาเรียนของนักเรียน', 'attendance-report': 'การมาเรียนของนักเรียน',
     'student-leave-settings': 'การตั้งค่า', 'attendance-settings': 'การตั้งค่า'
   };
@@ -2327,6 +2526,7 @@ function showModuleView(view, activeItem = null) {
   if (view === 'student-leave-settings') renderStudentLeaveSettings();
   if (view === 'sl-submit') renderSLSubmitPending();
   if (view === 'approve') renderApprovals();
+  if (view === 'student-dashboard') renderStudentDashboardView();
   if (view === 'attendance-check') renderAttendanceCheckView();
   if (view === 'attendance-report') renderAttendanceReportView();
   if (view === 'attendance-settings') renderAttendanceSettings();
@@ -3595,6 +3795,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if (tabId === 'summary') renderSummary();
     if (tabId === 'requests') renderApproveStudentLeaveTable();
     if (tabId === 'leave-history') renderSLProfileList();
+    if (tabId === 'sd-rooms' || tabId === 'sd-people') { sdState.tab = tabId; renderSDTab(); }
 
     const stickyBar = parent.querySelector('.view-tabs-sticky');
     if (stickyBar) stickyBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -6199,6 +6400,793 @@ function saveAttendanceSettings() {
   attStore(ATT_SETTINGS_KEY, attSettings);
   renderAttendanceSettings();
   attToast('บันทึกเวลาเข้า-เลิกเรียนของนักเรียนแล้ว');
+}
+
+// ======================================================================
+//  แดชบอร์ดการมาเรียนของนักเรียน (view-student-dashboard)
+//  สรุปมาตรงเวลา/สาย/ขาด/ลา/ออกก่อนเวลา/ยังไม่เช็คชื่อ + บัตรขออนุญาต ตามช่วงเวลาและชั้นเรียน
+//  ไม่มีข้อมูลของตัวเอง: คำนวณสดจาก getAttendance() (ใบลาที่อนุมัติ → ที่ครูบันทึก → ข้อมูล
+//  ตัวอย่าง) ทีละคนทีละวันเรียน และนับบัตรจาก HISTORY (ไม่นับบัตร "ไม่อนุมัติ")
+//  หน่วยนับ "คน-วัน" = นักเรียน 1 คนใน 1 วันเรียน, % มาเรียน = (ตรงเวลา + สาย) ÷ วันที่เช็คชื่อแล้ว
+//  ช่วงเวลา (sdPeriod) เป็นหน่วย วัน/สัปดาห์/เดือน/ภาคเรียน/กำหนดเอง — ปุ่ม ‹ › เลื่อนทีละหน่วย และ
+//  "ช่วงก่อนหน้า" ที่ใช้เทียบก็คือช่วงที่ได้จากการกด ‹ หนึ่งครั้ง ภาคเรียนอ่านจาก SchoolStore
+//  ('school_academic_years' ของ settings/school.html) เก็บเฉพาะตัวกรองล่าสุดใน localStorage
+//  sd_student_dashboard_filters
+// ======================================================================
+const SD_FILTER_KEY = 'sd_student_dashboard_filters';
+const SD_MAX_DAYS = 200;
+const SD_PAGE_SIZE = 50;
+// เกณฑ์ "กลุ่มเฝ้าระวัง": % มาเรียนต่ำกว่า rate (เมื่อเช็คชื่อแล้วอย่างน้อย minChecked วัน),
+// ขาดติดกันตั้งแต่ streak วันเรียน, หรือใช้บัตรขออนุญาตตั้งแต่ tickets ใบในช่วงที่เลือก
+const SD_RISK = { rate: 80, minChecked: 5, streak: 3, tickets: 3 };
+// สีของแต่ละสถานะ (แท่งสัดส่วน, กราฟแท่งแยกห้อง, กราฟเส้น "แยกสถานะ") — ลำดับ ตรงเวลา → ลา → สาย
+// → ขาด ไม่วาง เขียว↔ส้ม ติดกัน เพราะคนตาบอดสีแดง-เขียวแยกคู่นี้ไม่ออก; early ใช้ aqua แยกจากชุดสี
+// badge เดิม — ชุดสีเส้นตรวจด้วย validate_palette (--pairs all) แล้ว
+const SD_CATS = [
+  { key: 'ontime', label: 'มาตรงเวลา', color: '--success' },
+  { key: 'leave', label: 'ลา', color: '--info' },
+  { key: 'late', label: 'มาสาย', color: '--warning' },
+  { key: 'absent', label: 'ขาดเรียน', color: '--danger' },
+  { key: 'none', label: 'ยังไม่เช็คชื่อ', color: '--text-muted' }
+];
+const SD_LINE_COLORS = { late: '#c47f08', absent: '#d5203e', leave: '#0b8fc1', early: '#1baf7a', tickets: '#5336e2', none: '#7b899d' };
+// สีประจำห้อง (โหมด "เทียบห้อง") — ผูกกับห้อง ไม่ใช่ลำดับที่แสดง: ห้องเดิมได้สีเดิมเสมอแม้เปลี่ยนตัวกรอง
+const SD_ROOM_COLORS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#4a3aa7', '#e34948'];
+const SD_SUM_KEYS = ['ontime', 'late', 'absent', 'leave', 'none', 'early', 'tickets', 'lastNone'];
+const SD_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const SD_PRESETS = [
+  { id: 'today', label: 'วันนี้' }, { id: 'yesterday', label: 'เมื่อวาน' },
+  { id: 'week', label: 'สัปดาห์นี้' }, { id: 'lastweek', label: 'สัปดาห์ที่แล้ว' },
+  { id: 'month', label: 'เดือนนี้' }, { id: 'lastmonth', label: 'เดือนที่แล้ว' },
+  { id: 'term', label: 'ภาคเรียนนี้' }, { id: 'custom', label: 'กำหนดเอง…' }
+];
+// ชิปกรองในแท็บรายบุคคล — นับเป็น "จำนวนนักเรียนที่มีสถานะนั้นอย่างน้อย 1 วัน"
+const SD_PEOPLE_CHIPS = [
+  { key: 'late', label: 'มีมาสาย', cls: 'warning' }, { key: 'absent', label: 'มีขาดเรียน', cls: 'danger' },
+  { key: 'leave', label: 'มีลา', cls: 'info' }, { key: 'early', label: 'ออกก่อนเวลา', cls: 'warning' },
+  { key: 'tickets', label: 'ใช้บัตรขออนุญาต', cls: 'info' }, { key: 'none', label: 'ยังไม่เช็คชื่อ', cls: 'muted' },
+  { key: 'risk', label: 'กลุ่มเฝ้าระวัง', cls: 'danger' }
+];
+
+let sdPeriod = null;     // { unit: 'day'|'week'|'month'|'term'|'custom', from, to } — ช่วงเต็ม (to อาจเลยวันนี้)
+let sdState = { tab: 'sd-rooms', status: 'all', sortKey: 'cls', sortDir: 1, page: 1, trend: 'rate' };
+let sdData = null;       // ผลคำนวณล่าสุด — ใช้ร่วมกันทั้งภาพรวม กราฟ ตาราง และ Export
+let sdPrev = null;       // ผลคำนวณของช่วงก่อนหน้า (ใช้เทียบ)
+const sdCharts = {};
+
+const sdNum = n => Number(n || 0).toLocaleString('th-TH');
+const sdPct = v => v === null ? '-' : v.toFixed(1) + '%';
+function sdShortDate(dateStr) {
+  const [, m, d] = dateStr.split('-').map(Number);
+  return d + ' ' + SD_MONTHS_SHORT[m - 1];
+}
+function sdYMD(dt) { return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'); }
+function sdDaysBetween(a, b) {
+  const [y1, m1, d1] = a.split('-').map(Number), [y2, m2, d2] = b.split('-').map(Number);
+  return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000);
+}
+// "1–27 ก.ย. 2569" / "28 ก.ย. – 4 ต.ค. 2569" / "28 ธ.ค. 2569 – 3 ม.ค. 2570"
+function sdRangeText(from, to) {
+  const [y1, m1, d1] = from.split('-').map(Number), [y2, m2, d2] = to.split('-').map(Number);
+  if (from === to) return `${d1} ${SD_MONTHS_SHORT[m1 - 1]} ${y1 + 543}`;
+  if (y1 === y2 && m1 === m2) return `${d1}–${d2} ${SD_MONTHS_SHORT[m1 - 1]} ${y1 + 543}`;
+  if (y1 === y2) return `${d1} ${SD_MONTHS_SHORT[m1 - 1]} – ${d2} ${SD_MONTHS_SHORT[m2 - 1]} ${y1 + 543}`;
+  return `${d1} ${SD_MONTHS_SHORT[m1 - 1]} ${y1 + 543} – ${d2} ${SD_MONTHS_SHORT[m2 - 1]} ${y2 + 543}`;
+}
+
+// ---- ช่วงเวลา ----
+function sdDayPeriod(d) { return { unit: 'day', from: d, to: d }; }
+function sdWeekPeriod(d) { const mon = attAddDays(d, -((attWeekday(d) + 6) % 7)); return { unit: 'week', from: mon, to: attAddDays(mon, 6) }; }
+function sdMonthPeriod(d) {
+  const [y, m] = d.split('-').map(Number);
+  return { unit: 'month', from: sdYMD(new Date(y, m - 1, 1)), to: sdYMD(new Date(y, m, 0)) };
+}
+function sdMonthShift(d, n) { const [y, m] = d.split('-').map(Number); return sdYMD(new Date(y, m - 1 + n, 1)); }
+// ภาคเรียนทั้งหมดจากหน้าตั้งค่าโรงเรียน เรียงตามวันเปิดภาค
+function sdTerms() {
+  let years = [];
+  try { years = (window.SchoolStore && SchoolStore.get('school_academic_years')) || []; } catch (e) {}
+  const list = [];
+  years.forEach(y => [1, 2].forEach(n => {
+    const from = y['term' + n + 'Start'], to = y['term' + n + 'End'];
+    if (from && to && from <= to) list.push({ unit: 'term', from, to, year: y.year, term: n });
+  }));
+  return list.sort((a, b) => a.from.localeCompare(b.from));
+}
+// ภาคเรียนที่ครอบวันนี้ ถ้าอยู่ช่วงปิดภาค → ภาคล่าสุดที่เปิดไปแล้ว
+function sdCurrentTerm() {
+  const today = attToday(), terms = sdTerms();
+  return terms.find(t => t.from <= today && today <= t.to) || terms.filter(t => t.from <= today).pop() || null;
+}
+function sdPresetPeriod(id) {
+  const t = attToday();
+  if (id === 'today') return sdDayPeriod(t);
+  if (id === 'yesterday') return sdDayPeriod(attAddDays(t, -1));
+  if (id === 'week') return sdWeekPeriod(t);
+  if (id === 'lastweek') return sdWeekPeriod(attAddDays(t, -7));
+  if (id === 'lastmonth') return sdMonthPeriod(sdMonthShift(t, -1));
+  if (id === 'term') return sdCurrentTerm();
+  return sdMonthPeriod(t); // month
+}
+function sdShiftPeriod(p, dir) {
+  if (p.unit === 'day') {
+    let d = p.from;
+    for (let i = 0; i < 14; i++) { d = attAddDays(d, dir); if (attIsSchoolDay(d)) break; } // ข้ามวันหยุดประจำสัปดาห์
+    return sdDayPeriod(d);
+  }
+  if (p.unit === 'week') return sdWeekPeriod(attAddDays(p.from, 7 * dir));
+  if (p.unit === 'month') return sdMonthPeriod(sdMonthShift(p.from, dir));
+  if (p.unit === 'term') {
+    const terms = sdTerms(), i = terms.findIndex(t => t.from === p.from && t.to === p.to);
+    return i < 0 ? null : terms[i + dir] || null;
+  }
+  const len = sdDaysBetween(p.from, p.to) + 1;
+  return { unit: 'custom', from: attAddDays(p.from, dir * len), to: attAddDays(p.to, dir * len) };
+}
+function sdPeriodLabel(p) {
+  if (!p) return '-';
+  if (p.unit === 'day') return `${ATT_DAY_LABELS[attWeekday(p.from)]}. ${sdRangeText(p.from, p.from)}`;
+  if (p.unit === 'month') { const [y, m] = p.from.split('-').map(Number); return `${THAI_MONTHS_FULL[m - 1]} ${y + 543}`; }
+  if (p.unit === 'term') return `ภาคเรียนที่ ${p.term}/${p.year}`;
+  return sdRangeText(p.from, p.to);
+}
+function sdSamePeriod(a, b) { return !!a && !!b && a.unit === b.unit && a.from === b.from && a.to === b.to; }
+function sdMatchedPreset() {
+  if (sdPeriod.unit === 'custom') return 'custom';
+  const hit = SD_PRESETS.find(x => x.id !== 'custom' && sdSamePeriod(sdPresetPeriod(x.id), sdPeriod));
+  return hit ? hit.id : null;
+}
+
+// ---- ชั้นเรียน (ช่องเดียว: '' = ทุกชั้น, 'ม.1' = ทั้งชั้นปี, 'ม.1/1' = ห้องเดียว) ----
+function sdClassValue() {
+  const v = document.getElementById('sd-class').value;
+  if (!v) return { grade: '', room: '' };
+  const [grade, room] = v.split('/');
+  return { grade, room: room || '' };
+}
+function sdFillClassSelect() {
+  const sel = document.getElementById('sd-class');
+  sel.innerHTML = '<option value="">ทุกชั้นเรียน</option>' + studentGradeOptions().map(g =>
+    `<optgroup label="${g}"><option value="${g}">${g} ทั้งหมด</option>` +
+    attRoomsOfGrade(g).map(r => `<option value="${g}/${r}">${g}/${r}</option>`).join('') + '</optgroup>').join('');
+}
+
+// ---- ตัวกรอง ----
+function sdSaveFilters() {
+  attStore(SD_FILTER_KEY, { preset: sdMatchedPreset(), period: sdPeriod, cls: document.getElementById('sd-class').value, trend: sdState.trend });
+}
+function sdSyncFilterBar() {
+  const matched = sdMatchedPreset();
+  const sel = document.getElementById('sd-period');
+  sel.innerHTML = (matched ? '' : `<option value="__nav">${sdPeriodLabel(sdPeriod)}</option>`) +
+    SD_PRESETS.map(x => `<option value="${x.id}">${x.label}</option>`).join('');
+  sel.value = matched || '__nav';
+  document.getElementById('sd-custom-range').classList.toggle('show', sdPeriod.unit === 'custom');
+  if (sdPeriod.unit === 'custom') {
+    document.getElementById('sd-from').value = sdPeriod.from;
+    document.getElementById('sd-to').value = sdPeriod.to;
+  }
+  const next = sdShiftPeriod(sdPeriod, 1);
+  document.getElementById('sd-prev').disabled = !sdShiftPeriod(sdPeriod, -1);
+  document.getElementById('sd-next').disabled = !next || next.from > attToday();
+  const isDefault = matched === 'month' && !document.getElementById('sd-class').value;
+  document.getElementById('sd-clear-filters').hidden = isDefault;
+}
+function renderStudentDashboardView() {
+  const sel = document.getElementById('sd-class');
+  if (!sel.options.length) {
+    sdFillClassSelect();
+    const saved = attLoad(SD_FILTER_KEY, null) || {};
+    if (saved.cls && [...sel.options].some(o => o.value === saved.cls)) sel.value = saved.cls;
+    if (['rate', 'status', 'rooms'].includes(saved.trend)) sdState.trend = saved.trend;
+    // ปุ่มลัด (เดือนนี้/สัปดาห์นี้/…) คำนวณใหม่ตามวันนี้เสมอ ส่วนช่วงที่เลื่อนเอง/กำหนดเองใช้ค่าที่เก็บไว้
+    const p = saved.preset && saved.preset !== 'custom' ? sdPresetPeriod(saved.preset) : saved.period;
+    sdPeriod = p && p.from && p.to ? p : sdPresetPeriod('month');
+    document.querySelectorAll('#sd-trend-modes button').forEach(b => b.classList.toggle('active', b.dataset.mode === sdState.trend));
+  }
+  document.getElementById('sd-from').max = attToday();
+  document.getElementById('sd-to').max = attToday();
+  sdOnFilterChange();
+}
+function sdOnPeriodSelect() {
+  const id = document.getElementById('sd-period').value;
+  if (id === '__nav') return;
+  if (id === 'custom') {
+    const to = sdPeriod.to > attToday() ? attToday() : sdPeriod.to;
+    sdPeriod = { unit: 'custom', from: sdPeriod.from, to };
+  } else {
+    const p = sdPresetPeriod(id);
+    if (!p) { document.getElementById('sd-filter-note').innerHTML = 'ไม่พบข้อมูลภาคเรียน — ตั้งค่าวันเปิด-ปิดภาคเรียนที่ <a href="../settings/school.html#tab=years">ตั้งค่าโรงเรียน › ข้อมูลปีการศึกษา</a>'; sdSyncFilterBar(); return; }
+    sdPeriod = p;
+  }
+  sdOnFilterChange();
+}
+function sdOnCustomDate() {
+  let from = document.getElementById('sd-from').value, to = document.getElementById('sd-to').value;
+  if (!from || !to) return;
+  if (from > to) [from, to] = [to, from];
+  sdPeriod = { unit: 'custom', from, to };
+  sdOnFilterChange();
+}
+function sdStep(dir) {
+  const p = sdShiftPeriod(sdPeriod, dir);
+  if (!p || p.from > attToday()) return;
+  sdPeriod = p;
+  sdOnFilterChange();
+}
+function sdResetFilters() {
+  sdPeriod = sdPresetPeriod('month');
+  document.getElementById('sd-class').value = '';
+  sdOnFilterChange();
+}
+function sdOnFilterChange() { sdState.page = 1; sdSyncFilterBar(); sdSaveFilters(); renderStudentDashboard(); }
+
+// ---- คำนวณ ----
+function sdFinish(o) {
+  o.checked = o.ontime + o.late + o.absent + o.leave;
+  o.present = o.ontime + o.late;
+  o.rate = o.checked ? o.present / o.checked * 100 : null;
+  return o;
+}
+function sdCompute(period, grade, room) {
+  const today = attToday();
+  let from = period.from, to = period.to > today ? today : period.to;
+  let capped = false;
+  if (from > to) to = from; // ช่วงในอนาคตทั้งช่วง → ไม่มีวันเรียน (ดู days ด้านล่าง)
+  if (attAddDays(from, SD_MAX_DAYS - 1) < to) { from = attAddDays(to, -(SD_MAX_DAYS - 1)); capped = true; }
+
+  const students = attStudentsOf(grade, room);
+  const days = [];
+  for (let d = from; d <= to && d <= today; d = attAddDays(d, 1)) if (attIsSchoolDay(d)) days.push(d);
+  const lastIdx = days.length - 1;
+
+  const ids = new Set(students.map(s => s.id));
+  const tickets = HISTORY.filter(h => ids.has(h.id) && h.date >= from && h.date <= to && h.status !== 'ไม่อนุมัติ')
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const ticketCount = {}, ticketByDate = {};
+  tickets.forEach(t => { ticketCount[t.id] = (ticketCount[t.id] || 0) + 1; ticketByDate[t.date] = (ticketByDate[t.date] || 0) + 1; });
+
+  const blank = () => ({ ontime: 0, late: 0, absent: 0, leave: 0, none: 0, early: 0, tickets: 0, lastNone: 0 });
+  const daily = days.map(date => ({ date, ...blank(), tickets: ticketByDate[date] || 0 }));
+  const roomDaily = {}; // cls → [{ ontime, late, absent, leave, none }] ต่อวันเรียน (โหมดกราฟ "เทียบห้อง")
+  const people = students.map(s => {
+    const p = { s, ...blank(), streak: 0 };
+    const rd = roomDaily[s.cls] || (roomDaily[s.cls] = days.map(() => ({ ontime: 0, late: 0, absent: 0, leave: 0, none: 0 })));
+    let run = 0;
+    days.forEach((d, i) => {
+      const rec = getAttendance(s, d);
+      const cat = attCategory(rec.statusIn);
+      p[cat]++; daily[i][cat]++; rd[i][cat]++;
+      if (rec.statusOut === 'ออกก่อนเวลา') { p.early++; daily[i].early++; }
+      if (i === lastIdx && cat === 'none') p.lastNone = 1;
+      run = cat === 'absent' ? run + 1 : 0;
+      if (run > p.streak) p.streak = run;
+    });
+    p.tickets = ticketCount[s.id] || 0;
+    sdFinish(p);
+    p.flags = [];
+    if (p.streak >= SD_RISK.streak) p.flags.push(`ขาดติดกัน ${p.streak} วัน`);
+    if (p.checked >= SD_RISK.minChecked && p.rate < SD_RISK.rate) p.flags.push(`มาเรียน < ${SD_RISK.rate}%`);
+    if (p.tickets >= SD_RISK.tickets) p.flags.push(`บัตรฯ ${p.tickets} ใบ`);
+    p.risk = p.flags.length;
+    return p;
+  });
+  daily.forEach(sdFinish);
+  Object.values(roomDaily).forEach(arr => arr.forEach(sdFinish));
+
+  const roomMap = new Map();
+  const total = { cls: 'รวม', teacher: '', students: 0, risk: 0, ...blank() };
+  people.forEach(p => {
+    let r = roomMap.get(p.s.cls);
+    if (!r) { r = { cls: p.s.cls, teacher: homeroomTeacherName(p.s.cls), students: 0, risk: 0, ...blank() }; roomMap.set(p.s.cls, r); }
+    [r, total].forEach(o => {
+      o.students++;
+      if (p.flags.length) o.risk++;
+      SD_SUM_KEYS.forEach(k => { o[k] += p[k]; });
+    });
+  });
+  const rooms = [...roomMap.values()].sort((a, b) => a.cls.localeCompare(b.cls, 'th', { numeric: true }));
+  rooms.forEach(sdFinish);
+  sdFinish(total);
+
+  // เรื่องที่รอดำเนินการ (แถบ "ต้องติดตาม") — เฉพาะนักเรียนตามตัวกรอง และคาบเกี่ยวช่วงที่เลือก
+  const pendingTickets = tickets.filter(t => t.status === 'รอตรวจสอบ').length;
+  const pendingLeaves = STUDENT_LEAVE_REQUESTS.filter(r => ids.has(r.studentId) && r.status === 'รอตรวจสอบ' && r.startDate <= to && r.endDate >= from).length;
+
+  const ticketTypes = TICKET_TYPES.map(type => ({ type, count: tickets.filter(t => t.type === type).length }));
+  return { from, to, capped, grade, room, days, lastDay: days[lastIdx] || null, people, daily, roomDaily, rooms, total, tickets, ticketTypes, pendingTickets, pendingLeaves };
+}
+
+// ---- แสดงผล ----
+function renderStudentDashboard() {
+  const { grade, room } = sdClassValue();
+  sdData = sdCompute(sdPeriod, grade, room);
+  const prevP = sdShiftPeriod(sdPeriod, -1);
+  sdPrev = prevP ? { period: prevP, ...sdCompute(prevP, grade, room) } : null;
+
+  const d = sdData;
+  const clamped = sdPeriod.to > attToday() && sdPeriod.from <= attToday();
+  document.getElementById('sd-period-label').innerHTML = `${sdPeriodLabel(sdPeriod)}<small>${d.days.length} วันเรียน${clamped ? ' · ถึงวันนี้' : ''}</small>`;
+  const notes = [];
+  if (d.capped) notes.push(`แสดงสูงสุด ${SD_MAX_DAYS} วันย้อนหลังจากวันที่สิ้นสุด`);
+  if (!d.days.length) notes.push('ไม่มีวันเรียนในช่วงที่เลือก (วันหยุดประจำสัปดาห์ตามหน้าตั้งค่าเวลาเข้า-เลิกเรียน)');
+  document.getElementById('sd-filter-note').innerHTML = notes.join(' · ');
+
+  renderSDOverview();
+  renderSDTrendChart();
+  renderSDTicketChart();
+  renderSDTab();
+}
+function renderSDTab() {
+  if (!sdData) return;
+  if (sdState.tab === 'sd-people') renderSDPeople();
+  else { renderSDRooms(); renderSDRoomChart(); }
+}
+function sdGoTab(tab) {
+  const btn = document.querySelector(`#view-student-dashboard .tab-btn[data-tab="${tab}"]`);
+  if (btn) btn.click();
+  document.querySelector('#view-student-dashboard .view-tabs-sticky').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+const SD_ARROW_UP = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>';
+const SD_ARROW_DOWN = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
+const SD_ALERT = '<svg class="icon" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+
+function renderSDOverview() {
+  const d = sdData, t = d.total;
+  // ชั้น 1: ตัวเลขหลัก + เทียบช่วงก่อนหน้า + เกณฑ์
+  let delta = '<span>ไม่มีข้อมูลช่วงก่อนหน้าให้เทียบ</span>';
+  if (t.rate !== null && sdPrev && sdPrev.total.rate !== null) {
+    const diff = t.rate - sdPrev.total.rate;
+    const dir = Math.abs(diff) < 0.05 ? '' : diff > 0 ? 'up' : 'down';
+    delta = `<span class="sd-delta ${dir}">${dir === 'up' ? SD_ARROW_UP : dir === 'down' ? SD_ARROW_DOWN : ''}${dir ? (diff > 0 ? '+' : '') + diff.toFixed(1) + ' จุด' : 'เท่าเดิม'}</span>
+      <span>เทียบ${sdPeriodLabel(sdPrev.period)} (${sdPct(sdPrev.total.rate)})</span>`;
+  }
+  const pass = t.rate === null ? '' : t.rate >= SD_RISK.rate
+    ? `<span class="badge success">✓ ผ่านเกณฑ์ ${SD_RISK.rate}%</span>`
+    : `<span class="badge danger">ต่ำกว่าเกณฑ์ ${SD_RISK.rate}%</span>`;
+  document.getElementById('sd-hero').innerHTML = `
+    <div class="sd-hero-label">อัตราการมาเรียน</div>
+    <div class="sd-hero-value">${sdPct(t.rate)}</div>
+    <div class="sd-hero-row">${delta}</div>
+    <div class="sd-hero-row sd-hero-foot">${pass}<span>มา ${sdNum(t.present)} จาก ${sdNum(t.checked)} คน-วันที่เช็คชื่อแล้ว</span></div>`;
+
+  // ชั้น 2: แท่งสัดส่วนแท่งเดียว + ค่าเฉลี่ยต่อวันเรียน
+  const all = t.checked + t.none;
+  const cats = SD_CATS.filter(c => t[c.key] > 0);
+  const share = n => all ? (n / all * 100) : 0;
+  const perDay = n => { const v = d.days.length ? n / d.days.length : 0; return v >= 10 ? Math.round(v).toLocaleString('th-TH') : (Math.round(v * 10) / 10).toLocaleString('th-TH'); };
+  const clickable = { leave: 1, late: 1, absent: 1, none: 1 };
+  document.getElementById('sd-mix').innerHTML = !all
+    ? `<div class="sd-mix-title">สัดส่วนการมาเรียน</div><div class="sd-chart-sub" style="margin-top:12px;">ไม่มีข้อมูลในช่วงที่เลือก</div>`
+    : `<div class="sd-mix-title">สัดส่วนการมาเรียน <span style="font-weight:500;color:var(--text-muted);">· นักเรียน ${sdNum(t.students)} คน × ${d.days.length} วันเรียน</span></div>
+      <div class="sd-mix-bar" role="img" aria-label="${cats.map(c => c.label + ' ' + share(t[c.key]).toFixed(1) + '%').join(', ')}">
+        ${cats.map(c => `<span style="flex:${t[c.key]};background:var(${c.color});" title="${c.label} ${share(t[c.key]).toFixed(1)}% (${sdNum(t[c.key])} คน-วัน)"></span>`).join('')}
+      </div>
+      <div class="sd-mix-legend">
+        ${cats.map(c => {
+          const inner = `<i style="background:var(${c.color});"></i>${c.label} <strong>${share(t[c.key]).toFixed(1)}%</strong>`;
+          return clickable[c.key]
+            ? `<button type="button" class="sd-mix-item" onclick="sdFilterByStatus('${c.key}')" title="ดูรายชื่อนักเรียนที่มี${c.label}">${inner}</button>`
+            : `<span class="sd-mix-item" style="cursor:default;">${inner}</span>`;
+        }).join('')}
+      </div>
+      <div class="sd-mix-avg">เฉลี่ยต่อวันเรียน: มาสาย <strong>${perDay(t.late)}</strong> คน · ขาดเรียน <strong>${perDay(t.absent)}</strong> คน ·
+        ลา <strong>${perDay(t.leave)}</strong> คน · ออกก่อนเวลา <strong>${perDay(t.early)}</strong> คน · บัตรขออนุญาต <strong>${perDay(d.tickets.length)}</strong> ใบ</div>`;
+
+  // ชั้น 3: ต้องติดตาม — แสดงเฉพาะเรื่องที่ต้องลงมือทำ ไม่มีเลย → ซ่อนทั้งแถบ
+  const uncheckedRooms = d.rooms.filter(r => r.lastNone > 0).length;
+  const items = [];
+  if (uncheckedRooms) items.push(`<button type="button" class="sd-action" onclick="sdGoTab('sd-rooms')">${SD_ALERT}${d.lastDay === attToday() ? 'วันนี้' : sdShortDate(d.lastDay)} ยังไม่เช็คชื่อ <strong>${uncheckedRooms}</strong> ห้อง</button>`);
+  if (t.risk) items.push(`<button type="button" class="sd-action" onclick="sdFilterByStatus('risk')">${SD_ALERT}นักเรียนกลุ่มเฝ้าระวัง <strong>${t.risk}</strong> คน</button>`);
+  if (d.pendingLeaves) items.push(`<button type="button" class="sd-action" onclick="showModuleView('approve')">${SD_ALERT}ใบลารออนุมัติ <strong>${d.pendingLeaves}</strong> ใบ</button>`);
+  if (d.pendingTickets) items.push(`<button type="button" class="sd-action" onclick="showModuleView('ticket-calendar')">${SD_ALERT}บัตรขออนุญาตรอตรวจสอบ <strong>${d.pendingTickets}</strong> ใบ</button>`);
+  const box = document.getElementById('sd-actions');
+  box.hidden = !items.length;
+  box.innerHTML = `<span class="sd-actions-title">ต้องติดตาม</span>` + items.join('');
+}
+function sdFilterByStatus(key) {
+  sdState.status = key;
+  sdState.page = 1;
+  sdState.sortKey = key === 'risk' ? 'flags' : key; sdState.sortDir = -1;
+  sdGoTab('sd-people');
+}
+function sdClearPeopleFilters() {
+  sdState.status = 'all'; sdState.page = 1;
+  sdState.sortKey = 'cls'; sdState.sortDir = 1;
+  document.getElementById('sd-search').value = '';
+  renderSDPeople();
+}
+function sdOpenRoom(cls) {
+  document.getElementById('sd-class').value = cls;
+  sdState.status = 'all'; sdState.sortKey = 'no'; sdState.sortDir = 1;
+  sdOnFilterChange();
+  sdGoTab('sd-people');
+}
+
+// ---- กราฟ (Chart.js) ----
+function sdColor(varName) { return getComputedStyle(document.body).getPropertyValue(varName).trim() || '#888'; }
+function sdChart(id, config, emptyMsg) {
+  if (sdCharts[id]) { sdCharts[id].destroy(); delete sdCharts[id]; }
+  const box = document.getElementById(id + '-box');
+  const canvas = document.getElementById(id);
+  const oldEmpty = box.querySelector('.sd-chart-empty');
+  if (oldEmpty) oldEmpty.remove();
+  if (!config || typeof Chart === 'undefined') {
+    canvas.style.display = 'none';
+    box.insertAdjacentHTML('beforeend', `<div class="sd-chart-empty">${config ? 'โหลดไลบรารีกราฟไม่สำเร็จ (ต้องเชื่อมต่ออินเทอร์เน็ต)' : emptyMsg}</div>`);
+    return;
+  }
+  canvas.style.display = '';
+  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+  Chart.defaults.color = sdColor('--text-secondary');
+  sdCharts[id] = new Chart(canvas, config);
+}
+const SD_GRID = 'rgba(0,0,0,.06)';
+const SD_LEGEND = { position: 'top', align: 'start', labels: { boxWidth: 12, boxHeight: 12, padding: 14, usePointStyle: false } };
+function sdThresholdSet(n) {
+  return { key: 'threshold', label: `เกณฑ์ ${SD_RISK.rate}%`, data: Array(n).fill(SD_RISK.rate), borderColor: '#94a0b2', backgroundColor: '#94a0b2',
+           borderWidth: 1.5, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 0, fill: false, order: 9 };
+}
+function sdRateAxis(values) {
+  const nums = values.filter(v => v !== null && v !== undefined);
+  const min = Math.min(SD_RISK.rate, ...nums);
+  return { min: Math.max(0, Math.floor((min - 5) / 5) * 5), max: 100, ticks: { callback: v => v + '%' }, grid: { color: SD_GRID }, border: { display: false } };
+}
+function sdSetTrendMode(mode) {
+  sdState.trend = mode;
+  document.querySelectorAll('#sd-trend-modes button').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  sdSaveFilters();
+  renderSDTrendChart();
+}
+function renderSDTrendChart() {
+  const mode = sdState.trend;
+  const title = { rate: 'อัตราการมาเรียนรายวัน', status: 'จำนวนนักเรียนรายวันแยกสถานะ', rooms: 'อัตราการมาเรียนรายวันแยกห้อง' }[mode];
+  document.getElementById('sd-trend-title').textContent = title;
+  const sub = document.getElementById('sd-trend-sub');
+  const days = sdData.daily;
+  if (!days.length) { sub.textContent = ''; sdChart('sd-chart-trend', null, 'ไม่มีวันเรียนในช่วงที่เลือก'); return; }
+  const labels = days.map(d => sdShortDate(d.date));
+  const x = { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } };
+  const pointR = days.length > 31 ? 0 : 3;
+  const surface = sdColor('--bg-card');
+  const line = (extra) => ({ borderWidth: 2, cubicInterpolationMode: 'monotone', // monotone: เส้นโค้งไม่พุ่งเกิน 100%
+                              pointRadius: pointR, pointHoverRadius: 5, pointBorderColor: surface, pointBorderWidth: 2, spanGaps: true, fill: false, ...extra });
+  const dayTitle = items => thaiDateLong(days[items[0].dataIndex].date);
+
+  if (mode === 'rate') {
+    if (!days.some(d => d.rate !== null)) { sub.textContent = ''; sdChart('sd-chart-trend', null, 'ยังไม่มีข้อมูลการเช็คชื่อในช่วงที่เลือก'); return; }
+    const primary = sdColor('--primary');
+    const cur = days.map(d => d.rate === null ? null : Math.round(d.rate * 10) / 10);
+    // ช่วงก่อนหน้า: จับคู่ตาม "วันเรียนลำดับที่ n" (วันที่ 1 ของช่วงนี้ ↔ วันเรียนที่ 1 ของช่วงก่อน)
+    const prevDays = sdPrev ? sdPrev.daily : [];
+    const prev = days.map((_, i) => prevDays[i] && prevDays[i].rate !== null ? Math.round(prevDays[i].rate * 10) / 10 : null);
+    const datasets = [line({ key: 'cur', label: sdPeriodLabel(sdPeriod), data: cur, borderColor: primary, backgroundColor: primary, order: 1 })];
+    if (prev.some(v => v !== null)) datasets.push(line({ key: 'prev', label: sdPeriodLabel(sdPrev.period), data: prev, borderColor: '#b9c1cd', backgroundColor: '#b9c1cd', borderWidth: 1.5, pointRadius: 0, order: 2 }));
+    datasets.push(sdThresholdSet(days.length));
+    sub.textContent = `% ที่มาเรียน (ตรงเวลา + สาย) ของนักเรียนที่เช็คชื่อแล้ว` + (datasets.length > 2 ? ` · เส้นสีเทา = ${sdPeriodLabel(sdPrev.period)} เทียบวันเรียนลำดับเดียวกัน` : '');
+    sdChart('sd-chart-trend', {
+      type: 'line', data: { labels, datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: SD_LEGEND,
+          tooltip: {
+            filter: item => item.dataset.key !== 'threshold',
+            callbacks: {
+              title: dayTitle,
+              label: c => {
+                if (c.dataset.key === 'prev') return ` ${sdShortDate(prevDays[c.dataIndex].date)} (ช่วงก่อนหน้า): ${c.parsed.y}%`;
+                const d = days[c.dataIndex];
+                return [` มาเรียน ${c.parsed.y}%`, ` สาย ${d.late} · ขาด ${d.absent} · ลา ${d.leave}` + (d.none ? ` · ยังไม่เช็ค ${d.none}` : '')];
+              }
+            }
+          }
+        },
+        scales: { y: sdRateAxis([...cur, ...prev]), x }
+      }
+    });
+    return;
+  }
+
+  if (mode === 'status') {
+    const keys = [['late', 'มาสาย'], ['absent', 'ขาดเรียน'], ['leave', 'ลา'], ['early', 'ออกก่อนเวลา'], ['tickets', 'บัตรขออนุญาต (ใบ)']];
+    if (days.some(d => d.none)) keys.push(['none', 'ยังไม่เช็คชื่อ']);
+    const datasets = keys.map(([k, label]) => line({
+      key: k, label, data: days.map(d => d[k]), borderColor: SD_LINE_COLORS[k], backgroundColor: SD_LINE_COLORS[k],
+      borderDash: k === 'tickets' ? [5, 4] : k === 'none' ? [2, 3] : [], borderWidth: 2
+    }));
+    sub.textContent = 'จำนวนนักเรียนต่อวัน · บัตรขออนุญาตนับเป็นใบ (เส้นประ) · คลิกชื่อด้านบนเพื่อซ่อน/แสดงเส้น';
+    sdChart('sd-chart-trend', {
+      type: 'line', data: { labels, datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: SD_LEGEND,
+          tooltip: { callbacks: { title: dayTitle, label: c => ` ${c.dataset.label.replace(' (ใบ)', '')}: ${c.parsed.y} ${c.dataset.key === 'tickets' ? 'ใบ' : 'คน'}` } }
+        },
+        scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: SD_GRID }, border: { display: false } }, x }
+      }
+    });
+    return;
+  }
+
+  // rooms — สีผูกกับห้อง (ลำดับในรายชื่อห้องทั้งโรงเรียน) ไม่ใช่ลำดับที่แสดง
+  const allRooms = [...new Set(STUDENTS.map(s => s.cls))].sort((a, b) => a.localeCompare(b, 'th', { numeric: true }));
+  const rooms = sdData.rooms.map(r => r.cls);
+  if (rooms.length > SD_ROOM_COLORS.length) {
+    sub.textContent = '';
+    sdChart('sd-chart-trend', null, `มี ${rooms.length} ห้องในตัวกรองนี้ — เลือกชั้นเรียนให้เหลือไม่เกิน ${SD_ROOM_COLORS.length} ห้องเพื่อเทียบ`);
+    return;
+  }
+  const datasets = rooms.map(cls => {
+    const color = SD_ROOM_COLORS[allRooms.indexOf(cls) % SD_ROOM_COLORS.length];
+    return line({ key: cls, label: cls, baseColor: color, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0,
+      data: sdData.roomDaily[cls].map(v => v.rate === null ? null : Math.round(v.rate * 10) / 10) });
+  });
+  datasets.push(sdThresholdSet(days.length));
+  sub.textContent = 'ชี้ที่เส้นหรือชื่อห้องเพื่อเน้น · คลิกชื่อห้องเพื่อซ่อน/แสดง';
+  const highlight = (chart, idx) => {
+    let changed = false;
+    chart.data.datasets.forEach((ds, i) => {
+      if (!ds.baseColor) return;
+      const c = idx === null || i === idx ? ds.baseColor : ds.baseColor + '33';
+      const w = idx !== null && i === idx ? 3 : 2;
+      if (ds.borderColor !== c || ds.borderWidth !== w) { ds.borderColor = c; ds.backgroundColor = c; ds.borderWidth = w; changed = true; }
+    });
+    if (changed) chart.update('none');
+  };
+  sdChart('sd-chart-trend', {
+    type: 'line', data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      onHover: (e, els, chart) => {
+        const near = chart.getElementsAtEventForMode(e.native, 'nearest', { intersect: false }, false)[0];
+        highlight(chart, near && chart.data.datasets[near.datasetIndex].baseColor ? near.datasetIndex : null);
+      },
+      plugins: {
+        legend: { ...SD_LEGEND,
+          onHover: (e, item, legend) => highlight(legend.chart, legend.chart.data.datasets[item.datasetIndex].baseColor ? item.datasetIndex : null),
+          onLeave: (e, item, legend) => highlight(legend.chart, null) },
+        tooltip: {
+          filter: item => item.dataset.key !== 'threshold' && item.parsed.y !== null,
+          itemSort: (a, b) => b.parsed.y - a.parsed.y,
+          callbacks: { title: dayTitle, label: c => ` ${c.dataset.label}: ${c.parsed.y}%` }
+        }
+      },
+      scales: { y: sdRateAxis(datasets.flatMap(ds => ds.data)), x }
+    }
+  });
+  const canvas = document.getElementById('sd-chart-trend');
+  canvas.onmouseleave = () => { if (sdCharts['sd-chart-trend']) highlight(sdCharts['sd-chart-trend'], null); };
+}
+
+function renderSDTicketChart() {
+  const types = sdData.ticketTypes;
+  if (!sdData.tickets.length) { sdChart('sd-chart-tickets', null, 'ไม่มีบัตรขออนุญาตในช่วงที่เลือก'); return; }
+  sdChart('sd-chart-tickets', {
+    type: 'bar',
+    data: {
+      labels: types.map(t => t.type),
+      datasets: [{ label: 'จำนวนบัตร', data: types.map(t => t.count), backgroundColor: sdColor('--primary'), borderRadius: 4, borderSkipped: 'start', barThickness: 16 }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.x} ใบ` } } },
+      scales: {
+        x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: SD_GRID }, border: { display: false } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderSDRoomChart() {
+  const rooms = sdData.rooms;
+  const box = document.getElementById('sd-chart-rooms-box');
+  if (!rooms.length || !sdData.days.length) {
+    box.style.height = '160px';
+    sdChart('sd-chart-rooms', null, 'ไม่มีข้อมูลในช่วงที่เลือก');
+    return;
+  }
+  box.style.height = Math.max(160, 70 + rooms.length * 36) + 'px';
+  const surface = sdColor('--bg-card');
+  const datasets = SD_CATS.filter(c => rooms.some(r => r[c.key] > 0)).map(c => ({
+    label: c.label,
+    data: rooms.map(r => { const all = r.checked + r.none; return all ? Math.round(r[c.key] / all * 1000) / 10 : 0; }),
+    counts: rooms.map(r => r[c.key]),
+    backgroundColor: sdColor(c.color),
+    borderColor: surface, borderWidth: { right: 2 }, borderSkipped: false,
+    barThickness: 20
+  }));
+  sdChart('sd-chart-rooms', {
+    type: 'bar',
+    data: { labels: rooms.map(r => r.cls), datasets },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      onClick: (e, els) => { if (els.length) sdOpenRoom(rooms[els[0].index].cls); },
+      onHover: (e, els) => { e.native.target.style.cursor = els.length ? 'pointer' : 'default'; },
+      plugins: {
+        legend: SD_LEGEND,
+        tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.x}% (${sdNum(c.dataset.counts[c.dataIndex])} คน-วัน)` } }
+      },
+      scales: {
+        x: { stacked: true, min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: SD_GRID }, border: { display: false } },
+        y: { stacked: true, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// ---- ตาราง ----
+function sdCell(n) { return `<td class="num${n ? '' : ' zero'}">${sdNum(n)}</td>`; }
+function sdRateCell(v) {
+  if (v === null) return '<td class="num zero">-</td>';
+  const low = v < SD_RISK.rate;
+  return `<td class="num"><span class="sd-rate${low ? ' low' : ''}"><span class="sd-rate-bar"><i style="width:${Math.min(100, v)}%"></i></span><strong>${sdPct(v)}</strong></span></td>`;
+}
+
+function renderSDRooms() {
+  const d = sdData;
+  const checkHead = d.lastDay ? `เช็คชื่อ ${sdShortDate(d.lastDay)}` : 'เช็คชื่อ';
+  document.getElementById('sd-room-thead').innerHTML = `<tr>
+    <th>ห้อง</th><th>ครูประจำชั้น</th><th class="num">นักเรียน</th>
+    <th class="num">ตรงเวลา</th><th class="num">สาย</th><th class="num">ขาด</th><th class="num">ลา</th>
+    <th class="num">ออกก่อน</th><th class="num">บัตรฯ</th><th class="num">ยังไม่เช็ค</th>
+    <th class="num">% มาเรียน</th><th>เฝ้าระวัง</th><th>${checkHead}</th></tr>`;
+  const checkCell = r => {
+    if (!d.lastDay) return '<td class="zero">-</td>';
+    if (!r.lastNone) return `<td><span class="badge success">ครบ ${r.students} คน</span></td>`;
+    return `<td><span class="badge warning">ยังไม่เช็ค ${r.lastNone}/${r.students}</span></td>`;
+  };
+  const row = (r, isTotal) => `
+    <tr class="${isTotal ? 'sd-total' : 'sd-room-row'}" ${isTotal ? '' : `onclick="sdOpenRoom('${r.cls}')" title="ดูรายชื่อนักเรียน ${r.cls}"`}>
+      <td><strong>${r.cls}</strong></td><td>${r.teacher || ''}</td>${sdCell(r.students)}
+      ${sdCell(r.ontime)}${sdCell(r.late)}${sdCell(r.absent)}${sdCell(r.leave)}
+      ${sdCell(r.early)}${sdCell(r.tickets)}${sdCell(r.none)}${sdRateCell(r.rate)}
+      <td>${r.risk ? `<span class="badge danger">${r.risk} คน</span>` : '<span class="zero">-</span>'}</td>${checkCell(r)}
+    </tr>`;
+  document.getElementById('sd-room-tbody').innerHTML = d.rooms.length
+    ? d.rooms.map(r => row(r)).join('') + (d.rooms.length > 1 ? row(d.total, true) : '')
+    : `<tr><td colspan="13" style="text-align:center;padding:32px;color:var(--text-muted);">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>`;
+}
+
+const SD_PEOPLE_COLS = [
+  { key: 'no', label: 'เลขที่', num: true }, { key: 'cls', label: 'ห้อง' }, { key: 'id', label: 'รหัสนักเรียน' },
+  { key: 'name', label: 'ชื่อ-นามสกุล' }, { key: 'ontime', label: 'ตรงเวลา', num: true }, { key: 'late', label: 'สาย', num: true },
+  { key: 'absent', label: 'ขาด', num: true }, { key: 'leave', label: 'ลา', num: true }, { key: 'early', label: 'ออกก่อน', num: true },
+  { key: 'tickets', label: 'บัตรฯ', num: true }, { key: 'none', label: 'ยังไม่เช็ค', num: true },
+  { key: 'rate', label: '% มาเรียน', num: true }, { key: 'flags', label: 'เฝ้าระวัง' }
+];
+function sdSortValue(p, key) {
+  if (key === 'id') return p.s.id;
+  if (key === 'name') return p.s.name;
+  if (key === 'rate') return p.rate === null ? -1 : p.rate;
+  if (key === 'flags') return p.flags.length;
+  return p[key];
+}
+function sdCompare(a, b) {
+  const byRoom = a.s.cls.localeCompare(b.s.cls, 'th', { numeric: true }) || a.s.no - b.s.no;
+  const key = sdState.sortKey;
+  if (key === 'cls') return byRoom * sdState.sortDir;
+  if (key === 'no') return (a.s.no - b.s.no) * sdState.sortDir || byRoom;
+  const va = sdSortValue(a, key), vb = sdSortValue(b, key);
+  const c = typeof va === 'string' ? va.localeCompare(vb, 'th') : va - vb;
+  return c * sdState.sortDir || byRoom;
+}
+function sdSort(key) {
+  if (sdState.sortKey === key) sdState.sortDir *= -1;
+  else { sdState.sortKey = key; sdState.sortDir = SD_PEOPLE_COLS.find(c => c.key === key).num && key !== 'no' ? -1 : 1; } // ตัวเลขสถิติเริ่มจากมาก→น้อย
+  sdState.page = 1;
+  renderSDPeople();
+}
+function setSDPage(p) { sdState.page = p; renderSDPeople(); }
+function sdSetPeopleStatus(key) {
+  if (sdState.status === key) return; // เลือกซ้ำไม่ยกเลิก — ใช้ปุ่ม "ล้างตัวกรอง" แทน
+  sdState.status = key; sdState.page = 1;
+  sdState.sortKey = key === 'risk' ? 'flags' : key; sdState.sortDir = -1;
+  renderSDPeople();
+}
+
+function renderSDPeople() {
+  const q = document.getElementById('sd-search').value.trim().toLowerCase();
+  const st = sdState.status;
+  const matchQ = p => !q || p.s.name.toLowerCase().includes(q) || studentFullName(p.s).toLowerCase().includes(q) || p.s.id.toLowerCase().includes(q);
+  const base = sdData.people.filter(matchQ);
+
+  // ชิปกรอง — ตัวเลขนับตามคำค้นด้วย, เลือกได้ทีละชิป, ยกเลิกด้วยปุ่ม "ล้างตัวกรอง"
+  document.getElementById('sd-people-chips').innerHTML =
+    '<span style="font-size:12px;color:var(--text-muted);font-weight:600;">กรองนักเรียน:</span>' +
+    SD_PEOPLE_CHIPS.map(c => {
+      const n = base.filter(p => p[c.key] > 0).length;
+      const on = st === c.key;
+      return `<button type="button" class="badge ${n || on ? c.cls : 'muted'} att-filter-btn${on ? ' on' : ''}" ${!n && !on ? 'disabled style="opacity:.55;cursor:default;"' : ''} onclick="sdSetPeopleStatus('${c.key}')">${c.label} ${sdNum(n)} คน</button>`;
+    }).join('') +
+    (st !== 'all' || q ? `<button type="button" class="btn btn-secondary btn-sm" onclick="sdClearPeopleFilters()"><svg class="icon"><use href="#i-x"/></svg> ล้างตัวกรอง</button>` : '');
+
+  document.getElementById('sd-people-thead').innerHTML = '<tr>' + SD_PEOPLE_COLS.map(c => {
+    const arrow = sdState.sortKey === c.key ? `<span class="sd-sort">${sdState.sortDir > 0 ? '▲' : '▼'}</span>` : '';
+    return `<th class="sortable${c.num ? ' num' : ''}" onclick="sdSort('${c.key}')">${c.label}${arrow}</th>`;
+  }).join('') + '</tr>';
+
+  const rows = base.filter(p => st === 'all' || p[st] > 0).sort(sdCompare);
+  const pages = Math.max(1, Math.ceil(rows.length / SD_PAGE_SIZE));
+  if (sdState.page > pages) sdState.page = pages;
+  const pageRows = rows.slice((sdState.page - 1) * SD_PAGE_SIZE, sdState.page * SD_PAGE_SIZE);
+  document.getElementById('sd-people-tbody').innerHTML = pageRows.map(p => `
+    <tr>
+      <td class="num">${p.s.no}</td><td>${p.s.cls}</td><td>${p.s.id}</td>
+      <td><a href="#" class="sd-name-link" onclick="viewStudentHistory('${p.s.id}');return false;" title="ดูประวัติบัตรขออนุญาตรายบุคคล">${studentFullName(p.s)}</a></td>
+      ${sdCell(p.ontime)}${sdCell(p.late)}${sdCell(p.absent)}${sdCell(p.leave)}${sdCell(p.early)}${sdCell(p.tickets)}${sdCell(p.none)}
+      ${sdRateCell(p.rate)}
+      <td><div class="sd-flags">${p.flags.map(f => `<span class="badge danger">${f}</span>`).join('') || '<span class="zero">-</span>'}</div></td>
+    </tr>`).join('') ||
+    `<tr><td colspan="${SD_PEOPLE_COLS.length}" style="text-align:center;padding:32px;color:var(--text-muted);">ไม่พบนักเรียนตามเงื่อนไขที่เลือก</td></tr>`;
+
+  const pager = document.getElementById('sd-people-pager');
+  const countText = `${sdNum(rows.length)}${rows.length !== sdData.people.length ? ' จาก ' + sdNum(sdData.people.length) : ''} คน`;
+  if (pages <= 1) { pager.innerHTML = rows.length ? `<span>${countText}</span>` : ''; return; }
+  const btn = (p, label, dis) => `<button class="btn btn-secondary btn-sm" ${dis ? 'disabled' : ''} onclick="setSDPage(${p})">${label}</button>`;
+  pager.innerHTML = `<span>${countText} · หน้า ${sdState.page}/${pages}</span>` +
+    btn(1, '«', sdState.page === 1) + btn(sdState.page - 1, '‹ ก่อนหน้า', sdState.page === 1) +
+    btn(sdState.page + 1, 'ถัดไป ›', sdState.page === pages) + btn(pages, '»', sdState.page === pages);
+}
+
+// ---- Export Excel (หลายชีต: สรุป / รายห้อง / รายบุคคล / รายวัน / บัตรขออนุญาต) ----
+function sdExportExcel() {
+  if (typeof XLSX === 'undefined') { alert('โหลดไลบรารี Excel ไม่สำเร็จ (ต้องเชื่อมต่ออินเทอร์เน็ต)'); return; }
+  if (!sdData) renderStudentDashboard();
+  const d = sdData;
+  const t = d.total;
+  const r1 = v => v === null ? '-' : Math.round(v * 10) / 10;
+  const scope = d.grade ? (d.room ? `${d.grade}/${d.room}` : d.grade) : 'ทุกชั้นเรียน';
+  const prevRate = sdPrev ? sdPrev.total.rate : null;
+
+  const summary = [
+    ['แดชบอร์ดการมาเรียนของนักเรียน'], [SCHOOL_INFO.name], [],
+    ['ช่วงเวลา', sdPeriodLabel(sdPeriod)], ['ช่วงวันที่', `${thaiDate(d.from)} – ${thaiDate(d.to)}`], ['ชั้นเรียน', scope],
+    ['จำนวนวันเรียน', d.days.length], ['จำนวนนักเรียน', d.people.length], ['วันที่ส่งออก', thaiDate(attToday())], [],
+    ['รายการ', 'จำนวน', 'หน่วย'],
+    ['อัตราการมาเรียน', r1(t.rate), '%'],
+    [`อัตราการมาเรียนช่วงก่อนหน้า (${sdPrev ? sdPeriodLabel(sdPrev.period) : '-'})`, r1(prevRate), '%'],
+    ['มาตรงเวลา', t.ontime, 'คน-วัน'], ['มาสาย', t.late, 'คน-วัน'], ['ขาดเรียน', t.absent, 'คน-วัน'],
+    ['ลา (ใบลาที่อนุมัติ)', t.leave, 'คน-วัน'], ['ออกก่อนเวลา', t.early, 'คน-วัน'], ['ยังไม่เช็คชื่อ', t.none, 'คน-วัน'],
+    ['บัตรขออนุญาต (ไม่นับที่ไม่อนุมัติ)', d.tickets.length, 'ใบ'], ['นักเรียนกลุ่มเฝ้าระวัง', t.risk, 'คน'],
+    ['ใบลารออนุมัติ', d.pendingLeaves, 'ใบ'], ['บัตรขออนุญาตรอตรวจสอบ', d.pendingTickets, 'ใบ'], [],
+    ['หมายเหตุ'],
+    ['• % มาเรียน = (มาตรงเวลา + มาสาย) ÷ จำนวนคน-วันที่เช็คชื่อแล้ว (ไม่นับวันที่ยังไม่เช็คชื่อ)'],
+    [`• กลุ่มเฝ้าระวัง = มาเรียนต่ำกว่า ${SD_RISK.rate}% (เช็คชื่อแล้วอย่างน้อย ${SD_RISK.minChecked} วัน) หรือขาดติดกันตั้งแต่ ${SD_RISK.streak} วัน หรือใช้บัตรขออนุญาตตั้งแต่ ${SD_RISK.tickets} ใบ`]
+  ];
+  const roomRow = r => [r.cls, r.teacher || '-', r.students, r.ontime, r.late, r.absent, r.leave, r.early, r.tickets, r.none, r1(r.rate), r.risk];
+  const roomSheet = [
+    ['ห้อง', 'ครูประจำชั้น', 'นักเรียน (คน)', 'มาตรงเวลา', 'มาสาย', 'ขาดเรียน', 'ลา', 'ออกก่อนเวลา', 'บัตรขออนุญาต', 'ยังไม่เช็คชื่อ', '% มาเรียน', 'กลุ่มเฝ้าระวัง (คน)'],
+    ...d.rooms.map(roomRow), roomRow(t)
+  ];
+  const peopleSheet = [
+    ['ห้อง', 'เลขที่', 'รหัสนักเรียน', 'ชื่อ-นามสกุล', 'มาตรงเวลา', 'มาสาย', 'ขาดเรียน', 'ลา', 'ออกก่อนเวลา', 'บัตรขออนุญาต', 'ยังไม่เช็คชื่อ', 'วันที่เช็คชื่อแล้ว', '% มาเรียน', 'ขาดติดกันสูงสุด (วัน)', 'เฝ้าระวัง'],
+    ...d.people.map(p => [p.s.cls, p.s.no, p.s.id, studentFullName(p.s), p.ontime, p.late, p.absent, p.leave, p.early, p.tickets, p.none, p.checked, r1(p.rate), p.streak, p.flags.join(', ') || '-'])
+  ];
+  const dailySheet = [
+    ['วันที่', 'มาตรงเวลา', 'มาสาย', 'ขาดเรียน', 'ลา', 'ออกก่อนเวลา', 'ยังไม่เช็คชื่อ', 'บัตรขออนุญาต (ใบ)', '% มาเรียน'],
+    ...d.daily.map(x => [thaiDate(x.date), x.ontime, x.late, x.absent, x.leave, x.early, x.none, x.tickets, r1(x.rate)])
+  ];
+  const ticketSheet = [
+    ['วันที่', 'ช่วงเวลา', 'รหัสนักเรียน', 'ชื่อ-สกุล', 'ชั้น', 'ประเภท', 'เหตุผล', 'สถานะ'],
+    ...d.tickets.map(x => [thaiDate(x.date), x.time, x.id, x.name, x.cls, x.type, x.reason, x.status])
+  ];
+
+  const wb = XLSX.utils.book_new();
+  const add = (name, rows, widths) => {
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = widths.map(w => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, ws, name);
+  };
+  add('สรุปภาพรวม', summary, [40, 22, 10]);
+  add('รายห้อง', roomSheet, [10, 26, 12, 12, 10, 10, 8, 12, 12, 12, 10, 16]);
+  add('รายบุคคล', peopleSheet, [8, 8, 12, 30, 11, 9, 9, 7, 12, 12, 12, 14, 10, 16, 36]);
+  add('รายวัน', dailySheet, [12, 11, 9, 9, 7, 12, 12, 16, 10]);
+  add('บัตรขออนุญาต', ticketSheet, [12, 14, 12, 22, 8, 24, 24, 12]);
+  XLSX.writeFile(wb, `แดชบอร์ดการมาเรียน_${scope.replace('/', '-')}_${d.from}_${d.to}.xlsx`);
 }
 
 // Initial populate on load
