@@ -17,18 +17,15 @@ const App = (() => {
     // Map of module -> default view
     const MODULE_DEFAULT_VIEWS = {
         dashboard : 'dashboard-main',
-        leave     : 'leave-settings',
+        leave     : 'leave-form',
         personnel : 'directory',
-        settings  : 'general',
     };
 
     // Map of view -> page title (Thai)
     const VIEW_TITLES = {
         'dashboard-main'  : { title: 'แดชบอร์ดภาพรวม',           crumb: 'SchoolDark / ภาพรวม' },
-        'leave-settings'  : { title: 'ตั้งค่าการลา',              crumb: 'การตั้งค่า / ตั้งค่าการลา' },
         'leave-form'      : { title: 'ยื่นคำขอลา',        crumb: 'งานบริหารการลา / ยื่นใบลา (บุคลากร)' },
         'leave-approve'   : { title: 'อนุมัติการลา',              crumb: 'งานบริหารการลา / อนุมัติ (บุคลากร)' },
-        'settings'        : { title: 'ตั้งค่าการลา',              crumb: 'การตั้งค่า / ตั้งค่าการลา' },
         'form'            : { title: 'ยื่นคำขอลา',        crumb: 'งานบริหารการลา / ยื่นใบลา (บุคลากร)' },
         'approve'         : { title: 'อนุมัติการลา',              crumb: 'งานบริหารการลา / อนุมัติ (บุคลากร)' },
         'directory'       : { title: 'รายชื่อบุคลากร',             crumb: 'งานบุคลากร / รายชื่อ' },
@@ -37,14 +34,6 @@ const App = (() => {
         'job-license'     : { title: 'ตำแหน่ง & ใบประกอบฯ',       crumb: 'งานบุคลากร / ตำแหน่ง' },
         'import-hub'      : { title: 'นำเข้าข้อมูลบุคลากร',        crumb: 'งานบุคลากร / นำเข้าข้อมูล' },
         'print-studio'    : { title: 'พิมพ์บาร์โค้ด & QR Studio', crumb: 'งานบุคลากร / พิมพ์ & QR' },
-        'general'         : { title: 'การตั้งค่าทั่วไป',            crumb: 'ตั้งค่าระบบ / ทั่วไป' },
-        'homeroom'        : { title: 'ข้อมูลครูประจำชั้น',          crumb: 'ตั้งค่าระบบ / ครูประจำชั้น' },
-        'schedule'        : { title: 'ตั้งค่าวันเวลาเข้าออก',       crumb: 'ตั้งค่าระบบ / วันเวลา' },
-        'permissions'     : { title: 'สิทธิ์ผู้ใช้งาน',             crumb: 'ตั้งค่าระบบ / สิทธิ์' },
-        'signatories'     : { title: 'ผู้ลงนามเอกสาร',             crumb: 'ตั้งค่าระบบ / ผู้ลงนาม' },
-        'staff-types'     : { title: 'ตั้งค่าประเภทบุคลากร',       crumb: 'ตั้งค่าระบบ / ประเภทบุคลากร' },
-        'positions'       : { title: 'ตั้งค่าตำแหน่ง',             crumb: 'ตั้งค่าระบบ / ตำแหน่ง' },
-        'departments'     : { title: 'ตั้งค่าแผนก/กลุ่มสาระฯ',     crumb: 'ตั้งค่าระบบ / แผนก-กลุ่มสาระฯ' },
     };
 
     // --- DOM helpers ---
@@ -132,9 +121,7 @@ const App = (() => {
             if (typeof syncUserJourneySteps === 'function') {
                 syncUserJourneySteps(cleanView);
             }
-            if (cleanView === 'settings' && typeof renderSettingsView === 'function') {
-                renderSettingsView();
-            } else if (cleanView === 'form' && typeof renderFormView === 'function') {
+            if (cleanView === 'form' && typeof renderFormView === 'function') {
                 renderFormView();
             } else if (cleanView === 'approve' && typeof renderApprovalView === 'function') {
                 renderApprovalView();
@@ -161,12 +148,6 @@ const App = (() => {
             }
         }
 
-        // Integration with Settings module (settings.js)
-        if (mod === 'settings') {
-            if (typeof renderViewData === 'function') {
-                renderViewData(view);
-            }
-        }
     }
 
     // --- Quick nav cards (Settings overview) ---
@@ -361,8 +342,9 @@ const App = (() => {
         const addBtn = qs('#header-add-personnel-btn');
         if (addBtn) {
             addBtn.addEventListener('click', () => {
-                // Navigate to basic-info (new form mode)
-                navigate('personnel', 'basic-info');
+                // New personnel: blank form in the 3-step wizard (switchView in personnel.js)
+                if (typeof createNewBlankForm === 'function') createNewBlankForm();
+                if (typeof switchView === 'function') switchView('basic-info');
             });
         }
         const importBtn = qs('#btn-relocated-import');

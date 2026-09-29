@@ -5,6 +5,72 @@
 > รูปแบบต่อรายการ: วันที่ · ไฟล์/ฟังก์ชัน · แก้อะไร · ทำไม · หน้าตาเปลี่ยนไหม · ถ้าอยากย้อน
 > รายการใหม่ให้เพิ่มไว้ **บนสุด**
 
+## 2026-09-29 (รอบ 2: ย้ายหมวดการลา + wizard บุคลากร) — ⚠️ **หน้าตาเปลี่ยน**: หน้าตั้งค่าการลาย้ายที่, เมนูบุคลากรหาย 3 อัน
+
+> ⚠️ **แคร์ต้อง `git pull` ก่อนแก้ `app.html` / `app.js` / `index.js` / `personnel.js` / `app.css` / `leave-features.*`**
+> - ฟอร์ม/logic ตั้งค่าการลา (บุคลากร + นักเรียน) **ไม่อยู่ใน `schooldark/` แล้ว** → ไปแก้ที่ `settings/leave.html` + `settings/js/leave-settings-*.js`
+> - ข้อ "ที่ยังไม่ได้ย้าย: หมวดการลา" ในรายการ 18 ด้านล่าง **ล้าสมัยแล้ว** — ย้ายครบแล้วในรอบนี้
+
+### 19. ย้ายหน้าตั้งค่าการลา (บุคลากร + นักเรียน) ออกจาก `schooldark/` ไป `settings/leave.html`
+- **ทำไม**: noeysod สั่งย้ายการตั้งค่าที่แคร์ดูแลมารวมที่ `settings/` (หมวดโรงเรียน + บุคลากรย้ายไปแล้วในรายการ 18 เหลือหมวดการลา)
+- **ไฟล์ใหม่**: `settings/leave.html` (2 แท็บ `#tab=staff` / `#tab=student`), `settings/js/leave-settings.js` (router + helpers; contract `window.LeaveSettings = { tabs, helpers:{esc,toast,openModal,closeModal,confirm,debounce,svg}, switchTab }`, แท็บ = `{title, desc, iconSvg, render(panelEl)}`), `settings/js/leave-settings-staff.js` (wizard 6 ขั้น + live preview — มาจาก view `leave-settings` ใน `app.html`), `settings/js/leave-settings-student.js` (wizard 5 ขั้น ประเภทการลา การ์ดบทบาทผู้อนุมัติ โมดัลบันทึกพร้อมวันที่มีผล → เวอร์ชัน active/scheduled และ drawer ประวัติ — มาจาก `student-leave-settings` ใน `leave-features.html`)
+- **`settings/js/sd-settings-store.js` เพิ่ม**: `leaveSettings()`/`saveLeaveSettings()` (คีย์เดิม `schooldark_settings`, seed = `INITIAL_SETTINGS` ใน `index.js` **ต้องตรงกัน**), `studentLeaveVersions()`/`saveStudentLeaveVersions()` (คีย์ใหม่ `sd_student_leave_versions`), `studentLeaveForm()`/`saveStudentLeaveForm()` (คีย์ใหม่ `sd_student_leave_form`: acadYear, term1Start/End, term2Start/End, approverCount, roleTeacher1/2, roleHead, roleDean, approverSequence, sickDocRequired, sickDocDays, alertParent, deadlineTime, quotaWarningPercent)
+- **ของแคร์ที่ลบ**:
+  - `app.html`: `#view-leave-settings`
+  - `app.js`: `MODULE_DEFAULT_VIEWS.leave` → `'leave-form'`, `VIEW_TITLES` `leave-settings`/`settings`, สาขา `renderSettingsView` ใน `fireModuleInit`
+  - `index.js`: `renderSettingsView`, `addApprover`/`removeApprover`, `saveSettingsFromDOM`, `saveAllSettings`, `goToSettingsStep`/`next`/`prevSettingsStep`, `ensureStaffTypeQuotaSeeded`, `renderStaffTypeQuotaTable`, `staffTypeNameSafe`, `updatePreviewStep1..6`, `updateAllSettingsPreviews`, `initSettingsPreview` + การผูก event ตอนโหลด (`add-approver-btn`, `save-settings-btn`, `rule-rollover`, คลิก journey-step ของ settings, `prev/next-settings-btn` — พวกนี้ไม่มี null check ถ้าลบ markup โดยไม่ลบบรรทัดเหล่านี้ ฟอร์มยื่นลาจะพัง)
+  - `leave-features.html`: `#view-student-leave-settings`, `#modal-leave-type` (+overlay), `#settings-save-modal` (+overlay)
+  - `leave-features.js`: ฟังก์ชันตั้งค่าทั้งหมด + `window.*` exports + `syncApproverRoleCards()` ระดับบนสุด + `activeSettingStep`, `approverRoleSelectionOrder`, `getActiveSettingsVersion` + รายการ `VIEW_TITLES`/`BREADCRUMB_GROUP`/`showModuleView`/submenu ของ `student-leave-settings`
+  - **คงไว้**: `INITIAL_SETTINGS`, `systemState`, `initializeDatabase`, `getStaffQuota`, `activeStaffTypesSafe`, helper journey-step ของฟอร์ม/อนุมัติ, `studentLeaveTypeBadgeClass`, `CURRENT_APPROVER_NAME`, `detailDrawerRefresh`, `#drawer-detail`
+- **ของเหลือ (ยังไม่เก็บ)**: CSS `#settings-save-modal` ใน `leave-features.css` (บรรทัด ~46–47) และอาจมี `.approver-role-card`; คอมเมนต์ใน `index.js` ที่ `INITIAL_SETTINGS` ยังพูดถึง `ensureStaffTypeQuotaSeeded`; `systemState.currentSettingsStep` ไม่มีใครใช้; สาขา `goToSettingsStep` (มี `typeof` guard) ใน `bindSubmenus` ของ `app.js` กลายเป็นโค้ดตาย
+- **เมนู** (`shared/cross-nav.js`): "ตั้งค่าการลา" มีลูก → `settings/leave.html#tab=staff` / `#tab=student` (origin `schooldark`)
+
+### 20. พฤติกรรมที่เปลี่ยน (ไม่ใช่แค่ย้ายที่)
+- **ตั้งค่าการลาบุคลากรบันทึกจริงแล้ว**: เดิม `saveStateToLocalStorage` ของ `settings.js` บังชื่อของ `index.js` ทำให้ `schooldark_settings` ไม่ถูกเซฟซ้ำหลัง seed (แก้แล้วรีโหลดค่าหาย) — หน้าใหม่เขียนคีย์นี้ตรง ๆ ทำให้โควตา/ผู้อนุมัติ/เงื่อนไขที่ `index.js` อ่านผ่าน `systemState.settings` (`getStaffQuota`, `ruleHalfDay`, `ruleSickDoc`, `ruleAdvanceDays`, `approvers[0]`) เห็นค่าที่บันทึก; ช่องผู้รับแจ้งเตือน (`recipients`) โหลด/บันทึกได้ (เดิมไม่); เพิ่ม/ลบผู้อนุมัติบันทึกทันที
+- **ประเภทการลานักเรียนบันทึกจริง**: `leave-features.js` อ่านเวอร์ชัน active จาก `sd_student_leave_versions` ตอนโหลด (`STUDENT_LEAVE_TYPES`/`SETTINGS_VERSIONS` ยังเป็น `let` และมี default ในโค้ดเป็น fallback) ช่อง `sett-*` ถูกบันทึกที่ `sd_student_leave_form` แต่ยังไม่มีหน้าไหนอ่านไปใช้ (เหมือนเดิม)
+- **UI ต่างจากเดิมเล็กน้อย**: โมดัลประเภทการลาเป็นกลางจอ, drawer ประวัติเป็นแผงของตัวเอง, "วันนี้" ใช้วันที่ท้องถิ่น, ขั้นที่ทำแล้วเป็นสีเขียว (class `done` ของแคร์ไม่มี CSS)
+- **ช่องว่างที่ยังมี**: เวอร์ชัน scheduled ไม่ถูกเลื่อนเป็น active อัตโนมัติเมื่อถึงวันที่มีผล (เหมือนของเดิมแคร์)
+- **ข้อสังเกตที่เจอตอนทดสอบ**: ค่าโควตาตั้งต้น (ป่วย/พักผ่อน/คลอด) ถูกคัดลอกลงตารางแยกตามประเภทบุคลากรครั้งแรกที่เปิดหน้า ครูที่มี `staffTypeId` จึงใช้ค่าในตารางนั้น (`getStaffQuota` ให้ override มาก่อน) — แก้เฉพาะช่องตั้งต้นจึงไม่เปลี่ยนการ์ดโควตาของครู ต้องแก้ในตารางประเภทบุคลากรด้วย (พฤติกรรมเดิมของแคร์ ไม่ได้แก้)
+
+### 21. Personnel wizard 3 ขั้น (flow ของแคร์) + เอาเมนู 3 อันออก + แก้บั๊ก
+- **flow**: รายชื่อบุคลากร → "เพิ่มบุคลากรรายบุคคล" (หรือ "แก้ไข") → 1 ข้อมูลพื้นฐาน → 2 การศึกษา & อบรม → 3 ตำแหน่ง & ใบประกอบฯ
+- **สาเหตุที่ "แก้ไข" เคยขึ้นหน้าว่าง**: `personnel.js` `switchView()` รองรับ `#view-personnel-wizard` (`.journey-step[data-step]` + `.personnel-step-pane`) อยู่แล้ว แต่ `app.html` ไม่มี markup นั้น
+- **`app.html`**: ห่อ `#view-basic-info` / `#view-education` / `#view-job-license` (เปลี่ยน class `view-section` → `personnel-step-pane` คง id เดิม) ด้วย `#view-personnel-wizard` พร้อมการ์ด stepper 3 ขั้น
+- **`app.css`**: เพิ่ม `.personnel-step-pane` / `.personnel-wizard-stepper`
+- **`personnel.js`**: ตัด `import-hub` ออกจากรายการ wizard; sidebar ไฮไลต์ "รายชื่อบุคลากร" ขณะอยู่ใน wizard; คลิก stepper ได้เมื่อบันทึกข้อมูลพื้นฐานแล้ว (ไม่งั้น toast "กรุณาบันทึกข้อมูลพื้นฐานก่อน"); `deleteTeacherProfile` เคลียร์ `selectedTeacherId` ถ้าลบคนที่เลือกอยู่
+- **`app.js`**: ปุ่มเพิ่มบุคลากรเรียก `createNewBlankForm()` แล้ว `switchView('basic-info')` (แก้บั๊กที่กดเพิ่มแล้วเปิดฟอร์มของคนที่แก้ล่าสุด); `VIEW_TITLES` `basic-info`/`education`/`job-license` และสาขาใน `fireModuleInit` กลายเป็นโค้ดตาย
+- **`shared/cross-nav.js`**: ลบเมนู `menu-basic-info`, `menu-education`, `menu-job-license` (งานบุคลากรเหลือ รายชื่อ / นำเข้าข้อมูล / พิมพ์ & QR Studio)
+- **หน้าตาเปลี่ยน**: **ใช่** — ⚠️ (1) ตั้งค่าการลาอยู่ที่ `settings/leave.html` (2) sidebar งานบุคลากรเหลือ 3 เมนู (3) มี stepper 3 ขั้นบนฟอร์มบุคลากร
+- **ย้อน**: `git checkout` ไฟล์ที่แก้ — `schooldark/app.html`, `app.js`, `index.js`, `personnel.js`, `app.css`, `leave-features.html`, `leave-features.js`, `leave-features.css` (ถ้าแตะ), `shared/cross-nav.js`, `settings/index.html` — แล้วลบ `settings/leave.html`, `settings/js/leave-settings.js`, `settings/js/leave-settings-staff.js`, `settings/js/leave-settings-student.js` และถอดส่วนที่เพิ่มใน `settings/js/sd-settings-store.js` (`leaveSettings`, `studentLeaveVersions`, `studentLeaveForm` + 3 คีย์ใน `KEYS`)
+
+## 2026-09-29 (รอบย้ายการตั้งค่า) — ย้ายหน้า "ตั้งค่า" ของ care ไปรวมที่ `settings/` (⚠️ **หน้าตาเปลี่ยน**: หน้าตั้งค่าย้ายที่)
+
+> ⚠️ **แคร์ต้อง `git pull` ก่อนแก้ `app.html` / `app.js` / `settings.js` / `leave-features.*`** — หน้าตั้งค่าไม่อยู่ใน `schooldark/` แล้ว
+> ถ้าแก้ฟอร์ม/โมดัลตั้งค่าค้างอยู่ใน `app.html` ให้ย้ายไปแก้ที่ `settings/school.html` / `settings/personnel.html` แทน
+> **ที่ยังไม่ได้ย้าย**: หมวดการลา (`leave-settings` ใน `app.html`, `student-leave-settings` ใน `leave-features`) — เพราะ `student-leave-settings` เก็บข้อมูลไว้ในหน่วยความจำอย่างเดียว (`STUDENT_LEAVE_TYPES`) และหลายหน้าใช้ ต้องย้ายข้อมูลลง localStorage ก่อน
+
+### 18. ย้ายหน้าตั้งค่าโรงเรียน + บุคลากรออกจาก `schooldark/` ไป `settings/`
+- **ทำไม**: noeysod สั่งให้ย้ายการตั้งค่ามารวมที่ `settings/`
+- **ไฟล์ใหม่ (3 ไฟล์)**: `settings/personnel.html` (6 แท็บ: schedule, permissions, signatories, staff-types, positions, departments — มาจาก view เดิมของ `app.html`), `settings/js/personnel-settings.js`, `settings/js/sd-settings-store.js` (`window.SdSettings` — อ่าน/เขียนคีย์ `sd_*` ชุดเดียวกับ care; **seed ต้องเหมือน `settings.js` `initSettingsDatabase()` ทุกตัวอักษร ถ้าแคร์แก้ seed ต้องแก้ที่นี่ด้วย**)
+- **ไฟล์ที่แก้ใน `settings/` + `shared/`**: `settings/school.html` (เพิ่ม 3 แท็บ รวมเป็น 8: **school** = ข้อมูลโรงเรียน (จาก view `general` ตัดการ์ดทางลัด 6 ใบออก), **homeroom** = ครูประจำชั้น, **attendance** = เวลาเข้า-เลิกเรียนนักเรียน (จาก `attendance-settings`); แท็บเริ่มต้นเป็น school; แก้ `switchTab` ที่เดิมกดแท็บแล้วไม่ render ใหม่), `settings/index.html` (badge ระบบ "บุคลากร & การลา" สำหรับ origin schooldark), `shared/cross-nav.js` (เมนูตั้งค่าชี้หน้าใหม่ ติด `origin:'schooldark'`, เพิ่ม `syncSubmenuLinkActive()` ไฮไลต์ลิงก์เมนูย่อยตอน `hashchange`)
+- **ไฟล์ของแคร์ที่แก้**:
+  - `app.html`: ลบ `#module-settings` และโมดัลตั้งค่า 8 ตัว; ปุ่มลัดแดชบอร์ด "ตั้งค่าระบบ" ไป `../settings/school.html#tab=school`
+  - `app.js`: ลบรายการของ settings ใน `VIEW_TITLES` / `MODULE_DEFAULT_VIEWS` / `fireModuleInit`
+  - `settings.js`: จาก 1964 → 342 บรรทัด เหลือเป็น **data layer อย่างเดียว** (`INITIAL_*`, `settingsState`, `settingsStateDraft`, `initSettingsDatabase`, `saveStateToLocalStorage`, wrapper `showToast`/`openModal`/`closeModal`/`formatThaiDate` — ไม่แก้ค่า/ชื่อ) ห้ามลบ เพราะ `index.js`/`personnel.js` อ่าน `settingsState`
+  - `leave-features.html` / `leave-features.js`: ลบ view `attendance-settings` และ `renderAttendanceSettings` / `saveAttendanceSettings` / `attDaysLabel` (คง `ATT_SETTINGS_KEY`, loader `attSettings`, `attMin`, `attHHMM` ไว้ — หน้าเช็คชื่อ/รายงานยังอ่านค่าจากคีย์เดิม)
+  - `app.css`, `leave-features.css`: ตัดสไตล์ที่ใช้เฉพาะหน้าตั้งค่าที่ย้ายออก
+- **คีย์ localStorage ไม่เปลี่ยน**: ยังเป็น `sd_*` และ `sd_student_attendance_settings` ชุดเดิม ทั้งสองฝั่งอ่านเขียนร่วมกัน (ตรวจข้ามหน้าด้วย headless Chrome: เพิ่มตำแหน่งที่ settings → โผล่ในฟอร์ม job-license, ตั้งเวลาเข้าเรียน 07:40 → หน้าเช็คชื่อเห็น 07:40, ครูที่ seed จาก `app.html` โผล่ในแท็บ homeroom)
+- **พฤติกรรมที่ต่างจากของเดิมตอนย้าย**: ไม่มี draft แล้ว (แก้ในโมดัลบันทึกทันที), ปุ่ม "บันทึก" ของลิสต์แค่ขึ้น toast, ลบกะ/วันหยุด/ผู้ลงนามต้องกดยืนยันก่อน, id ใหม่ = max+1
+- **ปุ่มที่เดิม "ตาย" แล้วซ่อมตอนย้าย**: ปุ่ม "สิทธิ์" ของหน้า permissions เดิมเรียก `editUserRole` ที่ไม่มีอยู่ → ตอนนี้ใช้ได้ และบันทึก role/status พร้อมฟิลด์ใหม่ **`perms` (array) ลง `sd_users`** ⚠️ แคร์รับทราบ; ช่องค้นหาผู้ใช้/ตัวกรอง role ใช้ได้; การแก้ผู้ลงนามบันทึกจริง (เดิมพึ่ง `#btn-save-doc-signatories` ที่ไม่มี); สถิติ "วันทำงาน" ตามวันทำงานที่บันทึก; แก้ outline off-by-one
+- **สไตล์**: หน้าใหม่ใช้ Tailwind แต่ layout / สี (พาเลต `sd-*`) / ไอคอน เป็นของ care
+- **ที่ยังไม่ทำ/ข้อสังเกต**:
+  - หน้า `settings/school.html` มี "ปีการศึกษาปัจจุบัน" 2 แหล่งที่ยังไม่ sync: `sd_acad_*` (care) กับ `school_academic_years` (noeysod)
+  - ถ้ายังไม่เคยเปิด `app.html` (ยังไม่ seed `schooldark_personnel_teachers`) กลุ่มครูในแท็บ homeroom จะว่าง หน้าแสดงคำแนะนำ
+  - คอมเมนต์ใน `settings.js` แถว ~94 พูดถึง `ensureHomeroomYearSeeded` ซึ่งตอนนี้อยู่ใน `settings/school.html`
+  - ชื่อฟังก์ชัน `saveStateToLocalStorage` ชนกันระหว่าง `index.js` กับ `settings.js` (settings.js ชนะ) — มีมาก่อน ยังไม่แก้
+- **หน้าตาเปลี่ยน**: **ใช่** — หน้าตั้งค่าย้ายไปอยู่ใต้ `settings/` (เมนูซ้าย "การตั้งค่า") ไม่ได้อยู่ใน `app.html` / `leave-features.html` อีก
+- **ย้อน**: `git checkout` ไฟล์ที่แก้ (`schooldark/app.html`, `app.js`, `settings.js`, `app.css`, `leave-features.html`, `leave-features.js`, `leave-features.css`, `shared/cross-nav.js`, `settings/school.html`, `settings/index.html`) แล้วลบไฟล์ใหม่ 3 ไฟล์ (`settings/personnel.html`, `settings/js/personnel-settings.js`, `settings/js/sd-settings-store.js`)
+
 ## 2026-09-29 — รอบแก้หน้าค้าง + เมนูซ้ายกางหุบวุ่น (ทุกข้อ: หน้าตาไม่เปลี่ยน)
 
 > ⚠️ **แคร์ต้อง `git pull` ก่อนแก้ `leave-features.html`** — ไฟล์นั้นถูกแยก CSS/JS ออกเป็นไฟล์ใหม่แล้ว (ข้อ 1)
@@ -110,14 +176,13 @@
 - **แก้อะไร**: ลบการซ่อน/แสดงกลุ่มนี้ใน `updateSidebarVisibility()` (เมนู "ตั้งค่าการลา" `menu-leave-settings` ไม่มีใน sidebar แล้ว จึงไม่มีผล) และลบ pre-hide ใน `cross-nav.js` · **คง** redirect และ `updateApprovalBadge()` เดิมไว้
 - **ข้อควรรู้**: ตอนนี้ role ครูกดเมนูนี้แล้วเข้าหน้าอนุมัติได้ (redirect เดิมทำงานเฉพาะตอนโหลดหน้า/สลับ role ขณะอยู่หน้านั้น) — เป็น prototype ไม่มี login จริง ถ้าต้องการกันสิทธิ์ให้แคร์ทำที่ `navigate()` · หน้าตาเปลี่ยน: เมนูโผล่ตลอด · **ย้อน**: ใส่บรรทัด `approveMenu.style.display` กลับใน `index.js`
 
-### 17. ธีมสีเนยสด เฉพาะแดชบอร์ดหลัก (`schooldark/app.css`, `schooldark/app.html`)
-- **แก้อะไร**: (1) `app.css` ต่อจากบล็อก `:root {…}` เพิ่มบล็อก `#module-dashboard { --primary:#3e63dd; --primary-hover; --primary-glow; --success/--warning/--danger/--info (+ -bg/-glow) }` ใช้สีชุดเดียวกับ `admission/js/tailwind-config.js` ของเนยสด — มีผลเฉพาะภายใน `#module-dashboard` (2) `app.html` ใน `<section id="module-dashboard">` เปลี่ยน inline `background: linear-gradient(135deg, hsl(..), hsl(..))` ทั้ง 15 จุดเป็นสีทึบ: hue 250 → `var(--primary)`, 38 → `var(--warning)`, 350 → `var(--danger)`, 142 → `var(--success)`, 199 → `var(--info)`, ม่วง→ไวโอเล็ต (250→280) → `#9333ea`
-- **ทำไม**: เนยสดตัดสินใจ (2026-09-29) ให้สีตามธีมเนยสด ไอคอนใช้สีทึบน้ำเงิน-ม่วงของเนยสด ส่วนการ์ดคงสไตล์แคร์ (ขาว/เงา/มุมโค้ง, พื้นหลังหน้า `--bg-app` ไม่เปลี่ยน) และทำเป็นก้าวแรกที่แดชบอร์ดหลักก่อน
-- **หน้าตาเปลี่ยน**: **เปลี่ยน** — เฉพาะสีบนแดชบอร์ดหลัก และไอคอนไม่มี gradient แล้ว (เป็นสีทึบ) · view อื่นและ `leave-features.html` ยังใช้สีของแคร์เหมือนเดิม (gradient นอกแดชบอร์ดตั้งใจไม่แตะ)
-- **กฎต่อไป**: เมื่อหน้าอื่นสลับตามธีมนี้ ให้เพิ่ม scope ของหน้านั้นแบบเดียวกัน (เช่น `#module-leave { … }`) หรือย้ายค่าเข้า `:root` ทีเดียวเมื่อครบทุกหน้า
-- **ย้อน**: ลบบล็อก `#module-dashboard {…}` ใน `app.css` แล้วคืน inline gradient เดิมในส่วน dashboard ของ `app.html` (ดูของเดิมด้วย `git diff` / `git checkout -p` เฉพาะบรรทัดเหล่านั้น)
+### 17. พื้นหลังหน้าเป็นเทาอ่อนแบบเนยสด (`schooldark/app.css`, `schooldark/leave-features.css`)
+- **แก้อะไร**: (1) `app.css` `:root` `--bg-app` `hsl(210, 40%, 94%)` → `#f8fafc` (2) `main.main-content` ใช้ `var(--bg-app)` แทน `var(--bg-main)` (3) `header.top-header` เพิ่ม `background-color: var(--bg-main)` ให้แถบหัวยังขาว (4) `leave-features.css` `.sd-filter-sticky` ใช้ `var(--bg-app)` (แถบ sticky อยู่บนพื้นหน้า ไม่ให้เป็นแถบขาวโดด) · **ไม่แตะ** สี primary/success/warning/danger/info, gradient, เงา, เลย์เอาต์ · `--bg-main`/`--bg-card` ยังขาว (modal/drawer ใช้ `--bg-main`)
+- **ทำไม**: ธีมเนยสดคือพื้นหน้า `#f8fafc` + การ์ดขาว แต่เดิม `main` เป็นขาว (`--bg-main`) การ์ด (`--bg-card`) ก็ขาว จึงขาวทับขาว มองไม่เห็นขอบเขตการ์ด (`--bg-app` เดิมถูก `main` บังอยู่) — เนยสดสั่ง (2026-09-29) ให้เปลี่ยนเฉพาะสีพื้นฐานขาว ๆ ส่วนสีเด่นของแคร์คงเดิม
+- **หน้าตาเปลี่ยน**: **ใช่** — พื้นหลังหน้าเป็นเทาอ่อน การ์ด/แถบหัว/modal ยังขาว สีเด่นของแคร์เหมือนเดิม · มีผลทุกหน้าที่โหลด `app.css` (`app.html`, `leave-features.html`)
+- **ย้อน**: `--bg-app` กลับเป็น `hsl(210, 40%, 94%)`, `main.main-content` กลับเป็น `var(--bg-main)`, ลบ `background-color` ใน `header.top-header`, `.sd-filter-sticky` กลับเป็น `var(--bg-main)`
 
 ### ข้อสังเกต (ยังไม่ได้แก้ — ของแคร์ตัดสินใจเอง)
 - `leave-features.js` ท้ายไฟล์เรียก `renderAllHistory()` แต่ `renderAllHistory` อ่าน `#all-search` ซึ่งไม่มีใน HTML แล้ว → ขึ้น `Uncaught TypeError: Cannot read properties of null (reading 'value')` ใน console ตอนโหลด (เป็นมาก่อนรอบนี้ ไม่ได้ทำให้หน้าพัง เพราะเป็นบรรทัดสุดท้าย) — แก้ได้โดยลบการเรียกนั้นหรือเช็ค null
 - `settings.js` ผูก click กับ `.menu-item[data-view]` ทุกตัว (ไม่จำกัดเฉพาะเมนูตั้งค่า) — ยังไม่ได้แตะ แค่จดไว้
-- ยังไม่ได้แตะ: เงา `.glass-card`, สีของหน้าอื่นนอกแดชบอร์ด, เลย์เอาต์ (ทุกอย่างที่หน้าตาเปลี่ยน) — รอเรื่องธีม (สีแดชบอร์ดหลักทำแล้ว ดูข้อ 17)
+- ยังไม่ได้แตะ: เงา `.glass-card`, สี, เลย์เอาต์ (ทุกอย่างที่หน้าตาเปลี่ยน) — รอเรื่องธีม (ทำแค่สีพื้นหลังหน้าแล้ว ดูข้อ 17)

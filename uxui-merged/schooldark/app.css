@@ -14,7 +14,7 @@
     --font-body: 'Sarabun', 'Outfit', sans-serif;
 
     /* Light Mode (only mode — dark mode removed) */
-    --bg-app:      hsl(210, 40%, 94%);
+    --bg-app:      #f8fafc;
     --bg-main:     hsl(0, 0%, 100%);
     --bg-card:     #ffffff;
     --border-color: rgba(0, 0, 0, 0.12);
@@ -73,17 +73,6 @@
     --speed: 0.3s;
 }
 
-/* ธีมเนยสด (เฉพาะสี) — ใช้แค่แดชบอร์ดหลักก่อน (2026-09-29) ดู CHANGES-FOR-CARE.md
-   ค่าตรงกับ admission/js/tailwind-config.js — การ์ด/เงา/พื้นหลังหน้ายังเป็นของแคร์ตามที่ตกลง */
-#module-dashboard {
-    --primary: #3e63dd;  --primary-hover: #2f51c7;  --primary-glow: rgba(62, 99, 221, 0.12);
-    --border-focus: rgba(62, 99, 221, 0.4);
-    --success: #047857;  --success-bg: rgba(4, 120, 87, 0.1);   --success-glow: rgba(4, 120, 87, 0.15);
-    --warning: #b45309;  --warning-bg: rgba(180, 83, 9, 0.08);
-    --danger:  #dc2626;  --danger-bg:  rgba(220, 38, 38, 0.08); --danger-glow: rgba(220, 38, 38, 0.15);
-    --info:    #0369a1;  --info-bg:    rgba(3, 105, 161, 0.08);
-}
-
 /* =============================================================
    SECTION 2: RESET & BASE
    ============================================================= */
@@ -133,11 +122,12 @@ main.main-content {
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
-    background-color: var(--bg-main);
+    background-color: var(--bg-app);
     transition: background-color var(--transition-speed);
 }
 
 header.top-header {
+    background-color: var(--bg-main);
     border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
@@ -247,6 +237,12 @@ header.top-header {
     animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .view-section.active { display: block; }
+
+/* Personnel wizard: 3 step panes under one stepper card (switchView in personnel.js toggles .active) */
+.personnel-step-pane { display: none; }
+.personnel-step-pane.active { display: block; }
+.personnel-wizard-stepper { margin-bottom: 20px; }
+.personnel-wizard-stepper .journey-step { cursor: pointer; }
 
 /* Sub-tab panels */
 .sub-tab-panel {

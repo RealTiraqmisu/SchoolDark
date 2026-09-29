@@ -177,7 +177,7 @@ function switchView(viewName) {
         section.classList.remove('active');
     });
     
-    const isWizardView = ['basic-info', 'education', 'job-license', 'import-hub'].includes(viewName);
+    const isWizardView = ['basic-info', 'education', 'job-license'].includes(viewName);
     
     if (isWizardView) {
         // Show the unified wizard wrapper
@@ -186,12 +186,11 @@ function switchView(viewName) {
             wizardEl.classList.add('active');
         }
         
-        // Map viewName to step index (1-4)
+        // Map viewName to step index (1-3)
         const viewToStep = {
             'basic-info': 1,
             'education': 2,
-            'job-license': 3,
-            'import-hub': 4
+            'job-license': 3
         };
         const currentStep = viewToStep[viewName];
         
@@ -229,7 +228,7 @@ function switchView(viewName) {
         item.classList.remove('active');
     });
     
-    const activeMenuItem = document.querySelector(`.sidebar-menu [data-view="${viewName}"]`);
+    const activeMenuItem = document.querySelector(`.sidebar-menu [data-view="${isWizardView ? 'directory' : viewName}"]`);
     if (activeMenuItem) {
         activeMenuItem.classList.add('active');
     }
@@ -1299,6 +1298,7 @@ function handleJobLicenseFormSubmit(e) {
 function deleteTeacherProfile(teacherId) {
     if (confirm(`คุณต้องการลบแฟ้มข้อมูลของบุคลากรรายรหัส ${teacherId} หรือไม่?`)) {
         teachers = teachers.filter(t => t.id !== teacherId);
+        if (selectedTeacherId === teacherId) selectedTeacherId = null;
         saveDB();
         showToast(`ลบข้อมูลบุคลากร ${teacherId} เรียบร้อยแล้ว`, 'danger');
     }
@@ -2400,6 +2400,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
+    // Personnel wizard stepper: jump between steps only once a record is selected/saved
+    document.querySelectorAll('#view-personnel-wizard .journey-step').forEach(stepNode => {
+        stepNode.addEventListener('click', () => {
+            const stepToView = { 1: 'basic-info', 2: 'education', 3: 'job-license' };
+            if (selectedTeacherId) {
+                switchView(stepToView[parseInt(stepNode.getAttribute('data-step'))]);
+            } else {
+                showToast('กรุณาบันทึกข้อมูลพื้นฐานก่อน', 'warning');
+            }
+        });
+    });
+
     // Flowchart Click events
     document.querySelectorAll('.flow-node-card').forEach(card => {
         card.addEventListener('click', function() {

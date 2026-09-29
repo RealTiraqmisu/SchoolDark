@@ -257,7 +257,7 @@
     /* ===== แดชบอร์ดการมาเรียนของนักเรียน (view-student-dashboard) ===== */
     /* แถบตัวกรอง — ติดบนสุดของ .content-body ตอนเลื่อนลง (top ติดลบเท่า padding-top ของ .content-body
        เพราะ sticky นับจากขอบ content box ของกล่องที่เลื่อน ถ้า top: 0 แถบจะเลื่อนลงมาทับการ์ดด้านล่าง 28px) */
-    .sd-filter-sticky { position: sticky; top: -28px; z-index: 20; margin: -28px -32px 16px; padding: 14px 32px 12px; background: var(--bg-main); border-bottom: 1px solid var(--border-color); }
+    .sd-filter-sticky { position: sticky; top: -28px; z-index: 20; margin: -28px -32px 16px; padding: 14px 32px 12px; background: var(--bg-app); border-bottom: 1px solid var(--border-color); }
     .sd-filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
     .sd-filter-bar .glass-select { height: 38px; }
     .sd-period-nav { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--border-color); border-radius: var(--br-md); background: var(--bg-card); padding: 2px; }

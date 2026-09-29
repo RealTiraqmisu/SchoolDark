@@ -71,8 +71,8 @@
         return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
       }
 
-      function systemBadge(page) {
-        if (page.indexOf('schooldark/') === 0) return { label: 'บุคลากร & การลา', cls: 'bg-slate-100 text-slate-600 border-slate-200' };
+      function systemBadge(page, child) {
+        if (page.indexOf('schooldark/') === 0 || (child && child.origin === 'schooldark')) return { label: 'บุคลากร & การลา', cls: 'bg-slate-100 text-slate-600 border-slate-200' };
         if (page.indexOf('admission/') === 0) return { label: 'รับสมัคร', cls: 'bg-sky-50 text-sky-600 border-sky-200' };
         return { label: 'ใหม่', cls: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
       }
@@ -90,7 +90,7 @@
           var cardsHtml = (item.children || []).map(function (child) {
             var hash = child.hash ? '#' + child.hash : CrossNav.hashFor(child, null);
             var href = CrossNav.hrefTo(child.page) + hash;
-            var badge = systemBadge(child.page);
+            var badge = systemBadge(child.page, child);
             return (
               '<a href="' + escapeHtml(href) + '" class="custom-card border border-slate-200 rounded-2xl p-5 hover:border-primary hover:shadow-lg transition-all block relative">' +
               '<span class="absolute top-4 right-4 text-[10px] font-bold px-2 py-0.5 rounded-full border ' + badge.cls + '">' + escapeHtml(badge.label) + '</span>' +

@@ -218,32 +218,6 @@
         // รายชื่อบุคลากรมีที่เดียว (เดิมมี "รายชื่อบุคลากรและอาจารย์" ใน leave-features.html ซ้ำอีกอัน)
         { id: 'menu-directory', icon: 'users', label: 'รายชื่อบุคลากร', page: SD_APP, module: 'personnel', view: 'directory', keywords: 'ครู อาจารย์ พนักงาน staff' },
         {
-          id: 'menu-basic-info', icon: 'user', label: 'ข้อมูลพื้นฐาน', page: SD_APP, module: 'personnel', view: 'basic-info', keywords: 'ประวัติ ที่อยู่ ครอบครัว',
-          children: [
-            { label: 'ประวัติส่วนตัว', subtab: 'personal-profile' },
-            { label: 'ที่อยู่ตามทะเบียนบ้าน', subtab: 'registered-address' },
-            { label: 'ที่อยู่ติดต่อได้', subtab: 'contact-address' },
-            { label: 'ข้อมูลครอบครัว', subtab: 'family-info' }
-          ]
-        },
-        {
-          id: 'menu-education', icon: 'graduation', label: 'การศึกษา & อบรม', page: SD_APP, module: 'personnel', view: 'education', keywords: 'วุฒิ ฝึกอบรม ดูงาน',
-          children: [
-            { label: 'ข้อมูลการศึกษา', subtab: 'edu-background' },
-            { label: 'ข้อมูลเกียรติคุณ', subtab: 'edu-honors' },
-            { label: 'ประวัติอบรม ดูงาน', subtab: 'edu-training' },
-            { label: 'คะแนน TOEIC / อื่นๆ', subtab: 'edu-toeic' }
-          ]
-        },
-        {
-          id: 'menu-job-license', icon: 'idcard', label: 'ตำแหน่ง & ใบประกอบฯ', page: SD_APP, module: 'personnel', view: 'job-license', keywords: 'ใบอนุญาต วิชาชีพ เครื่องราช',
-          children: [
-            { label: 'ข้อมูลตำแหน่งงาน', subtab: 'job-position-tab' },
-            { label: 'ใบอนุญาตประกอบวิชาชีพ', subtab: 'professional-license-tab' },
-            { label: 'ประวัติรับเครื่องราชฯ', subtab: 'royal-decoration-tab' }
-          ]
-        },
-        {
           id: 'menu-import-hub', icon: 'upload', label: 'นำเข้าข้อมูล', page: SD_APP, module: 'personnel', view: 'import-hub', keywords: 'excel import อัปโหลด รูปภาพ',
           children: [
             { label: 'อัพโหลดไฟล์ Excel', subtab: 'import-excel-tab' },
@@ -296,32 +270,32 @@
         {
           icon: 'home', label: 'ตั้งค่าโรงเรียน', page: 'settings/index.html', anchor: 'school', section: 'school',
           children: [
-            { label: 'ข้อมูลโรงเรียน & ตั้งค่าระบบ', page: SD_APP, module: 'settings', view: 'general', desc: 'ชื่อโรงเรียน รหัส ที่อยู่ ปีการศึกษาปัจจุบัน' },
+            { label: 'ข้อมูลโรงเรียน & ตั้งค่าระบบ', page: 'settings/school.html', hash: 'tab=school', origin: 'schooldark', desc: 'ชื่อโรงเรียน รหัส ที่อยู่ ปีการศึกษาปัจจุบัน' },
+            { label: 'ข้อมูลห้องเรียน', page: 'settings/school.html', hash: 'tab=classrooms', desc: 'ห้องเรียน อาคาร ความจุ' },
+            { label: 'ปฏิทินโรงเรียน', page: 'settings/school.html', hash: 'tab=calendar', desc: 'วันหยุด กิจกรรม วันสอบ' },
             { label: 'ข้อมูลปีการศึกษา', page: 'settings/school.html', hash: 'tab=years', desc: 'ปีการศึกษาและช่วงภาคเรียน' },
             { label: 'ข้อมูลระดับการศึกษา', page: 'settings/school.html', hash: 'tab=levels', desc: 'ระดับชั้นและช่วงชั้น' },
             { label: 'ข้อมูลสาขางาน-สาขาวิชา', page: 'settings/school.html', hash: 'tab=majors', desc: 'แผนการเรียน สาขาวิชา สาขางาน' },
-            { label: 'ข้อมูลห้องเรียน', page: 'settings/school.html', hash: 'tab=classrooms', desc: 'ห้องเรียน อาคาร ความจุ' },
-            { label: 'ปฏิทินโรงเรียน', page: 'settings/school.html', hash: 'tab=calendar', desc: 'วันหยุด กิจกรรม วันสอบ' },
-            { label: 'ข้อมูลครูประจำชั้น', page: SD_APP, module: 'settings', view: 'homeroom', desc: 'ครูประจำชั้น/ที่ปรึกษาแต่ละห้อง' },
-            { label: 'เวลาเข้า-เลิกเรียนของนักเรียน', page: SD_LEAVE, view: 'attendance-settings', desc: 'เวลาเข้าเรียน เลิกเรียน เกณฑ์มาสาย วันเรียน' }
+            { label: 'ข้อมูลครูประจำชั้น', page: 'settings/school.html', hash: 'tab=homeroom', origin: 'schooldark', desc: 'ครูประจำชั้น/ที่ปรึกษาแต่ละห้อง' },
+            { label: 'เวลาเข้า-เลิกเรียนของนักเรียน', page: 'settings/school.html', hash: 'tab=attendance', origin: 'schooldark', desc: 'เวลาเข้าเรียน เลิกเรียน เกณฑ์มาสาย วันเรียน' }
           ]
         },
         {
           icon: 'users', label: 'ตั้งค่าบุคลากร', page: 'settings/index.html', anchor: 'personnel', section: 'personnel',
           children: [
-            { label: 'วันเวลาเข้าออก', page: SD_APP, module: 'settings', view: 'schedule', desc: 'เวลาทำงาน กะ วันหยุด' },
-            { label: 'สิทธิ์ผู้ใช้งาน', page: SD_APP, module: 'settings', view: 'permissions', desc: 'บทบาทและสิทธิ์การเข้าถึงระบบ' },
-            { label: 'ผู้ลงนามเอกสาร', page: SD_APP, module: 'settings', view: 'signatories', desc: 'รายชื่อผู้มีสิทธิ์ลงนามเอกสาร' },
-            { label: 'ตั้งค่าประเภทบุคลากร', page: SD_APP, module: 'settings', view: 'staff-types', desc: 'ข้าราชการ/ครูอัตราจ้าง/ผู้บริหาร ฯลฯ' },
-            { label: 'ตั้งค่าตำแหน่ง', page: SD_APP, module: 'settings', view: 'positions', desc: 'ตำแหน่งงานของบุคลากร' },
-            { label: 'ตั้งค่าแผนก/กลุ่มสาระฯ', page: SD_APP, module: 'settings', view: 'departments', desc: 'กลุ่มสาระการเรียนรู้และแผนก' }
+            { label: 'วันเวลาเข้าออก', page: 'settings/personnel.html', hash: 'tab=schedule', origin: 'schooldark', desc: 'เวลาทำงาน กะ วันหยุด' },
+            { label: 'สิทธิ์ผู้ใช้งาน', page: 'settings/personnel.html', hash: 'tab=permissions', origin: 'schooldark', desc: 'บทบาทและสิทธิ์การเข้าถึงระบบ' },
+            { label: 'ผู้ลงนามเอกสาร', page: 'settings/personnel.html', hash: 'tab=signatories', origin: 'schooldark', desc: 'รายชื่อผู้มีสิทธิ์ลงนามเอกสาร' },
+            { label: 'ตั้งค่าประเภทบุคลากร', page: 'settings/personnel.html', hash: 'tab=staff-types', origin: 'schooldark', desc: 'ข้าราชการ/ครูอัตราจ้าง/ผู้บริหาร ฯลฯ' },
+            { label: 'ตั้งค่าตำแหน่ง', page: 'settings/personnel.html', hash: 'tab=positions', origin: 'schooldark', desc: 'ตำแหน่งงานของบุคลากร' },
+            { label: 'ตั้งค่าแผนก/กลุ่มสาระฯ', page: 'settings/personnel.html', hash: 'tab=departments', origin: 'schooldark', desc: 'กลุ่มสาระการเรียนรู้และแผนก' }
           ]
         },
         {
           icon: 'calendar', label: 'ตั้งค่าการลา', page: 'settings/index.html', anchor: 'leave', section: 'leave',
           children: [
-            { label: 'ตั้งค่าการลาบุคลากร', page: SD_APP, module: 'leave', view: 'leave-settings', desc: 'รอบปี ผู้อนุมัติ โควตา เงื่อนไข' },
-            { label: 'ตั้งค่าการลาเรียนนักเรียน', page: SD_LEAVE, view: 'student-leave-settings', desc: 'ประเภทการลา ผู้อนุมัติ โควตา' }
+            { label: 'ตั้งค่าการลาบุคลากร', page: 'settings/leave.html', hash: 'tab=staff', origin: 'schooldark', desc: 'รอบปี ผู้อนุมัติ โควตา เงื่อนไข' },
+            { label: 'ตั้งค่าการลาเรียนนักเรียน', page: 'settings/leave.html', hash: 'tab=student', origin: 'schooldark', desc: 'ประเภทการลา ผู้อนุมัติ โควตา' }
           ]
         },
         {
@@ -655,6 +629,29 @@
   }
   syncAnchorActive();
   window.addEventListener('hashchange', syncAnchorActive);
+
+  // ไฮไลต์ .submenu-link ที่ชี้หน้าปัจจุบันตาม location.hash (เช่น settings/school.html#tab=...)
+  // renderItem คำนวณ active ตอน render ครั้งเดียว จึงต้องอัปเดตซ้ำเมื่อ hash เปลี่ยน
+  function syncSubmenuLinkActive() {
+    var links = Array.prototype.filter.call(sidebarEl.querySelectorAll('a.submenu-link'), function (a) {
+      try { return new URL(a.href).pathname === location.pathname; } catch (e) { return false; }
+    });
+    if (!links.some(function (a) { return new URL(a.href).hash; })) return;
+    links.forEach(function (a) {
+      var on = new URL(a.href).hash === location.hash;
+      a.classList.toggle('active', on);
+      if (on) {
+        var group = a.closest('.menu-item-group');
+        if (group) {
+          group.classList.add('expanded');
+          var tgl = group.querySelector('.submenu-toggle');
+          if (tgl) tgl.setAttribute('aria-expanded', 'true');
+        }
+      }
+    });
+  }
+  syncSubmenuLinkActive();
+  window.addEventListener('hashchange', syncSubmenuLinkActive);
 
   // จำ/คืนตำแหน่ง scroll ของเมนู ระหว่างเปลี่ยนหน้า
   var menuEl = sidebarEl.querySelector('.sidebar-menu');

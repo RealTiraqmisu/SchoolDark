@@ -44,8 +44,16 @@ uxui-merged/
 ├── apply/            # พอร์ทัลสมัครเรียนออนไลน์สำหรับผู้สมัคร/ผู้ปกครอง (ย้ายออกมาจาก admission/) — ดูหัวข้อ "พอร์ทัลสมัครเรียน (apply/)" ด้านล่าง
 ├── settings/         # ศูนย์รวมการตั้งค่าของทั้ง 2 ระบบ (โฟลเดอร์กลาง ไม่ใช่ของฝั่งใด)
 │   ├── index.html    # การ์ดรวมทุกหมวดตั้งค่า (อ่านจาก NAV_GROUPS กลุ่ม id "settings")
-│   ├── school.html   # ตั้งค่าโรงเรียน (master data) 5 แท็บ — ดูหัวข้อถัดไป
-│   └── js/school-store.js  # เก็บข้อมูลของ school.html คีย์ localStorage `school_*`
+│   ├── school.html   # ตั้งค่าโรงเรียน 8 แท็บ (5 master data ของ noeysod + 3 ย้ายมาจาก care) — ดูหัวข้อถัดไป
+│   ├── personnel.html  # ตั้งค่าบุคลากร 6 แท็บ (ย้ายมาจาก schooldark/app.html)
+│   ├── leave.html    # ตั้งค่าการลา 2 แท็บ: staff (บุคลากร) + student (นักเรียน) — ย้ายมาจาก schooldark/ (2026-09-29)
+│   └── js/
+│       ├── school-store.js        # เก็บข้อมูล master data ของ school.html คีย์ localStorage `school_*`
+│       ├── sd-settings-store.js   # window.SdSettings — อ่าน/เขียนคีย์ `sd_*` ของ care (seed ซ้ำกับ schooldark/settings.js)
+│       ├── personnel-settings.js  # logic ของ personnel.html
+│       ├── leave-settings.js      # router + helpers ของ leave.html (window.LeaveSettings)
+│       ├── leave-settings-staff.js    # แท็บ staff: wizard 6 ขั้น + live preview
+│       └── leave-settings-student.js  # แท็บ student: wizard 5 ขั้น ประเภทการลา/ผู้อนุมัติ/เวอร์ชัน
 └── parent/           # พอร์ทัลผู้ปกครอง — navbar บนสุดของตัวเอง (ไม่ใช้ sidebar แอดมิน)
     └── CLAUDE.md     # ← รายละเอียดของระบบนี้อยู่ในไฟล์นี้
 ```
@@ -121,7 +129,7 @@ uxui-merged/
 
 หมวดใน sidebar **จัดตามงานที่ผู้ใช้ทำ ไม่ได้จัดตามไฟล์** (จัดใหม่ 2026-09-29): แดชบอร์ดภาพรวม (บนสุด ไม่มีหัวหมวด) → งานทะเบียนนักเรียน
 → งานรับสมัครออนไลน์ → งานกิจการนักเรียน (แดชบอร์ดการมาเรียน + เช็คชื่อ + รายงานการมาเรียน + บัตรขออนุญาต — Team C เป็นเจ้าของหลัก
-เรามีส่วนที่ต้องทำด้วย) → งานบุคลากร → งานบริหารการลา (เมนูแบน 4 อัน: ยื่น/อนุมัติ ของบุคลากร + ยื่น/อนุมัติ ของนักเรียน ต่อท้ายชื่อด้วย
+เรามีส่วนที่ต้องทำด้วย) → งานบุคลากร (เหลือเมนู รายชื่อบุคลากร / นำเข้าข้อมูล / พิมพ์ & QR Studio — ไม่มี ข้อมูลพื้นฐาน/การศึกษา/ตำแหน่ง แล้ว: เข้าผ่านปุ่ม "เพิ่มบุคลากรรายบุคคล"/"แก้ไข" ใน รายชื่อบุคลากร → wizard 3 ขั้น) → งานบริหารการลา (เมนูแบน 4 อัน: ยื่น/อนุมัติ ของบุคลากร + ยื่น/อนุมัติ ของนักเรียน ต่อท้ายชื่อด้วย
 (บุคลากร)/(นักเรียน) — ไม่ทำเมนูซ้ำ 2 ที่ ข้อมูลเชื่อมกันอยู่แล้ว เช่นแดชบอร์ดการมาเรียนดึงใบลาที่อนุมัติ) → การตั้งค่า (ล่างสุด)
 กลุ่มที่ `label: ''` ใน `NAV_GROUPS` = ไม่แสดงหัวหมวด  รายชื่อบุคลากรมีเมนูเดียวคือของ `app.html` (view `directory`) —
 เมนู "รายชื่อบุคลากรและอาจารย์" (view `employees` ใน `leave-features.html`) ถูกถอดออกจาก sidebar
@@ -171,12 +179,36 @@ HTML ทุกไฟล์ แต่ถูกซ่อนด้วย `data-lega
 module?, view?, hash?, desc?}` — ถ้า child มี `view` และ `page` ตรงกับหน้าปัจจุบันจะกลายเป็น
 `submenu-item` แบบ SPA เดิมของ schooldark ให้อัตโนมัติ (ดู `renderItem` ใน `cross-nav.js`)
 
-`settings/school.html` เป็นหน้าตั้งค่า "โรงเรียน" (master data) ใหม่ที่ยังไม่มีมาก่อนในทั้ง 2
-ระบบ: ข้อมูลห้องเรียน, ปฏิทินโรงเรียน, ข้อมูลปีการศึกษา, ข้อมูลระดับการศึกษา, ข้อมูลสาขางาน-สาขาวิชา
-(5 แท็บ สลับด้วย hash `#tab=<id>`) เก็บข้อมูลผ่าน `SchoolStore` (`settings/js/school-store.js`,
-คีย์ localStorage ขึ้นต้นด้วย `school_*`) ส่วน "ข้อมูลโรงเรียน/ตั้งค่าระบบ" ตัวจริง (ชื่อ/รหัส/
-ที่อยู่/ปีการศึกษาปัจจุบัน) และ "ข้อมูลครูประจำชั้น" ยังคงอยู่ที่เดิมคือ `schooldark/app.html`
-(view `general`/`homeroom`) — การ์ดในศูนย์ตั้งค่าแค่ลิงก์ไปหาที่นั่น ไม่ได้ก็อปข้อมูลมาซ้ำ
+`settings/school.html` เป็นหน้าตั้งค่า "โรงเรียน" **8 แท็บ** (สลับด้วย hash `#tab=<id>`, แท็บเริ่มต้นคือ `school`):
+- 3 แท็บที่ย้ายมาจาก care (2026-09-29): `school` ข้อมูลโรงเรียน/ปีการศึกษา (จาก view `general` ของ `app.html`), `homeroom` ข้อมูลครูประจำชั้น,
+  `attendance` เวลาเข้า-เลิกเรียนของนักเรียน (จาก view `attendance-settings` ของ `leave-features.html`) — ใช้คีย์ `sd_*` /
+  `sd_student_attendance_settings` เดิมของ care ผ่าน `SdSettings`
+- 5 แท็บ master data ของ noeysod: ข้อมูลห้องเรียน, ปฏิทินโรงเรียน, ข้อมูลปีการศึกษา, ข้อมูลระดับการศึกษา, ข้อมูลสาขางาน-สาขาวิชา
+  เก็บผ่าน `SchoolStore` (`settings/js/school-store.js`, คีย์ `school_*`)
+
+`settings/personnel.html` (+ `js/personnel-settings.js`) เป็นหน้าตั้งค่า "บุคลากร" 6 แท็บ ย้ายมาจาก `schooldark/app.html`: `schedule`
+(เวลาทำงาน/กะ/วันหยุด), `permissions` (ผู้ใช้/สิทธิ์), `signatories` (ผู้ลงนาม), `staff-types`, `positions`, `departments` ทั้งหมดอ่าน/เขียนผ่าน
+`SdSettings` (`settings/js/sd-settings-store.js`) — คีย์เดียวกับ care ทุกตัว การแก้ในโมดัลบันทึกทันที (ไม่มี draft)
+
+`settings/leave.html` เป็นหน้าตั้งค่า "การลา" 2 แท็บ (hash `#tab=staff` เริ่มต้น / `#tab=student`) ย้ายมาจาก `leave-settings` ใน `app.html`
+และ `student-leave-settings` ใน `leave-features.html` (ทั้งสอง view ถูกลบออกจาก `schooldark/` แล้ว) สคริปต์โหลดตามลำดับ:
+`sd-settings-store.js` → `leave-settings.js` (router + helpers) → `leave-settings-staff.js` → `leave-settings-student.js`
+**Contract**: `window.LeaveSettings = { tabs, helpers:{esc,toast,openModal,closeModal,confirm,debounce,svg}, switchTab }` — แต่ละแท็บลงทะเบียน
+`LeaveSettings.tabs.<key> = { title, desc, iconSvg, render(panelEl) }` (`render` สร้างมาร์กอัป/โมดัลเอง โมดัลอยู่ใน `#modal-root`)
+- `staff`: wizard 6 ขั้น + preview สด อ่าน/เขียน `SdSettings.leaveSettings()` / `saveLeaveSettings()` (คีย์ `schooldark_settings`, seed = `INITIAL_SETTINGS` ใน `schooldark/index.js` —
+  ต้องตรงกัน) ตอนนี้ **บันทึกจริง** (เดิมค่าไม่ถูกเก็บเพราะ `saveStateToLocalStorage` ของ `settings.js` บังชื่อของ `index.js`); เพิ่ม/ลบผู้อนุมัติบันทึกทันที
+- `student`: wizard 5 ขั้น ประเภทการลา (โมดัลกลางจอ) การ์ดบทบาทผู้อนุมัติ โมดัลบันทึกพร้อมวันที่มีผล → เวอร์ชัน active/scheduled และ drawer ประวัติ
+  `schooldark/leave-features.js` อ่านเวอร์ชัน active จาก `sd_student_leave_versions` ตอนโหลด (ยังมีค่า default ในโค้ดเป็น fallback)
+  ช่องกรอก `sett-*` เก็บไว้แต่ยังไม่มีหน้าไหนอ่านไปใช้; เวอร์ชัน scheduled ยังไม่ถูกเลื่อนเป็น active อัตโนมัติเมื่อถึงวัน (ช่องว่างเดิมของ care)
+- คีย์ localStorage ใหม่ผ่าน `SdSettings`: `sd_student_leave_versions` (`studentLeaveVersions()`/`saveStudentLeaveVersions()`) และ
+  `sd_student_leave_form` (`studentLeaveForm()`/`saveStudentLeaveForm()` — ปีการศึกษา/ภาคเรียน จำนวน+บทบาทผู้อนุมัติ เอกสารลาป่วย กำหนดเวลา ฯลฯ)
+
+> [!IMPORTANT]
+> ค่าเริ่มต้น (seed) ของ `sd_*` ถูก**ทำซ้ำ**อยู่ใน `sd-settings-store.js` และ `schooldark/settings.js` (`initSettingsDatabase()`)
+> — ต้องเหมือนกันทุกตัวอักษร ถ้าแก้ seed ที่ใดที่หนึ่งต้องแก้อีกที่ด้วย ส่วน `schooldark/settings.js` ตอนนี้เหลือเป็น data layer อย่างเดียว
+> (ไม่มี UI ตั้งค่าใน `app.html` แล้ว) รายละเอียดการย้าย: `schooldark/CHANGES-FOR-CARE.md`
+>
+> หมวดการลาย้ายแล้ว (2026-09-29) — ดู `settings/leave.html` ด้านล่าง
 
 > [!NOTE]
 > ข้อมูลใน `school_*` (ห้องเรียน/ปฏิทิน/ปีการศึกษา/ระดับชั้น/สาขา) เป็น mockup ที่สร้างขึ้นใหม่

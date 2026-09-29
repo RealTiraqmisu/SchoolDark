@@ -414,11 +414,9 @@ const VIEW_TITLES = {
   'ticket-calendar': 'รายการบัตรขออนุญาต',
   'employees':   'รายชื่อบุคลากรและอาจารย์',
   'sl-submit': 'ยื่นขอลาของนักเรียน',
-  'student-leave-settings': 'ตั้งค่าการลาเรียน',
   'student-dashboard': 'แดชบอร์ดการมาเรียน',
   'attendance-check': 'เช็คชื่อนักเรียน',
-  'attendance-report': 'รายงานการมาเรียน',
-  'attendance-settings': 'เวลาเข้า-เลิกเรียนของนักเรียน'
+  'attendance-report': 'รายงานการมาเรียน'
 };
 
 // ======================================================================
@@ -494,7 +492,6 @@ function showModuleView(view, activeItem = null) {
     'sl-submit': 'งานบริหารการลา', 'approve': 'งานบริหารการลา',
     'student-dashboard': 'งานกิจการนักเรียน',
     'attendance-check': 'งานกิจการนักเรียน', 'attendance-report': 'งานกิจการนักเรียน',
-    'student-leave-settings': 'การตั้งค่า', 'attendance-settings': 'การตั้งค่า'
   };
   document.getElementById('breadcrumb').textContent = 'SchoolDark / ' + (BREADCRUMB_GROUP[view] || 'งานกิจการนักเรียน') + ' / ' + VIEW_TITLES[view];
 
@@ -503,13 +500,11 @@ function showModuleView(view, activeItem = null) {
     renderAllHistory();
   }
   if (view === 'employees') renderEmployees();
-  if (view === 'student-leave-settings') renderStudentLeaveSettings();
   if (view === 'sl-submit') renderSLSubmitPending();
   if (view === 'approve') renderApprovals();
   if (view === 'student-dashboard') renderStudentDashboardView();
   if (view === 'attendance-check') renderAttendanceCheckView();
   if (view === 'attendance-report') renderAttendanceReportView();
-  if (view === 'attendance-settings') renderAttendanceSettings();
   if (view === 'ticket-calendar') { renderTicketApprovals(); renderStudentList(); renderSummary(); }
 }
 
@@ -550,7 +545,6 @@ document.querySelectorAll('.submenu-item').forEach(link => {
       const stepNum = parseInt(step, 10);
       if (view === 'leave-card' && typeof goStep === 'function') goStep(stepNum);
       else if (view === 'sl-submit' && typeof goSLSubmitStep === 'function') goSLSubmitStep(stepNum);
-      else if (view === 'student-leave-settings' && typeof goSettingStep === 'function') goSettingStep(stepNum);
     } else if (tab) {
       const tabBtn = document.querySelector(`#view-${view} .tab-btn[data-tab="${tab}"]`);
       if (tabBtn) tabBtn.click();
@@ -3311,8 +3305,6 @@ function _exportTrainingReport() {
 // ======================================================================
 //  STUDENT LEAVE SETTINGS LOGIC
 // ======================================================================
-let activeSettingStep = 1;
-let approverRoleSelectionOrder = ['sett-role-teacher-1', 'sett-role-teacher-2'];
 
 let STUDENT_LEAVE_TYPES = [
   { name: 'ลาป่วย', desc: 'ลาหยุดเนื่องจากเจ็บป่วย ไข้หวัด อุบัติเหตุ', color: 'danger', quota: 15 },
@@ -3349,567 +3341,18 @@ let SETTINGS_VERSIONS = [
   }
 ];
 
-function getActiveSettingsVersion() {
-  return SETTINGS_VERSIONS.find(v => v.status === 'active');
-}
 
-function settingsVersionStatusBadge(status) {
-  if (status === 'active') return '<span class="badge success">ใช้งานอยู่</span>';
-  if (status === 'scheduled') return '<span class="badge info">รอมีผลในอนาคต</span>';
-  return '<span class="badge">ในอดีต</span>';
-}
-
-// เปิดโมดัลให้เลือกวันที่มีผลบังคับใช้ก่อนบันทึกจริง (เรียกจากปุ่ม "บันทึกการตั้งค่า" ในขั้นตอนที่ 5)
-function saveAllSettings() {
-  document.getElementById('settings-save-effective-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('settings-save-note').value = '';
-  document.getElementById('settings-save-overlay').classList.add('active');
-  document.getElementById('settings-save-modal').classList.add('active');
-}
-
-function closeSettingsSaveModal() {
-  document.getElementById('settings-save-overlay').classList.remove('active');
-  document.getElementById('settings-save-modal').classList.remove('active');
-}
-
-function confirmSaveSettings() {
-  const effectiveDate = document.getElementById('settings-save-effective-date').value;
-  if (!effectiveDate) { alert('กรุณาเลือกวันที่มีผลบังคับใช้'); return; }
-  const note = document.getElementById('settings-save-note').value.trim();
-  const today = new Date().toISOString().split('T')[0];
-  const candidateLeaveTypes = JSON.parse(JSON.stringify(STUDENT_LEAVE_TYPES));
-  const isFuture = effectiveDate > today;
-
-  if (isFuture) {
-    // ยังไม่มีผลตอนนี้ — บันทึกไว้เป็นเวอร์ชันที่รอมีผล แล้วคืนค่าที่แก้ไขระหว่างทำวิซาร์ดกลับเป็นเวอร์ชันที่ใช้งานอยู่จริง
-    const active = getActiveSettingsVersion();
-    if (active) {
-      STUDENT_LEAVE_TYPES.length = 0;
-      STUDENT_LEAVE_TYPES.push(...JSON.parse(JSON.stringify(active.leaveTypes)));
-    }
-    SETTINGS_VERSIONS.push({
-      id: 'CFG-' + String(SETTINGS_VERSIONS.length + 1).padStart(4, '0'),
-      effectiveDate, savedDate: today, savedBy: CURRENT_APPROVER_NAME,
-      note: note || 'ตั้งค่าล่วงหน้าสำหรับอนาคต',
-      status: 'scheduled',
-      leaveTypes: candidateLeaveTypes
-    });
-    renderLeaveTypesTable();
-    renderQuotaInputs();
-    updateSettingPreview();
-    alert(`บันทึกการตั้งค่าไว้ล่วงหน้าเรียบร้อยแล้ว จะมีผลวันที่ ${thaiDate(effectiveDate)}`);
-  } else {
-    const active = getActiveSettingsVersion();
-    if (active) active.status = 'past';
-    SETTINGS_VERSIONS.push({
-      id: 'CFG-' + String(SETTINGS_VERSIONS.length + 1).padStart(4, '0'),
-      effectiveDate, savedDate: today, savedBy: CURRENT_APPROVER_NAME,
-      note: note || 'บันทึกการตั้งค่าระบบการลาเรียนของนักเรียน',
-      status: 'active',
-      leaveTypes: candidateLeaveTypes
-    });
-    alert('บันทึกการตั้งค่าระบบการลาเรียนของนักเรียนเสร็จสิ้น!');
+// อ่านประวัติการตั้งค่าที่ settings/leave.html#tab=student บันทึกไว้ (localStorage) — ถ้าไม่มี/พังใช้ค่าเริ่มต้นด้านบน
+try {
+  const v = JSON.parse(localStorage.getItem('sd_student_leave_versions'));
+  if (Array.isArray(v) && v.length) {
+    SETTINGS_VERSIONS = v;
+    const act = v.find(x => x.status === 'active');
+    if (act) STUDENT_LEAVE_TYPES = JSON.parse(JSON.stringify(act.leaveTypes));
   }
-
-  closeSettingsSaveModal();
-  goSettingStep(1);
-}
-
-function openSettingsHistoryDrawer() {
-  const sorted = [...SETTINGS_VERSIONS].sort((a, b) => new Date(b.effectiveDate) - new Date(a.effectiveDate));
-  const listHtml = sorted.map(v => `
-    <div class="history-item" style="cursor:pointer;" onclick="viewSettingsVersionDetail('${v.id}')">
-      <div class="history-date-box">
-        <span class="history-date-month">${THAI_MONTHS_FULL[new Date(v.effectiveDate).getMonth()].substring(0, 3)}.</span>
-        <span class="history-date-day">${String(new Date(v.effectiveDate).getDate()).padStart(2, '0')}</span>
-      </div>
-      <div class="history-info">
-        <div class="history-type">มีผลบังคับใช้ ${thaiDate(v.effectiveDate)}</div>
-        <div class="history-duration">${v.note}</div>
-      </div>
-      ${settingsVersionStatusBadge(v.status)}
-    </div>
-  `).join('');
-
-  document.getElementById('drawer-detail-title').textContent = 'ประวัติการตั้งค่าการลาเรียน';
-  document.getElementById('drawer-detail-body').innerHTML = `
-    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">
-      รายการตั้งค่า "ประเภทการลา/โควตา" ที่เคยบันทึกไว้ ทั้งที่ใช้งานอยู่ ในอดีต และที่ตั้งไว้ล่วงหน้าสำหรับอนาคต
-      คลิกแต่ละรายการเพื่อดูรายละเอียด
-    </p>
-    <div style="display:flex;flex-direction:column;gap:8px;">${listHtml}</div>
-  `;
-
-  detailDrawerRefresh = () => openSettingsHistoryDrawer();
-  document.getElementById('drawer-overlay').classList.add('active');
-  document.getElementById('drawer-detail').classList.add('active');
-}
-
-function viewSettingsVersionDetail(versionId) {
-  const v = SETTINGS_VERSIONS.find(x => x.id === versionId);
-  if (!v) return;
-
-  const rowsHtml = v.leaveTypes.map(t => `
-    <tr><td><span class="badge ${t.color === 'primary' ? 'info' : t.color}">${t.name}</span></td><td>${t.desc || '-'}</td><td style="text-align:center;">${t.quota} วัน/ปี</td></tr>
-  `).join('');
-
-  document.getElementById('drawer-detail-title').textContent = 'รายละเอียดการตั้งค่า: ' + thaiDate(v.effectiveDate);
-  document.getElementById('drawer-detail-body').innerHTML = `
-    <div class="summary-table" style="margin-bottom:16px;">
-      <div class="summary-row"><span class="summary-label">วันที่มีผลบังคับใช้:</span><span class="summary-value">${thaiDate(v.effectiveDate)}</span></div>
-      <div class="summary-row"><span class="summary-label">บันทึกเมื่อ:</span><span class="summary-value">${thaiDate(v.savedDate)} โดย ${v.savedBy}</span></div>
-      <div class="summary-row"><span class="summary-label">สถานะ:</span><span class="summary-value">${settingsVersionStatusBadge(v.status)}</span></div>
-      <div class="summary-row" style="flex-direction:column;border-bottom:none;"><span class="summary-label" style="margin-bottom:4px;">หมายเหตุ:</span><span class="summary-value" style="text-align:left;font-weight:normal;">${v.note}</span></div>
-    </div>
-    <div class="setting-section-title">ประเภทการลาและโควตาในเวอร์ชันนี้</div>
-    <div class="data-table-wrap" style="margin-top:10px;">
-      <table class="data-table"><thead><tr><th>ประเภทการลา</th><th>คำอธิบาย</th><th style="text-align:center;">โควตา</th></tr></thead><tbody>${rowsHtml}</tbody></table>
-    </div>
-    <div style="margin-top:16px;"><button class="btn btn-secondary" style="width:100%;" onclick="openSettingsHistoryDrawer()">← กลับไปดูรายการทั้งหมด</button></div>
-  `;
-
-  detailDrawerRefresh = () => viewSettingsVersionDetail(versionId);
-}
-
-function renderStudentLeaveSettings() {
-  renderLeaveTypesTable();
-  renderQuotaInputs();
-  goSettingStep(1);
-}
-
-function goSettingStep(step) {
-  activeSettingStep = step;
-  
-  // Panes visibility
-  for (let i = 1; i <= 5; i++) {
-    const pane = document.getElementById('setting-step-pane-' + i);
-    if (pane) {
-      pane.style.display = (i === step) ? 'block' : 'none';
-      if (i === step) {
-        pane.classList.add('active');
-      } else {
-        pane.classList.remove('active');
-      }
-    }
-    
-    const nav = document.getElementById('setting-step-nav-' + i);
-    if (nav) {
-      nav.classList.remove('active', 'done');
-      if (i === step) nav.classList.add('active');
-      if (i < step) nav.classList.add('done');
-    }
-  }
-  
-  // Button disabled status
-  document.getElementById('sett-prev-btn').disabled = (step === 1);
-  const nextBtn = document.getElementById('sett-next-btn');
-  if (step === 5) {
-    nextBtn.textContent = 'บันทึกการตั้งค่า';
-  } else {
-    nextBtn.textContent = 'ขั้นตอนถัดไป →';
-  }
-  
-  if (step === 2) {
-    renderLeaveTypesTable();
-  }
-  if (step === 4) {
-    renderQuotaInputs();
-  }
-  if (step === 3) {
-    syncApproverRoleCards();
-  }
-  
-  updateSettingPreview();
-}
-
-function navigateSettingStep(dir) {
-  const target = activeSettingStep + dir;
-  if (target < 1) return;
-  if (target > 5) {
-    saveAllSettings();
-    return;
-  }
-  goSettingStep(target);
-}
-
-function syncApproverRoleCards() {
-  document.querySelectorAll('.approver-role-card').forEach(card => {
-    const checkbox = card.querySelector('input[type="checkbox"]');
-    if (checkbox) card.classList.toggle('checked', checkbox.checked);
-  });
-}
-
-function getApproverLimit() {
-  const input = document.getElementById('sett-approver-count');
-  const value = parseInt(input?.value, 10);
-  return Math.max(1, Math.min(4, value || 2));
-}
-
-function enforceApproverRoleLimit(latestId = null) {
-  const checkedIds = Array.from(document.querySelectorAll('.approver-role-card input[type="checkbox"]:checked')).map(input => input.id);
-  checkedIds.forEach(id => {
-    if (!approverRoleSelectionOrder.includes(id)) approverRoleSelectionOrder.push(id);
-  });
-  approverRoleSelectionOrder = approverRoleSelectionOrder.filter(id => checkedIds.includes(id));
-
-  if (latestId && checkedIds.includes(latestId)) {
-    approverRoleSelectionOrder = approverRoleSelectionOrder.filter(id => id !== latestId);
-    approverRoleSelectionOrder.push(latestId);
-  }
-
-  const limit = getApproverLimit();
-  while (approverRoleSelectionOrder.length > limit) {
-    const removedId = approverRoleSelectionOrder.shift();
-    const removedInput = document.getElementById(removedId);
-    if (removedInput) removedInput.checked = false;
-  }
-}
-
-function handleApproverRoleChange(input) {
-  if (input.checked) {
-    enforceApproverRoleLimit(input.id);
-  } else {
-    approverRoleSelectionOrder = approverRoleSelectionOrder.filter(id => id !== input.id);
-  }
-  syncApproverRoleCards();
-  updateSettingPreview();
-}
-
-function handleApproverCountChange() {
-  enforceApproverRoleLimit();
-  syncApproverRoleCards();
-  updateSettingPreview();
-}
-
-// Step 2: Types CRUD
-function renderLeaveTypesTable() {
-  const tbody = document.getElementById('sett-leave-types-tbody');
-  if (!tbody) return;
-  
-  tbody.innerHTML = STUDENT_LEAVE_TYPES.map((t, idx) => {
-    const badgeColor = {
-      danger: '#f87171',
-      warning: '#fb923c',
-      primary: '#60a5fa',
-      success: '#4ade80'
-    }[t.color] || '#9ca3af';
-
-    return `
-      <tr>
-        <td><strong>${t.name}</strong></td>
-        <td><span style="color: var(--text-muted); font-size: 12px;">${t.desc || '-'}</span></td>
-        <td style="text-align: center;"><span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: ${badgeColor}; border: 1px solid rgba(255,255,255,0.2);"></span></td>
-        <td style="text-align: right;">
-          <div style="display: flex; gap: 4px; justify-content: flex-end;">
-            <button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 10.5px;" onclick="openEditLeaveTypeModal(${idx})">แก้ไข</button>
-            <button class="btn btn-danger btn-sm" style="padding: 2px 6px; font-size: 10.5px;" onclick="deleteLeaveType(${idx})">ลบ</button>
-          </div>
-        </td>
-      </tr>
-    `;
-  }).join('');
-}
-
-function openAddLeaveTypeModal() {
-  document.getElementById('leave-type-modal-title').textContent = 'เพิ่มประเภทการลาเรียน';
-  document.getElementById('leave-type-edit-idx').value = '';
-  document.getElementById('lt-modal-name').value = '';
-  document.getElementById('lt-modal-desc').value = '';
-  document.getElementById('lt-modal-color').value = 'primary';
-  
-  const overlay = document.getElementById('modal-leave-type-overlay');
-  const panel = document.getElementById('modal-leave-type');
-  overlay.style.display = 'block';
-  panel.style.display = 'block';
-  requestAnimationFrame(() => {
-    overlay.classList.add('active');
-    panel.classList.add('active');
-  });
-}
-
-function openEditLeaveTypeModal(idx) {
-  const t = STUDENT_LEAVE_TYPES[idx];
-  document.getElementById('leave-type-modal-title').textContent = 'แก้ไขประเภทการลาเรียน';
-  document.getElementById('leave-type-edit-idx').value = idx;
-  document.getElementById('lt-modal-name').value = t.name;
-  document.getElementById('lt-modal-desc').value = t.desc;
-  document.getElementById('lt-modal-color').value = t.color;
-  
-  const overlay = document.getElementById('modal-leave-type-overlay');
-  const panel = document.getElementById('modal-leave-type');
-  overlay.style.display = 'block';
-  panel.style.display = 'block';
-  requestAnimationFrame(() => {
-    overlay.classList.add('active');
-    panel.classList.add('active');
-  });
-}
-
-function closeLeaveTypeModal() {
-  const overlay = document.getElementById('modal-leave-type-overlay');
-  const panel = document.getElementById('modal-leave-type');
-  overlay.classList.remove('active');
-  panel.classList.remove('active');
-  setTimeout(() => {
-    overlay.style.display = 'none';
-    panel.style.display = 'none';
-  }, 180);
-}
-
-function saveLeaveType() {
-  const name = document.getElementById('lt-modal-name').value.trim();
-  const desc = document.getElementById('lt-modal-desc').value.trim();
-  const color = document.getElementById('lt-modal-color').value;
-  const idxVal = document.getElementById('leave-type-edit-idx').value;
-  
-  if (!name) {
-    alert('กรุณาระบุชื่อประเภทการลา');
-    return;
-  }
-  
-  if (idxVal === '') {
-    STUDENT_LEAVE_TYPES.push({ name, desc, color, quota: 10 });
-  } else {
-    const idx = parseInt(idxVal);
-    STUDENT_LEAVE_TYPES[idx].name = name;
-    STUDENT_LEAVE_TYPES[idx].desc = desc;
-    STUDENT_LEAVE_TYPES[idx].color = color;
-  }
-  
-  closeLeaveTypeModal();
-  renderLeaveTypesTable();
-  updateSettingPreview();
-}
-
-function deleteLeaveType(idx) {
-  if (confirm('คุณต้องการลบประเภทการลานี้ใช่หรือไม่?')) {
-    STUDENT_LEAVE_TYPES.splice(idx, 1);
-    renderLeaveTypesTable();
-    updateSettingPreview();
-  }
-}
-
-// Step 4: Quota inputs generation
-function renderQuotaInputs() {
-  const container = document.getElementById('sett-quota-inputs-container');
-  if (!container) return;
-  
-  container.innerHTML = STUDENT_LEAVE_TYPES.map((t, idx) => `
-    <div class="form-group" style="margin-bottom: 14px; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 8px;text-align: left;">
-      <div style="width: 100%;">
-        <strong style="font-size: 13.5px; color: var(--text-primary);">${t.name}</strong>
-        <span style="display: block; font-size: 11px; color: var(--text-muted);">${t.desc || '-'}</span>
-      </div>
-      <div style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; width: 100%;">
-        <input type="number" class="glass-input" style="width: 100px; text-align: left;" id="quota-val-${idx}" value="${t.quota || 10}" min="0" oninput="updateQuotaValue(${idx}, this.value)">
-        <span style="font-size: 12px; color: var(--text-secondary);">วัน/ปี</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function updateQuotaValue(idx, val) {
-  STUDENT_LEAVE_TYPES[idx].quota = parseInt(val) || 0;
-  updateSettingPreview();
-}
-// Real-time Preview Renderer
-function updateSettingPreview() {
-  const step = activeSettingStep;
-  const preview = document.getElementById('preview-setting-' + step);
-  if (!preview) return;
-  
-  if (step === 1) {
-    const yr = document.getElementById('sett-acad-year').value;
-    const t1s = document.getElementById('sett-term1-start').value;
-    const t1e = document.getElementById('sett-term1-end').value;
-    const t2s = document.getElementById('sett-term2-start').value;
-    const t2e = document.getElementById('sett-term2-end').value;
-    
-    const fmtDate = dStr => {
-      if (!dStr) return '-';
-      const [y, m, d] = dStr.split('-');
-      return `${d}/${m}/${parseInt(y) + 543}`;
-    };
-    
-    preview.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--br-sm); padding: 12px; text-align: center;">
-          <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">ปีการศึกษาที่เลือก</span>
-          <h4 style="font-size: 20px; font-weight: 700; color: var(--primary); margin-top: 4px; margin-bottom: 0;">พ.ศ. ${yr}</h4>
-        </div>
-        
-        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px;">
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px;">
-            <span style="color: var(--text-muted);">ภาคเรียนที่ 1:</span>
-            <strong>${fmtDate(t1s)} - ${fmtDate(t1e)}</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px;">
-            <span style="color: var(--text-muted);">ภาคเรียนที่ 2:</span>
-            <strong>${fmtDate(t2s)} - ${fmtDate(t2e)}</strong>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  if (step === 2) {
-    preview.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">การ์ดเลือกประเภทในฟอร์มลาเรียน:</span>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          ${STUDENT_LEAVE_TYPES.map(t => {
-            const colorClass = {
-              danger: 'background: linear-gradient(135deg, var(--danger), #ef4444);',
-              warning: 'background: linear-gradient(135deg, var(--warning), #f97316);',
-              primary: 'background: linear-gradient(135deg, var(--primary), #3b82f6);',
-              success: 'background: linear-gradient(135deg, var(--success), #22c55e);'
-            }[t.color] || 'background: var(--border-color);';
-
-            return `
-              <div class="lt-card" style="padding: 10px 12px; cursor: default; display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--border-color); border-radius: var(--br-md);">
-                <div class="lt-icon" style="width: 28px; height: 28px; border-radius: 6px; font-size: 12px; display: grid; place-items: center; ${colorClass}">
-                  <svg class="icon" viewBox="0 0 24 24" style="width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                </div>
-                <div style="flex: 1; min-width: 0;">
-                  <div class="lt-title" style="font-size: 12px; font-weight: 600;">${t.name}</div>
-                  <div class="lt-sub" style="font-size: 10.5px; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-top: 2px;">${t.desc || '-'}</div>
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </div>
-    `;
-  }
-  
-  if (step === 3) {
-    const count = parseInt(document.getElementById('sett-approver-count').value) || 2;
-    const t1 = document.getElementById('sett-role-teacher-1').checked;
-    const t2 = document.getElementById('sett-role-teacher-2').checked;
-    const head = document.getElementById('sett-role-head').checked;
-    const dean = document.getElementById('sett-role-dean').checked;
-    const seq = document.getElementById('sett-approver-sequence').checked;
-    
-    let stepsList = [];
-    if (t1) stepsList.push({ name: 'ครูประจำชั้น', auto: true });
-    if (t2) stepsList.push({ name: 'ครูที่ปรึกษา', auto: true });
-    if (head) stepsList.push({ name: 'หัวหน้าระดับสายชั้น', auto: false });
-    if (dean) stepsList.push({ name: 'ฝ่ายปกครอง', auto: false });
-    
-    if (stepsList.length === 0) {
-      preview.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px;">กรุณาเลือกบทบาทผู้ตรวจสอบอย่างน้อย 1 บทบาท</div>`;
-      return;
-    }
-    
-    preview.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">แผนภาพเส้นทางการอนุมัติ:</span>
-        <div style="display: flex; flex-direction: column; gap: 10px; position: relative;">
-          ${stepsList.map((s, i) => `
-            <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--br-sm); padding: 8px 12px; position: relative; z-index: 2;">
-              <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0;">${i+1}</div>
-              <div style="flex: 1;">
-                <div style="font-size: 12px; font-weight: 600;">${s.name}</div>
-                <span style="font-size: 10px; color: ${s.auto ? 'var(--success)' : 'var(--text-muted)'}"></span>
-              </div>
-            </div>
-            ${(i < stepsList.length - 1) ? `
-              <div style="text-align: center; margin: -4px 0; color: var(--text-muted); font-size: 11px;">
-                ${seq ? '↓ (ลำดับขั้น)' : '⇅ (อนุมัติพร้อมกัน)'}
-              </div>
-            ` : ''}
-          `).join('')}
-          
-          <div style="display: flex; align-items: center; gap: 10px; background: rgba(74, 222, 128, 0.08); border: 1px solid #22c55e; border-radius: var(--br-sm); padding: 8px 12px; margin-top: 4px;">
-            <div style="width: 20px; height: 20px; border-radius: 50%; background: #22c55e; color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0;">✓</div>
-            <div>
-              <div style="font-size: 12px; font-weight: 600; color: #22c55e;">อนุมัติสำเร็จ</div>
-              <span style="font-size: 10px; color: var(--text-muted);">ใบลาได้รับการบันทึกลงระบบเสร็จสิ้น</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-  
-  if (step === 4) {
-    preview.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">สรุปโควตาการลาเรียน:</span>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          ${STUDENT_LEAVE_TYPES.map(t => `
-            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--br-sm); padding: 10px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px;">
-                <strong style="color: var(--text-primary);">${t.name}</strong>
-                <span style="color: var(--primary); font-weight: 600;">โควตา: ${t.quota || 0} วัน/ปี</span>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }
-  
-  if (step === 5) {
-    const sickDoc = document.getElementById('sett-sick-doc-required').checked;
-    const sickDays = document.getElementById('sett-sick-doc-days').value;
-    const alertParent = document.getElementById('sett-alert-parent').checked;
-    const deadline = document.getElementById('sett-deadline-time').value;
-    const warnPct = document.getElementById('sett-quota-warning-percent').value;
-    
-    preview.innerHTML = `
-      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; width: 100%;">
-        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">สรุปเงื่อนไขเพิ่มเติม:</span>
-        
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--br-sm); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
-          <div style="display: flex; align-items: start; gap: 8px;">
-            <span style="color: ${sickDoc ? '#22c55e' : 'var(--text-muted)'}; font-size: 14px; line-height: 1;">●</span>
-            <div>
-              <strong>ใบรับรองแพทย์:</strong> ${sickDoc ? `บังคับแนบเมื่อลาป่วยตั้งแต่ <strong>${sickDays} วัน</strong> ขึ้นไป` : 'ไม่บังคับแนบ'}
-            </div>
-          </div>
-          
-          <div style="display: flex; align-items: start; gap: 8px;">
-            <span style="color: ${alertParent ? '#22c55e' : 'var(--text-muted)'}; font-size: 14px; line-height: 1;">●</span>
-            <div>
-              <strong>การแจ้งเตือนผู้ปกครอง:</strong> ${alertParent ? 'เปิดใช้งาน (ส่ง SMS/LINE ทันทีเมื่ออนุมัติสำเร็จ)' : 'ปิดใช้งาน'}
-            </div>
-          </div>
-          
-          <div style="display: flex; align-items: start; gap: 8px;">
-            <span style="color: var(--primary); font-size: 14px; line-height: 1;">●</span>
-            <div>
-              <strong>เวลาตัดรอบประจำวัน:</strong> ไม่ให้ยื่นภายในวันนี้หลังเวลา <strong>${deadline} น.</strong>
-            </div>
-          </div>
-          
-          <div style="display: flex; align-items: start; gap: 8px;">
-            <span style="color: var(--primary); font-size: 14px; line-height: 1;">●</span>
-            <div>
-              <strong>เตือนสัดส่วนโควตา:</strong> เตือนครูเมื่อนักเรียนใช้โควตาเกิน <strong>${warnPct}%</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-}
+} catch (e) {}
 
 window.showModuleView = showModuleView;
-window.renderStudentLeaveSettings = renderStudentLeaveSettings;
-window.goSettingStep = goSettingStep;
-window.navigateSettingStep = navigateSettingStep;
-window.openAddLeaveTypeModal = openAddLeaveTypeModal;
-window.openEditLeaveTypeModal = openEditLeaveTypeModal;
-window.closeLeaveTypeModal = closeLeaveTypeModal;
-window.saveLeaveType = saveLeaveType;
-window.deleteLeaveType = deleteLeaveType;
-window.updateSettingPreview = updateSettingPreview;
-window.updateQuotaValue = updateQuotaValue;
-window.saveAllSettings = saveAllSettings;
-window.handleApproverRoleChange = handleApproverRoleChange;
-window.handleApproverCountChange = handleApproverCountChange;
-window.syncApproverRoleCards = syncApproverRoleCards;
 
 
 // ======================================================================
@@ -4369,53 +3812,6 @@ function renderAttendanceReport() {
   pager.innerHTML = `<span>${attReportRows.length.toLocaleString('th-TH')} รายการ · หน้า ${attReportPage}/${pages}</span>` +
     btn(1, '«', attReportPage === 1) + btn(attReportPage - 1, '‹ ก่อนหน้า', attReportPage === 1) +
     btn(attReportPage + 1, 'ถัดไป ›', attReportPage === pages) + btn(pages, '»', attReportPage === pages);
-}
-
-// ======================================================================
-//  ตั้งค่าเวลาเข้า-เลิกเรียนของนักเรียน
-// ======================================================================
-function attDaysLabel(days) {
-  const sorted = [...days].sort((a, b) => a - b);
-  if (sorted.join(',') === '1,2,3,4,5') return 'จ–ศ';
-  if (sorted.join(',') === '1,2,3,4,5,6') return 'จ–ส';
-  return sorted.map(d => ATT_DAY_LABELS[d]).join(', ') || '-';
-}
-function renderAttendanceSettings() {
-  const s = attSettings;
-  document.getElementById('att-set-start').value = s.start;
-  document.getElementById('att-set-end').value = s.end;
-  document.getElementById('att-set-absent').value = s.absentAfter;
-  document.getElementById('att-set-gate-open').value = s.gateOpen;
-  document.getElementById('att-set-late').value = s.lateMin;
-  document.getElementById('att-set-early').value = s.earlyMin;
-  document.querySelectorAll('#att-set-days input').forEach(cb => { cb.checked = s.days.includes(Number(cb.value)); });
-  document.getElementById('att-disp-start').textContent = s.start + ' น.';
-  document.getElementById('att-disp-end').textContent = s.end + ' น.';
-  document.getElementById('att-disp-late').textContent = s.lateMin + ' นาที';
-  document.getElementById('att-disp-days').textContent = attDaysLabel(s.days);
-}
-function saveAttendanceSettings() {
-  const next = {
-    start: document.getElementById('att-set-start').value,
-    end: document.getElementById('att-set-end').value,
-    absentAfter: document.getElementById('att-set-absent').value,
-    gateOpen: document.getElementById('att-set-gate-open').value,
-    lateMin: Math.max(0, parseInt(document.getElementById('att-set-late').value, 10) || 0),
-    earlyMin: Math.max(0, parseInt(document.getElementById('att-set-early').value, 10) || 0),
-    days: [...document.querySelectorAll('#att-set-days input:checked')].map(cb => Number(cb.value))
-  };
-  const problems = [];
-  if (!next.start || !next.end) problems.push('กรุณากรอกเวลาเข้าเรียนและเวลาเลิกเรียน');
-  else if (attMin(next.end) <= attMin(next.start)) problems.push('เวลาเลิกเรียนต้องหลังเวลาเข้าเรียน');
-  if (next.absentAfter && next.start && attMin(next.absentAfter) <= attMin(next.start) + next.lateMin) problems.push('เวลาที่ถือว่าขาดเรียนต้องหลังเวลาที่เริ่มนับว่าสาย');
-  if (next.gateOpen && next.start && attMin(next.gateOpen) > attMin(next.start)) problems.push('เวลาเปิดประตูต้องไม่หลังเวลาเข้าเรียน');
-  if (!next.days.length) problems.push('เลือกวันเรียนอย่างน้อย 1 วัน');
-  if (problems.length) { alert(problems.join('\n')); return; }
-  if (!next.absentAfter) next.absentAfter = attHHMM(attMin(next.start) + 120);
-  attSettings = next;
-  attStore(ATT_SETTINGS_KEY, attSettings);
-  renderAttendanceSettings();
-  attToast('บันทึกเวลาเข้า-เลิกเรียนของนักเรียนแล้ว');
 }
 
 // ======================================================================
@@ -4958,7 +4354,7 @@ function sdChart(id, config, emptyMsg) {
     });
     return;
   }
-  if (!config) {
+  if (!config) {
     sdChartToken[id] = (sdChartToken[id] || 0) + 1;
     canvas.style.display = 'none';
     box.insertAdjacentHTML('beforeend', `<div class="sd-chart-empty">${config ? 'โหลดไลบรารีกราฟไม่สำเร็จ (ต้องเชื่อมต่ออินเทอร์เน็ต)' : emptyMsg}</div>`);
@@ -5335,7 +4731,6 @@ function _sdExportExcel() {
 }
 
 // Initial populate on load
-syncApproverRoleCards();
 renderAllHistory();
 
 // ช่องค้นหาที่ต้อง render ตารางใหญ่ใหม่ทุกครั้ง — หน่วง 200ms หลังหยุดพิมพ์ (เดิมใช้ inline oninput ยิงทุกตัวอักษร)
