@@ -152,6 +152,17 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     margin: 0;
     padding: 0;
 }
+/* scrollbar แถบเล็กแบบเดียวกันทุกหน้า (admission/settings ไม่มีสไตล์ scrollbar ของตัวเอง จึงเคยได้แถบหนาของเบราว์เซอร์)
+   ใช้ ::-webkit-scrollbar สำหรับ Chrome/Edge — ห้ามใส่ scrollbar-width/scrollbar-color ตรง .sidebar-menu เพราะ Chrome 121+
+   จะใช้ค่านั้นแทนและไม่สน ::-webkit-scrollbar (แถบจะหนากว่า 4px) จึงแยกไว้ให้ Firefox อย่างเดียว */
+@supports (-moz-appearance: none) {
+    .sidebar-menu { scrollbar-width: thin; scrollbar-color: var(--xnav-border) transparent; }
+}
+.sidebar-menu::-webkit-scrollbar { width: 4px; height: 4px; }
+.sidebar-menu::-webkit-scrollbar-track { background: transparent; }
+.sidebar-menu::-webkit-scrollbar-thumb { background: var(--xnav-border); border-radius: 999px; }
+.sidebar-menu:hover::-webkit-scrollbar-thumb { background: #cbd5e1; }
+.sidebar-menu::-webkit-scrollbar-thumb:hover { background: var(--xnav-muted); }
 
 .menu-item {
     display: flex;

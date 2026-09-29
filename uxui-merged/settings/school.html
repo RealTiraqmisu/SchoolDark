@@ -204,6 +204,8 @@
 
   <script src="js/school-store.js"></script>
   <script src="js/sd-settings-store.js"></script>
+  <!-- ป๊อปอัปยืนยันการแก้ไข/ลบการตั้งค่า — ../shared/impact-confirm.js -->
+  <script src="../shared/impact-confirm.js"></script>
   <script>
     (function () {
       'use strict';
@@ -729,9 +731,15 @@
       }
 
       function switchTab(tab) {
-        currentTab = (TABS[tab] || CUSTOM_TABS[tab]) ? tab : 'school';
-        if (location.hash !== '#tab=' + currentTab) location.hash = 'tab=' + currentTab;
-        render();
+        var next = (TABS[tab] || CUSTOM_TABS[tab]) ? tab : 'school';
+        // ยังไม่ตั้ง currentTab ตรงนี้ — ให้ hashchange เป็นคนตั้งแล้ว render
+        // (ถ้าตั้งก่อน hashchange จะเห็นว่าแท็บเท่าเดิมแล้วไม่ render ตารางจะค้างเป็นแท็บเก่า)
+        if (location.hash !== '#tab=' + next) {
+          location.hash = 'tab=' + next;
+        } else {
+          currentTab = next;
+          render();
+        }
       }
 
       function render() {
@@ -844,14 +852,92 @@
         document.getElementById('modal-form').classList.add('hidden');
       }
 
+      /* ---------- ป๊อปอัปยืนยัน (../shared/impact-confirm.js) ----------
+         บอกว่าอะไรจะเปลี่ยน และข้อมูลแต่ละแท็บถูกใช้ที่หน้าไหนบ้าง (ตรวจจากโค้ดจริง ณ ตอนนี้):
+         - school_academic_years → แดชบอร์ดการมาเรียน (schooldark/leave-features.html ปุ่ม "ภาคเรียนนี้")
+           และพอร์ทัลผู้ปกครอง (ปฏิทิน, ตารางเรียน, ข้อมูลการมาเรียนตัวอย่าง)
+         - school_calendar → พอร์ทัลผู้ปกครอง (ปฏิทิน, กิจกรรมที่จะถึงในหน้าแรก, วันหยุดในข้อมูลการมาเรียนตัวอย่าง)
+         - ห้องเรียน / ระดับชั้น / สาขา → ใช้กันเองในหน้านี้เท่านั้น ยังไม่เชื่อมกับหน้าอื่น */
+      function askConfirm(opts) {
+        if (window.ImpactConfirm) { ImpactConfirm.show(opts); return; }
+        // สำรองกรณีโหลด impact-confirm.js ไม่ได้
+        if (window.confirm(opts.title + '\n\n' + String(opts.summary || '').replace(/<[^>]+>/g, ''))) {
+          if (opts.onConfirm) opts.onConfirm();
+        }
+      }
+
+      function countClassroomsWhere(field, value) {
+        if (value == null || value === '') return 0;
+        return SchoolStore.get('school_classrooms').filter(function (c) { return c[field] === value; }).length;
+      }
+
+      // "ส่งผลกับ" ของแต่ละแท็บ — row = ข้อมูลเดิม, next = ข้อมูลใหม่ (ไม่มีตอนลบ/คืนค่าเริ่มต้น)
+      function tabImpacts(tab, row, next, action) {
+        var impacts = [];
+        var notLinked = { where: 'หน้าอื่นในระบบ', detail: 'ยังไม่ได้เชื่อม — ข้อมูลนี้ใช้ในศูนย์ตั้งค่าเท่านั้นตอนนี้ (เช่น ครูประจำชั้นใน schooldark ยังใช้รายชื่อห้องของตัวเอง)' };
+        if (tab === 'years') {
+          impacts.push({ where: 'แดชบอร์ดการมาเรียนของนักเรียน', detail: 'ปุ่ม "ภาคเรียนนี้" และการเลื่อนทีละภาคเรียน ใช้วันเปิด-ปิดภาคจากตารางนี้' });
+          impacts.push({ where: 'พอร์ทัลผู้ปกครอง', detail: 'การ์ดปีการศึกษาในปฏิทิน, ตารางกิจกรรมรายปี, ภาคเรียนในตารางเรียน และข้อมูลการมาเรียนตัวอย่าง (เริ่มนับจากวันเปิดภาคเรียนที่ 1 ของปีปัจจุบัน)' });
+          if (next && next.isCurrent && !(row && row.isCurrent)) {
+            var others = SchoolStore.get('school_academic_years').filter(function (y) { return y.isCurrent && (!row || y.id !== row.id); });
+            if (others.length) impacts.push({ where: 'ปีการศึกษาปัจจุบัน', detail: 'ปี ' + escapeHtml(others.map(function (y) { return y.year; }).join(', ')) + ' จะไม่ใช่ปีปัจจุบันอีกต่อไป' });
+          }
+          if (row && row.isCurrent && (action === 'delete' || (next && !next.isCurrent))) {
+            impacts.push({ where: 'ปีการศึกษาปัจจุบัน', detail: 'จะไม่มีปีที่ตั้งเป็นปีปัจจุบัน — พอร์ทัลผู้ปกครองจะไม่แสดงการ์ดปีการศึกษา' });
+          }
+        } else if (tab === 'calendar') {
+          impacts.push({ where: 'พอร์ทัลผู้ปกครอง', detail: 'หน้าปฏิทินโรงเรียน และ "กิจกรรมที่จะถึง" ในหน้าแรก' });
+          if ((row && row.type === 'holiday') || (next && next.type === 'holiday') || action === 'reset') {
+            impacts.push({ where: 'ข้อมูลการมาเรียนตัวอย่าง (พอร์ทัลผู้ปกครอง)', detail: 'วันที่เป็น "วันหยุด" จะไม่ถูกนับเป็นวันเรียน' });
+          }
+        } else if (tab === 'levels') {
+          var lvCount = row ? countClassroomsWhere('level', row.short) : SchoolStore.get('school_classrooms').length;
+          impacts.push({ where: 'แท็บข้อมูลห้องเรียน', detail: 'ตัวเลือก "ระดับชั้น" ในฟอร์ม, ตัวกรองระดับชั้น และลำดับการเรียงห้อง' });
+          if (row && lvCount && (action === 'delete' || (next && next.short !== row.short))) {
+            impacts.push({ where: 'ห้องเรียน ' + lvCount + ' ห้องที่ใช้ "' + escapeHtml(row.short) + '"', detail: 'จะยังเก็บชื่อระดับชั้นเดิมไว้ และไม่ตรงกับตัวกรองอีก — ต้องเข้าไปแก้ทีละห้อง' });
+          }
+          impacts.push(notLinked);
+        } else if (tab === 'majors') {
+          var mjCount = row ? countClassroomsWhere('major', row.name) : 0;
+          impacts.push({ where: 'แท็บข้อมูลห้องเรียน', detail: 'ตัวเลือก "สาขา/แผนการเรียน" ในฟอร์มห้องเรียน' });
+          if (row && mjCount && (action === 'delete' || (next && next.name !== row.name))) {
+            impacts.push({ where: 'ห้องเรียน ' + mjCount + ' ห้องที่ใช้ "' + escapeHtml(row.name) + '"', detail: 'จะยังแสดงชื่อเดิม — ต้องเข้าไปแก้ทีละห้อง' });
+          }
+          impacts.push({ where: 'แผนการเรียนของระบบรับสมัคร', detail: 'ไม่เปลี่ยนตาม — ตั้งค่าแยกที่หน้าตั้งค่าหลักสูตรของงานรับสมัคร' });
+        } else {
+          impacts.push({ where: 'ตารางห้องเรียนในหน้านี้', detail: 'รายการและตัวกรองระดับชั้น' });
+          impacts.push(notLinked);
+        }
+        return impacts;
+      }
+
+      // ค่าที่อ่านง่ายสำหรับตาราง "เดิม → ใหม่"
+      function displayValue(f, v) {
+        if (f.type === 'checkbox') return v ? 'ใช่' : 'ไม่ใช่';
+        if (v == null || v === '') return '';
+        if (f.type === 'date') return thDate(v);
+        if (f.optionLabels && f.optionLabels[v]) return f.optionLabels[v];
+        return String(v);
+      }
+
+      function rowLabel(tab, r) {
+        if (!r) return '';
+        if (tab === 'classrooms') return 'ห้อง ' + r.level + '/' + r.room;
+        if (tab === 'calendar') return r.title;
+        if (tab === 'years') return 'ปีการศึกษา ' + r.year;
+        if (tab === 'levels') return r.short + ' ' + (r.name || '');
+        return r.name;
+      }
+
       function saveForm(e) {
         e.preventDefault();
         var def = TABS[currentTab];
+        var tab = currentTab;
         var id = document.getElementById('form-edit-id').value;
         var list = SchoolStore.get(def.key);
-        var row = id ? list.filter(function (r) { return r.id === id; })[0] : null;
-        var isNew = !row;
-        if (isNew) { row = { id: SchoolStore.uid(currentTab + '-') }; list.push(row); }
+        var existing = id ? list.filter(function (r) { return r.id === id; })[0] : null;
+        var isNew = !existing;
+        var row = isNew ? { id: SchoolStore.uid(currentTab + '-') } : JSON.parse(JSON.stringify(existing));
         def.fields.forEach(function (f) {
           var el = document.getElementById('field-' + f.name);
           if (!el) return;
@@ -859,27 +945,72 @@
           else if (f.type === 'number') row[f.name] = el.value === '' ? '' : Number(el.value);
           else row[f.name] = el.value;
         });
-        if (def.beforeSave) def.beforeSave(row, list);
-        SchoolStore.save(def.key, list);
-        closeModal();
-        render();
-        showToast(isNew ? 'เพิ่มรายการเรียบร้อย' : 'บันทึกการแก้ไขเรียบร้อย');
+
+        function commit() {
+          if (isNew) list.push(row);
+          else list[list.indexOf(existing)] = row;
+          if (def.beforeSave) def.beforeSave(row, list);
+          SchoolStore.save(def.key, list);
+          closeModal();
+          render();
+          showToast(isNew ? 'เพิ่มรายการเรียบร้อย' : 'บันทึกการแก้ไขเรียบร้อย');
+        }
+
+        // เพิ่มรายการใหม่ไม่ต้องถาม — ถามเฉพาะตอนแก้ไขรายการเดิมและมีอะไรเปลี่ยนจริง
+        if (isNew) { commit(); return; }
+        var changes = def.fields.map(function (f) {
+          return { label: f.label, before: displayValue(f, existing[f.name]), after: displayValue(f, row[f.name]) };
+        }).filter(function (c) { return c.before !== c.after; });
+        if (!changes.length) { closeModal(); showToast('ไม่มีการเปลี่ยนแปลง'); return; }
+
+        askConfirm({
+          title: 'แก้ไข' + def.title,
+          tone: 'warning',
+          summary: 'แก้ไข <b>' + escapeHtml(rowLabel(tab, existing)) + '</b>',
+          changes: changes,
+          impacts: tabImpacts(tab, existing, row, 'edit'),
+          confirmLabel: 'บันทึกการแก้ไข',
+          onConfirm: commit
+        });
       }
 
       function removeRow(id) {
-        if (!confirm('ยืนยันการลบรายการนี้? ข้อมูลนี้ไม่สามารถกู้คืนได้')) return;
         var def = TABS[currentTab];
-        var list = SchoolStore.get(def.key).filter(function (r) { return r.id !== id; });
-        SchoolStore.save(def.key, list);
-        render();
-        showToast('ลบรายการเรียบร้อย');
+        var tab = currentTab;
+        var row = SchoolStore.get(def.key).filter(function (r) { return r.id === id; })[0];
+        if (!row) return;
+        askConfirm({
+          title: 'ลบ' + def.title,
+          tone: 'danger',
+          summary: 'ลบ <b>' + escapeHtml(rowLabel(tab, row)) + '</b> ออกจาก' + escapeHtml(def.title),
+          impacts: tabImpacts(tab, row, null, 'delete'),
+          note: 'ลบแล้วกู้คืนไม่ได้ (ยกเว้นกด "คืนค่าเริ่มต้น" ซึ่งจะล้างการแก้ไขอื่นในแท็บนี้ด้วย)',
+          confirmLabel: 'ลบ',
+          onConfirm: function () {
+            var list = SchoolStore.get(def.key).filter(function (r) { return r.id !== id; });
+            SchoolStore.save(def.key, list);
+            render();
+            showToast('ลบรายการเรียบร้อย');
+          }
+        });
       }
 
       function resetTab() {
-        if (!confirm('คืนค่าข้อมูลเริ่มต้นของแท็บนี้? การแก้ไขที่ทำไว้ทั้งหมดจะหายไป')) return;
-        SchoolStore.reset(TABS[currentTab].key);
-        render();
-        showToast('คืนค่าเริ่มต้นเรียบร้อย');
+        var def = TABS[currentTab];
+        var count = SchoolStore.get(def.key).length;
+        askConfirm({
+          title: 'คืนค่าเริ่มต้น: ' + def.title,
+          tone: 'danger',
+          summary: 'ข้อมูลทั้งหมดในแท็บ <b>' + escapeHtml(def.title) + '</b> (ตอนนี้มี ' + count + ' รายการ) จะถูกแทนที่ด้วยข้อมูลตัวอย่างเริ่มต้น การเพิ่ม/แก้ไข/ลบที่ทำไว้ทั้งหมดจะหายไป',
+          impacts: tabImpacts(currentTab, null, null, 'reset'),
+          note: 'ทำแล้วย้อนกลับไม่ได้',
+          confirmLabel: 'คืนค่าเริ่มต้น',
+          onConfirm: function () {
+            SchoolStore.reset(def.key);
+            render();
+            showToast('คืนค่าเริ่มต้นเรียบร้อย');
+          }
+        });
       }
 
       var toastTimer = null;

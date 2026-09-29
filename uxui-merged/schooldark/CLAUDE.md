@@ -45,14 +45,14 @@ Everything is currently a static front-end prototype/mockup: no backend, all dat
 
 ## 2. User roles
 
-Roles are implied by UI copy and a role-switcher on the leave module, rather than enforced by real auth:
+Roles are implied by UI copy rather than enforced by real auth. The leave module used to have a mock role switcher ("จำลองสถานะ"); it was removed on 2026-09-29 and `app.html` now always shows the head-teacher/approver view (`systemState.currentRole = "head"` in `index.js`; the old teacher-only branches are dead code):
 
 | Role | Thai label | Capabilities implied by the UI |
 |---|---|---|
 | System admin | ผู้ดูแลระบบ / แอดมิน ระบบ | Full access to all modules; shown in `app.html` sidebar footer by default |
 | HR / personnel officer | เจ้าหน้าที่บุคคล | Default logged-in user in `leave-features.html` (e.g. "สมปอง ทองดี"); manages tickets, history, employee directory, student leave settings |
-| Teacher (general) | คุณครูทั่วไป (ผู้ยื่นขอลา) | Submits their own leave requests (mock role in the leave module's role switcher) |
-| Head teacher / approver | หัวหน้าครู / ผู้อนุมัติ | Approves/rejects staff leave requests (mock role in the role switcher) |
+| Teacher (general) | คุณครูทั่วไป (ผู้ยื่นขอลา) | Submits their own leave requests (the form still has "ส่งใบลาในนาม" to file on behalf of any teacher) |
+| Head teacher / approver | หัวหน้าครู / ผู้อนุมัติ | Approves/rejects staff leave requests — the only view `app.html` shows now |
 | Homeroom teacher (ครูประจำชั้น) | — | Auto-resolved (not manually assigned) as first-line approver for student leave, based on classroom data |
 | Advisor teacher (ครูที่ปรึกษา) | — | Auto-resolved second-line approver for student leave |
 | Level head / student affairs (หัวหน้าระดับชั้น / ฝ่ายปกครอง) | — | Optional additional/fallback approvers for student leave, selectable from a dropdown |
@@ -70,8 +70,9 @@ Sidebar sections in the shared menu (`../shared/cross-nav.js`, reorganised 2026-
 
 **ระบบบริหารการลา (Leave management)**
 - ~~`view-leave-settings`~~ — **ย้ายออกจาก `app.html` แล้ว (2026-09-29)** ไปที่ `../settings/leave.html#tab=staff` (wizard 6 ขั้นเดิม: รอบปี, ผู้อนุมัติ, โควตา + ตารางโควตาแยกประเภทบุคลากร `staffTypeQuotaOverrides`, เงื่อนไข, แจ้งล่วงหน้า, การแจ้งเตือน/ผู้รับ) ค่าเก็บที่ `schooldark_settings` (seed `INITIAL_SETTINGS` ใน `index.js`) `index.js` ยังอ่านผ่าน `systemState.settings` / `getStaffQuota()` แต่ฟังก์ชันหน้าตั้งค่าทั้งหมด (`renderSettingsView`, `saveSettingsFromDOM`, `updatePreviewStep1..6` ฯลฯ) ถูกลบออกแล้ว
+  - care เพิ่ม version history (`schooldark_leave_settings_versions`) + ImpactConfirm ให้ view เก่านี้เมื่อ 2026-09-30 (8df292e); การพอร์ตไปที่ `settings/leave.html` ยังค้างอยู่ (phase 2)
 - `view-leave-form` — Leave request submission form: leave type, start/end date, half-day options, reason, submit-on-behalf-of (ส่งใบลาในนาม), plus a table of the user's own submitted requests (date, type, duration, status).
-- `view-leave-approve` / `view-approve` — Calendar overview on top, then two tabs: **รายการคำขอ** (approval queue: teacher name, leave type, dates, attachment link, status; pending rows get approve/reject, resolved rows get an "อนุมัติโดย/ปฏิเสธ" note plus a "เปลี่ยนสถานะ" reset button, and every row has a "ดู" button opening `modal-detail` with the full request + attachment + evidence) and **ประวัติการลารายบุคคล** (a searchable teacher-name list — no more select dropdown — where clicking a teacher opens `modal-teacher-profile` with quota cards + a full history timeline; history items there drill further into `modal-detail`).
+- `view-leave-approve` — laid out like the student `view-approve` (2026-09-29): tabs on top; **รายการคำขอ** has a pending pill and a ตาราง/ปฏิทิน switch (`setStaffListMode`, calendar hidden by default and only rendered when shown). The table's first column "สถานะ" is a colored dropdown (`staffStatusSelectHTML` / `onStaffStatusSelect`, shared `.sl-status-select` CSS) that calls `approveRequestDirect` / `rejectRequestDirect` / `resetRequestStatus` (each asks via `App.showConfirm`; quota is deducted on approve and refunded when leaving "approved", via `adjustTeacherQuota`) — there is no action column any more. "ดู" opens the request in the right-side drawer `#staff-drawer` (`viewRequestDetails`), and **ประวัติการลารายบุคคล** opens the teacher's quota + history in the same drawer (`openTeacherProfileModal`, name kept); history items drill into the request with a ‹ back button (`staffDrawerBackTo`). `staffDrawerRefresh` re-renders the open drawer after a status change. The old `modal-detail` / `modal-teacher-profile` markup was removed.
 
 **ระบบบุคลากร (Personnel)**
 - `view-directory` — Staff directory: searchable/filterable table (photo, staff code, name, position/department, phone, data status).
@@ -90,7 +91,7 @@ signatories, staff-types, positions, departments) — ปุ่มลัดแ�
 ของ staff-types/positions/departments และตัวเลือกหัวหน้าแผนก (`headTeacherId`) ย้ายไปอยู่ใน `settings/js/personnel-settings.js` แล้ว
 หมวดการลาก็ย้ายแล้วเช่นกัน: `view-leave-settings` → `../settings/leave.html#tab=staff`, `view-student-leave-settings` (ใน `leave-features.html`) → `../settings/leave.html#tab=student` (ดู `CHANGES-FOR-CARE.md` รายการ 19–20) — `leave-features.js` อ่านเวอร์ชันประเภทการลาที่ active จากคีย์ `sd_student_leave_versions` ตอนโหลด (`STUDENT_LEAVE_TYPES` / `SETTINGS_VERSIONS` ยังเป็น `let` และมีค่า default ในโค้ดเป็น fallback)
 
-Several modals overlay these views: leave request detail (`modal-detail`), the individual teacher leave profile (`modal-teacher-profile`, quota cards + history, opened from the searchable name list on the "ประวัติการลารายบุคคล" tab), shift editor, holiday editor, user role editor, signatory editor, and a generic confirm dialog.
+Several modals overlay these views (leave detail and the teacher profile are no longer modals — they use the `#staff-drawer` right-side drawer): shift editor, holiday editor, user role editor, signatory editor, and a generic confirm dialog.
 
 ### `leave-features.html` — Student permission tickets & reports module
 
@@ -112,6 +113,7 @@ Sidebar sections:
 
 **บัตรขออนุญาตนักเรียน (Permission tickets)** (sidebar group was "รายงาน & บัตรอนุญาต")
 - `view-leave-card` — Record a permission ticket: 2 KPI cards (tickets recorded today, pending print) + a 3-step horizontal wizard (search/select student → choose permission type → fill details), producing a printable ticket preview (`.ticket-preview`).
+- `view-ticket-settings` — "ตั้งค่าบัตรขออนุญาต" (added 2026-09-29; linked from the settings group under "ตั้งค่างานกิจการนักเรียน", like every other settings page). 4-step wizard laid out like `view-student-leave-settings` (form + live preview, history drawer, effective-date save modal `#tks-save-modal`): 1) ticket types CRUD (name, short card label, description, icon, badge class, active toggle — a type still used by `HISTORY` can only be disabled, not deleted), 2) approver roles + sequential toggle + per-type "needs approval", 3) per-type conditions (needs return time, counts as "ออกก่อนเวลา" for attendance, max minutes) + max tickets/student/day, monthly warning, recording window, reason-required, 4) print title, signature lines, parent/homeroom notifications. Unlike the leave wizard it edits a copy (`tksDraft`) and only commits on save: the applied config is `TICKET_SETTINGS` (declared next to `TICKET_TYPES` near the top of `leave-features.js`), and `applyTicketSettings()` re-syncs `TICKET_TYPES`, `ATT_EXIT_TICKET_TYPES`, the wizard's type cards (`#ticket-type-grid`, now rendered by `renderTicketTypeCards()` instead of hardcoded HTML), the ticket preview title/signatures, and renames old `HISTORY` rows. `typeBadgeClass()` reads the badge from `TICKET_SETTINGS` first. `saveTicketEntry()` enforces reason-required / max-per-day and auto-approves types with `needsApproval: false`; the recording window, return-time and max-minutes settings are stored/previewed only (not enforced yet). Versions live in `TICKET_SETTINGS_VERSIONS` (in memory, like `SETTINGS_VERSIONS`; seeded for ปีการศึกษา 2567/2568/2569) with the same history drawer + "นำการตั้งค่านี้มาใช้" (`useTicketSettingsVersion` → `renderTicketSettings(v.config)`). Type edit/disable/delete and the final save show `ImpactConfirm` popups (`diffTicketSettings()`, `tksTypeRemovalImpacts()`).
 - `view-history` — Permission history, in 3 tabs: **รายการทั้งหมด** (all records table: code, name, class, type, date, time range, reason, status, with Excel export and month/type filters), **ประวัติรายบุคคล** (per-student search + cumulative history/timeline panel), **สรุปรวมตามชั้นเรียน** (summary table aggregated by class: entered class / left class / left campus / other / parent pickup / total, with a 6-column stats grid).
 - `view-employees` — **No longer in the sidebar** (merged into `app.html`'s `view-directory` as the single staff directory menu; the view's code is still here and not yet ported). Staff directory (compact/full toggle, filter chips by employment type: municipal teacher, contract teacher, teaching assistant, administrator, general staff), Excel export.
 
@@ -124,6 +126,8 @@ Sidebar sections:
   3. **ผู้ตรวจสอบ/อนุมัติ** — minimum approver count, approver role checkboxes (homeroom teacher/advisor auto-resolved from classroom data; level head/student affairs manually selectable), sequential-approval toggle.
   4. **โควตาวันลา** — per-leave-type annual quota, "unlimited" toggle, optional monthly cap.
   5. **เงื่อนไขเพิ่มเติม** — require medical certificate after N sick days, auto-notify parents (LINE/SMS), same-day submission cut-off time, quota-warning threshold. (There is deliberately **no** "allow students to self-submit" toggle — students never submit leave themselves; a homeroom teacher/officer files it via `view-sl-submit`.)
+
+  Versions (`SETTINGS_VERSIONS`, in memory) now snapshot **both** `leaveTypes` and `form` (steps 1/3/5 via `readStudentLeaveForm()` / `fillStudentLeaveForm()`). The history drawer groups them by ปีการศึกษา · ภาคเรียน (`academicPeriodLabel()`, shared with the ticket settings via `settingsHistoryListHTML()`), and a non-active version has "นำการตั้งค่านี้มาใช้" (`useSettingsVersion`) → diff popup → loads it into the wizard → effective-date modal. The final save and leave-type edit/delete go through `ImpactConfirm` (`diffStudentLeaveSettings()`); renaming a leave type also renames it on existing `STUDENT_LEAVE_REQUESTS`. Every wizard step change (all wizards on this page and in `app.html`) calls `scrollContentTop()` / resets `.content-body` scroll.
 
 Both pages share `app.css`. Both link back to each other (`leave-features.html`'s logo links to `app.html`). Dark mode has been removed entirely — `body` always carries `class="light-mode"` and there is no theme toggle anywhere in this folder.
 
@@ -153,7 +157,6 @@ components/
     AppShell            (sidebar + top header + theme toggle, shared by both pages)
     Sidebar / SidebarMenuGroup / SidebarMenuItem
     TopHeader (title, breadcrumb, header actions slot)
-    RoleSwitcher        (mock role selector, leave module only)
   shared/
     GlassCard, GlassInput, GlassSelect
     StatCard / StatsGrid

@@ -396,6 +396,31 @@ const STUDENT_LEAVE_REQUESTS = [
 
 const TICKET_TYPES = ['เข้าห้องเรียนช้า', 'ออกนอกห้องเรียน', 'ออกนอกบริเวณโรงเรียน', 'อนุญาตอื่น ๆ', 'ผู้ปกครองมารับก่อนกำหนด'];
 
+// ======================================================================
+//  การตั้งค่าบัตรขออนุญาต (view-ticket-settings) — ค่าที่ "มีผลอยู่" ตอนนี้
+//  ประกาศไว้ตรงนี้ (ไม่ใช่ท้ายไฟล์กับ logic ของวิซาร์ด) เพราะ typeBadgeClass / การ์ดเลือกประเภทใน
+//  view-leave-card / saveTicketEntry อ่านค่านี้ตั้งแต่ตอนโหลดหน้า
+//  badge = class ของ .type-badge / .calendar-leave-pill (class-in, class-out, ...)
+//  TICKET_TYPES และ ATT_EXIT_TICKET_TYPES ถูก sync จากค่านี้ใน applyTicketSettings() ทุกครั้งที่บันทึก
+// ======================================================================
+let TICKET_SETTINGS = {
+  types: [
+    { name: 'เข้าห้องเรียนช้า',        short: '',              desc: 'มาถึงโรงเรียนช้า',     icon: 'clock',    badge: 'class-in',      active: true, needsApproval: true,  needsReturnTime: false, countsAsExit: false, maxMinutes: 0 },
+    { name: 'ออกนอกห้องเรียน',        short: '',              desc: 'ออกระหว่างเรียน',      icon: 'door',     badge: 'class-out',     active: true, needsApproval: true,  needsReturnTime: true,  countsAsExit: false, maxMinutes: 30 },
+    { name: 'ออกนอกบริเวณโรงเรียน',    short: 'ออกนอกโรงเรียน', desc: 'ต้องระบุเวลากลับ',     icon: 'building', badge: 'school-out',    active: true, needsApproval: true,  needsReturnTime: true,  countsAsExit: true,  maxMinutes: 0 },
+    { name: 'อนุญาตอื่น ๆ',            short: '',              desc: 'ได้รับอนุญาตแล้ว',     icon: 'clock',    badge: 'late-permit',   active: true, needsApproval: true,  needsReturnTime: false, countsAsExit: false, maxMinutes: 0 },
+    { name: 'ผู้ปกครองมารับก่อนกำหนด', short: 'ผปค. มารับก่อน', desc: 'กลับบ้านก่อนเลิก',     icon: 'car',      badge: 'parent-pick',   active: true, needsApproval: true,  needsReturnTime: false, countsAsExit: true,  maxMinutes: 0 },
+    { name: 'มอบหมายเวรให้คนอื่น',     short: 'มอบหมายเวร',    desc: 'ระบุผู้รับในหมายเหตุ', icon: 'check',    badge: 'duty-delegate', active: true, needsApproval: false, needsReturnTime: false, countsAsExit: false, maxMinutes: 0 }
+  ],
+  approval: { roles: ['duty', 'homeroom'], sequence: true },
+  conditions: { maxPerDay: 3, warnPerMonth: 5, recordStart: '07:00', recordEnd: '16:30', reasonRequired: false },
+  print: { title: 'บัตรรายการขออนุญาต', signatures: ['requester', 'advisor', 'approver'], notifyParent: true, notifyHomeroom: false }
+};
+
+function ticketTypeSetting(name) {
+  return TICKET_SETTINGS.types.find(t => t.name === name);
+}
+
 const SUMMARY_DATA = {
   'ม.1': { 'เข้าห้องเรียนช้า':4, 'ออกนอกห้องเรียน':6,  'ออกนอกบริเวณโรงเรียน':1, 'อนุญาตอื่น ๆ':2, 'ผู้ปกครองมารับก่อนกำหนด':3 },
   'ม.2': { 'เข้าห้องเรียนช้า':7, 'ออกนอกห้องเรียน':9,  'ออกนอกบริเวณโรงเรียน':3, 'อนุญาตอื่น ๆ':4, 'ผู้ปกครองมารับก่อนกำหนด':2 },
@@ -414,6 +439,7 @@ const VIEW_TITLES = {
   'ticket-calendar': 'รายการบัตรขออนุญาต',
   'employees':   'รายชื่อบุคลากรและอาจารย์',
   'sl-submit': 'ยื่นขอลาของนักเรียน',
+  'ticket-settings': 'ตั้งค่าบัตรขออนุญาต',
   'student-dashboard': 'แดชบอร์ดการมาเรียน',
   'attendance-check': 'เช็คชื่อนักเรียน',
   'attendance-report': 'รายงานการมาเรียน'
@@ -423,6 +449,8 @@ const VIEW_TITLES = {
 //  SHARED HELPERS (used across History and Approval views)
 // ======================================================================
 function typeBadgeClass(t) {
+  const setting = ticketTypeSetting(t);
+  if (setting) return setting.badge;
   switch (t) {
     case 'เข้าห้องเรียนช้า': return 'class-in';
     case 'ออกนอกห้องเรียน': return 'class-out';
@@ -492,6 +520,7 @@ function showModuleView(view, activeItem = null) {
     'sl-submit': 'งานบริหารการลา', 'approve': 'งานบริหารการลา',
     'student-dashboard': 'งานกิจการนักเรียน',
     'attendance-check': 'งานกิจการนักเรียน', 'attendance-report': 'งานกิจการนักเรียน',
+    'ticket-settings': 'การตั้งค่า'
   };
   document.getElementById('breadcrumb').textContent = 'SchoolDark / ' + (BREADCRUMB_GROUP[view] || 'งานกิจการนักเรียน') + ' / ' + VIEW_TITLES[view];
 
@@ -500,6 +529,7 @@ function showModuleView(view, activeItem = null) {
     renderAllHistory();
   }
   if (view === 'employees') renderEmployees();
+  if (view === 'ticket-settings') renderTicketSettings();
   if (view === 'sl-submit') renderSLSubmitPending();
   if (view === 'approve') renderApprovals();
   if (view === 'student-dashboard') renderStudentDashboardView();
@@ -545,6 +575,7 @@ document.querySelectorAll('.submenu-item').forEach(link => {
       const stepNum = parseInt(step, 10);
       if (view === 'leave-card' && typeof goStep === 'function') goStep(stepNum);
       else if (view === 'sl-submit' && typeof goSLSubmitStep === 'function') goSLSubmitStep(stepNum);
+      else if (view === 'ticket-settings' && typeof goTicketSettingStep === 'function') goTicketSettingStep(stepNum);
     } else if (tab) {
       const tabBtn = document.querySelector(`#view-${view} .tab-btn[data-tab="${tab}"]`);
       if (tabBtn) tabBtn.click();
@@ -574,7 +605,15 @@ let selectedStudent = null;
 let selectedLeaveType = 'เข้าห้องเรียนช้า';
 let editingTicketReqId = null; // null = บันทึกรายการใหม่, มีค่า = กำลังแก้ไขบัตรที่ยังไม่ถูกดำเนินการ
 
+// เลื่อนขึ้นบนสุดของหน้าทุกครั้งที่เปลี่ยนขั้นตอนในวิซาร์ด (กดถัดไป/ย้อนกลับ/คลิกขั้น)
+function scrollContentTop() {
+  const body = document.querySelector('.content-body');
+  if (body) body.scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
 function goStep(step) {
+  scrollContentTop();
   document.querySelectorAll('.wiz-step-pane').forEach(p => p.classList.remove('active'));
   document.getElementById('wizard-' + step).classList.add('active');
 
@@ -636,14 +675,47 @@ function pickStudentRow(id, row) {
   document.getElementById('btn-step1-next').disabled = false;
 }
 
-// Leave type selection
-document.querySelectorAll('.leave-type').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.leave-type').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedLeaveType = card.dataset.type;
-  });
+// Leave type selection — การ์ดสร้างใหม่ทุกครั้งที่บันทึกการตั้งค่าบัตร จึงผูก click ไว้ที่ grid (delegation)
+const TICKET_TYPE_ICON_COLOR = {
+  'class-in': 'var(--warning)', 'class-out': 'var(--info)', 'school-out': 'var(--danger)',
+  'late-permit': 'var(--primary)', 'parent-pick': 'var(--flow-red)', 'duty-delegate': 'var(--success)'
+};
+
+function ticketTypeCardHTML(t, selected, extraClass = 'leave-type') {
+  const color = TICKET_TYPE_ICON_COLOR[t.badge] || 'var(--primary)';
+  return `
+    <div class="lt-card ${extraClass}${selected ? ' selected' : ''}" data-type="${t.name}">
+      <div class="lt-icon" style="background:${color}"><svg class="icon"><use href="#i-${t.icon}"/></svg></div>
+      <div><div class="lt-title">${t.short || t.name}</div><div class="lt-sub">${t.desc || ''}</div></div>
+    </div>`;
+}
+
+function activeTicketTypes() {
+  return TICKET_SETTINGS.types.filter(t => t.active);
+}
+
+function renderTicketTypeCards() {
+  const grid = document.getElementById('ticket-type-grid');
+  if (!grid) return;
+  const types = activeTicketTypes();
+  if (!types.some(t => t.name === selectedLeaveType)) {
+    // กำลังแก้บัตรเก่าที่ใช้ประเภทที่ปิดไปแล้ว → ยังแสดงการ์ดประเภทนั้นให้ ไม่งั้นกลับไปเลือกการ์ดแรก
+    const old = editingTicketReqId && ticketTypeSetting(selectedLeaveType);
+    if (old) types.push(old);
+    else selectedLeaveType = types[0] ? types[0].name : '';
+  }
+  grid.innerHTML = types.map(t => ticketTypeCardHTML(t, t.name === selectedLeaveType)).join('');
+}
+
+document.getElementById('ticket-type-grid').addEventListener('click', (e) => {
+  const card = e.target.closest('.leave-type');
+  if (!card) return;
+  document.querySelectorAll('#ticket-type-grid .leave-type').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedLeaveType = card.dataset.type;
 });
+
+renderTicketTypeCards();
 
 // Live Preview Update
 function updateLiveTicket() {
@@ -688,15 +760,14 @@ function updateLiveTicket() {
 
 function resetWizard() {
   selectedStudent = null;
-  selectedLeaveType = 'เข้าห้องเรียนช้า';
+  selectedLeaveType = activeTicketTypes()[0] ? activeTicketTypes()[0].name : '';
   editingTicketReqId = null;
   window.currentTicketNo = null;
   document.getElementById('student-search').value = '';
   document.getElementById('student-class-filter').value = '';
   document.getElementById('btn-step1-next').disabled = true;
   document.getElementById('selected-student-banner').style.display = 'none';
-  document.querySelector('.leave-type').classList.add('selected');
-  document.querySelectorAll('.leave-type:not(:first-child)').forEach(c => c.classList.remove('selected'));
+  renderTicketTypeCards();
   document.getElementById('f-reason').value = '';
   document.getElementById('f-time-start').value = '08:00';
   document.getElementById('f-time-end').value = '16:30';
@@ -724,6 +795,12 @@ function saveTicketEntry() {
   const timeStart = document.getElementById('f-time-start').value || '08:00';
   const timeEnd = document.getElementById('f-time-end').value || '16:30';
   const reason = document.getElementById('f-reason').value.trim();
+  if (!selectedLeaveType) { alert('ยังไม่มีประเภทบัตรที่เปิดใช้งาน — เปิดได้ที่เมนู "ตั้งค่าบัตรขออนุญาต"'); return; }
+  // เงื่อนไขจากหน้า "ตั้งค่าบัตรขออนุญาต" ขั้นตอนที่ 3
+  const cond = TICKET_SETTINGS.conditions;
+  if (cond.reasonRequired && !reason) { alert('กรุณาระบุเหตุผลการขออนุญาต'); return; }
+  const sameDay = HISTORY.filter(h => h.id === selectedStudent.id && h.date === dateStart && h.reqId !== editingTicketReqId && h.status !== 'ไม่อนุมัติ').length;
+  if (sameDay >= cond.maxPerDay) { alert(`นักเรียนคนนี้มีบัตรขออนุญาตในวันนั้นครบ ${cond.maxPerDay} ใบแล้ว (ตามที่ตั้งค่าไว้)`); return; }
   updateLiveTicket(); // ensures window.currentTicketNo is generated for a new entry
 
   if (editingTicketReqId) {
@@ -739,6 +816,8 @@ function saveTicketEntry() {
     }
     alert('บันทึกการแก้ไขบัตรขออนุญาตเรียบร้อยแล้ว');
   } else {
+    const typeSetting = ticketTypeSetting(selectedLeaveType);
+    const needsApproval = !typeSetting || typeSetting.needsApproval;
     HISTORY.push({
       id: selectedStudent.id,
       name: selectedStudent.name,
@@ -747,11 +826,12 @@ function saveTicketEntry() {
       date: dateStart,
       time: `${timeStart}-${timeEnd}`,
       reason: reason,
-      status: 'รอตรวจสอบ',
-      comment: '',
+      // ประเภทที่ตั้งค่าไว้ว่า "ไม่ต้องรออนุมัติ" (ขั้นตอนที่ 2) มีผลทันทีเมื่อบันทึก
+      status: needsApproval ? 'รอตรวจสอบ' : 'อนุมัติ',
+      comment: needsApproval ? '' : 'อนุมัติอัตโนมัติ (ประเภทบัตรนี้ไม่ต้องรออนุมัติ)',
       reqId: window.currentTicketNo
     });
-    alert('บันทึกบัตรขออนุญาตเรียบร้อยแล้ว');
+    alert(needsApproval ? 'บันทึกบัตรขออนุญาตเรียบร้อยแล้ว' : 'บันทึกบัตรขออนุญาตเรียบร้อยแล้ว (อนุมัติอัตโนมัติ)');
   }
 
   editingTicketReqId = null;
@@ -772,7 +852,7 @@ function editTicketRequest(reqId) {
   selectedStudent = STUDENTS.find(s => s.id === r.id) || { id: r.id, name: r.name, cls: r.cls, no: '-' };
   selectedLeaveType = r.type;
 
-  document.querySelectorAll('.leave-type').forEach(c => c.classList.toggle('selected', c.dataset.type === r.type));
+  renderTicketTypeCards();
   document.getElementById('btn-step1-next').disabled = false;
   searchStudents(document.getElementById('student-search').value || '');
 
@@ -800,6 +880,7 @@ let slSubmitCurrentNo = null;
 let editingSLId = null; // null = บันทึกรายการใหม่, มีค่า = กำลังแก้ไขใบลาที่ยังไม่ถูกดำเนินการ
 
 function goSLSubmitStep(step) {
+  scrollContentTop();
   document.querySelectorAll('#view-sl-submit .wiz-step-pane').forEach(p => p.classList.remove('active'));
   document.getElementById('sl-wizard-' + step).classList.add('active');
 
@@ -3354,6 +3435,755 @@ try {
 
 window.showModuleView = showModuleView;
 
+// ======================================================================
+//  HELPERS ที่โค้ดตั้งค่าบัตรใช้ร่วม (คงไว้จากเวอร์ชัน care 8df292e)
+// ======================================================================
+// "ปีการศึกษา 2569 · ภาคเรียนที่ 1" จากวันที่มีผล (ภาคเรียนที่ 1 = พ.ค.–ต.ค., ภาคเรียนที่ 2 = พ.ย.–เม.ย.)
+function academicPeriodLabel(dateStr) {
+  const [y, m] = dateStr.split('-').map(Number);
+  const acadYear = (m >= 5 ? y : y - 1) + 543;
+  const term = (m >= 5 && m <= 10) ? 1 : 2;
+  return `ปีการศึกษา ${acadYear} · ภาคเรียนที่ ${term}`;
+}
+
+function settingsVersionStatusBadge(status) {
+  if (status === 'active') return '<span class="badge success">ใช้งานอยู่</span>';
+  if (status === 'scheduled') return '<span class="badge info">รอมีผลในอนาคต</span>';
+  return '<span class="badge">ในอดีต</span>';
+}
+
+// รายการเวอร์ชันในลิ้นชักประวัติ — ใช้ร่วมกันระหว่างตั้งค่าการลาเรียนกับตั้งค่าบัตรขออนุญาต
+// จัดกลุ่มตามปีการศึกษา/ภาคเรียนของวันที่มีผล ให้หา "ปีที่แล้ว/เทอมที่แล้ว" ได้ง่าย
+function settingsHistoryListHTML(versions, viewFnName) {
+  const sorted = [...versions].sort((a, b) => b.effectiveDate.localeCompare(a.effectiveDate));
+  let lastGroup = '';
+  return sorted.map(v => {
+    const group = academicPeriodLabel(v.effectiveDate);
+    const head = group !== lastGroup ? `<div class="setting-section-title" style="margin-top:${lastGroup ? 10 : 0}px;">${group}</div>` : '';
+    lastGroup = group;
+    return head + `
+      <div class="history-item" style="cursor:pointer;" onclick="${viewFnName}('${v.id}')">
+        <div class="history-date-box">
+          <span class="history-date-month">${THAI_MONTHS_FULL[new Date(v.effectiveDate).getMonth()].substring(0, 3)}.</span>
+          <span class="history-date-day">${String(new Date(v.effectiveDate).getDate()).padStart(2, '0')}</span>
+        </div>
+        <div class="history-info">
+          <div class="history-type">มีผลบังคับใช้ ${thaiDate(v.effectiveDate)}</div>
+          <div class="history-duration">${v.note}</div>
+        </div>
+        ${settingsVersionStatusBadge(v.status)}
+      </div>`;
+  }).join('');
+}
+
+function openDetailDrawer() {
+  document.getElementById('drawer-overlay').classList.add('active');
+  document.getElementById('drawer-detail').classList.add('active');
+}
+
+
+// ======================================================================
+//  TICKET SETTINGS — วิซาร์ด "ตั้งค่าบัตรขออนุญาต" (view-ticket-settings, 4 ขั้น)
+//  แก้ใน tksDraft (สำเนาของ TICKET_SETTINGS) ระหว่างทำวิซาร์ด → กดบันทึกแล้วค่อยเขียนกลับ
+//  และเรียก applyTicketSettings() ให้มีผลกับหน้า "ยื่นบัตรขออนุญาต"/ตัวกรอง/การเช็คชื่อ
+//  ต่างจากตั้งค่าการลาเรียนที่แก้ STUDENT_LEAVE_TYPES ตรง ๆ ระหว่างทำวิซาร์ด
+// ======================================================================
+const TKS_ROLES = [
+  { id: 'duty',     name: 'ครูเวรประจำวัน' },
+  { id: 'homeroom', name: 'ครูประจำชั้น / ครูที่ปรึกษา' },
+  { id: 'dean',     name: 'ฝ่ายปกครอง / กิจการนักเรียน' },
+  { id: 'deputy',   name: 'รองผู้อำนวยการฝ่ายกิจการนักเรียน' }
+];
+const TKS_SIGNATURES = [
+  { id: 'requester', name: 'ผู้ขออนุญาต' },
+  { id: 'advisor',   name: 'ครูที่ปรึกษา' },
+  { id: 'approver',  name: 'ผู้อนุมัติ' },
+  { id: 'duty',      name: 'ครูเวร' },
+  { id: 'parent',    name: 'ผู้ปกครอง' }
+];
+
+let activeTicketSettingStep = 1;
+let tksDraft = null;
+
+function cloneTicketSettings(cfg) {
+  return JSON.parse(JSON.stringify(cfg));
+}
+
+let TICKET_SETTINGS_VERSIONS = [
+  {
+    id: 'TKS-0001',
+    effectiveDate: '2024-05-16',
+    savedDate: '2024-05-10',
+    savedBy: 'สมปอง ทองดี',
+    note: 'ตั้งค่าประเภทบัตรขออนุญาตเริ่มต้นของปีการศึกษา 2567',
+    status: 'past',
+    config: (() => {
+      const c = cloneTicketSettings(TICKET_SETTINGS);
+      c.types = c.types.filter(t => t.name !== 'มอบหมายเวรให้คนอื่น');
+      return c;
+    })()
+  },
+  {
+    id: 'TKS-0002',
+    effectiveDate: '2025-05-16',
+    savedDate: '2025-05-05',
+    savedBy: 'สมปอง ทองดี',
+    note: 'เพิ่มประเภท "มอบหมายเวรให้คนอื่น" (ไม่ต้องรออนุมัติ)',
+    status: 'past',
+    config: (() => {
+      const c = cloneTicketSettings(TICKET_SETTINGS);
+      c.conditions.maxPerDay = 2;
+      return c;
+    })()
+  },
+  {
+    id: 'TKS-0003',
+    effectiveDate: '2026-05-16',
+    savedDate: '2026-05-08',
+    savedBy: 'สมปอง ทองดี',
+    note: 'เพิ่มจำนวนบัตรสูงสุดเป็น 3 ใบ/วัน สำหรับปีการศึกษา 2569',
+    status: 'active',
+    config: cloneTicketSettings(TICKET_SETTINGS)
+  }
+];
+
+// cfg = ชุดค่าที่จะโหลดลงวิซาร์ด (ค่าเริ่มต้น = ที่ใช้อยู่) — ตอน "นำการตั้งค่าเก่ามาใช้" จะส่งเวอร์ชันเก่าเข้ามา
+function renderTicketSettings(cfg = TICKET_SETTINGS) {
+  tksDraft = cloneTicketSettings(cfg);
+  // origName ใช้ตามแก้ชื่อในบัตรเก่าตอนบันทึก — มีเฉพาะประเภทที่มีอยู่ในชุดที่ใช้อยู่ตอนนี้
+  tksDraft.types.forEach(t => { if (ticketTypeSetting(t.name)) t.origName = t.name; });
+  fillTicketSettingsForm();
+  goTicketSettingStep(1);
+}
+
+function fillTicketSettingsForm() {
+  const d = tksDraft;
+  TKS_ROLES.forEach(r => { document.getElementById('tks-role-' + r.id).checked = d.approval.roles.includes(r.id); });
+  document.getElementById('tks-approve-sequence').checked = d.approval.sequence;
+  document.getElementById('tks-max-per-day').value = d.conditions.maxPerDay;
+  document.getElementById('tks-warn-per-month').value = d.conditions.warnPerMonth;
+  document.getElementById('tks-record-start').value = d.conditions.recordStart;
+  document.getElementById('tks-record-end').value = d.conditions.recordEnd;
+  document.getElementById('tks-reason-required').checked = d.conditions.reasonRequired;
+  document.getElementById('tks-print-title').value = d.print.title;
+  document.getElementById('tks-notify-parent').checked = d.print.notifyParent;
+  document.getElementById('tks-notify-homeroom').checked = d.print.notifyHomeroom;
+  document.getElementById('tks-sign-options').innerHTML = TKS_SIGNATURES.map(s => `
+    <label class="checkbox-card tks-role-card" style="padding: 8px 12px;">
+      <input type="checkbox" data-sign="${s.id}" ${d.print.signatures.includes(s.id) ? 'checked' : ''} onchange="onTicketSettingsFormChange()">
+      <strong style="font-size: 12.5px; font-weight: 500;">${s.name}</strong>
+    </label>
+  `).join('');
+  syncTksRoleCards();
+}
+
+// อ่านค่าทุกช่อง (ขั้น 2–4) กลับเข้า tksDraft — ช่องที่ผูกกับประเภทบัตรรายตัวใช้ setTksTypeFlag แทน
+function onTicketSettingsFormChange() {
+  const d = tksDraft;
+  d.approval.roles = TKS_ROLES.filter(r => document.getElementById('tks-role-' + r.id).checked).map(r => r.id);
+  d.approval.sequence = document.getElementById('tks-approve-sequence').checked;
+  d.conditions.maxPerDay = Math.max(1, parseInt(document.getElementById('tks-max-per-day').value, 10) || 1);
+  d.conditions.warnPerMonth = Math.max(1, parseInt(document.getElementById('tks-warn-per-month').value, 10) || 1);
+  d.conditions.recordStart = document.getElementById('tks-record-start').value;
+  d.conditions.recordEnd = document.getElementById('tks-record-end').value;
+  d.conditions.reasonRequired = document.getElementById('tks-reason-required').checked;
+  d.print.title = document.getElementById('tks-print-title').value;
+  d.print.notifyParent = document.getElementById('tks-notify-parent').checked;
+  d.print.notifyHomeroom = document.getElementById('tks-notify-homeroom').checked;
+  d.print.signatures = Array.from(document.querySelectorAll('#tks-sign-options input[data-sign]:checked')).map(i => i.dataset.sign);
+  syncTksRoleCards();
+  updateTicketSettingPreview();
+}
+
+function syncTksRoleCards() {
+  document.querySelectorAll('.tks-role-card').forEach(card => {
+    const checkbox = card.querySelector('input[type="checkbox"]');
+    if (checkbox) card.classList.toggle('checked', checkbox.checked);
+  });
+}
+
+function applyTksTypeFlag(idx, field, value) {
+  const t = tksDraft.types[idx];
+  if (!t) return;
+  t[field] = field === 'maxMinutes' ? Math.max(0, parseInt(value, 10) || 0) : value;
+  if (field === 'active') renderTksTypesTable();
+  updateTicketSettingPreview();
+}
+
+// ส่งผลกับส่วนไหนบ้างเมื่อประเภทบัตรนี้หายไปจากตัวเลือก (ปิดใช้งาน/ลบ)
+function tksTypeRemovalImpacts(t) {
+  const used = t.origName ? HISTORY.filter(h => h.type === t.origName).length : 0;
+  const impacts = [
+    { where: 'ยื่นบัตรขออนุญาต', detail: `การ์ด "${t.short || t.name}" จะไม่แสดงให้เลือกในขั้นตอนที่ 2` },
+    { where: 'รายการบัตรขออนุญาต', detail: used ? `บัตรเดิม ${used} ใบยังอยู่ครบ ค้นหา/กรอง/ดูในปฏิทินได้เหมือนเดิม` : 'ยังไม่มีบัตรที่ใช้ประเภทนี้' }
+  ];
+  if (t.countsAsExit) impacts.push({ where: 'เช็คชื่อ / รายงานการมาเรียน', detail: 'บัตรใหม่ประเภทนี้จะไม่มีแล้ว จึงไม่มีการนับ "ออกก่อนเวลา" จากประเภทนี้อีก' });
+  return impacts;
+}
+
+function setTksTypeFlag(idx, field, value) {
+  const t = tksDraft.types[idx];
+  if (!t) return;
+  if (field === 'active' && value === false) {
+    ImpactConfirm.show({
+      title: 'ปิดใช้งานประเภทบัตร',
+      summary: `ต้องการปิดใช้งานประเภท <strong>"${t.name}"</strong> ใช่หรือไม่? เปิดกลับได้ทุกเมื่อ`,
+      impacts: tksTypeRemovalImpacts(t),
+      note: 'มีผลจริงเมื่อกด "บันทึกการตั้งค่า" ในขั้นตอนที่ 4',
+      confirmLabel: 'ปิดใช้งาน',
+      onConfirm: () => applyTksTypeFlag(idx, 'active', false),
+      onCancel: () => renderTksTypesTable() // คืนสวิตช์กลับเป็นเปิด
+    });
+    return;
+  }
+  applyTksTypeFlag(idx, field, value);
+}
+
+function goTicketSettingStep(step) {
+  scrollContentTop();
+  if (!tksDraft) renderTicketSettings();
+  activeTicketSettingStep = step;
+  for (let i = 1; i <= 4; i++) {
+    const pane = document.getElementById('tks-step-pane-' + i);
+    if (pane) {
+      pane.style.display = (i === step) ? 'block' : 'none';
+      pane.classList.toggle('active', i === step);
+    }
+    const nav = document.getElementById('tks-step-nav-' + i);
+    if (nav) {
+      nav.classList.remove('active', 'done');
+      if (i === step) nav.classList.add('active');
+      if (i < step) nav.classList.add('done');
+    }
+  }
+  document.getElementById('tks-prev-btn').disabled = (step === 1);
+  document.getElementById('tks-next-btn').textContent = step === 4 ? 'บันทึกการตั้งค่า' : 'ขั้นตอนถัดไป →';
+
+  if (step === 1) renderTksTypesTable();
+  if (step === 2) renderTksApprovalTable();
+  if (step === 3) renderTksConditionsTable();
+  updateTicketSettingPreview();
+}
+
+function navigateTicketSettingStep(dir) {
+  const target = activeTicketSettingStep + dir;
+  if (target < 1) return;
+  if (target > 4) {
+    if (!tksDraft.types.some(t => t.active)) { alert('ต้องเปิดใช้งานประเภทบัตรอย่างน้อย 1 ประเภท'); goTicketSettingStep(1); return; }
+    if (tksDraft.types.some(t => t.active && t.needsApproval) && tksDraft.approval.roles.length === 0) {
+      alert('มีประเภทบัตรที่ต้องรออนุมัติ กรุณาเลือกบทบาทผู้อนุมัติอย่างน้อย 1 บทบาท');
+      goTicketSettingStep(2);
+      return;
+    }
+    saveTicketSettings();
+    return;
+  }
+  goTicketSettingStep(target);
+}
+
+// Step 1: ประเภทบัตร (CRUD)
+function renderTksTypesTable() {
+  const tbody = document.getElementById('tks-types-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = tksDraft.types.map((t, idx) => `
+    <tr style="${t.active ? '' : 'opacity:.55;'}">
+      <td><span class="type-badge ${t.badge}">${t.name}</span></td>
+      <td><span style="color: var(--text-muted); font-size: 12px;">${t.desc || '-'}</span></td>
+      <td style="text-align: center;">
+        <label class="switch" style="transform: scale(.85);">
+          <input type="checkbox" ${t.active ? 'checked' : ''} onchange="setTksTypeFlag(${idx}, 'active', this.checked)">
+          <span class="slider"></span>
+        </label>
+      </td>
+      <td style="text-align: right;">
+        <div style="display: flex; gap: 4px; justify-content: flex-end;">
+          <button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 10.5px;" onclick="openEditTicketTypeModal(${idx})">แก้ไข</button>
+          <button class="btn btn-danger btn-sm" style="padding: 2px 6px; font-size: 10.5px;" onclick="deleteTicketType(${idx})">ลบ</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function showTicketTypeModal(title, t, idx) {
+  document.getElementById('ticket-type-modal-title').textContent = title;
+  document.getElementById('ticket-type-edit-idx').value = idx;
+  document.getElementById('tt-modal-name').value = t.name;
+  document.getElementById('tt-modal-short').value = t.short;
+  document.getElementById('tt-modal-desc').value = t.desc;
+  document.getElementById('tt-modal-icon').value = t.icon;
+  document.getElementById('tt-modal-badge').value = t.badge;
+  const overlay = document.getElementById('modal-ticket-type-overlay');
+  const panel = document.getElementById('modal-ticket-type');
+  overlay.style.display = 'block';
+  panel.style.display = 'block';
+  requestAnimationFrame(() => {
+    overlay.classList.add('active');
+    panel.classList.add('active');
+  });
+}
+
+function openAddTicketTypeModal() {
+  showTicketTypeModal('เพิ่มประเภทบัตรขออนุญาต', { name: '', short: '', desc: '', icon: 'ticket', badge: 'late-permit' }, '');
+}
+
+function openEditTicketTypeModal(idx) {
+  showTicketTypeModal('แก้ไขประเภทบัตรขออนุญาต', tksDraft.types[idx], idx);
+}
+
+function closeTicketTypeModal() {
+  const overlay = document.getElementById('modal-ticket-type-overlay');
+  const panel = document.getElementById('modal-ticket-type');
+  overlay.classList.remove('active');
+  panel.classList.remove('active');
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    panel.style.display = 'none';
+  }, 180);
+}
+
+const TKS_ICON_NAMES = { clock: 'นาฬิกา', door: 'ประตู', building: 'อาคาร', car: 'รถ', check: 'เครื่องหมายถูก', ticket: 'บัตร' };
+const TKS_BADGE_NAMES = { 'class-in': 'ส้ม', 'class-out': 'ฟ้า', 'school-out': 'แดง', 'late-permit': 'ม่วง', 'parent-pick': 'ชมพูเข้ม', 'duty-delegate': 'เขียว' };
+
+function saveTicketType() {
+  const name = document.getElementById('tt-modal-name').value.trim();
+  const idxVal = document.getElementById('ticket-type-edit-idx').value;
+  if (!name) { alert('กรุณาระบุชื่อประเภทบัตร'); return; }
+  if (tksDraft.types.some((t, i) => t.name === name && String(i) !== idxVal)) { alert('มีประเภทบัตรชื่อนี้อยู่แล้ว'); return; }
+
+  const fields = {
+    name,
+    short: document.getElementById('tt-modal-short').value.trim(),
+    desc: document.getElementById('tt-modal-desc').value.trim(),
+    icon: document.getElementById('tt-modal-icon').value,
+    badge: document.getElementById('tt-modal-badge').value
+  };
+  const done = () => {
+    closeTicketTypeModal();
+    renderTksTypesTable();
+    updateTicketSettingPreview();
+  };
+  if (idxVal === '') {
+    tksDraft.types.push({ ...fields, active: true, needsApproval: true, needsReturnTime: false, countsAsExit: false, maxMinutes: 0 });
+    done();
+    return;
+  }
+
+  const t = tksDraft.types[parseInt(idxVal, 10)];
+  const changes = [
+    { label: 'ชื่อ', before: t.name, after: fields.name },
+    { label: 'ชื่อย่อบนการ์ด', before: t.short || '', after: fields.short },
+    { label: 'คำอธิบาย', before: t.desc || '', after: fields.desc },
+    { label: 'ไอคอน', before: TKS_ICON_NAMES[t.icon] || t.icon, after: TKS_ICON_NAMES[fields.icon] || fields.icon },
+    { label: 'สีป้าย', before: TKS_BADGE_NAMES[t.badge] || t.badge, after: TKS_BADGE_NAMES[fields.badge] || fields.badge }
+  ].filter(c => c.before !== c.after);
+  if (!changes.length) { closeTicketTypeModal(); return; }
+
+  const used = t.origName ? HISTORY.filter(h => h.type === t.origName).length : 0;
+  const impacts = [{ where: 'ยื่นบัตรขออนุญาต', detail: 'การ์ดเลือกประเภทในขั้นตอนที่ 2 จะแสดงตามค่าใหม่' }];
+  if (t.name !== fields.name) {
+    impacts.push({ where: 'บัตรที่บันทึกไว้แล้ว', detail: used ? `บัตร ${used} ใบที่ใช้ชื่อ "${t.name}" จะเปลี่ยนเป็น "${fields.name}" ตามไปด้วย` : 'ยังไม่มีบัตรที่ใช้ประเภทนี้' });
+    impacts.push({ where: 'รายการบัตรขออนุญาต / แดชบอร์ดการมาเรียน', detail: 'ตัวกรองประเภทบัตร และกราฟ "บัตรขออนุญาตแยกประเภท" จะใช้ชื่อใหม่' });
+  }
+  if (t.badge !== fields.badge) impacts.push({ where: 'ปฏิทินและตารางบัตรขออนุญาต', detail: `สีป้ายประเภทนี้จะเปลี่ยนเป็นสี${TKS_BADGE_NAMES[fields.badge]}` });
+
+  ImpactConfirm.show({
+    title: 'แก้ไขประเภทบัตรขออนุญาต',
+    summary: `กำลังแก้ไขประเภท <strong>"${t.name}"</strong>`,
+    changes,
+    impacts,
+    note: 'มีผลจริงเมื่อกด "บันทึกการตั้งค่า" ในขั้นตอนที่ 4',
+    confirmLabel: 'บันทึกการแก้ไข',
+    onConfirm: () => { Object.assign(t, fields); done(); }
+  });
+}
+
+function deleteTicketType(idx) {
+  const t = tksDraft.types[idx];
+  const used = t.origName ? HISTORY.filter(h => h.type === t.origName).length : 0;
+  if (used > 0) {
+    // ลบไม่ได้ถ้ายังมีบัตรใช้ประเภทนี้อยู่ (ประวัติ/รายงานจะหาประเภทไม่เจอ) — ให้ปิดการใช้งานแทน
+    ImpactConfirm.show({
+      title: 'ลบประเภทบัตรนี้ไม่ได้',
+      tone: 'danger',
+      summary: `มีบัตรขออนุญาต <strong>${used} ใบ</strong> ที่ใช้ประเภท "${t.name}" อยู่ ถ้าลบ บัตรเหล่านั้นจะหาประเภทไม่เจอ แนะนำให้<strong>ปิดใช้งาน</strong>แทน`,
+      impacts: tksTypeRemovalImpacts(t),
+      note: 'มีผลจริงเมื่อกด "บันทึกการตั้งค่า" ในขั้นตอนที่ 4',
+      confirmLabel: 'ปิดใช้งานแทน',
+      onConfirm: () => applyTksTypeFlag(idx, 'active', false)
+    });
+    return;
+  }
+  ImpactConfirm.show({
+    title: 'ลบประเภทบัตรขออนุญาต',
+    tone: 'danger',
+    summary: `ต้องการลบประเภท <strong>"${t.name}"</strong> ใช่หรือไม่?`,
+    impacts: tksTypeRemovalImpacts(t),
+    note: 'มีผลจริงเมื่อกด "บันทึกการตั้งค่า" ในขั้นตอนที่ 4 — ถ้าเปลี่ยนใจภายหลัง นำเวอร์ชันเก่ากลับมาใช้ได้จาก "ประวัติการตั้งค่า"',
+    confirmLabel: 'ลบประเภทนี้',
+    onConfirm: () => {
+      tksDraft.types.splice(idx, 1);
+      renderTksTypesTable();
+      updateTicketSettingPreview();
+    }
+  });
+}
+
+// Step 2: ประเภทที่ต้องรออนุมัติ
+function renderTksApprovalTable() {
+  const tbody = document.getElementById('tks-approval-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = tksDraft.types.map((t, idx) => t.active ? `
+    <tr>
+      <td><span class="type-badge ${t.badge}">${t.name}</span></td>
+      <td style="text-align: center;">
+        <label class="switch" style="transform: scale(.85);">
+          <input type="checkbox" ${t.needsApproval ? 'checked' : ''} onchange="setTksTypeFlag(${idx}, 'needsApproval', this.checked)">
+          <span class="slider"></span>
+        </label>
+      </td>
+    </tr>` : '').join('');
+}
+
+// Step 3: เงื่อนไขรายประเภท
+function renderTksConditionsTable() {
+  const tbody = document.getElementById('tks-conditions-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = tksDraft.types.map((t, idx) => t.active ? `
+    <tr>
+      <td><span class="type-badge ${t.badge}">${t.name}</span></td>
+      <td style="text-align: center;"><input type="checkbox" ${t.needsReturnTime ? 'checked' : ''} onchange="setTksTypeFlag(${idx}, 'needsReturnTime', this.checked)"></td>
+      <td style="text-align: center;"><input type="checkbox" ${t.countsAsExit ? 'checked' : ''} onchange="setTksTypeFlag(${idx}, 'countsAsExit', this.checked)"></td>
+      <td style="text-align: center;"><input type="number" class="glass-input" style="width: 80px; padding: 4px 8px;" min="0" value="${t.maxMinutes}" oninput="setTksTypeFlag(${idx}, 'maxMinutes', this.value)"></td>
+    </tr>` : '').join('');
+}
+
+function tksBullet(on, html) {
+  return `
+    <div style="display: flex; align-items: start; gap: 8px;">
+      <span style="color: ${on ? '#22c55e' : 'var(--text-muted)'}; font-size: 14px; line-height: 1;">●</span>
+      <div>${html}</div>
+    </div>`;
+}
+
+// Real-time Preview Renderer
+function updateTicketSettingPreview() {
+  const step = activeTicketSettingStep;
+  const preview = document.getElementById('tks-preview-' + step);
+  if (!preview || !tksDraft) return;
+  const d = tksDraft;
+  const active = d.types.filter(t => t.active);
+
+  if (step === 1) {
+    preview.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">การ์ดในหน้า "ยื่นบัตรขออนุญาต" ขั้นตอนที่ 2:</span>
+        ${active.length ? `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px;">${active.map((t, i) => ticketTypeCardHTML(t, i === 0, '')).join('')}</div>`
+          : `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px;">ยังไม่มีประเภทบัตรที่เปิดใช้งาน</div>`}
+        ${d.types.length > active.length ? `<span style="font-size: 11px; color: var(--text-muted);">ปิดใช้งานอยู่ ${d.types.length - active.length} ประเภท (ไม่แสดงบนการ์ด)</span>` : ''}
+      </div>`;
+  }
+
+  if (step === 2) {
+    const roles = TKS_ROLES.filter(r => d.approval.roles.includes(r.id));
+    const needApprove = active.filter(t => t.needsApproval);
+    const autoApprove = active.filter(t => !t.needsApproval);
+    const flow = roles.length ? roles.map((r, i) => `
+      <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--br-sm); padding: 8px 12px;">
+        <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0;">${i + 1}</div>
+        <div style="font-size: 12px; font-weight: 600;">${r.name}</div>
+      </div>
+      ${i < roles.length - 1 ? `<div style="text-align: center; margin: -4px 0; color: var(--text-muted); font-size: 11px;">${d.approval.sequence ? '↓ (ลำดับขั้น)' : '⇅ (คนใดคนหนึ่งอนุมัติ)'}</div>` : ''}
+    `).join('') : `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 12px;">ยังไม่ได้เลือกบทบาทผู้อนุมัติ</div>`;
+
+    preview.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">บัตรที่ต้องรออนุมัติ (${needApprove.length} ประเภท):</span>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          ${flow}
+          <div style="display: flex; align-items: center; gap: 10px; background: rgba(74, 222, 128, 0.08); border: 1px solid #22c55e; border-radius: var(--br-sm); padding: 8px 12px; margin-top: 4px;">
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: #22c55e; color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0;">✓</div>
+            <div style="font-size: 12px; font-weight: 600; color: #22c55e;">อนุมัติบัตร</div>
+          </div>
+        </div>
+        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-top: 6px;">อนุมัติทันทีเมื่อบันทึก:</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          ${autoApprove.length ? autoApprove.map(t => `<span class="type-badge ${t.badge}">${t.name}</span>`).join('') : '<span style="font-size: 12px; color: var(--text-muted);">— ไม่มี (ทุกประเภทต้องรออนุมัติ) —</span>'}
+        </div>
+      </div>`;
+  }
+
+  if (step === 3) {
+    const c = d.conditions;
+    const withReturn = active.filter(t => t.needsReturnTime).map(t => t.name);
+    const exits = active.filter(t => t.countsAsExit).map(t => t.name);
+    const limited = active.filter(t => t.maxMinutes > 0).map(t => `${t.name} ≤ ${t.maxMinutes} นาที`);
+    preview.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; width: 100%;">
+        <span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">สรุปเงื่อนไข:</span>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--br-sm); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+          ${tksBullet(true, `<strong>ต่อนักเรียน:</strong> ไม่เกิน <strong>${c.maxPerDay} ใบ/วัน</strong> · แจ้งครูเมื่อเกิน <strong>${c.warnPerMonth} ใบ/เดือน</strong>`)}
+          ${tksBullet(true, `<strong>เวลารับบันทึกบัตร:</strong> ${c.recordStart || '-'} – ${c.recordEnd || '-'} น.`)}
+          ${tksBullet(c.reasonRequired, `<strong>เหตุผล:</strong> ${c.reasonRequired ? 'บังคับกรอก' : 'ไม่บังคับ'}`)}
+          ${tksBullet(withReturn.length, `<strong>ต้องระบุเวลากลับ:</strong> ${withReturn.join(', ') || 'ไม่มี'}`)}
+          ${tksBullet(exits.length, `<strong>นับเป็น "ออกก่อนเวลา" ในการเช็คชื่อ:</strong> ${exits.join(', ') || 'ไม่มี'}`)}
+          ${tksBullet(limited.length, `<strong>จำกัดเวลา:</strong> ${limited.join(', ') || 'ไม่จำกัด'}`)}
+        </div>
+      </div>`;
+  }
+
+  if (step === 4) {
+    const p = d.print;
+    const signs = TKS_SIGNATURES.filter(s => p.signatures.includes(s.id));
+    const sample = active[0] ? active[0].name : '-';
+    preview.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+        <div class="ticket-preview" style="padding: 16px 18px; box-shadow: 0 6px 18px rgba(0,0,0,.08);">
+          <h3 style="font-size: 14px;">${p.title || 'บัตรรายการขออนุญาต'}</h3>
+          <div class="ticket-sub" style="margin-bottom: 10px;">${SCHOOL_INFO.name}</div>
+          <hr class="ticket-divider" style="margin: 10px 0;">
+          <div class="ticket-grid" style="font-size: 11.5px; gap: 6px 14px;">
+            <div><div class="ticket-label">เลขที่ใบอนุญาต</div><strong>TK-0001</strong></div>
+            <div><div class="ticket-label">ประเภท</div><strong>${sample}</strong></div>
+            <div><div class="ticket-label">ชื่อ-นามสกุล</div><strong>มาลี ชนะภัย</strong></div>
+            <div><div class="ticket-label">ชั้น / เลขที่</div><strong>ม.1/1 / เลขที่ 1</strong></div>
+          </div>
+          <hr class="ticket-divider" style="margin: 10px 0;">
+          <div class="ticket-signatures" style="margin-top: 16px; flex-wrap: wrap; gap: 10px; font-size: 10.5px;">
+            ${signs.length ? signs.map(s => `<div><div class="ticket-sign-line" style="width: 70px;"></div>${s.name}</div>`).join('') : '<div style="width:100%;color:#9ca3af;">— ไม่มีช่องลงนาม —</div>'}
+          </div>
+        </div>
+        <div style="font-size: 12px; display: flex; flex-direction: column; gap: 6px;">
+          ${tksBullet(p.notifyParent, `<strong>แจ้งผู้ปกครอง:</strong> ${p.notifyParent ? 'เปิด (บัตรออกก่อนเวลาที่อนุมัติแล้ว)' : 'ปิด'}`)}
+          ${tksBullet(p.notifyHomeroom, `<strong>แจ้งครูประจำชั้น:</strong> ${p.notifyHomeroom ? 'เปิด (ทุกครั้งที่บันทึกบัตร)' : 'ปิด'}`)}
+        </div>
+      </div>`;
+  }
+}
+
+// ---------- บันทึก / เวอร์ชัน ----------
+// "เดิม → ใหม่" ระหว่างชุดค่าที่ใช้อยู่กับชุดที่กำลังจะบันทึก (ใช้ในป๊อปอัปก่อนบันทึก / ก่อนนำเวอร์ชันเก่ามาใช้)
+function diffTicketSettings(oldCfg, newCfg) {
+  const changes = [];
+  const onOff = v => v ? 'เปิด' : 'ปิด';
+  const newByOld = t => newCfg.types.find(n => (n.origName || n.name) === t.name);
+  oldCfg.types.forEach(o => {
+    const n = newByOld(o);
+    if (!n) { changes.push({ label: 'ลบประเภทบัตร', before: o.name, after: '-' }); return; }
+    if (n.name !== o.name) changes.push({ label: 'เปลี่ยนชื่อประเภท', before: o.name, after: n.name });
+    const tag = n.name;
+    if (n.active !== o.active) changes.push({ label: `${tag}: ใช้งาน`, before: onOff(o.active), after: onOff(n.active) });
+    if (n.needsApproval !== o.needsApproval) changes.push({ label: `${tag}: ต้องรออนุมัติ`, before: onOff(o.needsApproval), after: onOff(n.needsApproval) });
+    if (n.needsReturnTime !== o.needsReturnTime) changes.push({ label: `${tag}: ต้องระบุเวลากลับ`, before: onOff(o.needsReturnTime), after: onOff(n.needsReturnTime) });
+    if (n.countsAsExit !== o.countsAsExit) changes.push({ label: `${tag}: นับเป็นออกก่อนเวลา`, before: onOff(o.countsAsExit), after: onOff(n.countsAsExit) });
+    if (n.maxMinutes !== o.maxMinutes) changes.push({ label: `${tag}: จำกัดเวลา`, before: o.maxMinutes ? `${o.maxMinutes} นาที` : 'ไม่จำกัด', after: n.maxMinutes ? `${n.maxMinutes} นาที` : 'ไม่จำกัด' });
+    if ((n.desc || '') !== (o.desc || '') || (n.short || '') !== (o.short || '') || n.icon !== o.icon || n.badge !== o.badge) {
+      changes.push({ label: `${tag}: หน้าตาการ์ด`, before: 'เดิม', after: 'แก้ไขแล้ว' });
+    }
+  });
+  newCfg.types.filter(n => !oldCfg.types.some(o => o.name === (n.origName || n.name))).forEach(n => {
+    changes.push({ label: 'เพิ่มประเภทบัตร', before: '-', after: n.name });
+  });
+  const roles = c => TKS_ROLES.filter(r => c.approval.roles.includes(r.id)).map(r => r.name).join(' → ') || '-';
+  const signs = c => TKS_SIGNATURES.filter(s => c.print.signatures.includes(s.id)).map(s => s.name).join(', ') || '-';
+  [
+    ['ผู้อนุมัติ', roles(oldCfg), roles(newCfg)],
+    ['อนุมัติตามลำดับขั้น', onOff(oldCfg.approval.sequence), onOff(newCfg.approval.sequence)],
+    ['บัตรสูงสุดต่อวัน', `${oldCfg.conditions.maxPerDay} ใบ`, `${newCfg.conditions.maxPerDay} ใบ`],
+    ['แจ้งเตือนเมื่อเกินต่อเดือน', `${oldCfg.conditions.warnPerMonth} ใบ`, `${newCfg.conditions.warnPerMonth} ใบ`],
+    ['เวลารับบันทึกบัตร', `${oldCfg.conditions.recordStart}–${oldCfg.conditions.recordEnd} น.`, `${newCfg.conditions.recordStart}–${newCfg.conditions.recordEnd} น.`],
+    ['บังคับระบุเหตุผล', onOff(oldCfg.conditions.reasonRequired), onOff(newCfg.conditions.reasonRequired)],
+    ['หัวข้อบนบัตร', oldCfg.print.title, newCfg.print.title],
+    ['ช่องลงนาม', signs(oldCfg), signs(newCfg)],
+    ['แจ้งเตือนผู้ปกครอง', onOff(oldCfg.print.notifyParent), onOff(newCfg.print.notifyParent)],
+    ['แจ้งเตือนครูประจำชั้น', onOff(oldCfg.print.notifyHomeroom), onOff(newCfg.print.notifyHomeroom)]
+  ].forEach(([label, before, after]) => { if (before !== after) changes.push({ label, before, after }); });
+  return changes;
+}
+
+const TKS_SAVE_IMPACTS = [
+  { where: 'ยื่นบัตรขออนุญาต', detail: 'การ์ดเลือกประเภท ตัวอย่างบัตรที่พิมพ์ (หัวข้อ/ช่องลงนาม) และเงื่อนไขตอนกดบันทึกบัตร' },
+  { where: 'รายการบัตรขออนุญาต', detail: 'ตัวกรองประเภท สีบนปฏิทิน และบัตรใหม่ของประเภทที่ไม่ต้องรออนุมัติจะอนุมัติทันที' },
+  { where: 'เช็คชื่อ / รายงาน / แดชบอร์ดการมาเรียน', detail: 'ประเภทที่ "นับเป็นออกก่อนเวลา" และกราฟบัตรขออนุญาตแยกประเภท' }
+];
+
+// ปุ่ม "บันทึกการตั้งค่า" ในขั้นตอนที่ 4 → ป๊อปอัปสรุปสิ่งที่เปลี่ยน → โมดัลเลือกวันที่มีผลบังคับใช้
+function saveTicketSettings() {
+  const changes = diffTicketSettings(TICKET_SETTINGS, tksDraft);
+  ImpactConfirm.show({
+    title: 'บันทึกการตั้งค่าบัตรขออนุญาต',
+    tone: changes.length ? 'warning' : 'info',
+    summary: changes.length
+      ? `มีการเปลี่ยนแปลง <strong>${changes.length} รายการ</strong> จากการตั้งค่าที่ใช้อยู่ ตรวจสอบก่อนกดต่อไป`
+      : 'ยังไม่มีการเปลี่ยนแปลงจากการตั้งค่าที่ใช้อยู่ — บันทึกซ้ำได้ เช่น เพื่อตั้งค่าเดิมไว้ล่วงหน้าให้ปีการศึกษาถัดไป',
+    changes,
+    impacts: TKS_SAVE_IMPACTS,
+    note: 'ขั้นถัดไปจะให้เลือกวันที่มีผลบังคับใช้ — เลือกวันในอนาคตได้ถ้าต้องการตั้งไว้ล่วงหน้า',
+    confirmLabel: 'ต่อไป: เลือกวันที่มีผล',
+    onConfirm: openTicketSettingsSaveModal
+  });
+}
+
+function openTicketSettingsSaveModal() {
+  document.getElementById('tks-save-effective-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('tks-save-note').value = '';
+  document.getElementById('tks-save-overlay').classList.add('active');
+  document.getElementById('tks-save-modal').classList.add('active');
+}
+
+function closeTicketSettingsSaveModal() {
+  document.getElementById('tks-save-overlay').classList.remove('active');
+  document.getElementById('tks-save-modal').classList.remove('active');
+}
+
+function confirmSaveTicketSettings() {
+  const effectiveDate = document.getElementById('tks-save-effective-date').value;
+  if (!effectiveDate) { alert('กรุณาเลือกวันที่มีผลบังคับใช้'); return; }
+  const note = document.getElementById('tks-save-note').value.trim();
+  const today = new Date().toISOString().split('T')[0];
+
+  const renames = {};
+  const config = cloneTicketSettings(tksDraft);
+  config.types.forEach(t => {
+    if (t.origName && t.origName !== t.name) renames[t.origName] = t.name;
+    delete t.origName;
+  });
+
+  const nextId = 'TKS-' + String(TICKET_SETTINGS_VERSIONS.length + 1).padStart(4, '0');
+  if (effectiveDate > today) {
+    // ยังไม่มีผลตอนนี้ — เก็บเป็นเวอร์ชันที่รอมีผล ค่าที่ใช้งานจริงยังเป็นชุดเดิม
+    TICKET_SETTINGS_VERSIONS.push({
+      id: nextId, effectiveDate, savedDate: today, savedBy: CURRENT_APPROVER_NAME,
+      note: note || 'ตั้งค่าล่วงหน้าสำหรับอนาคต', status: 'scheduled', config
+    });
+    alert(`บันทึกการตั้งค่าไว้ล่วงหน้าเรียบร้อยแล้ว จะมีผลวันที่ ${thaiDate(effectiveDate)}`);
+  } else {
+    const current = TICKET_SETTINGS_VERSIONS.find(v => v.status === 'active');
+    if (current) current.status = 'past';
+    TICKET_SETTINGS_VERSIONS.push({
+      id: nextId, effectiveDate, savedDate: today, savedBy: CURRENT_APPROVER_NAME,
+      note: note || 'บันทึกการตั้งค่าบัตรขออนุญาต', status: 'active', config
+    });
+    TICKET_SETTINGS = cloneTicketSettings(config);
+    applyTicketSettings(renames);
+    alert('บันทึกการตั้งค่าบัตรขออนุญาตเสร็จสิ้น!');
+  }
+
+  closeTicketSettingsSaveModal();
+  renderTicketSettings();
+}
+
+// ให้ TICKET_SETTINGS ที่เพิ่งบันทึกมีผลกับส่วนอื่นของหน้า
+function applyTicketSettings(renames = {}) {
+  // บัตรเก่าที่ใช้ชื่อประเภทเดิม → เปลี่ยนตามชื่อใหม่ (ไม่งั้นสี/ตัวกรอง/สรุปหาประเภทไม่เจอ)
+  HISTORY.forEach(h => { if (renames[h.type]) h.type = renames[h.type]; });
+  if (renames[selectedLeaveType]) selectedLeaveType = renames[selectedLeaveType];
+
+  // TICKET_TYPES (ตัวกรอง/legend ปฏิทิน/แดชบอร์ด) รวมประเภทที่ปิดไว้ด้วย เพราะบัตรเก่ายังค้นหาได้
+  TICKET_TYPES.length = 0;
+  TICKET_TYPES.push(...TICKET_SETTINGS.types.map(t => t.name));
+  ATT_EXIT_TICKET_TYPES.length = 0;
+  ATT_EXIT_TICKET_TYPES.push(...TICKET_SETTINGS.types.filter(t => t.countsAsExit).map(t => t.name));
+
+  renderTicketTypeCards();
+  const title = document.getElementById('ticket-title');
+  if (title) title.textContent = TICKET_SETTINGS.print.title || 'บัตรรายการขออนุญาต';
+  const signs = document.getElementById('ticket-signatures');
+  if (signs) {
+    signs.innerHTML = TKS_SIGNATURES.filter(s => TICKET_SETTINGS.print.signatures.includes(s.id))
+      .map(s => `<div><div class="ticket-sign-line"></div>${s.name}</div>`).join('');
+  }
+  if (typeof refreshTicketCalendarIfVisible === 'function') refreshTicketCalendarIfVisible();
+}
+
+function openTicketSettingsHistoryDrawer() {
+  document.getElementById('drawer-detail-title').textContent = 'ประวัติการตั้งค่าบัตรขออนุญาต';
+  document.getElementById('drawer-detail-body').innerHTML = `
+    <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">
+      การตั้งค่าที่เคยบันทึกไว้ แยกตามปีการศึกษาและภาคเรียน ทั้งที่ใช้งานอยู่ ในอดีต และที่ตั้งไว้ล่วงหน้า
+      คลิกแต่ละรายการเพื่อดูรายละเอียด หรือกด "นำการตั้งค่านี้มาใช้"
+    </p>
+    <div style="display:flex;flex-direction:column;gap:8px;">${settingsHistoryListHTML(TICKET_SETTINGS_VERSIONS, 'viewTicketSettingsVersionDetail')}</div>
+  `;
+  detailDrawerRefresh = () => openTicketSettingsHistoryDrawer();
+  openDetailDrawer();
+}
+
+function viewTicketSettingsVersionDetail(versionId) {
+  const v = TICKET_SETTINGS_VERSIONS.find(x => x.id === versionId);
+  if (!v) return;
+  const c = v.config;
+  const yes = on => on ? '✓' : '–';
+  const rowsHtml = c.types.map(t => `
+    <tr style="${t.active ? '' : 'opacity:.55;'}">
+      <td><span class="type-badge ${t.badge}">${t.name}</span>${t.active ? '' : ' <span style="font-size:11px;color:var(--text-muted);">(ปิด)</span>'}</td>
+      <td style="text-align:center;">${yes(t.needsApproval)}</td>
+      <td style="text-align:center;">${yes(t.countsAsExit)}</td>
+      <td style="text-align:center;">${t.maxMinutes ? t.maxMinutes + ' นาที' : '–'}</td>
+    </tr>
+  `).join('');
+  const roles = TKS_ROLES.filter(r => c.approval.roles.includes(r.id)).map(r => r.name).join(' → ') || '-';
+  const signs = TKS_SIGNATURES.filter(s => c.print.signatures.includes(s.id)).map(s => s.name).join(', ') || '-';
+  const row = (label, value) => `<div class="summary-row"><span class="summary-label">${label}:</span><span class="summary-value">${value}</span></div>`;
+
+  document.getElementById('drawer-detail-title').textContent = 'รายละเอียดการตั้งค่า: ' + academicPeriodLabel(v.effectiveDate);
+  document.getElementById('drawer-detail-body').innerHTML = `
+    <div class="summary-table" style="margin-bottom:16px;">
+      ${row('วันที่มีผลบังคับใช้', thaiDate(v.effectiveDate))}
+      ${row('บันทึกเมื่อ', `${thaiDate(v.savedDate)} โดย ${v.savedBy}`)}
+      ${row('สถานะ', settingsVersionStatusBadge(v.status))}
+      <div class="summary-row" style="flex-direction:column;border-bottom:none;"><span class="summary-label" style="margin-bottom:4px;">หมายเหตุ:</span><span class="summary-value" style="text-align:left;font-weight:normal;">${v.note}</span></div>
+    </div>
+    <div class="setting-section-title">ประเภทบัตร</div>
+    <div class="data-table-wrap" style="margin:10px 0 16px;">
+      <table class="data-table"><thead><tr><th>ประเภทบัตร</th><th style="text-align:center;">ต้องรออนุมัติ</th><th style="text-align:center;">ออกก่อนเวลา</th><th style="text-align:center;">จำกัดเวลา</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+    </div>
+    <div class="setting-section-title">ผู้อนุมัติ เงื่อนไข และการพิมพ์</div>
+    <div class="summary-table" style="margin-top:10px;">
+      ${row('ผู้อนุมัติ', roles + (c.approval.sequence ? ' (ตามลำดับขั้น)' : ''))}
+      ${row('บัตรสูงสุดต่อวัน', `${c.conditions.maxPerDay} ใบ/คน`)}
+      ${row('แจ้งเตือนเมื่อเกินต่อเดือน', `${c.conditions.warnPerMonth} ใบ`)}
+      ${row('เวลารับบันทึกบัตร', `${c.conditions.recordStart}–${c.conditions.recordEnd} น.`)}
+      ${row('บังคับระบุเหตุผล', c.conditions.reasonRequired ? 'เปิด' : 'ปิด')}
+      ${row('หัวข้อบนบัตร', c.print.title)}
+      ${row('ช่องลงนาม', signs)}
+      ${row('แจ้งเตือนผู้ปกครอง / ครูประจำชั้น', `${c.print.notifyParent ? 'เปิด' : 'ปิด'} / ${c.print.notifyHomeroom ? 'เปิด' : 'ปิด'}`)}
+    </div>
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;">
+      ${v.status === 'active' ? '' : `<button class="btn btn-primary" style="width:100%;" onclick="useTicketSettingsVersion('${v.id}')">นำการตั้งค่านี้มาใช้</button>`}
+      <button class="btn btn-secondary" style="width:100%;" onclick="openTicketSettingsHistoryDrawer()">← กลับไปดูรายการทั้งหมด</button>
+    </div>
+  `;
+
+  detailDrawerRefresh = () => viewTicketSettingsVersionDetail(versionId);
+}
+
+// นำเวอร์ชันเก่า (เช่น ปีการศึกษาที่แล้ว) กลับมาใช้: โหลดลง tksDraft → โมดัลเลือกวันที่มีผล → บันทึกเป็นเวอร์ชันใหม่
+function useTicketSettingsVersion(versionId) {
+  const v = TICKET_SETTINGS_VERSIONS.find(x => x.id === versionId);
+  if (!v) return;
+  ImpactConfirm.show({
+    title: 'นำการตั้งค่าเก่ากลับมาใช้',
+    summary: `จะนำการตั้งค่าของ <strong>${academicPeriodLabel(v.effectiveDate)}</strong> (มีผล ${thaiDate(v.effectiveDate)}) มาแทนค่าที่ใช้อยู่ตอนนี้`,
+    changes: diffTicketSettings(TICKET_SETTINGS, v.config),
+    impacts: [
+      { where: 'วิซาร์ดตั้งค่าบัตรขออนุญาต', detail: 'ค่าทุกขั้นตอนจะถูกแทนที่ด้วยค่าของเวอร์ชันนี้ (แก้ต่อได้ก่อนบันทึก)' },
+      ...TKS_SAVE_IMPACTS,
+      { where: 'ประวัติการตั้งค่า', detail: 'เวอร์ชันเดิมยังเก็บไว้ครบ ระบบจะสร้างเวอร์ชันใหม่ขึ้นมาแทน' }
+    ],
+    note: 'ขั้นถัดไปจะให้เลือกวันที่มีผลบังคับใช้ ถ้ากดยกเลิกตรงนั้น ค่าจะยังค้างอยู่ในวิซาร์ดให้ตรวจแก้แล้วกดบันทึกเองภายหลังได้',
+    confirmLabel: 'นำมาใช้',
+    onConfirm: () => {
+      closeDetailDrawer();
+      showModuleView('ticket-settings'); // เรนเดอร์ด้วยค่าที่ใช้อยู่ก่อน แล้วค่อยโหลดเวอร์ชันเก่าทับ
+      renderTicketSettings(v.config);
+      openTicketSettingsSaveModal();
+      document.getElementById('tks-save-note').value = `นำการตั้งค่าของ${academicPeriodLabel(v.effectiveDate)} กลับมาใช้`;
+    }
+  });
+}
+
+
 
 // ======================================================================
 //  การมาเรียนของนักเรียน — เช็คชื่อ / รายงาน / ตั้งค่าเวลาเข้า-เลิกเรียน
@@ -4169,22 +4999,6 @@ const SD_ALERT = '<svg class="icon" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 1
 
 function renderSDOverview() {
   const d = sdData, t = d.total;
-  // ชั้น 1: ตัวเลขหลัก + เทียบช่วงก่อนหน้า + เกณฑ์
-  let delta = '<span>ไม่มีข้อมูลช่วงก่อนหน้าให้เทียบ</span>';
-  if (t.rate !== null && sdPrev && sdPrev.total.rate !== null) {
-    const diff = t.rate - sdPrev.total.rate;
-    const dir = Math.abs(diff) < 0.05 ? '' : diff > 0 ? 'up' : 'down';
-    delta = `<span class="sd-delta ${dir}">${dir === 'up' ? SD_ARROW_UP : dir === 'down' ? SD_ARROW_DOWN : ''}${dir ? (diff > 0 ? '+' : '') + diff.toFixed(1) + ' จุด' : 'เท่าเดิม'}</span>
-      <span>เทียบ${sdPeriodLabel(sdPrev.period)} (${sdPct(sdPrev.total.rate)})</span>`;
-  }
-  const pass = t.rate === null ? '' : t.rate >= SD_RISK.rate
-    ? `<span class="badge success">✓ ผ่านเกณฑ์ ${SD_RISK.rate}%</span>`
-    : `<span class="badge danger">ต่ำกว่าเกณฑ์ ${SD_RISK.rate}%</span>`;
-  document.getElementById('sd-hero').innerHTML = `
-    <div class="sd-hero-label">อัตราการมาเรียน</div>
-    <div class="sd-hero-value">${sdPct(t.rate)}</div>
-    <div class="sd-hero-row">${delta}</div>
-    <div class="sd-hero-row sd-hero-foot">${pass}<span>มา ${sdNum(t.present)} จาก ${sdNum(t.checked)} คน-วันที่เช็คชื่อแล้ว</span></div>`;
 
   // ชั้น 2: แท่งสัดส่วนแท่งเดียว + ค่าเฉลี่ยต่อวันเรียน
   const all = t.checked + t.none;

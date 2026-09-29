@@ -251,6 +251,14 @@
             { label: 'รายการคำขอ', tab: 'requests' },
             { label: 'ประวัติการลา', tab: 'leave-history' }
           ]
+        },
+        {
+          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย',
+          children: [
+            { label: '1. ค้นหานักเรียน', step: '1' },
+            { label: '2. เลือกประเภท', step: '2' },
+            { label: '3. กรอกรายละเอียด', step: '3' }
+          ]
         }
       ]
     },
@@ -297,6 +305,10 @@
             { label: 'ตั้งค่าการลาบุคลากร', page: 'settings/leave.html', hash: 'tab=staff', origin: 'schooldark', desc: 'รอบปี ผู้อนุมัติ โควตา เงื่อนไข' },
             { label: 'ตั้งค่าการลาเรียนนักเรียน', page: 'settings/leave.html', hash: 'tab=student', origin: 'schooldark', desc: 'ประเภทการลา ผู้อนุมัติ โควตา' }
           ]
+        },
+        {
+          icon: 'ticket', label: 'ตั้งค่าบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-settings', desc: 'ประเภทบัตร ผู้อนุมัติ เงื่อนไข การพิมพ์บัตร',
+          keywords: 'บัตรขออนุญาต ประเภทบัตร ผู้อนุมัติ พิมพ์บัตร'
         },
         {
           icon: 'clipboardList', label: 'ตั้งค่ารับสมัคร', page: 'settings/index.html', anchor: 'admission', section: 'admission',

@@ -171,7 +171,8 @@ let systemState = {
     settings: {},
     teachers: [],
     requests: [],
-    currentRole: "teacher", // 'teacher' or 'head'
+    // แสดงมุมมองหัวหน้าครู/ผู้อนุมัติเสมอ (ถอดตัวสลับ "จำลองสถานะ" ออกแล้ว 2026-09-29)
+    currentRole: "head",
     selectedTeacherId: "T001",
     activeView: "form",
     tempAttachment: null,
@@ -912,31 +913,70 @@ function cancelEditing() {
 // SECTION 3: LEAVE APPROVAL VIEW LOGIC
 // -------------------------------------------------------------
 
-function renderApprovalView(filterStatus = "all") {
+// สถานะคำขอแสดงเป็น dropdown ในคอลัมน์แรก (แบบเดียวกับตารางอนุมัติการลานักเรียนใน leave-features.js)
+// ใช้ class .sl-status-select ร่วมกัน (อยู่ใน app.css)
+const STAFF_STATUS_OPTIONS = [
+    { value: "pending", label: "รออนุมัติ", cls: "warning" },
+    { value: "approved", label: "อนุมัติ", cls: "success" },
+    { value: "rejected", label: "ไม่อนุมัติ", cls: "danger" }
+];
+
+function staffStatusSelectHTML(req) {
+    const cur = STAFF_STATUS_OPTIONS.find(o => o.value === req.status) || STAFF_STATUS_OPTIONS[0];
+    const approver = systemState.settings.approvers[0] || "ผู้อนุมัติ";
+    const tip = req.status === "pending" ? "เลือกเพื่ออนุมัติหรือไม่อนุมัติ"
+        : `${req.status === "approved" ? "อนุมัติ" : "ปฏิเสธ"}โดย: ${approver}${req.comment ? " — " + req.comment : ""}`;
+    return `<select class="sl-status-select ${cur.cls}" aria-label="สถานะคำขอของ ${req.teacherName}" title="${tip}" onchange="onStaffStatusSelect('${req.id}', this)">
+        ${STAFF_STATUS_OPTIONS.map(o => `<option value="${o.value}"${o.value === req.status ? " selected" : ""}>${o.label}</option>`).join("")}
+    </select>`;
+}
+
+function onStaffStatusSelect(reqId, sel) {
+    const req = systemState.requests.find(r => r.id === reqId);
+    if (!req) return;
+    const next = sel.value;
+    sel.value = req.status; // คืนค่าเดิมไว้ก่อน — ตารางจะ render ใหม่เองเมื่อยืนยันแล้ว
+    if (next === req.status) return;
+    if (next === "approved") approveRequestDirect(reqId);
+    else if (next === "rejected") rejectRequestDirect(reqId);
+    else resetRequestStatus(reqId);
+}
+
+let staffListMode = "table";
+let staffApproveFilter = "all";
+
+function setStaffListMode(mode, btn) {
+    staffListMode = mode;
+    document.getElementById("staff-table-panel").classList.toggle("hidden", mode !== "table");
+    document.getElementById("staff-calendar-panel").classList.toggle("hidden", mode !== "calendar");
+    if (btn) {
+        btn.parentElement.querySelectorAll(".view-mode-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+    }
+    if (mode === "calendar") renderLeaveCalendar();
+}
+
+function renderApprovalView(filterStatus) {
+    if (filterStatus !== undefined) staffApproveFilter = filterStatus;
     const tableBody = document.getElementById("approval-table-body");
     tableBody.innerHTML = "";
-
-    if (systemState.currentRole !== "head") {
-        tableBody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--danger); padding: 32px; font-weight:600;">ปฏิเสธการเข้าถึง: สำหรับหัวหน้าครูเท่านั้น</td></tr>`;
-        return;
-    }
 
     // Render the searchable teacher list for the "ประวัติการลารายบุคคล" tab
     renderTeacherProfileList();
 
-    // Render leave calendar
-    renderLeaveCalendar();
+    // ปฏิทินอยู่ในโหมด "ปฏิทิน" (ซ่อนไว้เป็นค่าเริ่มต้น) — วาดเฉพาะตอนเปิดดูอยู่
+    if (staffListMode === "calendar") renderLeaveCalendar();
 
-    const filtered = systemState.requests.filter(r => {
-        if (filterStatus === "all") return true;
-        return r.status === filterStatus;
-    });
+    const pendingEl = document.getElementById("staff-approve-pending-count");
+    if (pendingEl) pendingEl.textContent = systemState.requests.filter(r => r.status === "pending").length;
+
+    const filtered = systemState.requests.filter(r => staffApproveFilter === "all" || r.status === staffApproveFilter);
 
     // Display selected approver
     document.getElementById("current-approver-name-label").textContent = systemState.settings.approvers[0] || "ผู้บริหารสูงสุด";
 
     if (filtered.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 32px;">ไม่พบรายการคำขอการลาในหมวดหมู่นี้</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 32px;">ไม่พบรายการคำขอการลาในหมวดหมู่นี้</td></tr>`;
         return;
     }
 
@@ -947,60 +987,30 @@ function renderApprovalView(filterStatus = "all") {
         return b.id.localeCompare(a.id);
     });
 
+    const typeLabel = { "sick": "ลาป่วย", "vacation": "ลากิจ / พักผ่อน", "maternity": "ลาคลอด" };
     filtered.forEach(req => {
         const tr = document.createElement("tr");
-        
-        let statusBadge = "";
-        let actionButtons = "";
-        
-        if (req.status === "pending") {
-            statusBadge = `<span class="badge badge-pending">รออนุมัติ</span>`;
-            actionButtons = `
-                <div style="display: flex; gap: 6px; justify-content: center;">
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 11px; border-radius: 6px;" onclick="approveRequestDirect('${req.id}')">อนุมัติ</button>
-                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 11px; border-radius: 6px;" onclick="rejectRequestDirect('${req.id}')">ปฏิเสธ</button>
-                </div>
-            `;
-        } else if (req.status === "approved") {
-            statusBadge = `<span class="badge badge-approved">อนุมัติ</span>`;
-            actionButtons = `
-                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
-                    <span style="font-size:10px; color: var(--text-muted); text-align:center; display:block;">อนุมัติโดย: ${systemState.settings.approvers[0] || "ผู้อนุมัติ"}</span>
-                    <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; line-height: 1;" onclick="resetRequestStatus('${req.id}')">เปลี่ยนสถานะ</button>
-                </div>
-            `;
-        } else {
-            statusBadge = `<span class="badge badge-rejected">ไม่อนุมัติ</span>`;
-            actionButtons = `
-                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
-                    <span style="font-size:10px; color: var(--danger); text-align:center; display:block;">ปฏิเสธคำขอการลา</span>
-                    <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; line-height: 1;" onclick="resetRequestStatus('${req.id}')">เปลี่ยนสถานะ</button>
-                </div>
-            `;
-        }
-
-        const typeLabel = { "sick": "ลาป่วย", "vacation": "ลากิจ / พักผ่อน", "maternity": "ลาคลอด" };
+        if (req.status === "pending") tr.className = "sl-row-pending";
         const durationDisplay = req.durationType !== "full" ? " (ครึ่งวัน)" : "";
-        
+
         let fileLink = "-";
         if (req.attachment) {
-            fileLink = `<a href="#" style="color: var(--primary); font-weight: 500;" onclick="viewAttachmentMock('${req.attachment.name}'); return false;">
+            fileLink = `<a href="#" style="color: var(--primary); font-weight: 500;" onclick="viewAttachmentMock('${req.attachment.name}'); return false;" title="${req.attachment.name}">
                 <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:2px;"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
             </a>`;
         }
 
         tr.innerHTML = `
+            <td>${staffStatusSelectHTML(req)}</td>
             <td>${formatThaiDate(req.submittedDate)}</td>
             <td style="font-weight: 600; color: var(--text-primary);">${req.teacherName}</td>
             <td>${typeLabel[req.leaveType] || req.leaveType}${durationDisplay}</td>
             <td>${formatThaiDate(req.startDate)} - ${formatThaiDate(req.endDate)}</td>
             <td style="text-align: center; font-weight: 600;">${req.netDays}</td>
-            <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${req.reason}">${req.reason}</td>
+            <td style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${req.reason}">${req.reason}</td>
             <td style="text-align: center;">${fileLink}</td>
-            <td>${statusBadge}</td>
-            <td>${actionButtons}</td>
             <td style="text-align: center;">
-                <button class="btn btn-secondary btn-icon" style="width:28px; height:28px; border-radius:6px; padding:0;" onclick="viewRequestDetails('${req.id}')">
+                <button class="btn btn-secondary btn-icon" style="width:28px; height:28px; border-radius:6px; padding:0;" onclick="viewRequestDetails('${req.id}')" title="ดูรายละเอียด">
                     <svg viewBox="0 0 24 24" style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                 </button>
             </td>
@@ -1503,35 +1513,38 @@ function resetCalendarToToday() {
     renderLeaveCalendar();
 }
 
+function adjustTeacherQuota(req, sign) {
+    const teacher = systemState.teachers.find(t => t.id === req.teacherId);
+    if (!teacher) return;
+    const key = { sick: "sickUsed", vacation: "vacationUsed", maternity: "maternityUsed" }[req.leaveType];
+    if (key) teacher[key] = Math.max(0, (teacher[key] || 0) + sign * req.netDays);
+}
+
+// หลังเปลี่ยนสถานะ: บันทึก + วาดตาราง/ปฏิทิน/badge ใหม่ + รีเฟรช drawer ที่เปิดค้างอยู่
+function afterStaffStatusChange() {
+    saveStateToLocalStorage();
+    renderApprovalView();
+    updateApprovalBadge();
+    if (typeof staffDrawerRefresh === "function" && document.getElementById("staff-drawer").classList.contains("active")) {
+        staffDrawerRefresh();
+    }
+}
+
 function approveRequestDirect(reqId) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
-    
+
     App.showConfirm({
         title: "ยืนยันอนุมัติใบลา",
         message: `ยืนยันการอนุมัติใบลาของ <strong style="color:var(--primary);">${req.teacherName}</strong><br>ประเภท: ${typeLabelShort(req.leaveType)} (${req.netDays} วัน)`,
         confirmLabel: "อนุมัติ",
         requireNote: true,
         onConfirm: (note) => {
-            // Update request state
             req.status = "approved";
             req.comment = note || "อนุมัติในระบบ";
-            
-            // Deduct quota from teacher
-            const teacher = systemState.teachers.find(t => t.id === req.teacherId);
-            if (teacher) {
-                if (req.leaveType === "sick") teacher.sickUsed += req.netDays;
-                else if (req.leaveType === "vacation") teacher.vacationUsed += req.netDays;
-                else if (req.leaveType === "maternity") teacher.maternityUsed += req.netDays;
-            }
-            
-            saveStateToLocalStorage();
-            renderApprovalView();
-            updateApprovalBadge();
+            adjustTeacherQuota(req, +1); // หักโควตาของครู
+            afterStaffStatusChange();
             showToast(`อนุมัติใบลาของ ${req.teacherName} สำเร็จ`, "success");
-            
-            // Sync steps
-            updateJourneyStepProgress("approve", 3);
         }
     });
 }
@@ -1539,22 +1552,19 @@ function approveRequestDirect(reqId) {
 function rejectRequestDirect(reqId) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
-    
+
     App.showConfirm({
         title: "ปฏิเสธคำขอการลา",
-        message: `คุณกำลังปฏิเสธใบลาของ <strong style="color:var(--danger);">${req.teacherName}</strong>`,
+        message: `คุณกำลังปฏิเสธใบลาของ <strong style="color:var(--danger);">${req.teacherName}</strong>` +
+            (req.status === "approved" ? `<br><span style="font-size:12px;color:var(--text-muted);">ใบลานี้อนุมัติไปแล้ว — ระบบจะคืนโควตา ${req.netDays} วันให้ครูอัตโนมัติ</span>` : ""),
         confirmLabel: "ปฏิเสธ",
         requireNote: true,
         onConfirm: (note) => {
+            if (req.status === "approved") adjustTeacherQuota(req, -1); // เปลี่ยนจากอนุมัติ → ไม่อนุมัติ ต้องคืนโควตา
             req.status = "rejected";
             req.comment = note;
-            
-            saveStateToLocalStorage();
-            renderApprovalView();
-            updateApprovalBadge();
+            afterStaffStatusChange();
             showToast(`ปฏิเสธคำขอการลาของ ${req.teacherName}`, "danger");
-            
-            updateJourneyStepProgress("approve", 3);
         }
     });
 }
@@ -1562,41 +1572,68 @@ function rejectRequestDirect(reqId) {
 function resetRequestStatus(reqId) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
-    
-    if (!confirm(`คุณต้องการยกเลิกการตัดสินใจและเปลี่ยนสถานะคำขอของ ${req.teacherName} กลับเป็น "รออนุมัติ" ใช่หรือไม่?`)) return;
-    
-    // If it was approved, we must refund the used quota
-    if (req.status === "approved") {
-        const teacher = systemState.teachers.find(t => t.id === req.teacherId);
-        if (teacher) {
-            if (req.leaveType === "sick") teacher.sickUsed = Math.max(0, teacher.sickUsed - req.netDays);
-            else if (req.leaveType === "vacation") teacher.vacationUsed = Math.max(0, teacher.vacationUsed - req.netDays);
-            else if (req.leaveType === "maternity") teacher.maternityUsed = Math.max(0, teacher.maternityUsed - req.netDays);
+
+    App.showConfirm({
+        title: "เปลี่ยนสถานะกลับเป็นรออนุมัติ",
+        message: `ยกเลิกผลการพิจารณาใบลาของ <strong>${req.teacherName}</strong> และเปลี่ยนกลับเป็น "รออนุมัติ"` +
+            (req.status === "approved" ? `<br><span style="font-size:12px;color:var(--text-muted);">ระบบจะคืนโควตา ${req.netDays} วันให้ครูอัตโนมัติ</span>` : ""),
+        confirmLabel: "เปลี่ยนสถานะ",
+        requireNote: false,
+        onConfirm: () => {
+            if (req.status === "approved") adjustTeacherQuota(req, -1);
+            req.status = "pending";
+            req.comment = "";
+            afterStaffStatusChange();
+            showToast(`เปลี่ยนคำขอของ ${req.teacherName} กลับเป็นรออนุมัติแล้ว`, "warning");
         }
-    }
-    
-    req.status = "pending";
-    req.comment = "";
-    
-    saveStateToLocalStorage();
-    renderApprovalView();
-    updateApprovalBadge();
-    showToast(`ยกเลิกการตัดสินใจของคำขอ ${req.teacherName} เรียบร้อยแล้ว`, "warning");
-    
-    updateJourneyStepProgress("approve", 1);
+    });
 }
 
-// Detailed Review screen for Approver Modal
-function viewRequestDetails(reqId) {
+// -------------------------------------------------------------
+// DRAWER ด้านขวา (แทน modal-detail / modal-teacher-profile เดิม)
+// staffDrawerRefresh = วาดเนื้อหาปัจจุบันใหม่ (หลังเปลี่ยนสถานะ), staffDrawerBackTo = ปุ่ม ‹ ย้อนกลับ
+// -------------------------------------------------------------
+let staffDrawerRefresh = null;
+let staffDrawerBackTo = null;
+
+function openStaffDrawer({ title, body, footer = "", backTo = null, refresh = null }) {
+    document.getElementById("staff-drawer-title").textContent = title;
+    document.getElementById("staff-drawer-body").innerHTML = body;
+    document.getElementById("staff-drawer-footer").innerHTML = footer;
+    document.getElementById("staff-drawer-footer").style.display = footer ? "flex" : "none";
+    staffDrawerBackTo = backTo;
+    staffDrawerRefresh = refresh;
+    document.getElementById("staff-drawer-back-btn").style.display = backTo ? "inline-flex" : "none";
+    document.getElementById("staff-drawer-overlay").classList.add("active");
+    document.getElementById("staff-drawer").classList.add("active");
+}
+
+function closeStaffDrawer() {
+    document.getElementById("staff-drawer-overlay").classList.remove("active");
+    document.getElementById("staff-drawer").classList.remove("active");
+    staffDrawerRefresh = null;
+    staffDrawerBackTo = null;
+}
+
+function staffDrawerGoBack() {
+    if (typeof staffDrawerBackTo === "function") staffDrawerBackTo();
+}
+
+document.addEventListener("keydown", (e) => {
+    const drawer = document.getElementById("staff-drawer");
+    if (e.key === "Escape" && drawer && drawer.classList.contains("active") && !document.querySelector(".ic-overlay, .modal-overlay.active")) {
+        closeStaffDrawer();
+    }
+});
+
+// รายละเอียดคำขอลา — backTo: ฟังก์ชันสำหรับปุ่ม ‹ (เช่น กลับไปหน้าประวัติรายบุคคลของครูคนนั้น)
+function viewRequestDetails(reqId, backTo = null) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
 
-    const modalBody = document.getElementById("detail-modal-body");
-    const modalFooter = document.getElementById("detail-modal-footer");
-    
     const typeLabel = { "sick": "ลาป่วย", "vacation": "ลาพักผ่อน / ลากิจ", "maternity": "ลาคลอด" };
     const durationLabel = { "full": "ลาเต็มวัน", "morning": "ลาครึ่งเช้า (0.5 วัน)", "afternoon": "ลาครึ่งบ่าย (0.5 วัน)" };
-    
+
     let attachmentHtml = "<span style='color: var(--text-muted);'>ไม่มีเอกสารแนบ</span>";
     if (req.attachment) {
         attachmentHtml = `
@@ -1609,13 +1646,12 @@ function viewRequestDetails(reqId) {
         `;
     }
 
-    let statusLabel = "";
-    if (req.status === "pending") statusLabel = `<span class="badge badge-pending">รออนุมัติ</span>`;
-    else if (req.status === "approved") statusLabel = `<span class="badge badge-approved">อนุมัติ</span>`;
-    else statusLabel = `<span class="badge badge-rejected">ปฏิเสธการลา</span>`;
-
-    modalBody.innerHTML = `
+    const body = `
         <div class="summary-table">
+            <div class="summary-row">
+                <span class="summary-label">สถานะ:</span>
+                <span class="summary-value">${staffStatusSelectHTML(req)}</span>
+            </div>
             <div class="summary-row">
                 <span class="summary-label">รหัสเอกสาร:</span>
                 <span class="summary-value">${req.id}</span>
@@ -1641,47 +1677,37 @@ function viewRequestDetails(reqId) {
                 <span class="summary-value" style="color: var(--primary); font-size:16px;">${req.netDays} วัน</span>
             </div>
             <div class="summary-row">
+                <span class="summary-label">วันที่ยื่น:</span>
+                <span class="summary-value">${formatThaiDate(req.submittedDate)}</span>
+            </div>
+            <div class="summary-row" style="flex-direction: column; gap: 6px;">
                 <span class="summary-label">เหตุผลการขอลา:</span>
-                <span class="summary-value" style="font-weight: normal; text-align: right; max-width: 250px;">${req.reason}</span>
+                <span class="summary-value" style="font-weight: normal; text-align: left;">${req.reason}</span>
             </div>
             <div class="summary-row" style="flex-direction: column; gap: 8px; border-bottom: none;">
                 <span class="summary-label" style="margin-bottom: 4px;">เอกสารหลักฐานแนบ:</span>
                 <div>${attachmentHtml}</div>
             </div>
-            <div class="summary-row" style="margin-top: 10px;">
-                <span class="summary-label">สถานะปัจจุบัน:</span>
-                <span class="summary-value">${statusLabel}</span>
-            </div>
             ${req.comment ? `
-            <div class="summary-row" style="flex-direction: column; border-bottom: none; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; margin-top: 10px;">
+            <div class="summary-row" style="flex-direction: column; border-bottom: none; background: rgba(0,0,0,0.02); padding: 10px; border-radius: 8px; margin-top: 10px;">
                 <span class="summary-label" style="font-size: 12px;">ข้อคิดเห็นจากผู้อนุมัติ:</span>
                 <span class="summary-value" style="text-align: left; font-weight: normal; margin-top: 4px; color: var(--text-secondary);">${req.comment}</span>
             </div>` : ""}
         </div>
     `;
 
-    // Manage footer actions: Show approval buttons only if pending
-    if (req.status === "pending" && systemState.currentRole === "head") {
-        modalFooter.innerHTML = `
-            <button class="btn btn-danger" onclick="rejectRequestDirect('${req.id}'); closeModal('modal-detail');">ไม่อนุมัติ</button>
-            <button class="btn btn-success" onclick="approveRequestDirect('${req.id}'); closeModal('modal-detail');">อนุมัติใบลา</button>
-        `;
-    } else if (systemState.currentRole === "head" && (req.status === "approved" || req.status === "rejected")) {
-        modalFooter.innerHTML = `
-            <button class="btn btn-warning" onclick="resetRequestStatus('${req.id}'); closeModal('modal-detail');">ยกเลิกผลและเปลี่ยนสถานะ</button>
-        `;
-    } else {
-        modalFooter.innerHTML = `
-            <button class="btn btn-primary" onclick="closeModal('modal-detail')" style="width: 100%;">ตกลง</button>
-        `;
-    }
+    const footer = req.status === "pending" ? `
+        <button class="btn btn-danger" style="flex:1;" onclick="rejectRequestDirect('${req.id}')">ไม่อนุมัติ</button>
+        <button class="btn btn-success" style="flex:1;" onclick="approveRequestDirect('${req.id}')">อนุมัติใบลา</button>
+    ` : "";
 
-    openModal("modal-detail");
-    
-    // Sync steps
-    if (systemState.currentRole === "head") {
-        updateJourneyStepProgress("approve", 1);
-    }
+    openStaffDrawer({
+        title: `รายละเอียดการลา: ${req.teacherName}`,
+        body,
+        footer,
+        backTo,
+        refresh: () => viewRequestDetails(reqId, backTo)
+    });
 }
 
 function viewAttachmentMock(filename) {
@@ -1700,39 +1726,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // 2. Sync sidebar visibility based on role
     updateSidebarVisibility();
-
-    // 4. Role Selector Switch
-    const roleSelect = document.getElementById("mock-user-role-select");
-    roleSelect.addEventListener("change", (e) => {
-        const role = e.target.value;
-        systemState.currentRole = role;
-        systemState.editingRequestId = null;
-        
-        // Adjust display based on role
-        const avatar = document.getElementById("avatar-display");
-        const username = document.getElementById("username-display");
-        const roleLabel = document.getElementById("userrole-display");
-        
-        if (role === "head") {
-            avatar.textContent = "ผอ";
-            avatar.style.background = "linear-gradient(135deg, var(--warning), var(--danger))";
-            username.textContent = "ครูวิชัย เรียนดี (ผอ.)";
-            roleLabel.textContent = "ตำแหน่ง: ผู้อำนวยการสถานศึกษา";
-            systemState.selectedTeacherId = "T001"; // Reset
-        } else {
-            avatar.textContent = "ครู";
-            avatar.style.background = "linear-gradient(135deg, var(--primary), var(--info))";
-            username.textContent = "ครูสมชาย ใจดี";
-            roleLabel.textContent = "ตำแหน่ง: ครูประจำชั้น ม.1/1";
-            systemState.selectedTeacherId = "T001";
-        }
-        
-        showToast(`สลับจำลองสิทธิ์เป็น: ${role === "head" ? "ผู้อนุมัติ (ผอ.)" : "คุณครูผู้ขอลา"}`, "info");
-        
-        // Dynamic sidebar updates and view navigation
-        updateSidebarVisibility();
-        navigateToView(systemState.activeView || "form");
-    });
 
     // 7. Form page interactions
     document.getElementById("leave-type").addEventListener("change", updateLiveCalculatedDays);
@@ -1884,11 +1877,10 @@ function renderTeacherProfileList() {
     }).join('');
 }
 
+// ประวัติการลารายบุคคล — เปิดใน drawer ด้านขวา (เดิมเป็น modal-teacher-profile)
 function openTeacherProfileModal(teacherId) {
     const teacher = systemState.teachers.find(t => t.id === teacherId);
     if (!teacher) return;
-
-    document.getElementById("modal-teacher-profile-title").querySelector("span").textContent = `ประวัติการลา: ${teacher.name}`;
 
     const sickUsed = teacher.sickUsed || 0;
     const vacationUsed = teacher.vacationUsed || 0;
@@ -1937,7 +1929,7 @@ function openTeacherProfileModal(teacherId) {
             }
 
             return `
-                <div class="history-item" style="cursor:pointer;" onclick="closeModal('modal-teacher-profile'); viewRequestDetails('${req.id}');">
+                <div class="history-item" style="cursor:pointer;" onclick="viewRequestDetails('${req.id}', () => openTeacherProfileModal('${teacherId}'))">
                     <div class="history-date-box">
                         <span class="history-date-month">${monthStr}</span>
                         <span class="history-date-day">${dayStr}</span>
@@ -1955,15 +1947,17 @@ function openTeacherProfileModal(teacherId) {
         }).join('');
     }
 
-    document.getElementById("modal-teacher-profile-body").innerHTML = `
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">${teacher.role || "-"} · รหัส: ${teacher.id}</div>
-        <div class="setting-section-title">โควต้าการลาคงเหลือ</div>
-        <div class="grid-3" style="margin-top:12px;margin-bottom:24px;">${quotaCardsHtml}</div>
-        <div class="setting-section-title">ประวัติการลาในปีนี้</div>
-        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">${historyHtml}</div>
-    `;
-
-    openModal("modal-teacher-profile");
+    openStaffDrawer({
+        title: `ประวัติการลา: ${teacher.name}`,
+        body: `
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">${teacher.role || "-"} · รหัส: ${teacher.id}</div>
+            <div class="setting-section-title">โควต้าการลาคงเหลือ</div>
+            <div class="grid-3" style="margin-top:12px;margin-bottom:24px;">${quotaCardsHtml}</div>
+            <div class="setting-section-title">ประวัติการลาในปีนี้</div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">${historyHtml}</div>
+        `,
+        refresh: () => openTeacherProfileModal(teacherId)
+    });
 }
 
 // -------------------------------------------------------------

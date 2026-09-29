@@ -5,6 +5,23 @@
 > รูปแบบต่อรายการ: วันที่ · ไฟล์/ฟังก์ชัน · แก้อะไร · ทำไม · หน้าตาเปลี่ยนไหม · ถ้าอยากย้อน
 > รายการใหม่ให้เพิ่มไว้ **บนสุด**
 
+## 2026-09-30 — merge งานของแคร์ (8df292e "เดี๋ยวกลับมาแก้ dashboard") เข้า `dev` (phase 1)
+
+### 23. merge 2026-09-30: เก็บงานแคร์ที่ลงโค้ดใน `schooldark/` ที่ยังอยู่ · งานที่ต้องพอร์ตไป `settings/` ยังค้าง (phase 2)
+- **ทำไม**: noeysod ย้ายหน้าตั้งค่าของ schooldark ไปอยู่ใน `settings/` (2026-09-29) ระหว่างที่แคร์ยังแก้หน้าตั้งค่าเดิมใน `schooldark/` จึงชนกัน — เลือกโครงสร้างของ noeysod (ตั้งค่าอยู่ใน `settings/`) และเก็บงานแคร์ทุกอย่างที่ลงในโค้ดที่ยังอยู่ใน `schooldark/`
+- **เก็บงานแคร์ไว้แล้ว (ไม่ต้องทำซ้ำ)**:
+  - อนุมัติการลาบุคลากร: ตาราง/ปฏิทิน + `setStaffListMode` (U1), `#staff-drawer` แทน `modal-detail` / `modal-teacher-profile` (U2), `adjustTeacherQuota` (U3), ตัดตัวสลับ role เหลือ `currentRole = "head"` (U4)
+  - ตั้งค่าบัตรขออนุญาต `view-ticket-settings` (วิซาร์ด 4 ขั้น, `TICKET_SETTINGS`, modal `#modal-ticket-type` / `#tks-save-modal`, ประวัติการตั้งค่า) (U7) และการ์ดประเภทบัตรที่อ่านจากค่าตั้งค่า + `scrollContentTop` (U8) — **ตอนนี้ยังอยู่ใน `schooldark/leave-features.html`** (ยังไม่ย้ายไป `settings/`)
+  - เอา `sd-hero` ออกจากแดชบอร์ดการมาเรียน (U14), เมนู cross-nav ใหม่ (U15), CSS ที่ย้ายเข้า `app.css`
+  - ไฟล์ใหม่: `shared/impact-confirm.js`, `schooldark/usecase.md`, `schooldark/usecase.drawio`
+- **ยังไม่ได้ merge — ต้องพอร์ตไปไฟล์ใน `settings/` (phase 2 คอมมิตแยก)**:
+  - U5: ประวัติการตั้งค่าการลาบุคลากร (`schooldark_leave_settings_versions`) + ImpactConfirm ในวิซาร์ดตั้งค่าการลาบุคลากร -> `settings/leave.html#tab=staff` (`settings/js/leave-settings-staff.js`)
+  - U6: diff/ImpactConfirm/`form` ในเวอร์ชันการตั้งค่าการลาเรียน -> `settings/leave.html#tab=student` (`settings/js/leave-settings-student.js`)
+  - U9-U12: `showImpactConfirm` ของข้อมูลหลัก, ทั่วไป, กะงาน, วันหยุด, ครูประจำชั้น, ผู้ลงนาม -> `settings/school.html` / `settings/personnel.html`
+  - `btn-save-doc-signatories` (ปุ่มบันทึกผู้ลงนามเอกสาร) -> หน้าตั้งค่าที่ตรงกันใน `settings/`
+  - แคร์เอาปุ่มเลื่อนขึ้น/ลง (up/down) ออก — ต้องเอาออกในหน้าที่ย้ายไป `settings/` ด้วย
+- **ถึงแคร์**: ก่อนแก้หน้าตั้งค่าอีก ให้ `git pull` จาก `dev` ก่อน เพราะหน้าตั้งค่าอยู่ใน `settings/` แล้ว (ที่เดิมใน `schooldark/app.html` / `settings.js` / `index.js` ถูกลบแล้ว งานที่แก้ตรงนั้นจะไม่มีผล)
+
 ## 2026-09-30 — wizard บุคลากร: ปุ่ม "ถัดไป" ต่อ microstep + ปุ่มกรอกข้อมูลตัวอย่าง (⚠️ **หน้าตาเปลี่ยน**: ปุ่ม "ถัดไป" ท้ายฟอร์ม + ปุ่มลอย neon มุมขวาล่าง)
 
 ### 22. ปุ่ม "ถัดไป" (บันทึกเบื้องหลัง) + "กรอกข้อมูลตัวอย่าง" ในฟอร์มบุคลากรทั้ง 3 ขั้น + แก้บั๊ก `setupFormTabs`
