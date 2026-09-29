@@ -776,7 +776,7 @@
                                 <button class="form-tab-btn" data-subtab="contact-address">ที่อยู่ติดต่อได้</button>
                                 <button class="form-tab-btn" data-subtab="family-info">ข้อมูลครอบครัว</button>
                             </div>
-                            <form id="form-basic-info-body">
+                            <form id="form-basic-info-body" novalidate>
                                 <div class="sub-tab-panel active" id="subtab-personal-profile">
                                     <div class="form-grid">
                                         <div class="col-3 form-group"><label for="basic-code">รหัสบุคลากร <span
@@ -918,7 +918,7 @@
                                 </div>
                                 <div class="form-actions-wrapper"><button type="button"
                                         class="btn btn-secondary btn-cancel-form">ยกเลิก</button><button type="submit"
-                                        class="btn btn-primary">บันทึกข้อมูลพื้นฐาน</button></div>
+                                        class="btn btn-primary btn-wizard-next">ถัดไป</button></div>
                             </form>
                         </div>
                     </div>
@@ -936,7 +936,7 @@
                                 <button class="form-tab-btn" data-subtab="edu-training">ประวัติอบรม ดูงาน</button>
                                 <button class="form-tab-btn" data-subtab="edu-toeic">คะแนน TOEIC / อื่นๆ</button>
                             </div>
-                            <form id="form-education-body">
+                            <form id="form-education-body" novalidate>
                                 <div class="sub-tab-panel active" id="subtab-edu-background">
                                     <div class="form-grid">
                                         <div class="col-4 form-group"><label
@@ -1000,7 +1000,7 @@
                                 </div>
                                 <div class="form-actions-wrapper"><button type="button"
                                         class="btn btn-secondary btn-cancel-form">ยกเลิก</button><button type="submit"
-                                        class="btn btn-primary">บันทึกข้อมูลการศึกษา</button></div>
+                                        class="btn btn-primary btn-wizard-next">ถัดไป</button></div>
                             </form>
                         </div>
                     </div>
@@ -1020,7 +1020,7 @@
                                 <button class="form-tab-btn"
                                     data-subtab="royal-decoration-tab">ประวัติรับเครื่องราชฯ</button>
                             </div>
-                            <form id="form-job-license-body">
+                            <form id="form-job-license-body" novalidate>
                                 <div class="sub-tab-panel active" id="subtab-job-position-tab">
                                     <div class="form-grid">
                                         <div class="col-4 form-group"><label for="job-staff-type">ประเภทบุคลากร <span
@@ -1090,7 +1090,7 @@
                                 </div>
                                 <div class="form-actions-wrapper"><button type="button"
                                         class="btn btn-secondary btn-cancel-form">ยกเลิก</button><button type="submit"
-                                        class="btn btn-primary">บันทึกตำแหน่ง &amp; ใบประกอบวิชาชีพ</button></div>
+                                        class="btn btn-primary btn-wizard-next">ถัดไป</button></div>
                             </form>
                         </div>
                     </div>
@@ -1438,6 +1438,7 @@
      ===================================================================== -->
 
     <!-- App Router & Shared Utilities (ใหม่) -->
+    <button type="button" id="wizard-demo-fab" class="demo-fab" hidden title="เครื่องมือทดสอบ: กรอกข้อมูลตัวอย่างเฉพาะหัวข้อย่อยที่เปิดอยู่">⚡ กรอกข้อมูลตัวอย่าง (demo)</button>
     <script src="app.js"></script>
 
     <!-- Leave module logic (from index.js) -->

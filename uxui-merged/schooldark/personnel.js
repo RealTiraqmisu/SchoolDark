@@ -211,6 +211,7 @@ function switchView(viewName) {
             if (paneId === `view-${viewName}`) {
                 pane.classList.add('active');
                 pane.style.display = 'block';
+                activateWizardSubtab(pane, 0); // เข้าขั้นใหญ่ใหม่ทุกครั้งให้เริ่มที่ microstep แรกเสมอ
             } else {
                 pane.classList.remove('active');
                 pane.style.display = 'none';
@@ -244,6 +245,15 @@ function switchView(viewName) {
     };
     
     document.getElementById('current-view-title').innerText = titleMap[viewName] || 'ข้อมูลบุคลากร';
+    syncWizardDemoFab();
+}
+
+// ปุ่มลอย demo อยู่ท้าย <body> (นอก .view-section เพราะ transform จาก fadeIn ทำให้ position:fixed เพี้ยน) จึงต้องซ่อน/แสดงเองตาม wizard
+function syncWizardDemoFab() {
+    const fab = document.getElementById('wizard-demo-fab');
+    if (!fab) return;
+    const wizard = document.getElementById('view-personnel-wizard');
+    fab.hidden = !(wizard && wizard.classList.contains('active') && wizard.offsetParent !== null);
 }
 
 // Metrics Panel Updater
@@ -614,13 +624,20 @@ function setupFormTabs() {
             navContainer.querySelectorAll('.form-tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            // Deactivate all subtab panels under the same view section
-            const viewSection = navContainer.closest('.view-section');
+            // Deactivate all subtab panels under the same step pane / view section
+            // (ต้องจำกัดขอบเขตที่ .personnel-step-pane — ถ้าใช้ .view-section อย่างเดียวจะได้ตัว wizard ทั้งก้อน
+            // แล้วการกดแท็บในขั้น 1 จะลบ .active ของ panel ในขั้น 2/3 ทิ้งไปด้วย)
+            const viewSection = navContainer.closest('.personnel-step-pane, .view-section');
+            if (!viewSection) return;
             viewSection.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active'));
-            
+
             const targetPanel = viewSection.querySelector(`#subtab-${subtabId}`);
             if (targetPanel) {
                 targetPanel.classList.add('active');
+            }
+
+            if (viewSection.classList.contains('personnel-step-pane')) {
+                updateWizardNextLabel(viewSection);
             }
         });
     });
@@ -1033,55 +1050,25 @@ function createNewBlankForm() {
     syncAddressVisibility();
 }
 
-// Save basic profile form
-function handleBasicFormSubmit(e) {
-    e.preventDefault();
-    
+// Save basic profile form (ตัวเก็บข้อมูลล้วน ๆ — ไม่มีการเปลี่ยนหน้า/ไม่มี toast สำเร็จ ให้ handleWizardNext จัดการ)
+// คืน true เมื่อบันทึกสำเร็จ, false เมื่อไม่ผ่าน (การตรวจ id/เลขบัตร/วันเกิด/เบอร์โทรอยู่ใน validateWizardPanel)
+function saveBasicInfo() {
     const id = document.getElementById('basic-code').value;
     if (!id) {
         showToast("กรุณาระบุรหัสบุคลากร", "danger");
-        return;
+        return false;
     }
-    
+
     const prefix = document.getElementById('basic-prefix').value;
     const firstname = document.getElementById('basic-firstname').value;
     const lastname = document.getElementById('basic-lastname').value;
     const phone = document.getElementById('basic-phone').value;
-    
-    // Validations
     const cid = document.getElementById('basic-cid').value.replace(/-/g, '').trim();
-    if (cid.length !== 13 || isNaN(cid)) {
-        showToast("เลขบัตรประจำตัวประชาชนต้องกรอกให้ครบ 13 หลัก", "danger");
-        document.getElementById('basic-cid').focus();
-        return;
-    }
-    
     const dob = document.getElementById('basic-dob').value;
-    if (dob) {
-        const dobDate = new Date(dob);
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        if (dobDate >= today) {
-            showToast("วันเกิดต้องน้อยกว่าวันปัจจุบัน", "danger");
-            document.getElementById('basic-dob').focus();
-            return;
-        }
-    } else {
-        showToast("กรุณาระบุวันเกิด", "danger");
-        document.getElementById('basic-dob').focus();
-        return;
-    }
-    
-    const phoneClean = phone.replace(/-/g, '').trim();
-    if (phoneClean.length !== 10 || isNaN(phoneClean)) {
-        showToast("เบอร์โทรศัพท์ติดต่อต้องกรอกให้ครบ 10 หลัก", "danger");
-        document.getElementById('basic-phone').focus();
-        return;
-    }
-    
+
     let teacher = teachers.find(item => item.id === id);
     let isNew = false;
-    
+
     if (!teacher) {
         isNew = true;
         teacher = {
@@ -1090,7 +1077,7 @@ function handleBasicFormSubmit(e) {
             photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=50' // default avatar
         };
     }
-    
+
     teacher.prefix = prefix;
     teacher.firstname = firstname;
     teacher.lastname = lastname;
@@ -1102,7 +1089,7 @@ function handleBasicFormSubmit(e) {
     teacher.religion = document.getElementById('basic-religion').value;
     teacher.phone = phone;
     teacher.email = document.getElementById('basic-email').value;
-    
+
     teacher.regAddress = {
         houseNo: document.getElementById('reg-house-no').value,
         moo: document.getElementById('reg-moo').value,
@@ -1112,7 +1099,7 @@ function handleBasicFormSubmit(e) {
         subdistrict: document.getElementById('reg-subdistrict').value,
         zipcode: document.getElementById('reg-zipcode').value
     };
-    
+
     const syncCheckbox = document.getElementById('sync-address-checkbox').checked;
     if (syncCheckbox) {
         teacher.contactAddress = { ...teacher.regAddress };
@@ -1127,7 +1114,7 @@ function handleBasicFormSubmit(e) {
             zipcode: document.getElementById('con-zipcode').value
         };
     }
-    
+
     // Children list parsing
     const children = [];
     document.querySelectorAll('#family-children-list .dynamic-row-item').forEach(row => {
@@ -1142,20 +1129,20 @@ function handleBasicFormSubmit(e) {
     });
     const spouseNameVal = document.getElementById('fam-spouse').value.trim();
     const spouseVal = spouseNameVal ? (document.getElementById('fam-spouse-prefix').value + spouseNameVal) : '';
-    
+
     teacher.family = {
         spouse: spouseVal,
         spousePhone: document.getElementById('fam-spouse-phone').value,
         children: children
     };
-    
+
     if (isNew) {
         // initialize empty objects for the rest if it's new
         teacher.education = { degree: 'ปริญญาตรี', major: '', institution: '', gradYear: '', gpa: '' };
         teacher.honors = [];
         teacher.trainings = [];
         teacher.toeic = { score: '', date: '' };
-        // ค่าตั้งต้นชั่วคราว — ผู้ใช้จะกำหนดจริงในขั้นตอน "ข้อมูลตำแหน่งงาน" (handleJobLicenseFormSubmit) ต่อไป
+        // ค่าตั้งต้นชั่วคราว — ผู้ใช้จะกำหนดจริงในขั้นตอน "ข้อมูลตำแหน่งงาน" (saveJobLicense) ต่อไป
         const defaultStaffType = activeStaffTypesForForm()[0];
         const defaultPosition = activePositionsForStaffType(defaultStaffType?.id)[0];
         const defaultDepartment = activeDepartmentsForForm()[0];
@@ -1171,28 +1158,33 @@ function handleBasicFormSubmit(e) {
         teacher.royals = [];
         teachers.push(teacher);
     }
-    
+
     saveDB();
     selectedTeacherId = id;
-    showToast("บันทึกข้อมูลส่วนตัวพื้นฐานแล้ว สามารถแก้ไขการศึกษาและตำแหน่งต่อได้", "success");
-    
-    // Automatically transition to the next step: Education Form
-    setTimeout(() => {
-        editTeacherProfile(id);
-        switchView('education');
-    }, 800);
+
+    // บันทึกกลางคันแล้วต้องเข้าสู่โหมดแก้ไขทันที (ล็อกรหัส + อัปเดตหัวข้อ/ป้ายสถานะ) — ไม่เรียก editTeacherProfile()
+    // เพราะมันเรนเดอร์แถวไดนามิกใหม่และดีดกลับไปขั้น 1 ระหว่างที่ผู้ใช้ยังกรอกอยู่
+    isEditMode = true;
+    document.getElementById('basic-code').disabled = true;
+    const fullName = `${teacher.prefix}${teacher.firstname} ${teacher.lastname}`;
+    document.getElementById('form-basic-title').innerText = `แก้ไขข้อมูลพื้นฐาน: ${fullName}`;
+    document.getElementById('form-basic-status-badge').innerText = `รหัสบุคลากร: ${teacher.id}`;
+    document.getElementById('form-edu-title').innerText = `แก้ไขประวัติการศึกษา: ${fullName}`;
+    document.getElementById('form-edu-status-badge').innerText = `รหัสบุคลากร: ${teacher.id}`;
+    document.getElementById('form-job-title').innerText = `แก้ไขตำแหน่ง & ใบประกอบวิชาชีพ: ${fullName}`;
+    document.getElementById('form-job-status-badge').innerText = `รหัสบุคลากร: ${teacher.id}`;
+    return true;
 }
 
-function handleEducationFormSubmit(e) {
-    e.preventDefault();
+function saveEducation() {
     if (!selectedTeacherId) {
         showToast("กรุณากรอกข้อมูลส่วนตัวขั้นแรกก่อนบันทึกการศึกษา", "danger");
-        return;
+        return false;
     }
-    
+
     const teacher = teachers.find(item => item.id === selectedTeacherId);
-    if (!teacher) return;
-    
+    if (!teacher) return false;
+
     teacher.education = {
         degree: document.getElementById('edu-degree').value,
         major: document.getElementById('edu-major').value,
@@ -1200,14 +1192,14 @@ function handleEducationFormSubmit(e) {
         gradYear: document.getElementById('edu-grad-year').value,
         gpa: document.getElementById('edu-gpa').value
     };
-    
+
     // Honors parsing
     const honors = [];
     document.querySelectorAll('#edu-honors-list .honor-input-field').forEach(input => {
         if (input.value.trim()) honors.push(input.value.trim());
     });
     teacher.honors = honors;
-    
+
     // Trainings parsing
     const trainings = [];
     document.querySelectorAll('#edu-trainings-list .dynamic-row-item').forEach(row => {
@@ -1219,7 +1211,7 @@ function handleEducationFormSubmit(e) {
         }
     });
     teacher.trainings = trainings;
-    
+
     // TOEIC parsing
     const toeicScore = document.getElementById('toeic-score').value.trim();
     const toeicDate = document.getElementById('toeic-date').value;
@@ -1227,26 +1219,20 @@ function handleEducationFormSubmit(e) {
         score: toeicScore,
         date: toeicDate
     };
-    
+
     saveDB();
-    showToast("บันทึกข้อมูลการศึกษาและอบรมเรียบร้อยแล้ว", "success");
-    
-    // Transition to step 3: Job and Licenses form
-    setTimeout(() => {
-        switchView('job-license');
-    }, 800);
+    return true;
 }
 
-function handleJobLicenseFormSubmit(e) {
-    e.preventDefault();
+function saveJobLicense() {
     if (!selectedTeacherId) {
         showToast("กรุณากรอกข้อมูลส่วนตัวขั้นแรกก่อน", "danger");
-        return;
+        return false;
     }
-    
+
     const teacher = teachers.find(item => item.id === selectedTeacherId);
-    if (!teacher) return;
-    
+    if (!teacher) return false;
+
     const staffTypeId = document.getElementById('job-staff-type').value;
     const positionId = document.getElementById('job-position').value;
     const positionOption = document.getElementById('job-position').selectedOptions[0];
@@ -1263,21 +1249,21 @@ function handleJobLicenseFormSubmit(e) {
         salary: document.getElementById('job-salary').value,
         status: document.getElementById('job-status').value
     };
-    
+
     teacher.license = {
         number: document.getElementById('lic-number').value.trim(),
         type: document.getElementById('lic-type').value,
         issueDate: document.getElementById('lic-issue-date').value,
         expireDate: document.getElementById('lic-expire-date').value
     };
-    
+
     // Royals parsing
     const royals = [];
     document.querySelectorAll('#job-royals-list .royal-input-field').forEach(input => {
         if (input.value.trim()) royals.push(input.value.trim());
     });
     teacher.royals = royals;
-    
+
     // Evaluate if profile information is complete or incomplete
     // E.g., Profile complete if basic forms are filled AND education forms have major/institution AND license is entered
     if (teacher.phone && teacher.firstname && teacher.education.major && teacher.education.institution && teacher.license.type !== 'ไม่มี') {
@@ -1285,14 +1271,262 @@ function handleJobLicenseFormSubmit(e) {
     } else {
         teacher.status = 'ไม่ครบถ้วน';
     }
-    
+
     saveDB();
-    showToast("บันทึกตําแหน่งงานและใบประกอบวิชาชีพแล้ว แฟ้มประวัติสมบูรณ์เรียบร้อย", "success");
-    
-    // Finish, go back to database table overview
-    setTimeout(() => {
-        switchView('directory');
-    }, 800);
+    return true;
+}
+
+// ---- Wizard microstep: "ถัดไป" / demo-fill ----
+// แต่ละขั้นใหญ่ (basic-info / education / job-license) มีแท็บย่อย (microstep) หลายอัน ปุ่มท้ายฟอร์มจึงเป็น "ถัดไป":
+// ตรวจเฉพาะ panel ที่เปิดอยู่ -> บันทึกทั้งขั้นเงียบ ๆ -> เปิดแท็บย่อยถัดไป (อันสุดท้าย = ไปขั้นใหญ่ถัดไปเหมือนเดิม)
+
+// เปิดแท็บย่อยลำดับที่ i ของ pane นั้น (สลับ .active เฉพาะใน pane เดียวกัน) แล้วอัปเดตป้ายปุ่ม
+function activateWizardSubtab(pane, i) {
+    if (!pane) return;
+    const tabs = [...pane.querySelectorAll('.form-tab-btn')];
+    const panels = [...pane.querySelectorAll('.sub-tab-panel')];
+    if (!tabs[i] || !panels[i]) return;
+    tabs.forEach((b, k) => b.classList.toggle('active', k === i));
+    panels.forEach((p, k) => p.classList.toggle('active', k === i));
+    updateWizardNextLabel(pane);
+}
+
+// ปุ่มท้ายฟอร์ม: "บันทึกและเสร็จสิ้น" เฉพาะแท็บย่อยสุดท้ายของขั้น 3 ที่เหลือคือ "ถัดไป"
+function updateWizardNextLabel(pane) {
+    if (!pane) return;
+    const btn = pane.querySelector('.btn-wizard-next');
+    if (!btn) return;
+    const panels = [...pane.querySelectorAll('.sub-tab-panel')];
+    const idx = panels.findIndex(p => p.classList.contains('active'));
+    const isFinal = pane.id === 'view-job-license' && idx === panels.length - 1;
+    btn.textContent = isFinal ? 'บันทึกและเสร็จสิ้น' : 'ถัดไป';
+}
+
+// ตรวจ panel เดียว: ช่อง required ที่ไม่ disabled ต้องไม่ว่าง (form ใส่ novalidate ไว้ เพราะ native validation
+// ไปติดช่อง required ในแท็บที่ซ่อนอยู่ และ pattern ของเลขบัตร/เบอร์ไม่รับข้อมูลเดิมที่มีขีด)
+function validateWizardPanel(panel) {
+    if (!panel) return true;
+    for (const el of panel.querySelectorAll('input, select')) {
+        if (!el.required || el.disabled || el.value.trim() !== '') continue;
+        const labelEl = el.closest('.form-group')?.querySelector('label');
+        const labelText = labelEl ? labelEl.textContent.replace(/\*/g, '').replace(/\s+/g, ' ').trim() : '';
+        showToast(labelText ? `กรุณากรอก ${labelText}` : "กรุณากรอกข้อมูลที่จำเป็นให้ครบ", "danger");
+        el.focus();
+        return false;
+    }
+
+    if (panel.id === 'subtab-personal-profile') {
+        const id = document.getElementById('basic-code').value;
+        if (!id) {
+            showToast("กรุณาระบุรหัสบุคลากร", "danger");
+            return false;
+        }
+
+        const cid = document.getElementById('basic-cid').value.replace(/-/g, '').trim();
+        if (cid.length !== 13 || isNaN(cid)) {
+            showToast("เลขบัตรประจำตัวประชาชนต้องกรอกให้ครบ 13 หลัก", "danger");
+            document.getElementById('basic-cid').focus();
+            return false;
+        }
+
+        const dob = document.getElementById('basic-dob').value;
+        if (dob) {
+            const dobDate = new Date(dob);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            if (dobDate >= today) {
+                showToast("วันเกิดต้องน้อยกว่าวันปัจจุบัน", "danger");
+                document.getElementById('basic-dob').focus();
+                return false;
+            }
+        } else {
+            showToast("กรุณาระบุวันเกิด", "danger");
+            document.getElementById('basic-dob').focus();
+            return false;
+        }
+
+        const phoneClean = document.getElementById('basic-phone').value.replace(/-/g, '').trim();
+        if (phoneClean.length !== 10 || isNaN(phoneClean)) {
+            showToast("เบอร์โทรศัพท์ติดต่อต้องกรอกให้ครบ 10 หลัก", "danger");
+            document.getElementById('basic-phone').focus();
+            return false;
+        }
+    }
+    return true;
+}
+
+// submit ของทั้ง 3 ฟอร์ม (ปุ่ม "ถัดไป")
+function handleWizardNext(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const pane = form.closest('.personnel-step-pane');
+    const panels = [...form.querySelectorAll('.sub-tab-panel')];
+    const idx = panels.findIndex(p => p.classList.contains('active'));
+    if (!validateWizardPanel(panels[idx])) return;
+
+    // ขั้น 1 ที่ยังไม่เคยบันทึก: ผู้ใช้อาจกดข้ามแท็บมาก่อน ต้องผ่านแท็บ "ประวัติส่วนตัว" ก่อนสร้างระเบียนเสมอ
+    if (form.id === 'form-basic-info-body' && !selectedTeacherId && idx !== 0) {
+        if (!validateWizardPanel(panels[0])) {
+            activateWizardSubtab(pane, 0);
+            return;
+        }
+    }
+
+    const saveFns = {
+        'form-basic-info-body': saveBasicInfo,
+        'form-education-body': saveEducation,
+        'form-job-license-body': saveJobLicense
+    };
+    if (!saveFns[form.id]()) return;
+
+    // ยังไม่ใช่แท็บย่อยสุดท้าย -> บันทึกเงียบ ๆ แล้วไปแท็บถัดไป
+    if (idx < panels.length - 1) {
+        activateWizardSubtab(pane, idx + 1);
+        showToast('บันทึกแล้ว', 'success');
+        return;
+    }
+
+    // แท็บย่อยสุดท้าย -> เปลี่ยนขั้นใหญ่เหมือนเดิม
+    if (form.id === 'form-basic-info-body') {
+        showToast("บันทึกข้อมูลส่วนตัวพื้นฐานแล้ว สามารถแก้ไขการศึกษาและตำแหน่งต่อได้", "success");
+        const id = selectedTeacherId;
+        // Automatically transition to the next step: Education Form
+        setTimeout(() => {
+            editTeacherProfile(id);
+            switchView('education');
+        }, 800);
+    } else if (form.id === 'form-education-body') {
+        showToast("บันทึกข้อมูลการศึกษาและอบรมเรียบร้อยแล้ว", "success");
+        // Transition to step 3: Job and Licenses form
+        setTimeout(() => {
+            switchView('job-license');
+        }, 800);
+    } else {
+        showToast("บันทึกตําแหน่งงานและใบประกอบวิชาชีพแล้ว แฟ้มประวัติสมบูรณ์เรียบร้อย", "success");
+        // Finish, go back to database table overview
+        setTimeout(() => {
+            switchView('directory');
+        }, 800);
+    }
+}
+
+// ---- Demo fill (ปุ่ม "กรอกข้อมูลตัวอย่าง" — เติมเฉพาะแท็บย่อยที่เปิดอยู่) ----
+function wizardRandomDigits(n) {
+    let out = '';
+    for (let i = 0; i < n; i++) out += Math.floor(Math.random() * 10);
+    return out;
+}
+
+function fillWizardDemo(e) {
+    const pane = document.querySelector('#view-personnel-wizard .personnel-step-pane.active');
+    const panel = pane?.querySelector('.sub-tab-panel.active');
+    if (!panel) return;
+
+    const setVal = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+    };
+    // เลือก option ตัวแรกที่ไม่ว่างของ select แล้วยิง change (ให้ dropdown ที่ผูกกันเติมตามต่อ)
+    const pickFirstOption = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const opt = [...el.options].find(o => o.value !== '');
+        if (opt) el.value = opt.value;
+        el.dispatchEvent(new Event('change'));
+    };
+
+    switch (panel.id) {
+        case 'subtab-personal-profile': {
+            const demoNames = [
+                { prefix: 'นาย', first: 'สมชาย', last: 'ใจดี', gender: 'ชาย', mail: 'somchai.demo@school.ac.th' },
+                { prefix: 'นาง', first: 'สมหญิง', last: 'รักเรียน', gender: 'หญิง', mail: 'somying.demo@school.ac.th' },
+                { prefix: 'นางสาว', first: 'วิไล', last: 'ศรีสุข', gender: 'หญิง', mail: 'wilai.demo@school.ac.th' }
+            ];
+            const n = demoNames[Math.floor(Math.random() * demoNames.length)];
+            setVal('basic-prefix', n.prefix);
+            setVal('basic-firstname', n.first);
+            setVal('basic-lastname', n.last);
+            setVal('basic-cid', String(1 + Math.floor(Math.random() * 9)) + wizardRandomDigits(12));
+            setVal('basic-dob', '1990-05-14');
+            setVal('basic-gender', n.gender);
+            setVal('basic-blood', 'O');
+            setVal('basic-phone', '08' + wizardRandomDigits(8));
+            setVal('basic-email', n.mail);
+            break;
+        }
+        case 'subtab-registered-address':
+            setVal('reg-house-no', '99/1');
+            setVal('reg-moo', '4');
+            setVal('reg-road', 'ถ.พหลโยธิน');
+            pickFirstOption('reg-province');
+            pickFirstOption('reg-district');
+            pickFirstOption('reg-subdistrict');
+            break;
+        case 'subtab-contact-address': {
+            const sync = document.getElementById('sync-address-checkbox');
+            if (sync) {
+                sync.checked = true;
+                sync.dispatchEvent(new Event('change'));
+            }
+            break;
+        }
+        case 'subtab-family-info':
+            setVal('fam-spouse-prefix', 'นาง');
+            setVal('fam-spouse', 'สมหญิง ใจดี');
+            setVal('fam-spouse-phone', '08' + wizardRandomDigits(8));
+            if (!document.querySelector('#family-children-list .dynamic-row-item')) {
+                appendChildRow('เด็กชายสมปอง ใจดี');
+            }
+            break;
+        case 'subtab-edu-background':
+            setVal('edu-degree', 'ปริญญาโท');
+            setVal('edu-major', 'คณิตศาสตร์');
+            setVal('edu-institution', 'มหาวิทยาลัยเกษตรศาสตร์');
+            setVal('edu-grad-year', '2558');
+            setVal('edu-gpa', '3.45');
+            break;
+        case 'subtab-edu-honors': {
+            if (!document.querySelector('#edu-honors-list .honor-input-field')) appendHonorRow();
+            const input = document.querySelector('#edu-honors-list .honor-input-field');
+            if (input) input.value = 'ครูดีเด่นประจำปี 2567';
+            break;
+        }
+        case 'subtab-edu-training': {
+            if (!document.querySelector('#edu-trainings-list .dynamic-row-item')) appendTrainingRow();
+            const row = document.querySelector('#edu-trainings-list .dynamic-row-item');
+            if (row) {
+                row.querySelector('.training-year').value = '2567';
+                row.querySelector('.training-topic').value = 'การจัดการเรียนรู้เชิงรุก (Active Learning)';
+                row.querySelector('.training-agency').value = 'สพฐ.';
+            }
+            break;
+        }
+        case 'subtab-edu-toeic':
+            setVal('toeic-score', '650');
+            setVal('toeic-date', '2024-03-10');
+            break;
+        case 'subtab-job-position-tab':
+            pickFirstOption('job-staff-type');
+            pickFirstOption('job-position');
+            pickFirstOption('job-department');
+            setVal('job-hire-date', '2018-05-16');
+            setVal('job-salary', '32000');
+            setVal('job-status', 'ปฏิบัติราชการปกติ');
+            break;
+        case 'subtab-professional-license-tab':
+            setVal('lic-number', '6310900012' + wizardRandomDigits(4));
+            setVal('lic-type', 'ใบอนุญาตประกอบวิชาชีพควบคุม (ครู)');
+            setVal('lic-issue-date', '2019-01-10');
+            setVal('lic-expire-date', '2029-01-09');
+            break;
+        case 'subtab-royal-decoration-tab': {
+            if (!document.querySelector('#job-royals-list .royal-input-field')) appendRoyalRow();
+            const input = document.querySelector('#job-royals-list .royal-input-field');
+            if (input) input.value = 'ตริตาภรณ์ช้างเผือก (ต.ช.)';
+            break;
+        }
+    }
+    showToast('กรอกข้อมูลตัวอย่างแล้ว', 'info');
 }
 
 function deleteTeacherProfile(teacherId) {
@@ -2388,10 +2622,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Form submissions
-    document.getElementById('form-basic-info-body')?.addEventListener('submit', handleBasicFormSubmit);
-    document.getElementById('form-education-body')?.addEventListener('submit', handleEducationFormSubmit);
-    document.getElementById('form-job-license-body')?.addEventListener('submit', handleJobLicenseFormSubmit);
-    
+    document.getElementById('form-basic-info-body')?.addEventListener('submit', handleWizardNext);
+    document.getElementById('form-education-body')?.addEventListener('submit', handleWizardNext);
+    document.getElementById('form-job-license-body')?.addEventListener('submit', handleWizardNext);
+
+    // Demo-fill ต่อ microstep (ปุ่มลอย neon มุมขวาล่างของ wizard)
+    document.getElementById('wizard-demo-fab')?.addEventListener('click', fillWizardDemo);
+    const demoObserver = new MutationObserver(syncWizardDemoFab);
+    const wizardForFab = document.getElementById('view-personnel-wizard');
+    const moduleForFab = document.getElementById('module-personnel');
+    if (wizardForFab) demoObserver.observe(wizardForFab, { attributes: true, attributeFilter: ['class'] });
+    if (moduleForFab) demoObserver.observe(moduleForFab, { attributes: true, attributeFilter: ['class', 'style'] });
+    syncWizardDemoFab();
+
     // Cancel form actions
     document.querySelectorAll('.btn-cancel-form').forEach(btn => {
         btn.addEventListener('click', () => {
