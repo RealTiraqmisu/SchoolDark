@@ -152,7 +152,7 @@
     $('tab-title').textContent = title;
     $('tab-desc').textContent = (def && def.desc) || meta.desc;
     $('crumb-tab').textContent = title;
-    $('tab-icon-tile').innerHTML = (def && def.iconSvg) || PLACEHOLDER_ICON;
+    var iconTile = $('tab-icon-tile'); if (iconTile) iconTile.innerHTML = (def && def.iconSvg) || PLACEHOLDER_ICON;
     document.querySelectorAll('.tab-pill').forEach(function (a) {
       var active = a.getAttribute('data-tab-link') === currentTab;
       a.className = 'tab-pill flex-1 text-center py-2 px-3 rounded-lg text-xs transition-colors whitespace-nowrap ' +

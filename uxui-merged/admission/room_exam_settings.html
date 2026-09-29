@@ -39,17 +39,15 @@
     }
   </style>
   <link rel="stylesheet" href="../shared/cross-nav.css">
+  <link rel="stylesheet" href="../shared/page-layout.css">
 </head>
 <body class="font-sans antialiased text-card-foreground">
 <script src="../shared/cross-nav.js"></script>
 
   <!-- Header (Consistent Layout) -->
   <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
-    <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-6 py-4">
+    <div class="xpage xpage--wide flex flex-wrap items-center gap-4 py-4">
       <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
-          <i data-lucide="graduation-cap" class="h-5 w-5"></i>
-        </div>
         <div>
           <h1 class="text-lg font-bold leading-tight text-slate-900">ระบบบริหารจัดการผู้สมัครเรียน</h1>
           <p class="text-xs text-slate-500">Student Admission & Information System</p>
@@ -84,7 +82,7 @@
   </header>
 
   <!-- Main Container -->
-  <main class="mx-auto max-w-[1400px] px-6 py-6 pb-24">
+  <main class="xpage xpage--wide py-6 pb-24">
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
       <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">ข้อมูลบุคคล</span>
@@ -97,9 +95,6 @@
     <!-- Title Area -->
     <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
       <div class="flex items-center gap-3">
-        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-600 text-white shadow-md">
-          <i data-lucide="layout" class="h-6 w-6"></i>
-        </div>
         <div>
           <h2 class="text-2xl font-bold tracking-tight text-slate-900">ตั้งค่าการจัดห้องสอบคัดเลือก</h2>
           <p class="text-xs text-slate-500">สร้างห้องสอบเพื่อจัดสรรผู้สมัครสอบ กำหนดจำนวนที่นั่ง และระบุสถานที่สอบทางกายภาพในสถานศึกษา</p>
@@ -128,7 +123,7 @@
     </div>
 
     <!-- Exam Rooms List -->
-    <div class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-w-6xl">
+    <div class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
       <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
         <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
           <i data-lucide="door-open" class="h-4 w-4 text-purple-600"></i> รายการห้องสอบคัดเลือกในระบบ

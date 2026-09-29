@@ -66,8 +66,10 @@ uxui-merged/
 
 > [!NOTE]
 > **layout ความกว้างเนื้อหา (ทดลอง 2026-09-29)**: มี `shared/page-layout.css` ให้เลือก 1 แบบต่อหน้า — `.xpage--read` (หน้าอ่าน/ฟอร์ม
-> ตรงกลาง จำกัด 1280px) หรือ `.xpage--wide` (หน้าตาราง เต็มพื้นที่เนื้อหา) ใส่คลาสเดียวกันทั้ง `<header>` ด้านใน และ `<main>` — ตอนนี้ใช้แค่
-> `admission/index.html` กับ `admission/students.html` (แบบ wide) เป็นตัวทดลอง หน้าอื่นยังเป็น `max-w-[1400px]` เดิม รอเนยสดดูผลก่อนขยาย
+> ตรงกลาง จำกัด 1280px) หรือ `.xpage--wide` (หน้าตาราง เต็มพื้นที่เนื้อหา) ใส่คลาสเดียวกันทั้ง `<header>` ด้านใน และ `<main>` — ตอนนี้ใช้กับ
+> `admission/index.html`, `admission/students.html` และ `settings/{index,school,personnel,leave}.html` และหน้าตั้งค่า admission 4 หน้า (`admission/{settings,course_settings,room_exam_settings,student_field_settings}.html`) (แบบ wide, 2026-09-30) หน้าอื่นยังเป็น `max-w-[1400px]` เดิม รอเนยสดดูผลก่อนขยาย
+>
+> **ไอคอนสี่เหลี่ยมตกแต่ง (2026-09-30)**: ลบกล่องไอคอนข้างชื่อระบบใน `<header>` และข้างชื่อหน้า (`<h2>`) ออกจากหน้า admission/settings/apply แล้ว ตามที่ noeysod สั่ง (รก) — อย่าใส่กลับ
 
 ## ความต่างของ 2 ระบบ (อ่านก่อนแก้โค้ด)
 
@@ -185,6 +187,7 @@ module?, view?, hash?, desc?}` — ถ้า child มี `view` และ `page
   `sd_student_attendance_settings` เดิมของ care ผ่าน `SdSettings`
 - 5 แท็บ master data ของ noeysod: ข้อมูลห้องเรียน, ปฏิทินโรงเรียน, ข้อมูลปีการศึกษา, ข้อมูลระดับการศึกษา, ข้อมูลสาขางาน-สาขาวิชา
   เก็บผ่าน `SchoolStore` (`settings/js/school-store.js`, คีย์ `school_*`)
+- ความกว้างเนื้อหา (2026-09-30): หน้า `settings/*` (index/school/personnel/leave) ใช้ `.xpage xpage--wide` (จาก `shared/page-layout.css`) ที่ `<header>` ด้านใน และ `<main>` เหมือน `admission/index`/`students` และกล่องเนื้อหาไม่มี `max-w` ซ้อน (เหลือแค่แถบแท็บที่จำกัดความกว้าง)
 
 `settings/personnel.html` (+ `js/personnel-settings.js`) เป็นหน้าตั้งค่า "บุคลากร" 6 แท็บ ย้ายมาจาก `schooldark/app.html`: `schedule`
 (เวลาทำงาน/กะ/วันหยุด), `permissions` (ผู้ใช้/สิทธิ์), `signatories` (ผู้ลงนาม), `staff-types`, `positions`, `departments` ทั้งหมดอ่าน/เขียนผ่าน

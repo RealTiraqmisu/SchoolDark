@@ -49,16 +49,14 @@
     html, body { overflow-x: hidden; }
   </style>
   <link rel="stylesheet" href="../shared/cross-nav.css">
+  <link rel="stylesheet" href="../shared/page-layout.css">
 </head>
 <body class="font-sans antialiased text-card-foreground">
 <script src="../shared/cross-nav.js"></script>
 
   <!-- Header เรียบ ๆ ของศูนย์ตั้งค่า -->
   <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
-    <div class="mx-auto flex max-w-[1400px] items-center gap-3 px-4 sm:px-6 py-4">
-      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-      </div>
+    <div class="xpage xpage--wide flex items-center gap-3 py-4">
       <div>
         <h1 class="text-lg font-bold leading-tight text-slate-900">ศูนย์รวมการตั้งค่า</h1>
         <p class="text-xs text-slate-500">School Settings Center</p>
@@ -66,7 +64,7 @@
     </div>
   </header>
 
-  <main class="mx-auto max-w-[1400px] px-4 sm:px-6 py-6 pb-24">
+  <main class="xpage xpage--wide py-6 pb-24">
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2 flex-wrap">
       <a href="index.html" class="hover:underline">ศูนย์รวมการตั้งค่า</a>
@@ -79,7 +77,6 @@
     <!-- Title Area -->
     <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
       <div class="flex items-center gap-3">
-        <div id="tab-icon-tile" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sd-primary text-white shadow-md"></div>
         <div>
           <h2 id="tab-title" class="font-heading text-2xl font-bold tracking-tight text-slate-900"></h2>
           <p id="tab-desc" class="text-xs text-slate-500"></p>
@@ -94,7 +91,7 @@
     </div>
 
     <!-- เนื้อหาของแท็บ (สร้างโดย js/leave-settings*.js) -->
-    <div id="panel" class="max-w-6xl text-sd-text"></div>
+    <div id="panel" class="text-sd-text"></div>
   </main>
 
   <!-- Modals ของทุกแท็บ (สร้างโดย js/leave-settings*.js) -->

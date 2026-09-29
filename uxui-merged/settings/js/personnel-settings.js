@@ -1014,7 +1014,7 @@
     $('tab-title').textContent = def.title;
     $('tab-desc').textContent = def.desc;
     $('crumb-tab').textContent = def.title;
-    $('tab-icon-tile').innerHTML = svg(def.icon, 'h-6 w-6');
+    var iconTile = $('tab-icon-tile'); if (iconTile) iconTile.innerHTML = svg(def.icon, 'h-6 w-6');
     document.querySelectorAll('.tab-pill').forEach(function (a) {
       var active = a.getAttribute('data-tab-link') === currentTab;
       a.className = 'tab-pill flex-1 text-center py-2 px-3 rounded-lg text-xs transition-colors whitespace-nowrap ' +

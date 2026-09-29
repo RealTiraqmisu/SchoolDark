@@ -54,16 +54,14 @@
     .custom-input:focus { border-color: #3e63dd; outline: none; }
   </style>
   <link rel="stylesheet" href="../shared/cross-nav.css">
+  <link rel="stylesheet" href="../shared/page-layout.css">
 </head>
 <body class="font-sans antialiased text-card-foreground">
 <script src="../shared/cross-nav.js"></script>
 
   <!-- Header เรียบ ๆ ของศูนย์ตั้งค่า (ไม่มีแท็บระบบเดิมเหมือน admission) -->
   <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
-    <div class="mx-auto flex max-w-[1400px] items-center gap-3 px-6 py-4">
-      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-        <i data-lucide="settings" class="h-5 w-5"></i>
-      </div>
+    <div class="xpage xpage--wide flex items-center gap-3 py-4">
       <div>
         <h1 class="text-lg font-bold leading-tight text-slate-900">ศูนย์รวมการตั้งค่า</h1>
         <p class="text-xs text-slate-500">School Settings Center</p>
@@ -71,7 +69,7 @@
     </div>
   </header>
 
-  <main class="mx-auto max-w-[1400px] px-6 py-6 pb-24">
+  <main class="xpage xpage--wide py-6 pb-24">
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
       <a href="index.html" class="hover:underline">ศูนย์รวมการตั้งค่า</a>
@@ -82,9 +80,6 @@
     <!-- Title Area -->
     <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
       <div class="flex items-center gap-3">
-        <div id="tab-icon-tile" class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
-          <i data-lucide="door-open" class="h-6 w-6"></i>
-        </div>
         <div>
           <h2 id="tab-title" class="text-2xl font-bold tracking-tight text-slate-900">ข้อมูลห้องเรียน</h2>
           <p id="tab-desc" class="text-xs text-slate-500"></p>
@@ -116,7 +111,7 @@
     </div>
 
     <!-- Table Card -->
-    <div id="table-card" class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-w-6xl">
+    <div id="table-card" class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
       <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center flex-wrap gap-2">
         <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
           <i data-lucide="list" class="h-4 w-4 text-primary"></i> <span id="table-title">รายการทั้งหมด</span>
@@ -140,7 +135,7 @@
     </div>
 
     <!-- Panel ของแท็บที่ย้ายมาจาก care (school / homeroom / attendance) — เรนเดอร์ด้วย JS -->
-    <div id="custom-panel" class="hidden max-w-6xl font-sans text-sd-text"></div>
+    <div id="custom-panel" class="hidden font-sans text-sd-text"></div>
   </main>
 
   <!-- Add/Edit Modal -->
@@ -755,17 +750,19 @@
         if (custom) {
           document.getElementById('tab-title').textContent = custom.title;
           document.getElementById('tab-desc').textContent = custom.desc;
-          tile.className = TILE_CLASS_CUSTOM;
-          tile.innerHTML = custom.iconSvg;
+          if (tile) {
+            tile.className = TILE_CLASS_CUSTOM;
+            tile.innerHTML = custom.iconSvg;
+          }
           document.getElementById('classrooms-filter').classList.add('hidden');
           custom.render(panel);
           return;
         }
-        tile.className = TILE_CLASS_TABLE;
+        if (tile) tile.className = TILE_CLASS_TABLE;
         var def = TABS[currentTab];
         document.getElementById('tab-title').textContent = def.title;
         document.getElementById('tab-desc').textContent = def.desc;
-        document.getElementById('tab-icon-tile').innerHTML = '<i data-lucide="' + def.icon + '" class="h-6 w-6"></i>';
+        if (tile) tile.innerHTML = '<i data-lucide="' + def.icon + '" class="h-6 w-6"></i>';
         document.getElementById('table-title').textContent = def.title + 'ทั้งหมด';
 
         document.querySelectorAll('.tab-pill').forEach(function (a) {

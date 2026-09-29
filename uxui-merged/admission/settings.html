@@ -30,17 +30,15 @@
     }
   </style>
   <link rel="stylesheet" href="../shared/cross-nav.css">
+  <link rel="stylesheet" href="../shared/page-layout.css">
 </head>
 <body class="font-sans antialiased text-card-foreground">
 <script src="../shared/cross-nav.js"></script>
 
   <!-- Header (Consistent Layout) -->
   <header class="border-b border-slate-200 bg-card sticky top-0 z-30 shadow-sm">
-    <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-6 py-4">
+    <div class="xpage xpage--wide flex flex-wrap items-center gap-4 py-4">
       <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-md">
-          <i data-lucide="graduation-cap" class="h-5 w-5"></i>
-        </div>
         <div>
           <h1 class="text-lg font-bold leading-tight text-slate-900">ระบบบริหารจัดการผู้สมัครเรียน</h1>
           <p class="text-xs text-slate-500">Student Admission & Information System</p>
@@ -75,7 +73,7 @@
   </header>
 
   <!-- Main Container -->
-  <main class="mx-auto max-w-[1400px] px-6 py-6 pb-24">
+  <main class="xpage xpage--wide py-6 pb-24">
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-xs text-slate-500 mb-4 mt-2">
       <span class="hover:underline cursor-pointer" onclick="location.href='index.html'">ข้อมูลบุคคล</span>
@@ -87,9 +85,6 @@
 
     <!-- Title Area -->
     <div class="flex items-center gap-3 mb-8">
-      <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500 text-white shadow-md">
-        <i data-lucide="settings" class="h-6 w-6"></i>
-      </div>
       <div>
         <h2 class="text-2xl font-bold tracking-tight text-slate-900">ตั้งค่าการกรอกข้อมูลรับสมัครนักเรียนออนไลน์</h2>
         <p class="text-xs text-slate-500">กำหนดสถานะฟิลด์ข้อมูลที่ต้องการให้ผู้สมัครระบุในหน้าฟอร์มรับสมัคร</p>
@@ -118,12 +113,12 @@
     </div>
 
     <!-- Settings Groups Grid -->
-    <div id="settings-content" class="space-y-8 max-w-4xl">
+    <div id="settings-content" class="space-y-8">
       <!-- iOS groups will be rendered here dynamically -->
     </div>
 
     <!-- Buttons Panel -->
-    <div class="flex items-center justify-center gap-3 mt-10 border-t border-slate-200 pt-8 max-w-4xl">
+    <div class="flex items-center justify-center gap-3 mt-10 border-t border-slate-200 pt-8">
       <button id="btn-save" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3.5 font-semibold transition-all shadow-md active:scale-95 text-sm cursor-pointer">
         <i data-lucide="save" class="h-[18px] w-[18px]"></i> บันทึกการตั้งค่า
       </button>

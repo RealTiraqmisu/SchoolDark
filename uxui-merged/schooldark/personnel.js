@@ -1470,14 +1470,18 @@ function fillWizardDemo(e) {
             }
             break;
         }
-        case 'subtab-family-info':
-            setVal('fam-spouse-prefix', 'นาง');
-            setVal('fam-spouse', 'สมหญิง ใจดี');
+        case 'subtab-family-info': {
+            const ln = (document.getElementById('basic-lastname')?.value || '').trim() || 'ใจดี';
+            const ownPrefix = document.getElementById('basic-prefix')?.value || '';
+            const spouseIsMale = ownPrefix === 'นาง' || ownPrefix === 'นางสาว';
+            setVal('fam-spouse-prefix', spouseIsMale ? 'นาย' : 'นาง');
+            setVal('fam-spouse', spouseIsMale ? `สมชาย ${ln}` : `สมหญิง ${ln}`);
             setVal('fam-spouse-phone', '08' + wizardRandomDigits(8));
             if (!document.querySelector('#family-children-list .dynamic-row-item')) {
-                appendChildRow('เด็กชายสมปอง ใจดี');
+                appendChildRow(`เด็กชายสมปอง ${ln}`);
             }
             break;
+        }
         case 'subtab-edu-background':
             setVal('edu-degree', 'ปริญญาโท');
             setVal('edu-major', 'คณิตศาสตร์');
