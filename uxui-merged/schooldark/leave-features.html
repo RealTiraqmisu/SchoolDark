@@ -1497,22 +1497,13 @@
                     </label>
                   </div>
                   
-                  <div class="toggle-row">
-                    <div class="toggle-info">
-                      <span class="toggle-title">อนุญาตให้นักเรียนยื่นคำขอลาเอง</span>
-                      <span class="toggle-desc">หากปิดใช้งาน เฉพาะคุณครูประจำชั้นหรือแอดมินเท่านั้นที่จะเป็นผู้ลงใบลาแทนได้</span>
-                    </div>
-                    <label class="switch">
-                      <input type="checkbox" id="sett-student-apply-self" checked onchange="updateSettingPreview()">
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                  
+                  <!-- ไม่มีตัวเลือก "อนุญาตให้นักเรียนยื่นคำขอลาเอง" — นักเรียนยื่นลาเองไม่ได้ ใบลาต้องยื่นผ่าน
+                       ครูประจำชั้น/เจ้าหน้าที่ (view-sl-submit) เท่านั้น -->
                   <div class="grid-2" style="gap: 16px;">
                     <div class="form-group">
                       <label>เวลาจำกัดในการส่งใบลาภายในวัน (น.)</label>
                       <input type="time" class="glass-input" id="sett-deadline-time" value="08:30" oninput="updateSettingPreview()">
-                      <span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">ระบบจะไม่อนุญาตให้นักเรียนยื่นลาภายในวันนี้หากเลยเวลาที่กำหนด</span>
+                      <span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">ระบบจะไม่รับใบลาของวันนี้หากยื่นเลยเวลาที่กำหนด</span>
                     </div>
                     <div class="form-group">
                       <label>เตือนล่วงหน้าเมื่อถึงสัดส่วนโควตา (%)</label>
@@ -1569,7 +1560,8 @@
               <span style="color:var(--text-muted);font-size:13px;">ถึง</span>
               <input type="date" class="glass-input" id="sd-to" style="width:160px;" onchange="sdOnCustomDate()" aria-label="ถึงวันที่">
             </div>
-            <select class="glass-select" id="sd-class" style="width:150px;" onchange="sdOnFilterChange()" aria-label="ชั้นเรียน"></select>
+            <select class="glass-select" id="sd-grade" style="width:120px;" onchange="sdOnGradeChange()" aria-label="ระดับชั้น"></select>
+            <select class="glass-select" id="sd-room" style="width:120px;" onchange="sdOnRoomChange()" aria-label="ห้อง"></select>
             <button type="button" class="btn btn-secondary btn-sm sd-clear-btn" id="sd-clear-filters" onclick="sdResetFilters()" hidden><svg class="icon"><use href="#i-x"/></svg> ล้างตัวกรอง</button>
             <span class="sd-filter-spacer"></span>
             <button class="btn btn-primary btn-sm" onclick="sdExportExcel()"><svg class="icon"><use href="#i-download"/></svg> Export Excel</button>
@@ -5918,7 +5910,6 @@ function updateSettingPreview() {
     const sickDoc = document.getElementById('sett-sick-doc-required').checked;
     const sickDays = document.getElementById('sett-sick-doc-days').value;
     const alertParent = document.getElementById('sett-alert-parent').checked;
-    const selfApply = document.getElementById('sett-student-apply-self').checked;
     const deadline = document.getElementById('sett-deadline-time').value;
     const warnPct = document.getElementById('sett-quota-warning-percent').value;
     
@@ -5938,13 +5929,6 @@ function updateSettingPreview() {
             <span style="color: ${alertParent ? '#22c55e' : 'var(--text-muted)'}; font-size: 14px; line-height: 1;">●</span>
             <div>
               <strong>การแจ้งเตือนผู้ปกครอง:</strong> ${alertParent ? 'เปิดใช้งาน (ส่ง SMS/LINE ทันทีเมื่ออนุมัติสำเร็จ)' : 'ปิดใช้งาน'}
-            </div>
-          </div>
-          
-          <div style="display: flex; align-items: start; gap: 8px;">
-            <span style="color: ${selfApply ? '#22c55e' : 'var(--text-muted)'}; font-size: 14px; line-height: 1;">●</span>
-            <div>
-              <strong>สิทธิ์การส่งใบลา:</strong> ${selfApply ? 'นักเรียนสามารถล็อกอินเข้ามายื่นใบลาเองได้' : 'ให้เฉพาะคุณครู/ผู้ปกครองลงระบบให้'}
             </div>
           </div>
           
@@ -6502,8 +6486,8 @@ const SD_PRESETS = [
 ];
 // ชิปกรองในแท็บรายบุคคล — นับเป็น "จำนวนนักเรียนที่มีสถานะนั้นอย่างน้อย 1 วัน"
 const SD_PEOPLE_CHIPS = [
-  { key: 'late', label: 'มีมาสาย', cls: 'warning' }, { key: 'absent', label: 'มีขาดเรียน', cls: 'danger' },
-  { key: 'leave', label: 'มีลา', cls: 'info' }, { key: 'early', label: 'ออกก่อนเวลา', cls: 'warning' },
+  { key: 'late', label: 'มาสาย', cls: 'warning' }, { key: 'absent', label: 'ขาดเรียน', cls: 'danger' },
+  { key: 'leave', label: 'ลา', cls: 'info' }, { key: 'early', label: 'ออกก่อนเวลา', cls: 'warning' },
   { key: 'tickets', label: 'ใช้บัตรขออนุญาต', cls: 'info' }, { key: 'none', label: 'ยังไม่เช็คชื่อ', cls: 'muted' },
   { key: 'risk', label: 'กลุ่มเฝ้าระวัง', cls: 'danger' }
 ];
@@ -6597,23 +6581,45 @@ function sdMatchedPreset() {
   return hit ? hit.id : null;
 }
 
-// ---- ชั้นเรียน (ช่องเดียว: '' = ทุกชั้น, 'ม.1' = ทั้งชั้นปี, 'ม.1/1' = ห้องเดียว) ----
+// ---- ชั้นเรียน: 2 dropdown ระดับชั้น (sd-grade) + ห้อง (sd-room) ----
+// ค่าของห้องเป็นชื่อห้องเต็ม ('ม.1/1') เสมอ — ยังไม่เลือกระดับชั้น ห้องก็เลือกได้ (แสดงทุกห้อง)
+// และเลือกแล้วระดับชั้นจะตั้งตามให้เอง จึงไม่มีช่องที่กดไม่ได้
+// sdClassKey(): '' = ทุกชั้น, 'ม.1' = ทั้งชั้นปี, 'ม.1/1' = ห้องเดียว (ใช้เก็บตัวกรอง/เช็คค่าเริ่มต้น)
 function sdClassValue() {
-  const v = document.getElementById('sd-class').value;
-  if (!v) return { grade: '', room: '' };
-  const [grade, room] = v.split('/');
-  return { grade, room: room || '' };
+  const grade = document.getElementById('sd-grade').value;
+  const cls = document.getElementById('sd-room').value;
+  return { grade, room: cls ? cls.split('/')[1] : '' };
 }
-function sdFillClassSelect() {
-  const sel = document.getElementById('sd-class');
-  sel.innerHTML = '<option value="">ทุกชั้นเรียน</option>' + studentGradeOptions().map(g =>
-    `<optgroup label="${g}"><option value="${g}">${g} ทั้งหมด</option>` +
-    attRoomsOfGrade(g).map(r => `<option value="${g}/${r}">${g}/${r}</option>`).join('') + '</optgroup>').join('');
+function sdClassKey() { return document.getElementById('sd-room').value || document.getElementById('sd-grade').value; }
+function sdFillGradeSelect() {
+  document.getElementById('sd-grade').innerHTML = '<option value="">ทุกชั้นปี</option>' +
+    studentGradeOptions().map(g => `<option value="${g}">${g}</option>`).join('');
+}
+function sdFillRoomSelect() {
+  const grade = document.getElementById('sd-grade').value;
+  const grades = grade ? [grade] : studentGradeOptions();
+  document.getElementById('sd-room').innerHTML = '<option value="">ทุกห้อง</option>' +
+    grades.flatMap(g => attRoomsOfGrade(g).map(r => `<option value="${g}/${r}">${grade ? 'ห้อง ' + r : g + '/' + r}</option>`)).join('');
+}
+// ตั้งค่าตัวกรองชั้นเรียนจาก key ('' / 'ม.1' / 'ม.1/1')
+function sdSetClassKey(key) {
+  const [grade, room] = (key || '').split('/');
+  const gSel = document.getElementById('sd-grade');
+  gSel.value = [...gSel.options].some(o => o.value === grade) ? grade : '';
+  sdFillRoomSelect();
+  const rSel = document.getElementById('sd-room');
+  rSel.value = room && [...rSel.options].some(o => o.value === key) ? key : '';
+}
+function sdOnGradeChange() { sdFillRoomSelect(); sdOnFilterChange(); }
+function sdOnRoomChange() {
+  const cls = document.getElementById('sd-room').value;
+  if (cls && !document.getElementById('sd-grade').value) sdSetClassKey(cls); // เลือกห้องก่อน → ตั้งระดับชั้นตาม
+  sdOnFilterChange();
 }
 
 // ---- ตัวกรอง ----
 function sdSaveFilters() {
-  attStore(SD_FILTER_KEY, { preset: sdMatchedPreset(), period: sdPeriod, cls: document.getElementById('sd-class').value, trend: sdState.trend });
+  attStore(SD_FILTER_KEY, { preset: sdMatchedPreset(), period: sdPeriod, cls: sdClassKey(), trend: sdState.trend });
 }
 function sdSyncFilterBar() {
   const matched = sdMatchedPreset();
@@ -6629,15 +6635,14 @@ function sdSyncFilterBar() {
   const next = sdShiftPeriod(sdPeriod, 1);
   document.getElementById('sd-prev').disabled = !sdShiftPeriod(sdPeriod, -1);
   document.getElementById('sd-next').disabled = !next || next.from > attToday();
-  const isDefault = matched === 'month' && !document.getElementById('sd-class').value;
+  const isDefault = matched === 'month' && !sdClassKey();
   document.getElementById('sd-clear-filters').hidden = isDefault;
 }
 function renderStudentDashboardView() {
-  const sel = document.getElementById('sd-class');
-  if (!sel.options.length) {
-    sdFillClassSelect();
+  if (!document.getElementById('sd-grade').options.length) {
+    sdFillGradeSelect();
     const saved = attLoad(SD_FILTER_KEY, null) || {};
-    if (saved.cls && [...sel.options].some(o => o.value === saved.cls)) sel.value = saved.cls;
+    sdSetClassKey(saved.cls || '');
     if (['rate', 'status', 'rooms'].includes(saved.trend)) sdState.trend = saved.trend;
     // ปุ่มลัด (เดือนนี้/สัปดาห์นี้/…) คำนวณใหม่ตามวันนี้เสมอ ส่วนช่วงที่เลื่อนเอง/กำหนดเองใช้ค่าที่เก็บไว้
     const p = saved.preset && saved.preset !== 'custom' ? sdPresetPeriod(saved.preset) : saved.period;
@@ -6676,7 +6681,7 @@ function sdStep(dir) {
 }
 function sdResetFilters() {
   sdPeriod = sdPresetPeriod('month');
-  document.getElementById('sd-class').value = '';
+  sdSetClassKey('');
   sdOnFilterChange();
 }
 function sdOnFilterChange() { sdState.page = 1; sdSyncFilterBar(); sdSaveFilters(); renderStudentDashboard(); }
@@ -6858,7 +6863,7 @@ function sdClearPeopleFilters() {
   renderSDPeople();
 }
 function sdOpenRoom(cls) {
-  document.getElementById('sd-class').value = cls;
+  sdSetClassKey(cls);
   sdState.status = 'all'; sdState.sortKey = 'no'; sdState.sortDir = 1;
   sdOnFilterChange();
   sdGoTab('sd-people');
