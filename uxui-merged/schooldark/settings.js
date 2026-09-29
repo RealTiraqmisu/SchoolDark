@@ -307,7 +307,7 @@ function closeModal(id) {
 // VIEW SWITCHING
 // -------------------------------------------------------------
 
-function navigateToView(viewId) {
+function navigateToSettingsView(viewId) {
     settingsState.activeView = viewId;
     App.navigate('settings', viewId);
 
@@ -1757,7 +1757,7 @@ document.getElementById("btn-save-doc-signatories")?.addEventListener("click", (
 // ---- Staff Types (ประเภทบุคลากร) ----
 document.getElementById("btn-add-staff-type")?.addEventListener("click", openAddStaffTypeModal);
 document.getElementById("btn-confirm-staff-type")?.addEventListener("click", saveStaffTypeFromModal);
-document.getElementById("staff-type-search")?.addEventListener("input", renderStaffTypesView);
+document.getElementById("staff-type-search")?.addEventListener("input", debounce(renderStaffTypesView, 200));
 document.getElementById("staff-type-filter-status")?.addEventListener("change", renderStaffTypesView);
 
 document.getElementById("btn-save-staff-types")?.addEventListener("click", () => {
@@ -1770,7 +1770,7 @@ document.getElementById("btn-save-staff-types")?.addEventListener("click", () =>
 // ---- Positions (ตำแหน่ง) ----
 document.getElementById("btn-add-position")?.addEventListener("click", openAddPositionModal);
 document.getElementById("btn-confirm-position")?.addEventListener("click", savePositionFromModal);
-document.getElementById("position-search")?.addEventListener("input", renderPositionsView);
+document.getElementById("position-search")?.addEventListener("input", debounce(renderPositionsView, 200));
 document.getElementById("position-filter-status")?.addEventListener("change", renderPositionsView);
 document.getElementById("position-filter-type")?.addEventListener("change", renderPositionsView);
 
@@ -1784,7 +1784,7 @@ document.getElementById("btn-save-positions")?.addEventListener("click", () => {
 // ---- Departments / Learning Areas (แผนก/กลุ่มสาระการเรียนรู้) ----
 document.getElementById("btn-add-department")?.addEventListener("click", openAddDepartmentModal);
 document.getElementById("btn-confirm-department")?.addEventListener("click", saveDepartmentFromModal);
-document.getElementById("department-search")?.addEventListener("input", renderDepartmentsView);
+document.getElementById("department-search")?.addEventListener("input", debounce(renderDepartmentsView, 200));
 document.getElementById("department-filter-status")?.addEventListener("change", renderDepartmentsView);
 
 document.getElementById("btn-save-departments")?.addEventListener("click", () => {
@@ -1820,7 +1820,7 @@ function initQuickNav() {
     document.querySelectorAll(".quick-nav-card").forEach(card => {
         card.addEventListener("click", () => {
             const target = card.getAttribute("data-goto");
-            if (target) navigateToView(target);
+            if (target) navigateToSettingsView(target);
         });
     });
 }
@@ -1829,7 +1829,7 @@ function initQuickNav() {
 document.querySelectorAll(".menu-item[data-view]").forEach(item => {
     item.addEventListener("click", (e) => {
         const viewId = item.getAttribute("data-view");
-        navigateToView(viewId);
+        navigateToSettingsView(viewId);
     });
 });
 
@@ -1961,6 +1961,4 @@ document.addEventListener("DOMContentLoaded", () => {
     initQuickNav();
     setupSettingsOutlines();
 
-    // Default view
-    navigateToView("general");
 });

@@ -9,32 +9,31 @@
  * ====================================================================== */
 
 /* ----------------------------------------------------------------------
-   1) โทนสีของ sidebar เมื่อไม่ได้อยู่ในหน้า schooldark (ไม่มี --bg-sidebar ฯลฯ
-      ของ app.css ให้ใช้) — หน้า schooldark เองมี body.light-mode เสมอ (ใส่ไว้
-      ตรง ๆ ใน markup, ไม่มีโหมดมืดอีกต่อไป) จึงใช้ attribute บน <html>
-      (data-app="schooldark", ใส่ไว้ตรง ๆ ใน markup ไม่ใช่ทาง JS) เป็นตัวคัดแยก
-      เพื่อไม่ให้ค่า fallback พวกนี้ไปทับโทนจริงของฝั่ง schooldark
+   1) สี/ฟอนต์ของ sidebar — กำหนดที่นี่ "ที่เดียว" (token ขึ้นต้น --xnav-)
+      ทุกหน้า (schooldark/*, admission/*, settings/*) ได้ sidebar หน้าตาเดียวกัน (ชุดสีเนยสด)
+      ห้ามให้หน้าใดประกาศ --xnav-* หรือสไตล์ .sidebar ทับ และห้ามให้ sidebar ไปอ่านตัวแปรสีของหน้า
+      (เช่น --primary ของ schooldark/app.css) — ไม่งั้นสีจะแตกต่างกันระหว่างหน้าอีก
       ---------------------------------------------------------------- */
-html:not([data-app="schooldark"]) {
-    --bg-sidebar: #ffffff;
-    --bg-card: #f8fafc;
-    --border-color: #e2e8f0;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
-    --primary: #3e63dd;
-    --primary-hover: #2f51c7;
-    --primary-glow: rgba(62, 99, 221, 0.12);
-    --danger: #ef4444;
-    --danger-bg: rgba(239, 68, 68, 0.1);
-    --warning: #f59e0b;
-    --warning-bg: rgba(245, 158, 11, 0.1);
-    --success: #10b981;
-    --success-bg: rgba(16, 185, 129, 0.1);
-    --border-radius-md: 12px;
-    --border-radius-sm: 8px;
-    --font-heading: 'Sarabun', sans-serif;
-    --font-body: 'Sarabun', sans-serif;
+:root {
+    --xnav-bg: #ffffff;
+    --xnav-surface: #f8fafc;
+    --xnav-border: #e2e8f0;
+    --xnav-text: #0f172a;
+    --xnav-text-2: #475569;
+    --xnav-muted: #94a3b8;
+    --xnav-primary: #3e63dd;
+    --xnav-primary-hover: #2f51c7;
+    --xnav-primary-soft: rgba(62, 99, 221, 0.12);
+    --xnav-danger: #ef4444;
+    --xnav-danger-soft: rgba(239, 68, 68, 0.1);
+    --xnav-warning: #f59e0b;
+    --xnav-warning-soft: rgba(245, 158, 11, 0.1);
+    --xnav-success: #10b981;
+    --xnav-success-soft: rgba(16, 185, 129, 0.1);
+    --xnav-info: #3e63dd;
+    --xnav-radius-md: 12px;
+    --xnav-radius-sm: 8px;
+    --xnav-font: 'Sarabun', sans-serif;
 }
 
 /* ----------------------------------------------------------------------
@@ -44,13 +43,13 @@ html:not([data-app="schooldark"]) {
 aside.sidebar {
     width: 280px;
     flex-shrink: 0;
-    background-color: var(--bg-sidebar);
-    border-right: 1px solid var(--border-color);
+    background-color: var(--xnav-bg);
+    border-right: 1px solid var(--xnav-border);
     display: flex;
     flex-direction: column;
     padding: 24px;
     overflow: hidden;
-    font-family: var(--font-body);
+    font-family: var(--xnav-font);
     /* แก้แลค 1/5: ไม่ animate width/padding อีกต่อไป (เดิม transition 0.3s ทำให้
        ทั้งหน้า reflow ทุกเฟรมระหว่างย่อ/ขยาย ซ้ำกับการ์ดกระจกฝ้าที่ต้องคำนวณ
        backdrop-filter ใหม่ทุกครั้ง) — สลับขนาดทันที ไม่มี transition ที่ตัว aside
@@ -72,18 +71,18 @@ aside.sidebar {
 .sidebar-logo svg.logo-icon {
     width: 36px;
     height: 36px;
-    fill: var(--primary);
+    fill: var(--xnav-primary);
     flex-shrink: 0;
     /* แก้แลค 2/5: ตัด drop-shadow กระจกเรืองแสงออก (กินแรง paint แต่ไม่ได้ช่วย
        อ่านง่ายขึ้น) */
 }
 
 .sidebar-logo h1 {
-    font-family: var(--font-heading);
+    font-family: var(--xnav-font);
     font-size: 19px;
     font-weight: 700;
     letter-spacing: -0.5px;
-    color: var(--text-primary);
+    color: var(--xnav-text);
     white-space: nowrap;
 }
 
@@ -92,7 +91,7 @@ aside.sidebar {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--text-muted);
+    color: var(--xnav-muted);
     display: block;
     margin-top: -2px;
 }
@@ -100,7 +99,7 @@ aside.sidebar {
 .sidebar-toggle-btn {
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: var(--xnav-muted);
     cursor: pointer;
     width: 28px;
     height: 28px;
@@ -112,7 +111,7 @@ aside.sidebar {
     flex-shrink: 0;
     transition: color 150ms ease, background-color 150ms ease, opacity 150ms ease;
 }
-.sidebar-toggle-btn:hover { color: var(--text-primary); background: rgba(0, 0, 0, 0.06); opacity: 1; }
+.sidebar-toggle-btn:hover { color: var(--xnav-text); background: rgba(0, 0, 0, 0.06); opacity: 1; }
 .sidebar-toggle-btn svg { transition: transform 150ms ease; }
 
 /* สถานะย่อ sidebar — สลับทันที ไม่ animate (แก้แลค 1/5 ต่อ) */
@@ -134,7 +133,7 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: var(--text-muted);
+    color: var(--xnav-muted);
     margin-bottom: 8px;
     margin-top: 16px;
     padding-left: 12px;
@@ -159,8 +158,8 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     align-items: center;
     gap: 12px;
     padding: 10px 14px;
-    border-radius: var(--border-radius-md);
-    color: var(--text-secondary);
+    border-radius: var(--xnav-radius-md);
+    color: var(--xnav-text-2);
     text-decoration: none;
     font-size: 13.5px;
     font-weight: 500;
@@ -183,14 +182,14 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     flex-shrink: 0;
 }
 .menu-item:hover {
-    color: var(--text-primary);
-    background: var(--bg-card);
-    border-color: var(--border-color);
+    color: var(--xnav-text);
+    background: var(--xnav-surface);
+    border-color: var(--xnav-border);
 }
 .menu-item.active {
-    color: var(--text-primary);
-    background: var(--primary-glow);
-    border-color: var(--border-color);
+    color: var(--xnav-text);
+    background: var(--xnav-primary-soft);
+    border-color: var(--xnav-border);
 }
 .menu-item.active::before {
     content: '';
@@ -199,7 +198,7 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     top: 20%;
     height: 60%;
     width: 3px;
-    background: var(--primary);
+    background: var(--xnav-primary);
     border-radius: 0 4px 4px 0;
     /* แก้แลค 4/5: ตัด box-shadow เรืองแสงรอบแถบไฮไลต์ออก (ของเดิมมี glow ซ้อน
        ทุกแถวที่ active ทำให้ browser ต้อง paint เงาเบลอเพิ่มโดยไม่จำเป็น) */
@@ -215,12 +214,12 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     flex-shrink: 0;
     background: transparent;
     border: 1px solid transparent;
-    border-radius: var(--border-radius-md);
-    color: var(--text-muted);
+    border-radius: var(--xnav-radius-md);
+    color: var(--xnav-muted);
     cursor: pointer;
     transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease;
 }
-.submenu-toggle:hover { color: var(--text-primary); background: var(--bg-card); border-color: var(--border-color); }
+.submenu-toggle:hover { color: var(--xnav-text); background: var(--xnav-surface); border-color: var(--xnav-border); }
 .submenu-toggle svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; fill: none; transition: transform 150ms ease; }
 .menu-item-group.expanded .submenu-toggle svg { transform: rotate(180deg); }
 
@@ -245,8 +244,8 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     display: block;
     padding: 7px 10px;
     margin: 2px 0;
-    border-radius: var(--border-radius-sm);
-    color: var(--text-muted);
+    border-radius: var(--xnav-radius-sm);
+    color: var(--xnav-muted);
     text-decoration: none;
     font-size: 12.5px;
     cursor: pointer;
@@ -255,88 +254,88 @@ aside.sidebar.collapsed .submenu-toggle { display: none; }
     text-overflow: ellipsis;
     transition: color 120ms ease, background-color 120ms ease;
 }
-.submenu-item:hover, .submenu-link:hover { color: var(--text-primary); background: var(--bg-card); }
+.submenu-item:hover, .submenu-link:hover { color: var(--xnav-text); background: var(--xnav-surface); }
 .submenu-item.active,
-.submenu-link.active { color: var(--primary); font-weight: 600; }
+.submenu-link.active { color: var(--xnav-primary); font-weight: 600; }
 
 /* ช่องค้นหาเมนู (สร้างโดย cross-nav.js ใต้โลโก้) */
 .sidebar-search { position: relative; margin: -16px 0 12px; flex-shrink: 0; }
 .sidebar-search-icon {
     position: absolute; left: 0; top: 0; bottom: 0; width: 36px;
     display: flex; align-items: center; justify-content: center;
-    background: none; border: none; padding: 0; color: var(--text-muted); cursor: pointer;
+    background: none; border: none; padding: 0; color: var(--xnav-muted); cursor: pointer;
 }
 .sidebar-search-icon svg { width: 15px; height: 15px; }
 .sidebar-search-input {
     width: 100%;
     padding: 9px 34px 9px 34px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-md);
-    background: var(--bg-card);
-    color: var(--text-primary);
-    font-family: var(--font-body);
+    border: 1px solid var(--xnav-border);
+    border-radius: var(--xnav-radius-md);
+    background: var(--xnav-surface);
+    color: var(--xnav-text);
+    font-family: var(--xnav-font);
     font-size: 13px;
     outline: none;
     transition: border-color 120ms ease, box-shadow 120ms ease;
 }
-.sidebar-search-input::placeholder { color: var(--text-muted); }
-.sidebar-search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+.sidebar-search-input::placeholder { color: var(--xnav-muted); }
+.sidebar-search-input:focus { border-color: var(--xnav-primary); box-shadow: 0 0 0 3px var(--xnav-primary-soft); }
 .sidebar-search-input::-webkit-search-cancel-button { cursor: pointer; }
 .sidebar-search-kbd {
     position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-    font-family: var(--font-body); font-size: 11px; line-height: 1;
+    font-family: var(--xnav-font); font-size: 11px; line-height: 1;
     padding: 3px 6px; border-radius: 4px;
-    border: 1px solid var(--border-color); color: var(--text-muted); background: transparent;
+    border: 1px solid var(--xnav-border); color: var(--xnav-muted); background: transparent;
     pointer-events: none;
 }
 .sidebar-search-input:focus ~ .sidebar-search-kbd,
 aside.sidebar.is-searching .sidebar-search-kbd { display: none; }
-.sidebar-search-empty { font-size: 12.5px; color: var(--text-muted); text-align: center; padding: 16px 8px; margin: 0; }
+.sidebar-search-empty { font-size: 12.5px; color: var(--xnav-muted); text-align: center; padding: 16px 8px; margin: 0; }
 .sidebar-search-empty[hidden],
 .sidebar-menu [hidden] { display: none !important; }
 
 /* ระหว่างค้นหา: กางกลุ่มที่มีเมนูย่อยตรงคำค้น, ไฮไลต์คำที่ตรง, และแถบเลือกด้วยคีย์บอร์ด */
 .menu-item-group.search-open .submenu { grid-template-rows: 1fr; }
 .menu-item-group.search-open .submenu-toggle svg { transform: rotate(180deg); }
-.sidebar-menu mark { background: var(--warning-bg, rgba(245, 158, 11, 0.18)); color: inherit; border-radius: 3px; padding: 0 1px; }
-.sidebar-menu a.xnav-kbd { outline: 2px solid var(--primary); outline-offset: -2px; }
+.sidebar-menu mark { background: var(--xnav-warning-soft); color: inherit; border-radius: 3px; padding: 0 1px; }
+.sidebar-menu a.xnav-kbd { outline: 2px solid var(--xnav-primary); outline-offset: -2px; }
 
 /* sidebar ย่อ: เหลือแค่ไอคอนแว่นขยายให้กด (กดแล้วขยาย sidebar + โฟกัสช่องค้นหา) */
 aside.sidebar.collapsed .sidebar-search { margin: -16px 0 8px; height: 40px; }
 aside.sidebar.collapsed .sidebar-search-input,
 aside.sidebar.collapsed .sidebar-search-kbd { display: none; }
-aside.sidebar.collapsed .sidebar-search-icon { width: 100%; border-radius: var(--border-radius-md); }
-aside.sidebar.collapsed .sidebar-search-icon:hover { background: var(--bg-card); color: var(--text-primary); }
+aside.sidebar.collapsed .sidebar-search-icon { width: 100%; border-radius: var(--xnav-radius-md); }
+aside.sidebar.collapsed .sidebar-search-icon:hover { background: var(--xnav-surface); color: var(--xnav-text); }
 
-.sidebar-divider { height: 1px; background: var(--border-color); margin: 12px 0 4px; flex-shrink: 0; }
+.sidebar-divider { height: 1px; background: var(--xnav-border); margin: 12px 0 4px; flex-shrink: 0; }
 
-.sidebar-footer { padding-top: 16px; border-top: 1px solid var(--border-color); margin-top: auto; flex-shrink: 0; }
+.sidebar-footer { padding-top: 16px; border-top: 1px solid var(--xnav-border); margin-top: auto; flex-shrink: 0; }
 .user-profile-badge {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
-    border-radius: var(--border-radius-md);
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
+    border-radius: var(--xnav-radius-md);
+    background: var(--xnav-surface);
+    border: 1px solid var(--xnav-border);
 }
 .user-avatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--info, var(--primary)));
+    background: linear-gradient(135deg, var(--xnav-primary), var(--xnav-info));
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
     font-weight: 700;
     font-size: 14px;
-    font-family: var(--font-heading);
+    font-family: var(--xnav-font);
     flex-shrink: 0;
 }
 .user-info { flex-grow: 1; min-width: 0; overflow: hidden; }
-.user-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
-.user-role { font-size: 11px; color: var(--text-muted); }
+.user-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--xnav-text); }
+.user-role { font-size: 11px; color: var(--xnav-muted); }
 
 /* badge เล็กท้ายเมนู (จำนวนรออนุมัติ ฯลฯ) — ผูก scope ไว้ใต้ .sidebar-menu เพื่อ
    ไม่ไปแก้ลุคของ .badge ที่ใช้ในตารางอื่นของ schooldark (มี specificity สูงกว่า
@@ -351,7 +350,7 @@ aside.sidebar.collapsed .sidebar-search-icon:hover { background: var(--bg-card);
     margin-left: auto;
 }
 .sidebar-menu .badge.danger,
-.sidebar-menu .badge-pending { color: var(--danger); background: var(--danger-bg); }
+.sidebar-menu .badge-pending { color: var(--xnav-danger); background: var(--xnav-danger-soft); }
 
 /* ----------------------------------------------------------------------
    3) โหมด fixed-sidebar สำหรับหน้าที่ไม่มีโครง .app-container ของ schooldark
@@ -375,24 +374,6 @@ html.xnav-fixed-layout.xnav-collapsed body {
    ไว้ — ยกเลิกการซ่อนได้ในอนาคตด้วยการลบกฎนี้ทีเดียว โดยไม่ต้องแก้ทีละหน้า) */
 [data-legacy-tabs] { display: none !important; }
 
-@media (max-width: 1024px) {
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) { width: 72px; padding: 24px 12px; }
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .logo-group,
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .menu-label,
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .menu-item span,
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-footer .user-info { display: none; }
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .menu-item { justify-content: center; padding: 12px; }
-    /* เดิมช่องค้นหา/เมนูย่อยไม่ถูกซ่อนตอนบีบเป็น rail 72px เลยยังโชว์เต็มความกว้าง
-       บีบอยู่ในแถบแคบ ๆ ดูแปลก ๆ — ซ่อนให้เหมือนสถานะ .collapsed แบบเดียวกัน */
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-search-input,
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-search-kbd { display: none; }
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-search { margin: -16px 0 8px; height: 40px; }
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .sidebar-search-icon { width: 100%; border-radius: var(--border-radius-md); }
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .submenu,
-    html.xnav-fixed-layout aside.sidebar:not(.collapsed) .submenu-toggle { display: none; }
-    html.xnav-fixed-layout body { padding-left: 72px; }
-}
-
 /* ----------------------------------------------------------------------
    4) มือถือ (≤768px): sidebar กลายเป็น off-canvas เต็มอัน (ไม่ใช่ rail 72px
       แบบ tablet ด้านบน) ซ่อนไว้นอกจอด้วย transform จนกว่าจะกดปุ่มแฮมเบอร์เกอร์
@@ -414,10 +395,10 @@ html.xnav-fixed-layout.xnav-collapsed body {
     height: 40px;
     align-items: center;
     justify-content: center;
-    background: var(--bg-sidebar, #fff);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-md);
-    color: var(--text-primary);
+    background: var(--xnav-bg);
+    border: 1px solid var(--xnav-border);
+    border-radius: var(--xnav-radius-md);
+    color: var(--xnav-text);
     cursor: pointer;
 }
 .xnav-backdrop {
@@ -468,11 +449,11 @@ html.xnav-fixed-layout.xnav-collapsed body {
 /* shortcut ในแต่ละหมวด → พาไปศูนย์รวมการตั้งค่า (settings/index.html) */
 .menu-item.menu-shortcut {
     font-size: 12.5px;
-    color: var(--text-muted);
+    color: var(--xnav-muted);
     padding-top: 7px;
     padding-bottom: 7px;
     border-style: dashed;
-    border-color: var(--border-color);
+    border-color: var(--xnav-border);
 }
 .menu-item.menu-shortcut::after {
     content: '→';
@@ -480,5 +461,15 @@ html.xnav-fixed-layout.xnav-collapsed body {
     font-size: 12px;
     opacity: .7;
 }
-.menu-item.menu-shortcut:hover { color: var(--primary); }
+.menu-item.menu-shortcut:hover { color: var(--xnav-primary); }
 aside.sidebar.collapsed .menu-item.menu-shortcut::after { display: none; }
+
+/* ปิด animation ของ sidebar ตอนโหลดหน้า — class ถูกใส่/ปลดโดย cross-nav.js (กันเมนูกาง/หุบให้เห็นหลายรอบ) */
+html.xnav-preload .sidebar,
+html.xnav-preload .sidebar * { transition: none !important; }
+
+/* sidebar ต้องขนาดเท่ากันทุกระบบ (ยึดฝั่ง admission/Tailwind preflight: line-height 1.5, ปุ่ม/ช่องกรอกสืบทอดฟอนต์)
+   ไม่งั้นกดข้ามระบบแล้วทุกอย่างใต้เมาส์เลื่อน (schooldark ไม่มี preflight → line-height normal, ปุ่ม 13.33px) */
+.sidebar { line-height: 1.5; font-family: var(--xnav-font); }
+:where(.sidebar) button, :where(.sidebar) input { font-family: inherit; font-size: 100%; line-height: inherit; }
+.sidebar h1, .sidebar .user-avatar { font-family: inherit; }

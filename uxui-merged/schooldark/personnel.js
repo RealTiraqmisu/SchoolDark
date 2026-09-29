@@ -1317,9 +1317,10 @@ function setupExcelImport() {
     // Bind template download button click listener
     const downloadBtn = document.getElementById('btn-download-template');
     if (downloadBtn) {
-        downloadBtn.addEventListener('click', (e) => {
+        downloadBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             try {
+                await loadScriptOnce(LAZY_LIBS.xlsx);
                 const templateData = [
                     {
                         "รหัสบุคลากร": "T-008",
@@ -1641,7 +1642,10 @@ function setupExcelImport() {
                 showToast("เกิดข้อผิดพลาดในการอ่านไฟล์ Excel ตรวจสอบให้แน่ใจว่าโหลดไลบรารี SheetJS แล้ว", "danger");
             }
         };
-        reader.readAsArrayBuffer(file);
+        loadScriptOnce(LAZY_LIBS.xlsx).then(() => reader.readAsArrayBuffer(file)).catch(() => {
+            progressContainer.style.display = 'none';
+            showToast("โหลดไลบรารี Excel ไม่สำเร็จ (ต้องเชื่อมต่ออินเทอร์เน็ต)", "danger");
+        });
     }
     
     function displayExcelPreviewData(filename) {
@@ -2367,10 +2371,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Search directory event listener
-    document.getElementById('directory-search')?.addEventListener('input', function() {
+    document.getElementById('directory-search')?.addEventListener('input', debounce(function() {
         const statusVal = document.getElementById('directory-filter-status').value;
         populateDirectoryTable(this.value, statusVal);
-    });
+    }, 200));
     
     document.getElementById('directory-filter-status')?.addEventListener('change', function() {
         const searchVal = document.getElementById('directory-search').value;

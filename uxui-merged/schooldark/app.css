@@ -4,7 +4,7 @@
    แยกส่วนด้วย comment headers
    ============================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
+/* ฟอนต์ Outfit + Sarabun ย้ายไปเป็น <link> ใน <head> ของ app.html / leave-features.html (ลดการบล็อกการเรนเดอร์จาก @import) */
 
 /* =============================================================
    SECTION 1: CSS VARIABLES & THEME (Unified from all 3 files)
@@ -16,7 +16,6 @@
     /* Light Mode (only mode — dark mode removed) */
     --bg-app:      hsl(210, 40%, 94%);
     --bg-main:     hsl(0, 0%, 100%);
-    --bg-sidebar:  hsl(210, 30%, 97%);
     --bg-card:     #ffffff;
     --border-color: rgba(0, 0, 0, 0.12);
     --border-focus: hsla(250, 85%, 55%, 0.4);
@@ -72,6 +71,17 @@
     --br-md: 14px;
     --br-lg: 20px;
     --speed: 0.3s;
+}
+
+/* ธีมเนยสด (เฉพาะสี) — ใช้แค่แดชบอร์ดหลักก่อน (2026-09-29) ดู CHANGES-FOR-CARE.md
+   ค่าตรงกับ admission/js/tailwind-config.js — การ์ด/เงา/พื้นหลังหน้ายังเป็นของแคร์ตามที่ตกลง */
+#module-dashboard {
+    --primary: #3e63dd;  --primary-hover: #2f51c7;  --primary-glow: rgba(62, 99, 221, 0.12);
+    --border-focus: rgba(62, 99, 221, 0.4);
+    --success: #047857;  --success-bg: rgba(4, 120, 87, 0.1);   --success-glow: rgba(4, 120, 87, 0.15);
+    --warning: #b45309;  --warning-bg: rgba(180, 83, 9, 0.08);
+    --danger:  #dc2626;  --danger-bg:  rgba(220, 38, 38, 0.08); --danger-glow: rgba(220, 38, 38, 0.15);
+    --info:    #0369a1;  --info-bg:    rgba(3, 105, 161, 0.08);
 }
 
 /* =============================================================

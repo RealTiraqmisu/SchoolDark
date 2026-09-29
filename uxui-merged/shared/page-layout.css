@@ -1,0 +1,9 @@
+/* page-layout.css — ความกว้างเนื้อหาของหน้า (ใช้ร่วมทุกระบบ) — เลือก 1 แบบต่อหน้า
+   .xpage--read : หน้าอ่าน/ฟอร์ม/รายละเอียด → ตรงกลาง จำกัดความกว้าง อ่านสบายบนจอกว้าง
+   .xpage--wide : หน้าตาราง/แดชบอร์ด/ปฏิทิน → เต็มพื้นที่เนื้อหา ตารางไม่ต้องเลื่อนแนวนอน
+   ใส่คลาสเดียวกันทั้งที่ <header> ด้านใน และ <main> เพื่อให้หัวหน้า/เนื้อหาตรงแนวเดียวกันเสมอ */
+.xpage { width: 100%; margin-inline: auto; padding-inline: 24px; box-sizing: border-box; }
+.xpage--read { max-width: 1280px; }
+.xpage--wide { max-width: none; }
+@media (min-width: 1536px) { .xpage { padding-inline: 32px; } }
+@media (max-width: 640px)  { .xpage { padding-inline: 16px; } }

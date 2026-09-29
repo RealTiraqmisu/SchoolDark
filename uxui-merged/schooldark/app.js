@@ -25,18 +25,18 @@ const App = (() => {
     // Map of view -> page title (Thai)
     const VIEW_TITLES = {
         'dashboard-main'  : { title: 'แดชบอร์ดภาพรวม',           crumb: 'SchoolDark / ภาพรวม' },
-        'leave-settings'  : { title: 'ตั้งค่าการลา',              crumb: 'ระบบการลา / ตั้งค่า' },
-        'leave-form'      : { title: 'ยื่นคำขอลา',        crumb: 'ระบบการลา / ยื่นใบลา' },
-        'leave-approve'   : { title: 'อนุมัติการลา',              crumb: 'ระบบการลา / อนุมัติ' },
-        'settings'        : { title: 'ตั้งค่าการลา',              crumb: 'ระบบการลา / ตั้งค่า' },
-        'form'            : { title: 'ยื่นคำขอลา',        crumb: 'ระบบการลา / ยื่นใบลา' },
-        'approve'         : { title: 'อนุมัติการลา',              crumb: 'ระบบการลา / อนุมัติ' },
-        'directory'       : { title: 'รายชื่อบุคลากร',             crumb: 'บุคลากร / รายชื่อ' },
-        'basic-info'      : { title: 'ข้อมูลพื้นฐานบุคลากร',       crumb: 'บุคลากร / ข้อมูลพื้นฐาน' },
-        'education'       : { title: 'ข้อมูลการศึกษา & อบรม',     crumb: 'บุคลากร / การศึกษา' },
-        'job-license'     : { title: 'ตำแหน่ง & ใบประกอบฯ',       crumb: 'บุคลากร / ตำแหน่ง' },
-        'import-hub'      : { title: 'นำเข้าข้อมูลบุคลากร',        crumb: 'บุคลากร / นำเข้าข้อมูล' },
-        'print-studio'    : { title: 'พิมพ์บาร์โค้ด & QR Studio', crumb: 'บุคลากร / พิมพ์ & QR' },
+        'leave-settings'  : { title: 'ตั้งค่าการลา',              crumb: 'การตั้งค่า / ตั้งค่าการลา' },
+        'leave-form'      : { title: 'ยื่นคำขอลา',        crumb: 'งานบริหารการลา / ยื่นใบลา (บุคลากร)' },
+        'leave-approve'   : { title: 'อนุมัติการลา',              crumb: 'งานบริหารการลา / อนุมัติ (บุคลากร)' },
+        'settings'        : { title: 'ตั้งค่าการลา',              crumb: 'การตั้งค่า / ตั้งค่าการลา' },
+        'form'            : { title: 'ยื่นคำขอลา',        crumb: 'งานบริหารการลา / ยื่นใบลา (บุคลากร)' },
+        'approve'         : { title: 'อนุมัติการลา',              crumb: 'งานบริหารการลา / อนุมัติ (บุคลากร)' },
+        'directory'       : { title: 'รายชื่อบุคลากร',             crumb: 'งานบุคลากร / รายชื่อ' },
+        'basic-info'      : { title: 'ข้อมูลพื้นฐานบุคลากร',       crumb: 'งานบุคลากร / ข้อมูลพื้นฐาน' },
+        'education'       : { title: 'ข้อมูลการศึกษา & อบรม',     crumb: 'งานบุคลากร / การศึกษา' },
+        'job-license'     : { title: 'ตำแหน่ง & ใบประกอบฯ',       crumb: 'งานบุคลากร / ตำแหน่ง' },
+        'import-hub'      : { title: 'นำเข้าข้อมูลบุคลากร',        crumb: 'งานบุคลากร / นำเข้าข้อมูล' },
+        'print-studio'    : { title: 'พิมพ์บาร์โค้ด & QR Studio', crumb: 'งานบุคลากร / พิมพ์ & QR' },
         'general'         : { title: 'การตั้งค่าทั่วไป',            crumb: 'ตั้งค่าระบบ / ทั่วไป' },
         'homeroom'        : { title: 'ข้อมูลครูประจำชั้น',          crumb: 'ตั้งค่าระบบ / ครูประจำชั้น' },
         'schedule'        : { title: 'ตั้งค่าวันเวลาเข้าออก',       crumb: 'ตั้งค่าระบบ / วันเวลา' },
@@ -231,9 +231,7 @@ const App = (() => {
         const sidebar   = qs('#sidebar');
         const toggleBtn = qs('#sidebar-toggle-btn');
         if (!toggleBtn || !sidebar) return;
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-        });
+        // ปุ่มย่อ/ขยาย sidebar ย้ายไปคุมที่ ../shared/cross-nav.js ที่เดียว (2026-09-29) — ห้าม toggle ซ้ำที่นี่ ไม่งั้นกดแล้วไม่เปลี่ยน
     }
 
     // Dark mode ถูกถอดออกทั้งหมดแล้ว — เหลือแค่โหมดสว่างโหมดเดียว (body.light-mode ถูกใส่ไว้ตรง ๆ ใน HTML)

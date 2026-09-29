@@ -52,6 +52,22 @@
   // แปะ sidebar ทับ ให้แค่เติมการ์ดผ่าน #cross-nav-hub เหมือนเดิม
   var IS_HUB = !CURRENT_DIR && CURRENT === 'index.html';
 
+  // view เริ่มต้นของหน้า SPA ใน schooldark — ต้องตรงกับที่หน้านั้นเปิดเองตอนโหลด
+  // (app.js App.init → dashboard-main, leave-features.js → view ที่ HTML ตั้ง .active ไว้ = leave-card)
+  // ใช้ให้ sidebar มี active/expanded ถูกตัวเดียวตั้งแต่เฟรมแรก แทนที่จะ active ทุกเมนูของหน้านี้แล้วค่อยหุบ (เมนู "เด้ง")
+  // ถ้าแคร์เปลี่ยน view เริ่มต้นของหน้า ต้องแก้ตารางนี้ด้วย
+  var SPA_DEFAULT_VIEW = { 'schooldark/app.html': 'dashboard-main', 'schooldark/leave-features.html': 'leave-card' };
+  var INITIAL_SPA = (function () {
+    var p = {};
+    location.hash.slice(1).split('&').forEach(function (kv) { var a = kv.split('='); if (a[0]) p[a[0]] = decodeURIComponent(a[1] || ''); });
+    return p.v ? { view: p.v, module: p.m || '' } : { view: SPA_DEFAULT_VIEW[CURRENT] || '', module: '' };
+  })();
+  function isInitialSpaItem(item) {
+    var norm = function (v) { return String(v || '').replace(/^leave-/, ''); }; // App.navigate เติม/ตัด 'leave-' เอง
+    if (!INITIAL_SPA.view || norm(item.view) !== norm(INITIAL_SPA.view)) return false;
+    return !INITIAL_SPA.module || !item.module || item.module === INITIAL_SPA.module;
+  }
+
   // หน้าย่อยของ admission ที่เข้าถึงจากเมนู "ข้อมูลนักเรียน" (ไม่มีเมนูของตัวเอง)
   // apply.html ย้ายออกไปเป็น apply/register.html แล้ว (พอร์ทัลสาธารณะแยกจาก admission/) — ไม่มี
   // alias มาที่นี่อีกต่อไป
@@ -151,13 +167,53 @@
       ]
     },
     {
-      label: 'ภาพรวม',
+      // เมนูเดียวบนสุด ไม่มีหัวหมวด (label ว่าง → renderGroups ไม่สร้างหัวหมวด)
+      label: '',
       items: [
         { id: 'menu-dashboard', icon: 'dashboard', label: 'แดชบอร์ดภาพรวม', page: SD_APP, module: 'dashboard', view: 'dashboard-main', keywords: 'หน้าแรก สรุป สถิติ' }
       ]
     },
     {
-      label: 'บุคลากร',
+      label: 'งานทะเบียนนักเรียน',
+      items: [
+        { icon: 'users', label: 'ข้อมูลนักเรียน', page: 'admission/students.html', keywords: 'ทะเบียน นักเรียน' }
+      ]
+    },
+    {
+      // หน้าสมัครออนไลน์ฝั่งผู้สมัครอยู่ที่กลุ่ม 'public' (apply/) — กลุ่มนี้คือฝั่งเจ้าหน้าที่
+      label: 'งานรับสมัครออนไลน์',
+      items: [
+        { icon: 'clipboardList', label: 'บอร์ดรับสมัคร', page: 'admission/index.html', keywords: 'สมัครเรียน ม.1 ม.4 ผู้สมัคร' }
+      ]
+    },
+    {
+      // งานกิจการนักเรียน: Team C เป็นเจ้าของหลัก แต่ฝั่งเราก็มีส่วนที่ต้องทำด้วย จึงมีเมนูอยู่ที่นี่
+      label: 'งานกิจการนักเรียน',
+      items: [
+        { icon: 'dashboard', label: 'แดชบอร์ดการมาเรียน', page: SD_LEAVE, view: 'student-dashboard', keywords: 'สถิติ สรุป กราฟ ขาด สาย ลา บัตรขออนุญาต รายห้อง' },
+        { icon: 'check', label: 'เช็คชื่อนักเรียน', page: SD_LEAVE, view: 'attendance-check', keywords: 'เช็คชื่อ มาเรียน ขาด สาย ครูประจำชั้น' },
+        { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย' },
+        {
+          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย',
+          children: [
+            { label: '1. ค้นหานักเรียน', step: '1' },
+            { label: '2. เลือกประเภท', step: '2' },
+            { label: '3. กรอกรายละเอียด', step: '3' }
+          ]
+        },
+        {
+          icon: 'calendar', label: 'รายการบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-calendar', keywords: 'ปฏิทิน อนุมัติบัตร รายงาน สรุป',
+          badgeId: 'sidebar-ticket-badge', badgeClass: 'danger',
+          children: [
+            { label: 'รายการบัตรขออนุญาตของนักเรียน', tab: 'tk-list' },
+            { label: 'ประวัติรายบุคคล', tab: 'personal' },
+            { label: 'สรุปรวมตามชั้นเรียน', tab: 'summary' }
+          ]
+        }
+      ]
+    },
+    {
+      label: 'งานบุคลากร',
       items: [
         // รายชื่อบุคลากรมีที่เดียว (เดิมมี "รายชื่อบุคลากรและอาจารย์" ใน leave-features.html ซ้ำอีกอัน)
         { id: 'menu-directory', icon: 'users', label: 'รายชื่อบุคลากร', page: SD_APP, module: 'personnel', view: 'directory', keywords: 'ครู อาจารย์ พนักงาน staff' },
@@ -198,72 +254,30 @@
       ]
     },
     {
-      label: 'การลาของบุคลากร',
+      // รวมการลาของบุคลากร + นักเรียนไว้หมวดเดียว (ไม่ทำเมนูซ้ำ 2 ที่ — การลานักเรียนเชื่อมกับงานกิจการนักเรียนอยู่แล้ว
+      // เช่นแดชบอร์ดการมาเรียนดึงใบลาที่อนุมัติแล้ว; การลาบุคลากรอาจเชื่อมงานบุคลากรภายหลัง)
+      label: 'งานบริหารการลา',
       items: [
-        { id: 'menu-leave-form', icon: 'fileText', label: 'ยื่นคำขอลา', page: SD_APP, module: 'leave', view: 'leave-form', keywords: 'ใบลา ลาป่วย ลากิจ ลาพักผ่อน' },
+        { id: 'menu-leave-form', icon: 'fileText', label: 'ยื่นคำขอลา (บุคลากร)', page: SD_APP, module: 'leave', view: 'leave-form', keywords: 'ใบลา ลาป่วย ลากิจ ลาพักผ่อน บุคลากร ครู' },
         {
-          id: 'menu-leave-approve', icon: 'checkCircle', label: 'อนุมัติการลา', page: SD_APP, module: 'leave', view: 'leave-approve', keywords: 'ใบลา อนุมัติ ปฏิทิน',
+          id: 'menu-leave-approve', icon: 'checkCircle', label: 'อนุมัติการลา (บุคลากร)', page: SD_APP, module: 'leave', view: 'leave-approve', keywords: 'ใบลา อนุมัติ ปฏิทิน บุคลากร ครู',
           badgeId: 'sidebar-approval-badge', badgeClass: 'badge-pending',
           children: [
             { label: 'รายการคำขอ', tab: 'requests' },
             { label: 'ประวัติการลารายบุคคล', tab: 'profile' }
           ]
-        }
-      ]
-    },
-    {
-      label: 'การมาเรียนของนักเรียน',
-      items: [
-        { icon: 'dashboard', label: 'แดชบอร์ดการมาเรียน', page: SD_LEAVE, view: 'student-dashboard', keywords: 'สถิติ สรุป กราฟ ขาด สาย ลา บัตรขออนุญาต รายห้อง' },
-        { icon: 'check', label: 'เช็คชื่อนักเรียน', page: SD_LEAVE, view: 'attendance-check', keywords: 'เช็คชื่อ มาเรียน ขาด สาย ครูประจำชั้น' },
-        { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย' }
-      ]
-    },
-    {
-      label: 'การลาเรียนของนักเรียน',
-      items: [
-        {
-          icon: 'fileText', label: 'ยื่นขอลาของนักเรียน', page: SD_LEAVE, view: 'sl-submit', keywords: 'ลาป่วย ลากิจ นักเรียน'
         },
         {
-          icon: 'checkCircle', label: 'อนุมัติการลานักเรียน', page: SD_LEAVE, view: 'approve', keywords: 'ลาเรียน อนุมัติ ปฏิทิน',
+          icon: 'fileText', label: 'ยื่นขอลา (นักเรียน)', page: SD_LEAVE, view: 'sl-submit', keywords: 'ลาป่วย ลากิจ นักเรียน นักเรียน'
+        },
+        {
+          icon: 'checkCircle', label: 'อนุมัติการลา (นักเรียน)', page: SD_LEAVE, view: 'approve', keywords: 'ลาเรียน อนุมัติ ปฏิทิน นักเรียน',
           badgeId: 'sidebar-approve-badge', badgeClass: 'danger',
           children: [
             { label: 'รายการคำขอ', tab: 'requests' },
             { label: 'ประวัติการลา', tab: 'leave-history' }
           ]
         }
-      ]
-    },
-    {
-      label: 'บัตรขออนุญาตนักเรียน',
-      items: [
-        {
-          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย',
-          children: [
-            { label: '1. ค้นหานักเรียน', step: '1' },
-            { label: '2. เลือกประเภท', step: '2' },
-            { label: '3. กรอกรายละเอียด', step: '3' }
-          ]
-        },
-        {
-          icon: 'calendar', label: 'รายการบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-calendar', keywords: 'ปฏิทิน อนุมัติบัตร รายงาน สรุป',
-          badgeId: 'sidebar-ticket-badge', badgeClass: 'danger',
-          children: [
-            { label: 'รายการบัตรขออนุญาตของนักเรียน', tab: 'tk-list' },
-            { label: 'ประวัติรายบุคคล', tab: 'personal' },
-            { label: 'สรุปรวมตามชั้นเรียน', tab: 'summary' }
-          ]
-        }
-      ]
-    },
-    {
-      label: 'รับสมัคร & ทะเบียนนักเรียน',
-      items: [
-        { icon: 'clipboardList', label: 'บอร์ดรับสมัคร', page: 'admission/index.html', keywords: 'สมัครเรียน ม.1 ม.4 ผู้สมัคร' },
-        { icon: 'users', label: 'ข้อมูลนักเรียน', page: 'admission/students.html', keywords: 'ทะเบียน นักเรียน' }
-        // พอร์ทัลสมัครเรียน/ตรวจสอบสถานะ ย้ายไปกลุ่ม 'public' แล้ว (แยกเป็น apply/ ทั้งโฟลเดอร์
-        // เป็นพอร์ทัลสาธารณะสำหรับผู้สมัคร ไม่ใช่เมนูของเจ้าหน้าที่อีกต่อไป — ดูกลุ่ม 'public' ด้านบน)
       ]
     },
     {
@@ -367,7 +381,8 @@
     // (ตั้งค่าจริงใน syncAnchorActive() หลัง inject และทุกครั้งที่ hashchange)
     var anchorHere = isCurrentPage(item.page) && !item.module && !item.view;
     if (anchorHere) isActive = false;
-
+    // หน้า SPA (schooldark): item ของหน้านี้ active เฉพาะ view ที่หน้าจะเปิดตอนโหลดจริง
+    if (samePage && item.view) isActive = isInitialSpaItem(item);
     // attribute สำหรับ item ที่อยู่หน้าเดียวกัน (ให้ JS เดิมของหน้านั้น bind SPA switching)
     var attrs = '';
     var href = '';
@@ -446,7 +461,7 @@
       var visible = group.items.filter(function (it) { return !it.hubOnly; });
       if (!visible.length) return;
       out.push((out.length ? '<div class="sidebar-divider"></div>' : '') +
-        '<li><p class="menu-label">' + escapeHtml(group.label) + '</p></li>' + visible.map(renderItem).join(''));
+        (group.label ? '<li><p class="menu-label">' + escapeHtml(group.label) + '</p></li>' : '') + visible.map(renderItem).join(''));
     });
     return out.join('');
   }
@@ -518,6 +533,9 @@
   // (ข้ามทั้งบล็อกนี้บนหน้า hub — ดู IS_HUB ด้านบน)
   // ------------------------------------------------------------------
   if (!IS_HUB) {
+    // ปิด transition ของ sidebar ระหว่างโหลดหน้า (ปลดด้านล่าง หลังทุก handler DOMContentLoaded ทำงานเสร็จ)
+    document.documentElement.classList.add('xnav-preload');
+
   var built = renderSidebarInner();
   var hostAside = thisScript.closest('aside.sidebar');
   var sidebarEl;
@@ -597,25 +615,17 @@
         if (group) group.classList.toggle('expanded');
       });
     });
-    var toggleBtn = sidebarEl.querySelector('#sidebar-toggle-btn');
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', function () {
-        var nowCollapsed = sidebarEl.classList.toggle('collapsed');
-        document.documentElement.classList.toggle('xnav-collapsed', nowCollapsed);
-        try { localStorage.setItem(COLLAPSE_KEY, nowCollapsed ? '1' : '0'); } catch (e) {}
-      });
-    }
-  } else {
-    // schooldark: ปุ่มย่อ/ขยายถูก toggle โดย app.js/index.js/settings.js เองอยู่แล้ว
-    // เราแค่ "จำ" สถานะหลังจากนั้นไว้ใช้ตอนโหลดหน้าใหม่
-    var sdToggleBtn = sidebarEl.querySelector('#sidebar-toggle-btn');
-    if (sdToggleBtn) {
-      sdToggleBtn.addEventListener('click', function () {
-        setTimeout(function () {
-          try { localStorage.setItem(COLLAPSE_KEY, sidebarEl.classList.contains('collapsed') ? '1' : '0'); } catch (e) {}
-        }, 0);
-      });
-    }
+  }
+
+  // ปุ่มย่อ/ขยาย sidebar — cross-nav.js คุม "ที่เดียวทุกหน้า" (2026-09-29)
+  // เดิมบน schooldark ปล่อยให้ app.js คุมเอง แต่ leave-features ไม่มี handler เลย ปุ่มเลยกดไม่ได้บางหน้า
+  var toggleBtn = sidebarEl.querySelector('#sidebar-toggle-btn');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function () {
+      var nowCollapsed = sidebarEl.classList.toggle('collapsed');
+      document.documentElement.classList.toggle('xnav-collapsed', nowCollapsed);
+      try { localStorage.setItem(COLLAPSE_KEY, nowCollapsed ? '1' : '0'); } catch (e) {}
+    });
   }
 
   // ไฮไลต์ item แบบ #anchor ของหน้าปัจจุบันตาม location.hash — hash ตรงกับ anchor ตัวไหน
@@ -708,6 +718,15 @@
       if (target) target.click();
     }, 0); });
   }
+
+  // ปลด xnav-preload (ปิด transition ของ sidebar ระหว่างโหลด) หลัง handler DOMContentLoaded ของทุกหน้า
+  // + deep-link ทำงานเสร็จ รอ 2 เฟรมให้สถานะสุดท้ายของเมนูถูกวาดก่อน → เมนูไม่กาง/หุบให้เห็นตอนโหลด
+  whenDomReady(function () { setTimeout(function () {
+    var done = false;
+    function endPreload() { if (done) return; done = true; document.documentElement.classList.remove('xnav-preload'); }
+    requestAnimationFrame(function () { requestAnimationFrame(endPreload); });
+    setTimeout(endPreload, 400); // สำรอง: แท็บที่ซ่อนอยู่ไม่ยิง rAF
+  }, 0); });
 
   // ------------------------------------------------------------------
   // ช่องค้นหาเมนู: กรองเมนูเดิม "ในที่" (ซ่อนตัวที่ไม่ตรง) ไม่สร้างรายการผลลัพธ์ใหม่ —

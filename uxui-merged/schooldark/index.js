@@ -262,14 +262,11 @@ function closeModal(id) {
 function updateSidebarVisibility() {
     const role = systemState.currentRole;
     const settingsMenu = document.getElementById("menu-leave-settings") || document.getElementById("sidebar-menu-settings");
-    // ซ่อนทั้งกลุ่ม (<li class="menu-item-group">) ไม่ใช่แค่ลิงก์หลัก — ไม่งั้นเมนูย่อย
-    // "รายการคำขอ / ประวัติการลารายบุคคล" ยังโผล่ให้ครูกดเข้าหน้าอนุมัติได้
-    const approveLink = document.getElementById("menu-leave-approve") || document.getElementById("sidebar-menu-approve");
-    const approveMenu = approveLink ? (approveLink.closest(".menu-item-group") || approveLink) : null;
-    
+    // เมนูอนุมัติการลา (บุคลากร) แสดงทุก role ทุกหน้า (2026-09-29, ตามที่ noeysod เลือก) — เดิมซ่อนเฉพาะบน app.html ตอน role=ครู
+    // ทำให้เมนูหาย/โผล่ไม่คงที่ระหว่างหน้า (หน้าอื่นไม่มีโค้ดนี้ และ role ไม่ถูกจำข้ามหน้า)
+
     if (role === "teacher") {
         if (settingsMenu) settingsMenu.style.display = "none";
-        if (approveMenu) approveMenu.style.display = "none";
         
         // Redirect if currently on a restricted view
         const active = systemState.activeView || "";
@@ -278,7 +275,6 @@ function updateSidebarVisibility() {
         }
     } else {
         if (settingsMenu) settingsMenu.style.display = "block";
-        if (approveMenu) approveMenu.style.display = "block";
     }
     
     updateApprovalBadge();

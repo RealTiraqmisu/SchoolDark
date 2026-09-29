@@ -354,6 +354,64 @@ noeysod เขียนงานเป็น to-do list ใน `uxui-merged/noey
     `C:\Users\noey\.claude\plans\im-noeysod-use-noeysod-md-joyful-bentley.md` ถ้าต้องดูรายละเอียด
     ลำดับขั้นตอน/เหตุผลเชิงเทคนิคที่ไม่ได้ลงในไฟล์นี้
 
+- (2026-09-29) **รอบแก้หน้าค้าง + เมนูซ้าย "ระเบิด" ของ `schooldark/` (หน้าตาไม่เปลี่ยน)** — ตามที่ปรึกษาไว้ใน
+  `theme-consult-2026-09-29-v2.md` ข้อ 6 ทำครบ; รายการเต็ม/วิธีย้อนของแต่ละจุดอยู่ที่ `schooldark/CHANGES-FOR-CARE.md`
+  (ให้เนยสดส่งต่อแคร์ — แคร์ต้อง `git pull` ก่อนแก้ `leave-features.html`) แผนเต็มอยู่ที่
+  `~/.claude/plans/im-noeysod-lets-fix-jazzy-platypus.md` สรุปที่ไม่เห็นตรง ๆ จากโค้ด:
+  - **ธีม**: คุยกับแคร์แล้ว → ใช้ธีมเนยสด (Tailwind) เป็นมาตรฐาน แต่ **เนยสดจะสั่งทีละหน้า/ทีละส่วนเอง ห้าม Claude
+    auto เปลี่ยนธีมทั้งระบบ** จนกว่าเนยสดจะบอกว่ามั่นใจ; เจ้าของ `shared/tokens.css` ยังไม่ตกลง (ยังไม่ได้สร้างไฟล์)
+  - **แยกไฟล์**: `schooldark/leave-features.html` → `leave-features.css` + `leave-features.js` (ย้าย 1:1; classic script
+    เพื่อให้ inline `onclick` ทำงาน) และเพิ่ม `schooldark/lazy-libs.js` (`loadScriptOnce`/`LAZY_LIBS`/`debounce`) โหลดใน
+    `app.html` + `leave-features.html` — xlsx/Chart.js ไม่อยู่ใน `<head>` แล้ว โหลดตอนใช้
+  - **บั๊กที่เจอเพิ่ม**: `navigateToView` ประกาศซ้ำใน `index.js` + `settings.js` (ตัวหลังทับ) → เปลี่ยนของ `settings.js`
+    เป็น `navigateToSettingsView`; ลบ `navigateToView("general")` ตอนโหลดของ `settings.js`
+  - **`shared/`**: `cross-nav.js` ใส่/ปลด class `xnav-preload` บน `<html>` (ปิด transition ของ sidebar ตอนโหลด, ข้ามหน้า hub)
+    + กฎใน `cross-nav.css` — กระทบทุกหน้าที่มี sidebar แต่หน้าตาไม่เปลี่ยน
+  - **ต้นเหตุจริงของเมนูเด้ง (แก้ตามหลังจากเนยสดยังเห็นอาการอยู่)**: `cross-nav.js` เคยสร้าง sidebar ของหน้า SPA ให้ active ทุก item ที่ชี้หน้าเดียวกัน
+    (app.html 9 ตัว, leave-features 7 ตัว) แล้วโค้ดของแคร์ค่อยหุบ → แก้ด้วย `SPA_DEFAULT_VIEW`/`isInitialSpaItem` ให้ active ถูกตัวเดียวตั้งแต่เฟรมแรก + pre-hide กลุ่ม
+    "อนุมัติการลา" บน app.html (role เริ่มต้น=ครู) + ข้าม `showModuleView` ตอนโหลดใน `leave-features.js` เมื่อมี deep-link; และ **บังคับขนาด sidebar ให้เท่ากัน
+    ทุกระบบตามฝั่งเนยสด** (`cross-nav.css` ท้ายไฟล์: line-height 1.5, ปุ่ม/input สืบทอดฟอนต์) — เดิมเมนูฝั่งแคร์สูง 40px vs 42px ทำให้ hover วิ่งตอนข้ามระบบ (รายการ 10–12 ใน CHANGES-FOR-CARE.md)
+
+  - **sidebar สีเดียวทุกหน้า + จัดหมวดใหม่ (ข้อ "ก่อนแก้เรื่อง theme")**: สี/ฟอนต์/ขนาด sidebar อยู่ที่ `--xnav-*` ใน `shared/cross-nav.css` ที่เดียว
+    (ลบ `--bg-sidebar` ใน `schooldark/app.css` + `.sidebar{display:none}` ใน `leave-features.css` ที่เคยทับกัน) สีชุดเนยสด; หมวดเมนูเป็น
+    ทะเบียนนักเรียน / รับสมัครออนไลน์ / กิจการนักเรียน / บุคลากร / บริหารการลา (แดชบอร์ดบนสุดไม่มีหัวหมวด) / การตั้งค่า — CHANGES-FOR-CARE.md รายการ 13–14
+    ส่วนสีของ "เนื้อหาหน้า" (ไม่ใช่ sidebar) ยังรอแผนธีมทีละหน้า
+
+  - **ปุ่มหุบ sidebar + เมนูอนุมัติการลา (บุคลากร)**: ปุ่มหุบถูกคุมที่ `cross-nav.js` ที่เดียวทุกหน้า (เดิม leave-features กดไม่ได้, หน้า admission จอ 769–1024px ถูกบังคับ rail);
+    `app.js` `bindSidebarToggle()` ห้าม toggle ซ้ำ; เมนู "อนุมัติการลา (บุคลากร)" แสดงเสมอทุกหน้า/role (เอาการซ่อนตาม role ใน `index.js` ออก) — CHANGES-FOR-CARE.md รายการ 15–16
+
+  - **ทดลอง layout 2 แบบ (อ่าน/ตาราง)**: เพิ่ม `shared/page-layout.css` (`.xpage--read` 1280px กลาง / `.xpage--wide` เต็ม) ใช้แล้วแค่ `admission/index.html` +
+    `admission/students.html` (wide) หน้าอื่นยัง `max-w-[1400px]` — เนยสดจะดูผลแล้วสั่งขยายเอง (สรุปเหตุผลในไฟล์ปรึกษาธีมท้ายไฟล์)
+
+  - ตรวจด้วย headless Chrome + CDP: ตัวเลขแดชบอร์ดการมาเรียน/แถวรายงาน/DOM เหมือนของเดิมทุกค่า, สลับ role ในหน้าลาแล้วอยู่หน้าลา
+  - ข้อสังเกตที่ยังไม่แก้ (ของแคร์): `renderAllHistory()` ท้าย `leave-features.js` ขึ้น TypeError เพราะไม่มี `#all-search` (มีมาก่อนแล้ว)
+
+## วิธีทำงานกับ Claude ที่ใช้จริง (2026-09-29)
+
+- **Opus ต้องส่งงานให้ Sonnet เองหลังแผนผ่าน (ย้ำกฎเหล็กข้างบน)**: session 2026-09-29 Opus วางแผนเสร็จแล้ว **ไม่เคย spawn Sonnet
+  subagent (`Agent` + `model: "sonnet"`) ให้ลงมือเลย** — เนยสดเลยต้องสลับโมเดลเป็น Sonnet เองทุกรอบแล้วพิมพ์ "proceed the plan"
+  → ต่อไปเมื่อแผนได้รับอนุมัติ Opus ต้องส่งแผนเต็มให้ Sonnet subagent ทันที ไม่ลงมือเองและไม่รอให้เนยสดสลับโมเดล
+  (ถ้าเนยสดสลับเป็น Sonnet มาเองแล้ว ก็ทำตามแผนได้เลย) — แผนต้องละเอียดพอให้ Sonnet ทำเองได้ครบ (path เต็ม, ข้อความ anchor, ค่าที่ใส่, วิธีตรวจ)
+- **เนยสด commit เอง** — Claude ไม่ต้อง commit และไม่ต้องถามเรื่อง commit ท้ายงานทุกครั้ง
+- **อาการ UI ต้องวัดจริงก่อนสรุปสาเหตุ** (เมนูเด้ง, hover วิ่ง, ปุ่มกดไม่ได้, สี/ขนาดต่างกันระหว่างหน้า): ใช้ headless Chrome + CDP
+  - Chrome: `C:/Program Files/Google/Chrome/Application/chrome.exe` flags `--headless=new --allow-file-access-from-files --window-size=1366,768
+    --remote-debugging-port=<port> --user-data-dir=<โฟลเดอร์ใหม่ทุกครั้ง กัน localStorage ค้าง>`; Node 22 มี `fetch`/`WebSocket` ในตัว ไม่ต้องติดตั้งอะไร
+  - ดูสถานะระหว่างโหลด: `Page.addScriptToEvaluateOnNewDocument` ใส่ MutationObserver + requestAnimationFrame เก็บ snapshot
+    (จำนวน `.menu-item.active`, กลุ่มที่ `.expanded`, scrollHeight, `document.elementFromPoint` = ของที่อยู่ใต้เมาส์)
+  - เทียบข้ามหน้า: `getComputedStyle` (สี/ฟอนต์) และ `getBoundingClientRect` (ขนาด/ตำแหน่ง) ของ sidebar ทุกหน้า ต้องเท่ากัน
+  - เหตุผล: รอบแรกเดาว่าเมนูเด้งเพราะ animation แล้วแก้ไม่หาย วัดจริงจึงเจอต้นเหตุ (active ทุกเมนูตอนโหลด, line-height 2 ระบบต่างกัน, ปุ่มไม่มี handler)
+  - สคริปต์ทดสอบเก็บไว้ใน `$TEMP` (หายได้) — เขียนใหม่ตามแนวข้างบน
+- **หลัก "รวมศูนย์ไฟล์เดียว"**: ของที่ใช้ร่วมทุกระบบ (สี/ขนาด sidebar = `--xnav-*` ใน `shared/cross-nav.css`, ปุ่มหุบ = `shared/cross-nav.js`,
+  ความกว้างหน้า = `shared/page-layout.css`) ให้อยู่ที่เดียว ห้ามหน้าใดประกาศทับ — เจอโค้ดทับกันให้ลบตัวทับ ไม่ใช่เพิ่มตัวทับซ้อนอีกชั้น
+- **ธีมสีเนยสด สลับทีละหน้า (เริ่ม 2026-09-29)**: หน้าแรกที่ทำคือแดชบอร์ดหลักของ `schooldark/app.html` — หน้าอื่นรอเนยสดสั่งทีละหน้า
+- **วิธีสลับธีมต่อหน้า**: ประกาศบล็อกตัวแปรแบบมี scope `#module-dashboard {}` ใน `schooldark/app.css` (ค่าสีจาก `admission/js/tailwind-config.js`) แล้วเปลี่ยน inline gradient เป็นสีทึบ `var(--...)` — ครบทุกหน้าค่อยย้ายเข้า `:root`
+- **ไอคอนใช้สีทึบน้ำเงิน-ม่วงของเนยสด ส่วนการ์ดคงสไตล์แคร์** (ขาว/เงา/มุมโค้ง, พื้นหลังหน้าไม่เปลี่ยน) — รายละเอียดที่ `schooldark/CHANGES-FOR-CARE.md` ข้อ 17
+
+## ภาษาที่ใช้ตอบ
+
+- ถ้าเป็นการ**ปรึกษา/ถามความเห็น** → ตอบและเขียนแผนเป็น**ภาษาไทย**
+- ถ้า**ไม่ใช่การปรึกษา** (แผนสำหรับลงมือ, prompt ที่ส่ง subagent ฯลฯ) → ภาษาอังกฤษได้ เพื่อประหยัด token
+
 ## ความชอบด้าน UI ของ noeysod
 
 - ชอบหน้าแรกกะทัดรัด ไม่ชอบกล่องสรุปข้อมูลเล็ก ๆ ที่แยกเป็นกล่องใหญ่โต ๆ จนดู "ขาด ๆ เกิน ๆ" —

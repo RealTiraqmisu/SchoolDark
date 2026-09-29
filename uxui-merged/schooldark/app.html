@@ -7,12 +7,15 @@
     <title>SchoolDark — ระบบบริหารงานบุคคลและการลา</title>
     <meta name="description"
         content="SchoolDark — ระบบบริหารงานบุคคลและการลาบุคลากรครู จัดการใบลา, ข้อมูลบุคลากร, ตั้งค่าระบบ ในที่เดียว">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap">
     <!-- Unified CSS -->
     <link rel="stylesheet" href="app.css">
     <!-- เมนูรวมจุดเดียวของทั้งโปรเจกต์ (sidebar) — ดู ../shared/cross-nav.js -->
     <link rel="stylesheet" href="../shared/cross-nav.css">
-    <!-- XLSX library for Personnel import -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- xlsx โหลดแบบ lazy ตอนใช้งาน (import/export Excel) — ดู lazy-libs.js -->
+    <script src="lazy-libs.js"></script>
 </head>
 <!-- body class managed by JS; default dark -->
 
@@ -85,7 +88,7 @@
                         <div class="dashboard-stats-grid">
                             <div class="stat-card" style="--card-accent: var(--primary);">
                                 <div class="stat-icon"
-                                    style="background: linear-gradient(135deg, hsl(250,85%,65%), hsl(199,89%,48%));">
+                                    style="background: var(--primary);">
                                     <svg viewBox="0 0 24 24">
                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                                         <circle cx="9" cy="7" r="4" />
@@ -106,7 +109,7 @@
                             </div>
                             <div class="stat-card" style="--card-accent: var(--warning);">
                                 <div class="stat-icon"
-                                    style="background: linear-gradient(135deg, hsl(38,92%,50%), hsl(38,75%,40%));">
+                                    style="background: var(--warning);">
                                     <svg viewBox="0 0 24 24">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                         <polyline points="14 2 14 8 20 8" />
@@ -125,7 +128,7 @@
                             </div>
                             <div class="stat-card" style="--card-accent: var(--danger);">
                                 <div class="stat-icon"
-                                    style="background: linear-gradient(135deg, hsl(350,84%,55%), hsl(350,70%,42%));">
+                                    style="background: var(--danger);">
                                     <svg viewBox="0 0 24 24">
                                         <path
                                             d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -146,7 +149,7 @@
                             </div>
                             <div class="stat-card" style="--card-accent: var(--success);">
                                 <div class="stat-icon"
-                                    style="background: linear-gradient(135deg, hsl(142,72%,45%), hsl(142,60%,35%));">
+                                    style="background: var(--success);">
                                     <svg viewBox="0 0 24 24">
                                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                                         <polyline points="22 4 12 14.01 9 11.01" />
@@ -179,7 +182,7 @@
                                 <div class="activity-list">
                                     <div class="activity-item">
                                         <div class="activity-avatar"
-                                            style="background: linear-gradient(135deg, hsl(250,85%,65%), hsl(199,89%,48%));">
+                                            style="background: var(--primary);">
                                             สม</div>
                                         <div class="activity-info">
                                             <div class="activity-name">ครูสมชาย ใจดี</div>
@@ -190,7 +193,7 @@
                                     </div>
                                     <div class="activity-item">
                                         <div class="activity-avatar"
-                                            style="background: linear-gradient(135deg, hsl(142,72%,45%), hsl(142,60%,35%));">
+                                            style="background: var(--success);">
                                             สุ</div>
                                         <div class="activity-info">
                                             <div class="activity-name">ครูสุดา สอนดี</div>
@@ -201,7 +204,7 @@
                                     </div>
                                     <div class="activity-item">
                                         <div class="activity-avatar"
-                                            style="background: linear-gradient(135deg, hsl(38,92%,50%), hsl(38,75%,40%));">
+                                            style="background: var(--warning);">
                                             ปร</div>
                                         <div class="activity-info">
                                             <div class="activity-name">ครูประยูร จรรยา</div>
@@ -212,7 +215,7 @@
                                     </div>
                                     <div class="activity-item">
                                         <div class="activity-avatar"
-                                            style="background: linear-gradient(135deg, hsl(350,84%,55%), hsl(350,70%,42%));">
+                                            style="background: var(--danger);">
                                             วิ</div>
                                         <div class="activity-info">
                                             <div class="activity-name">ครูวิมล เรืองศรี</div>
@@ -223,7 +226,7 @@
                                     </div>
                                     <div class="activity-item">
                                         <div class="activity-avatar"
-                                            style="background: linear-gradient(135deg, hsl(199,89%,48%), hsl(199,75%,38%));">
+                                            style="background: var(--info);">
                                             น</div>
                                         <div class="activity-info">
                                             <div class="activity-name">ครูนารี มีสุข</div>
@@ -302,7 +305,7 @@
                                     <div class="quick-actions-grid">
                                         <div class="quick-action-btn" onclick="App.navigate('leave','leave-form')">
                                             <div class="qa-icon"
-                                                style="background: linear-gradient(135deg, hsl(250,85%,65%), hsl(199,89%,48%));">
+                                                style="background: var(--primary);">
                                                 <svg viewBox="0 0 24 24">
                                                     <path
                                                         d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -314,7 +317,7 @@
                                         </div>
                                         <div class="quick-action-btn" onclick="App.navigate('leave','leave-approve')">
                                             <div class="qa-icon"
-                                                style="background: linear-gradient(135deg, hsl(142,72%,45%), hsl(142,60%,35%));">
+                                                style="background: var(--success);">
                                                 <svg viewBox="0 0 24 24">
                                                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                                                     <polyline points="22 4 12 14.01 9 11.01" />
@@ -325,7 +328,7 @@
                                         </div>
                                         <div class="quick-action-btn" onclick="App.navigate('personnel','directory')">
                                             <div class="qa-icon"
-                                                style="background: linear-gradient(135deg, hsl(38,92%,50%), hsl(38,75%,40%));">
+                                                style="background: var(--warning);">
                                                 <svg viewBox="0 0 24 24">
                                                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                                                     <circle cx="9" cy="7" r="4" />
@@ -336,7 +339,7 @@
                                         </div>
                                         <div class="quick-action-btn" onclick="App.navigate('settings','general')">
                                             <div class="qa-icon"
-                                                style="background: linear-gradient(135deg, hsl(199,89%,48%), hsl(199,75%,38%));">
+                                                style="background: var(--info);">
                                                 <svg viewBox="0 0 24 24">
                                                     <circle cx="12" cy="12" r="3" />
                                                     <path
@@ -348,7 +351,7 @@
                                         </div>
                                         <div class="quick-action-btn" onclick="App.navigate('personnel','import-hub')">
                                             <div class="qa-icon"
-                                                style="background: linear-gradient(135deg, hsl(350,84%,55%), hsl(350,70%,42%));">
+                                                style="background: var(--danger);">
                                                 <svg viewBox="0 0 24 24">
                                                     <path
                                                         d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
@@ -360,7 +363,7 @@
                                         <div class="quick-action-btn"
                                             onclick="App.navigate('personnel','print-studio')">
                                             <div class="qa-icon"
-                                                style="background: linear-gradient(135deg, hsl(250,70%,50%), hsl(280,80%,55%));">
+                                                style="background: #9333ea;">
                                                 <svg viewBox="0 0 24 24">
                                                     <polyline points="6 9 6 2 18 2 18 9" />
                                                     <path

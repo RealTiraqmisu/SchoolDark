@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **care / Claude ของ care: อ่าน [`CHANGES-FOR-CARE.md`](CHANGES-FOR-CARE.md) ก่อน** — noeysod แก้ไฟล์ในโฟลเดอร์นี้ไปบางส่วน (ไม่เปลี่ยนหน้าตา) และบันทึกไว้ที่นั่นทุกครั้ง
+
 # SchoolDark — UX/UI Prototype
 
 This file documents the `schooldark/` prototype based on inspection of `app.html`, `app.css`, `app.js`, and `leave-features.html`. It is meant to orient a future Claude session working in this folder.
@@ -60,7 +63,7 @@ Roles are implied by UI copy and a role-switcher on the leave module, rather tha
 
 ### `app.html` — Personnel & Staff Leave module (sidebar-driven SPA shell)
 
-Grouped under three sidebar sections:
+Sidebar sections in the shared menu (`../shared/cross-nav.js`, reorganised 2026-09-29: งานกิจการนักเรียน / งานบุคลากร / งานบริหารการลา / การตั้งค่า — the older group names mentioned below are historical):
 
 **ภาพรวมระบบ (Overview)**
 - `view-dashboard-main` — Dashboard: welcome banner, 4 KPI stat cards (total staff, pending leave, expiring documents, approved today), recent leave requests activity feed, quick actions.
@@ -194,7 +197,7 @@ state/
 ## Notes for future work
 
 - `app.html` itself contains almost no page-specific logic — it only loads `app.js` (shell: nav/theme/modals/toasts) plus `index.js`, `personnel.js`, and `settings.js`, which hold the real dashboard/leave/personnel/settings behavior. Those three files were **not** in scope for this inspection; read them before modifying anything beyond markup/CSS in `app.html`.
-- `leave-features.html` is self-contained: its wizard/table/CRUD logic lives in an inline `<script>` at the bottom of the file (functions like `goSettingStep`, `renderLeaveTypesTable`, `renderStudentList`, `exportExcel`, etc.).
+- `leave-features.html` is markup only: its CSS is `leave-features.css` and its wizard/table/CRUD logic is `leave-features.js` (split out 1:1 from the former inline `<style>`/`<script>` on 2026-09-29 — see `CHANGES-FOR-CARE.md`; it is still a classic script, so inline `onclick="fn()"` handlers keep working) (functions like `goSettingStep`, `renderLeaveTypesTable`, `renderStudentList`, `exportExcel`, etc.).
 - `implementation_plan.md` documents the (already-implemented) design for the student leave settings wizard in `leave-features.html`, including three open questions from the original design discussion (default leave types, source of homeroom/advisor teacher data, whether the academic-year step belongs here vs. a central setting) — check whether those were resolved before extending that feature.
 - `app.html` and `leave-features.html` use two different icon strategies (inline SVG vs. sprite `<symbol>`) — pick one convention if unifying the codebase.
 - Staff types/positions (`settingsState.staffTypes` / `.positions` in `settings.js`) are read cross-file by `index.js` (leave quota overrides) and `personnel.js` (job-license form selects). This works because all four `<script>` tags execute top-to-bottom before `DOMContentLoaded` fires, and every cross-file reference lives inside a function body (called later, on user interaction) rather than at top level — see `personnelListSafe()`/`activeStaffTypesSafe()`-style guards used throughout. Keep that pattern (function-scoped access, never top-level) if you add more cross-file state.
