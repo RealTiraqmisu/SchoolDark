@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="../shared/cross-nav.css">
   <!-- xlsx + Chart.js โหลดแบบ lazy ตอนใช้งาน — ดู lazy-libs.js -->
   <script src="lazy-libs.js"></script>
+  <!-- ป๊อปอัปยืนยันการแก้ไข/ลบการตั้งค่า (บอกว่าส่งผลกับส่วนไหน) — ../shared/impact-confirm.js -->
+  <script src="../shared/impact-confirm.js"></script>
   <!-- ภาคเรียน (ปุ่ม "ภาคเรียนนี้" ในแดชบอร์ด) อ่านจากหน้าตั้งค่าโรงเรียน — ../settings/school.html -->
   <script src="../settings/js/school-store.js"></script>
   <link rel="stylesheet" href="leave-features.css">
@@ -156,32 +158,8 @@
               <h3><svg viewBox="0 0 24 24" class="icon" style="stroke: var(--primary);"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg> เลือกประเภทการขออนุญาต</h3>
             </div>
             <p class="card-desc" style="margin-bottom: 16px;">เลือกประเภทการขออนุญาตที่เหมาะสมเพื่อดำเนินการต่อ</p>
-            <div class="leave-type-grid" style="margin-bottom: 16px;">
-              <div class="lt-card leave-type selected" data-type="เข้าห้องเรียนช้า">
-                <div class="lt-icon"><svg class="icon"><use href="#i-clock"/></svg></div>
-                <div><div class="lt-title">เข้าห้องเรียนช้า</div><div class="lt-sub">มาถึงโรงเรียนช้า</div></div>
-              </div>
-              <div class="lt-card leave-type" data-type="ออกนอกห้องเรียน">
-                <div class="lt-icon"><svg class="icon"><use href="#i-door"/></svg></div>
-                <div><div class="lt-title">ออกนอกห้องเรียน</div><div class="lt-sub">ออกระหว่างเรียน</div></div>
-              </div>
-              <div class="lt-card leave-type" data-type="ออกนอกบริเวณโรงเรียน">
-                <div class="lt-icon"><svg class="icon"><use href="#i-building"/></svg></div>
-                <div><div class="lt-title">ออกนอกโรงเรียน</div><div class="lt-sub">ต้องระบุเวลากลับ</div></div>
-              </div>
-              <div class="lt-card leave-type" data-type="อนุญาตอื่น ๆ">
-                <div class="lt-icon" style="background:linear-gradient(135deg,var(--warning),hsl(25,90%,55%))"><svg class="icon"><use href="#i-clock"/></svg></div>
-                <div><div class="lt-title">อนุญาตอื่น ๆ</div><div class="lt-sub">ได้รับอนุญาตแล้ว</div></div>
-              </div>
-              <div class="lt-card leave-type" data-type="ผู้ปกครองมารับก่อนกำหนด">
-                <div class="lt-icon" style="background:linear-gradient(135deg,var(--danger),hsl(15,80%,55%))"><svg class="icon"><use href="#i-car"/></svg></div>
-                <div><div class="lt-title">ผปค. มารับก่อน</div><div class="lt-sub">กลับบ้านก่อนเลิก</div></div>
-              </div>
-              <div class="lt-card leave-type" data-type="มอบหมายเวรให้คนอื่น">
-                <div class="lt-icon" style="background:linear-gradient(135deg,var(--success),hsl(165,70%,40%))"><svg class="icon"><use href="#i-check"/></svg></div>
-                <div><div class="lt-title">มอบหมายเวร</div><div class="lt-sub">ระบุผู้รับในหมายเหตุ</div></div>
-              </div>
-            </div>
+            <!-- การ์ดประเภทบัตรสร้างจากหน้า "ตั้งค่าบัตรขออนุญาต" (renderTicketTypeCards ใน leave-features.js) -->
+            <div class="leave-type-grid" id="ticket-type-grid" style="margin-bottom: 16px;"></div>
             <div class="form-actions">
               <button class="btn btn-secondary" onclick="goStep(1)">← กลับ</button>
               <button class="btn btn-primary" onclick="goStep(3)">ถัดไป →</button>
@@ -249,7 +227,7 @@
                   <h3>ตัวอยางบัตรขออนุญาต</h3>
                 </div>
                 <div class="ticket-preview" id="ticket-preview" style="display:block;">
-                  <h3>บัตรรายการขออนุญาต</h3>
+                  <h3 id="ticket-title">บัตรรายการขออนุญาต</h3>
                   <div class="ticket-sub" id="ticket-school">โรงเรียนสาธิต เทศบาลนคร • รหัสโรงเรียน: SCH-001</div>
                   <hr class="ticket-divider">
                   <div class="ticket-grid">
@@ -262,7 +240,7 @@
                     <div style="grid-column:1/-1"><div class="ticket-label">เหตุผล</div><strong id="t-reason">-</strong></div>
                   </div>
                   <hr class="ticket-divider">
-                  <div class="ticket-signatures">
+                  <div class="ticket-signatures" id="ticket-signatures">
                     <div><div class="ticket-sign-line"></div>ผู้ขออนุญาต</div>
                     <div><div class="ticket-sign-line"></div>ครูที่ปรึกษา</div>
                     <div><div class="ticket-sign-line"></div>ผู้อนุมัติ</div>
@@ -1161,6 +1139,296 @@
 
       </section>
 
+      <!-- ================================================================
+           VIEW: ตั้งค่าบัตรขออนุญาต (วิซาร์ด 4 ขั้น จัดหน้าแบบเดียวกับ view-student-leave-settings)
+           แก้ใน tksDraft ระหว่างทำวิซาร์ด → กดบันทึกแล้วค่อยมีผล (applyTicketSettings) — ดู "TICKET SETTINGS" ใน leave-features.js
+           ================================================================ -->
+      <section id="view-ticket-settings" class="module-view">
+
+        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+          <button class="btn btn-secondary btn-sm" onclick="openTicketSettingsHistoryDrawer()">
+            <svg class="icon"><use href="#i-history"/></svg> ประวัติการตั้งค่า
+          </button>
+        </div>
+
+        <!-- Journey Steps -->
+        <div class="journey-steps" style="margin-bottom: 24px;">
+          <div class="journey-step active" id="tks-step-nav-1" onclick="goTicketSettingStep(1)">
+            <div class="step-node">1</div>
+            <div class="step-label">ประเภทบัตร</div>
+          </div>
+          <div class="journey-step" id="tks-step-nav-2" onclick="goTicketSettingStep(2)">
+            <div class="step-node">2</div>
+            <div class="step-label">ผู้อนุมัติ</div>
+          </div>
+          <div class="journey-step" id="tks-step-nav-3" onclick="goTicketSettingStep(3)">
+            <div class="step-node">3</div>
+            <div class="step-label">เงื่อนไขการใช้บัตร</div>
+          </div>
+          <div class="journey-step" id="tks-step-nav-4" onclick="goTicketSettingStep(4)">
+            <div class="step-node">4</div>
+            <div class="step-label">การพิมพ์ &amp; แจ้งเตือน</div>
+          </div>
+        </div>
+
+        <!-- Step 1: ประเภทบัตร -->
+        <div class="settings-step-pane active" id="tks-step-pane-1">
+          <div class="settings-step-grid">
+            <div class="settings-form-col">
+              <div class="glass-card" style="margin-bottom: 0;">
+                <div class="card-header" style="justify-content: space-between; display: flex; align-items: center; width: 100%;">
+                  <h3><svg class="icon"><use href="#i-list"/></svg> ขั้นตอนที่ 1: จัดการประเภทบัตรขออนุญาต</h3>
+                  <button class="btn btn-primary btn-sm" onclick="openAddTicketTypeModal()" style="font-size: 12px; padding: 6px 12px;">+ เพิ่มประเภท</button>
+                </div>
+                <p class="card-desc">เพิ่ม แก้ไข หรือปิดการใช้งานประเภทบัตรที่เลือกได้ในหน้า "ยื่นบัตรขออนุญาต" — ประเภทที่ปิดไว้จะไม่แสดงให้เลือก แต่บัตรเก่ายังอยู่ครบ</p>
+                <div class="data-table-wrap" style="margin-top: 14px; max-height: 380px; overflow-y: auto;">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>ชื่อประเภทบัตร</th>
+                        <th>คำอธิบาย</th>
+                        <th style="width: 70px; text-align: center;">ใช้งาน</th>
+                        <th style="width: 100px; text-align: right;">จัดการ</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tks-types-tbody">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="settings-preview-col">
+              <div class="step-preview-panel">
+                <div class="preview-header">
+                  <svg class="icon"><use href="#i-ticket"/></svg> ตัวอย่างการ์ดเลือกประเภทบัตร
+                </div>
+                <div class="preview-content" id="tks-preview-1" style="padding: 16px; min-height: 220px; display: block;">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: ผู้อนุมัติ -->
+        <div class="settings-step-pane" id="tks-step-pane-2" style="display: none;">
+          <div class="settings-step-grid">
+            <div class="settings-form-col">
+              <div class="glass-card" style="margin-bottom: 0;">
+                <div class="card-header">
+                  <h3><svg class="icon"><use href="#i-users"/></svg> ขั้นตอนที่ 2: กำหนดผู้อนุมัติบัตรขออนุญาต</h3>
+                </div>
+                <p class="card-desc">เลือกบทบาทที่มีสิทธิ์อนุมัติบัตร และกำหนดว่าบัตรประเภทไหนต้องรออนุมัติ หรือมีผลทันทีเมื่อบันทึก</p>
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+                  <div class="form-group">
+                    <label>บทบาทผู้อนุมัติ (เรียงตามลำดับขั้น)</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+                      <label class="checkbox-card tks-role-card">
+                        <input type="checkbox" id="tks-role-duty" onchange="onTicketSettingsFormChange()">
+                        <div style="font-size: 13px;">
+                          <strong>ครูเวรประจำวัน</strong>
+                          <span style="display: block; font-size: 11px; color: var(--text-muted);">ครูเวรที่อยู่หน้าประตูหรือจุดบันทึกบัตรในวันนั้น</span>
+                        </div>
+                      </label>
+                      <label class="checkbox-card tks-role-card">
+                        <input type="checkbox" id="tks-role-homeroom" onchange="onTicketSettingsFormChange()">
+                        <div style="font-size: 13px;">
+                          <strong>ครูประจำชั้น / ครูที่ปรึกษา</strong>
+                          <span style="display: block; font-size: 11px; color: var(--text-muted);">ดึงรายชื่อครูจากห้องเรียนของนักเรียนอัตโนมัติ</span>
+                        </div>
+                      </label>
+                      <label class="checkbox-card tks-role-card">
+                        <input type="checkbox" id="tks-role-dean" onchange="onTicketSettingsFormChange()">
+                        <div style="font-size: 13px;">
+                          <strong>ฝ่ายปกครอง / กิจการนักเรียน</strong>
+                          <span style="display: block; font-size: 11px; color: var(--text-muted);">หัวหน้าคณะปกครอง หรือเจ้าหน้าที่งานกิจการนักเรียน</span>
+                        </div>
+                      </label>
+                      <label class="checkbox-card tks-role-card">
+                        <input type="checkbox" id="tks-role-deputy" onchange="onTicketSettingsFormChange()">
+                        <div style="font-size: 13px;">
+                          <strong>รองผู้อำนวยการฝ่ายกิจการนักเรียน</strong>
+                          <span style="display: block; font-size: 11px; color: var(--text-muted);">ขั้นสุดท้าย สำหรับกรณีที่ต้องให้ผู้บริหารอนุมัติ</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="toggle-row">
+                    <div class="toggle-info">
+                      <span class="toggle-title">อนุมัติตามลำดับขั้น</span>
+                      <span class="toggle-desc">หากเปิดไว้ ผู้อนุมัติขั้นถัดไปจะอนุมัติได้หลังจากขั้นก่อนหน้าอนุมัติแล้วเท่านั้น หากปิดไว้ คนใดคนหนึ่งอนุมัติก็พอ</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="tks-approve-sequence" onchange="onTicketSettingsFormChange()">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label>ประเภทบัตรที่ต้องรออนุมัติ</label>
+                    <span style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:6px;">ประเภทที่ไม่ได้ติ๊กไว้จะขึ้นสถานะ "อนุมัติ" ทันทีเมื่อบันทึกบัตร</span>
+                    <div class="data-table-wrap">
+                      <table class="data-table">
+                        <thead><tr><th>ประเภทบัตร</th><th style="width: 110px; text-align: center;">ต้องรออนุมัติ</th></tr></thead>
+                        <tbody id="tks-approval-tbody"><!-- Rendered dynamically --></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="settings-preview-col">
+              <div class="step-preview-panel">
+                <div class="preview-header">
+                  <svg class="icon"><use href="#i-trending"/></svg> ลำดับขั้นตอนการอนุมัติ (Flow)
+                </div>
+                <div class="preview-content" id="tks-preview-2" style="padding: 16px; min-height: 220px; display: block;">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: เงื่อนไขการใช้บัตร -->
+        <div class="settings-step-pane" id="tks-step-pane-3" style="display: none;">
+          <div class="settings-step-grid">
+            <div class="settings-form-col">
+              <div class="glass-card" style="margin-bottom: 0;">
+                <div class="card-header">
+                  <h3><svg class="icon"><use href="#i-clock"/></svg> ขั้นตอนที่ 3: เงื่อนไขการใช้บัตร</h3>
+                </div>
+                <p class="card-desc">กำหนดเงื่อนไขแยกตามประเภทบัตร และข้อจำกัดโดยรวมของการขออนุญาตในแต่ละวัน</p>
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+                  <div class="data-table-wrap">
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <th>ประเภทบัตร</th>
+                          <th style="width: 95px; text-align: center;">ต้องระบุเวลากลับ</th>
+                          <th style="width: 110px; text-align: center;">นับเป็น "ออกก่อนเวลา"</th>
+                          <th style="width: 120px; text-align: center;">จำกัดเวลา (นาที)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tks-conditions-tbody"><!-- Rendered dynamically --></tbody>
+                    </table>
+                  </div>
+                  <span style="font-size:11px;color:var(--text-muted);margin-top:-6px;">"นับเป็นออกก่อนเวลา" = บัตรที่อนุมัติแล้วจะขึ้นสถานะ "ออกก่อนเวลา" ในหน้าเช็คชื่อ/รายงานการมาเรียนอัตโนมัติ · จำกัดเวลา 0 = ไม่จำกัด</span>
+                  <div class="grid-2" style="gap: 16px;">
+                    <div class="form-group">
+                      <label>จำนวนบัตรสูงสุดต่อนักเรียนต่อวัน (ใบ)</label>
+                      <input type="number" class="glass-input" id="tks-max-per-day" min="1" oninput="onTicketSettingsFormChange()">
+                    </div>
+                    <div class="form-group">
+                      <label>แจ้งเตือนเมื่อนักเรียนขอบัตรเกินต่อเดือน (ใบ)</label>
+                      <input type="number" class="glass-input" id="tks-warn-per-month" min="1" oninput="onTicketSettingsFormChange()">
+                      <span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">แจ้งครูประจำชั้นให้ติดตามพฤติกรรม</span>
+                    </div>
+                  </div>
+                  <div class="grid-2" style="gap: 16px;">
+                    <div class="form-group">
+                      <label>เวลาเริ่มรับบันทึกบัตร (น.)</label>
+                      <input type="time" class="glass-input" id="tks-record-start" oninput="onTicketSettingsFormChange()">
+                    </div>
+                    <div class="form-group">
+                      <label>เวลาสิ้นสุดรับบันทึกบัตร (น.)</label>
+                      <input type="time" class="glass-input" id="tks-record-end" oninput="onTicketSettingsFormChange()">
+                    </div>
+                  </div>
+                  <div class="toggle-row">
+                    <div class="toggle-info">
+                      <span class="toggle-title">บังคับระบุเหตุผล</span>
+                      <span class="toggle-desc">ไม่ให้บันทึกบัตรหากช่อง "เหตุผล / หมายเหตุ" ว่าง</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="tks-reason-required" onchange="onTicketSettingsFormChange()">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="settings-preview-col">
+              <div class="step-preview-panel">
+                <div class="preview-header">
+                  <svg class="icon"><use href="#i-refresh"/></svg> สรุปเงื่อนไขการใช้บัตร
+                </div>
+                <div class="preview-content" id="tks-preview-3" style="padding: 16px; min-height: 220px; display: block;">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: การพิมพ์ & แจ้งเตือน -->
+        <div class="settings-step-pane" id="tks-step-pane-4" style="display: none;">
+          <div class="settings-step-grid">
+            <div class="settings-form-col">
+              <div class="glass-card" style="margin-bottom: 0;">
+                <div class="card-header">
+                  <h3><svg class="icon"><use href="#i-print"/></svg> ขั้นตอนที่ 4: รูปแบบบัตรที่พิมพ์และการแจ้งเตือน</h3>
+                </div>
+                <p class="card-desc">กำหนดหัวบัตร ช่องลงนาม และการแจ้งเตือนผู้ปกครอง/ครูเมื่อมีการขออนุญาต</p>
+                <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 14px;">
+                  <div class="form-group">
+                    <label>หัวข้อบนบัตร</label>
+                    <input type="text" class="glass-input" id="tks-print-title" oninput="onTicketSettingsFormChange()">
+                  </div>
+                  <div class="form-group">
+                    <label>ช่องลงนามบนบัตร</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;" id="tks-sign-options">
+                      <!-- Rendered dynamically -->
+                    </div>
+                  </div>
+                  <div class="toggle-row">
+                    <div class="toggle-info">
+                      <span class="toggle-title">แจ้งเตือนผู้ปกครองอัตโนมัติ</span>
+                      <span class="toggle-desc">ส่ง LINE / SMS หาผู้ปกครองเมื่อบัตรประเภท "นับเป็นออกก่อนเวลา" ได้รับอนุมัติ</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="tks-notify-parent" onchange="onTicketSettingsFormChange()">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="toggle-row">
+                    <div class="toggle-info">
+                      <span class="toggle-title">แจ้งเตือนครูประจำชั้น</span>
+                      <span class="toggle-desc">แจ้งครูประจำชั้นทุกครั้งที่มีการบันทึกบัตรของนักเรียนในห้อง</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="tks-notify-homeroom" onchange="onTicketSettingsFormChange()">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="settings-preview-col">
+              <div class="step-preview-panel">
+                <div class="preview-header">
+                  <svg class="icon"><use href="#i-ticket"/></svg> ตัวอย่างบัตรที่พิมพ์
+                </div>
+                <div class="preview-content" id="tks-preview-4" style="padding: 16px; min-height: 220px; display: block;">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wizard Navigation Buttons -->
+        <div style="display:flex; margin-top:24px; background:var(--bg-card); padding:16px 24px; border-radius:var(--br-md); border:1px solid var(--border-color); backdrop-filter:var(--glass-blur);">
+          <button class="btn btn-secondary" id="tks-prev-btn" style="min-width:120px;" onclick="navigateTicketSettingStep(-1)" disabled>
+            ← ย้อนกลับ
+          </button>
+          <button class="btn btn-primary" id="tks-next-btn" style="min-width:140px; margin-left:auto;" onclick="navigateTicketSettingStep(1)">
+            ขั้นตอนถัดไป →
+          </button>
+        </div>
+
+      </section>
+
 
       <!-- ================================================================
            VIEW: แดชบอร์ดการมาเรียนของนักเรียน — สรุปเช็คชื่อ/ยังไม่เช็คชื่อ/ขาด/สาย/ลา/บัตรขออนุญาต
@@ -1193,7 +1461,7 @@
 
         <!-- ชั้น 1–2: ตัวเลขหลัก + แท่งสัดส่วน -->
         <div class="sd-overview">
-          <div class="glass-card sd-hero" id="sd-hero"></div>
+          <!-- <div class="glass-card sd-hero" id="sd-hero"></div> -->
           <div class="glass-card sd-mix" id="sd-mix"></div>
         </div>
         <!-- ชั้น 3: ต้องติดตาม (ซ่อนเมื่อไม่มีเรื่องค้าง) -->
@@ -1650,6 +1918,84 @@
     <div style="display:flex;gap:10px;padding:16px 24px;border-top:1px solid var(--border-color);">
       <button class="btn btn-secondary" style="flex:1;" onclick="closeSettingsSaveModal()">ยกเลิก</button>
       <button class="btn btn-primary" style="flex:1;" onclick="confirmSaveSettings()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add/Edit ประเภทบัตรขออนุญาต (view-ticket-settings ขั้นตอนที่ 1) -->
+<div class="drawer-overlay" id="modal-ticket-type-overlay" style="display: none; z-index: 1100;" onclick="closeTicketTypeModal()"></div>
+<aside class="drawer-panel" id="modal-ticket-type" style="display: none; z-index: 1200; width: 420px; max-width: 90%;">
+  <div class="drawer-title">
+    <h3 id="ticket-type-modal-title">เพิ่มประเภทบัตรขออนุญาต</h3>
+    <button class="btn-icon" onclick="closeTicketTypeModal()"><svg class="icon"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="drawer-body" style="padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+    <input type="hidden" id="ticket-type-edit-idx" value="">
+    <div class="form-group">
+      <label>ชื่อประเภทบัตร <span class="req">*</span></label>
+      <input type="text" class="glass-input" id="tt-modal-name" placeholder="เช่น ไปห้องพยาบาล, ไปติดต่อธุรการ">
+    </div>
+    <div class="form-group">
+      <label>ชื่อย่อบนการ์ด</label>
+      <input type="text" class="glass-input" id="tt-modal-short" placeholder="เว้นว่างไว้ = ใช้ชื่อเต็ม">
+    </div>
+    <div class="form-group">
+      <label>คำอธิบายสั้น</label>
+      <input type="text" class="glass-input" id="tt-modal-desc" placeholder="แสดงใต้ชื่อบนการ์ดเลือกประเภท">
+    </div>
+    <div class="grid-2" style="gap: 12px;">
+      <div class="form-group">
+        <label>ไอคอน</label>
+        <select class="glass-select" id="tt-modal-icon">
+          <option value="clock">นาฬิกา</option>
+          <option value="door">ประตู</option>
+          <option value="building">อาคาร</option>
+          <option value="car">รถ</option>
+          <option value="check">เครื่องหมายถูก</option>
+          <option value="ticket">บัตร</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>สีป้าย</label>
+        <select class="glass-select" id="tt-modal-badge">
+          <option value="class-in">ส้ม</option>
+          <option value="class-out">ฟ้า</option>
+          <option value="school-out">แดง</option>
+          <option value="late-permit">ม่วง</option>
+          <option value="parent-pick">ชมพูเข้ม</option>
+          <option value="duty-delegate">เขียว</option>
+        </select>
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px;">
+      <button class="btn btn-secondary" onclick="closeTicketTypeModal()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveTicketType()">บันทึก</button>
+    </div>
+  </div>
+</aside>
+
+<!-- Modal: บันทึกการตั้งค่าบัตรขออนุญาต พร้อมกำหนดวันที่มีผลบังคับใช้ -->
+<div class="drawer-overlay" id="tks-save-overlay" onclick="closeTicketSettingsSaveModal()"></div>
+<div id="tks-save-modal">
+  <div class="confirm-modal-card">
+    <div class="drawer-title" style="padding: 20px 24px 14px; margin-bottom: 0;">
+      <h3>บันทึกการตั้งค่าบัตรขออนุญาต</h3>
+      <button class="btn-icon" onclick="closeTicketSettingsSaveModal()"><svg class="icon"><use href="#i-x"/></svg></button>
+    </div>
+    <div style="padding: 0 24px 16px;">
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>วันที่มีผลบังคับใช้</label>
+        <input type="date" class="glass-input" id="tks-save-effective-date" style="width:100%;">
+        <span style="font-size:11px;color:var(--text-muted);display:block;margin-top:4px;">เลือกวันนี้หรือวันที่ผ่านมาแล้วเพื่อให้มีผลทันที หรือเลือกวันในอนาคตเพื่อบันทึกไว้ล่วงหน้า</span>
+      </div>
+      <div class="form-group">
+        <label>หมายเหตุการเปลี่ยนแปลง (ถ้ามี)</label>
+        <textarea id="tks-save-note" class="glass-input" rows="3" style="width:100%;resize:vertical;" placeholder="เช่น เพิ่มประเภท &quot;ไปห้องพยาบาล&quot;, ให้ฝ่ายปกครองอนุมัติบัตรออกนอกโรงเรียน..."></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;padding:16px 24px;border-top:1px solid var(--border-color);">
+      <button class="btn btn-secondary" style="flex:1;" onclick="closeTicketSettingsSaveModal()">ยกเลิก</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="confirmSaveTicketSettings()">บันทึก</button>
     </div>
   </div>
 </div>

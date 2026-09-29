@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="../shared/cross-nav.css">
     <!-- xlsx โหลดแบบ lazy ตอนใช้งาน (import/export Excel) — ดู lazy-libs.js -->
     <script src="lazy-libs.js"></script>
+    <!-- ป๊อปอัปยืนยันการแก้ไข/ลบการตั้งค่า (บอกว่าส่งผลกับส่วนไหน) — ../shared/impact-confirm.js -->
+    <script src="../shared/impact-confirm.js"></script>
 </head>
 <!-- body class managed by JS; default dark -->
 
@@ -43,14 +45,6 @@
                     <p class="page-breadcrumb" id="page-breadcrumb">SchoolDark / ภาพรวม</p>
                 </div>
                 <div class="header-actions">
-                    <!-- Role switcher (Leave module only) -->
-                    <div id="role-switcher-wrapper" style="display:none; align-items:center; gap:8px;">
-                        <span style="font-size:12px; color:var(--text-muted);">จำลองสถานะ:</span>
-                        <select class="role-selector" id="mock-user-role-select">
-                            <option value="teacher">คุณครูทั่วไป (ผู้ยื่นขอลา)</option>
-                            <option value="head">หัวหน้าครู / ผู้อนุมัติ</option>
-                        </select>
-                    </div>
                     <!-- Add Personnel (Personnel module only) -->
                     <!-- <button class="header-btn" id="header-add-personnel-btn" style="display:none;">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -389,6 +383,13 @@
 
                     <!-- ===== LEAVE VIEW 1: ตั้งค่าการลา (from index.html view-settings) ===== -->
                     <div class="view-section active" id="view-leave-settings">
+                        <!-- ประวัติการตั้งค่าแยกตามรอบปีการทำงาน ดู/นำกลับมาใช้ได้ (openStaffSettingsHistoryDrawer ใน index.js) -->
+                        <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+                            <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px;" onclick="openStaffSettingsHistoryDrawer()">
+                                <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5M12 7v5l3 2" /></svg>
+                                ประวัติการตั้งค่า
+                            </button>
+                        </div>
                         <!-- User Journey Steps -->
                         <div class="journey-steps">
                             <div class="journey-step active" data-step="1">
@@ -893,40 +894,10 @@
                         </div>
                     </div>
 
-                    <!-- ===== LEAVE VIEW 3: อนุมัติการลา ===== -->
+                    <!-- ===== LEAVE VIEW 3: อนุมัติการลา =====
+                         จัดหน้าแบบเดียวกับ "อนุมัติการลา (นักเรียน)" ใน leave-features.html: แท็บอยู่บนสุด,
+                         ในแท็บรายการคำขอสลับ "ตาราง" (ค่าเริ่มต้น) / "ปฏิทิน" ได้ (setStaffListMode ใน index.js) -->
                     <div class="view-section" id="view-leave-approve">
-                        <div class="glass-card" id="approve-calendar-card" style="margin-bottom:24px;">
-                            <div class="card-header">
-                                <h3><svg viewBox="0 0 24 24">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                        <line x1="16" y1="2" x2="16" y2="6" />
-                                        <line x1="8" y1="2" x2="8" y2="6" />
-                                        <line x1="3" y1="10" x2="21" y2="10" />
-                                    </svg>ปฏิทินภาพรวมการลาของบุคลากรครู</h3>
-                                <div class="calendar-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                                    <div class="calendar-mode-switcher" style="display:flex;background:rgba(255,255,255,0.05);padding:3px;border-radius:var(--border-radius-md);border:1px solid var(--border-color);">
-                                        <button class="cal-mode-btn active" id="cal-mode-month" data-mode="month">รายเดือน</button>
-                                        <button class="cal-mode-btn" id="cal-mode-week" data-mode="week">รายสัปดาห์</button>
-                                        <button class="cal-mode-btn" id="cal-mode-day" data-mode="day">รายวัน</button>
-                                    </div>
-                                    <div style="display:flex;align-items:center;gap:8px;">
-                                        <button class="btn btn-secondary" id="calendar-prev-month-btn" style="padding:6px 12px;font-size:13px;">
-                                            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
-                                                <polyline points="15 18 9 12 15 6" />
-                                            </svg>ก่อนหน้า
-                                        </button>
-                                        <span id="calendar-month-year-label" style="font-weight:600;font-size:14px;min-width:170px;text-align:center;">-</span>
-                                        <button class="btn btn-secondary" id="calendar-next-month-btn" style="padding:6px 12px;font-size:13px;">
-                                            ถัดไป<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
-                                                <polyline points="9 18 15 12 9 6" />
-                                            </svg>
-                                        </button>
-                                        <button class="btn btn-secondary" id="calendar-today-btn" style="padding:6px 12px;font-size:12px;">วันนี้</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="leave-calendar-container"></div>
-                        </div>
                         <!-- TABS -->
                         <div class="approve-tabs-container">
                             <button class="approve-tab-btn active" data-tab="requests">รายการคำขอ</button>
@@ -936,49 +907,97 @@
                         <!-- TAB: Requests -->
                         <div id="approve-tab-requests" class="approve-tab-content active">
                             <div class="glass-card" style="margin-bottom:0;">
-                                <div class="card-header">
+                                <div class="card-header" style="flex-wrap:wrap;gap:12px;">
                                     <h3><svg viewBox="0 0 24 24">
                                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                             <polyline points="14 2 14 8 20 8" />
                                             <path d="M12 18v-6" />
                                             <path d="M9 15h6" />
                                         </svg>รายการคำขออนุมัติการลา</h3>
-                                </div>
-                                <div
-                                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
-                                    <div style="display:flex;gap:8px;">
-                                        <button class="btn btn-secondary btn-active"
-                                            style="padding:8px 16px;font-size:13px;"
-                                            id="approve-filter-all">คำขอทั้งหมด</button>
-                                        <button class="btn btn-secondary" style="padding:8px 16px;font-size:13px;"
-                                            id="approve-filter-pending">รออนุมัติ</button>
-                                        <button class="btn btn-secondary" style="padding:8px 16px;font-size:13px;"
-                                            id="approve-filter-approved">อนุมัติ</button>
-                                        <button class="btn btn-secondary" style="padding:8px 16px;font-size:13px;"
-                                            id="approve-filter-rejected">ปฏิเสธการลา</button>
+                                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                                        <span class="header-pending-pill">
+                                            <svg viewBox="0 0 24 24" style="fill:none;stroke-width:2;"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
+                                            รออนุมัติ <strong id="staff-approve-pending-count">0</strong>
+                                        </span>
+                                        <div class="view-mode-switcher">
+                                            <button class="view-mode-btn active" data-mode="table" onclick="setStaffListMode('table', this)">ตาราง</button>
+                                            <button class="view-mode-btn" data-mode="calendar" onclick="setStaffListMode('calendar', this)">ปฏิทิน</button>
+                                        </div>
                                     </div>
-                                    <div style="font-size:13px;color:var(--text-muted);">ผู้อนุมัติ: <strong
-                                            id="current-approver-name-label" style="color:var(--text-primary);">ครูวิชัย
-                                            เรียนดี</strong></div>
                                 </div>
-                                <div class="table-container" id="view-approve">
-                                    <table class="premium-table">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:70px;">วันที่ยื่น</th>
-                                                <th>ชื่อคุณครู</th>
-                                                <th>ประเภทการลา</th>
-                                                <th>วันที่ขอลา</th>
-                                                <th style="text-align:center;">วันสุทธิ</th>
-                                                <th style="width:100px;">เหตุผลการลา</th>
-                                                <th style="text-align:center;">เอกสารแนบ</th>
-                                                <th style="width:80px;">สถานะ</th>
-                                                <th style="width:190px;text-align:center;">ดำเนินการ</th>
-                                                <th style="width:70px;text-align:center;">ดู</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="approval-table-body"></tbody>
-                                    </table>
+
+                                <!-- โหมดตาราง (default) -->
+                                <div class="list-panel" id="staff-table-panel">
+                                    <div
+                                        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+                                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                                            <button class="btn btn-secondary btn-active"
+                                                style="padding:8px 16px;font-size:13px;"
+                                                id="approve-filter-all">คำขอทั้งหมด</button>
+                                            <button class="btn btn-secondary" style="padding:8px 16px;font-size:13px;"
+                                                id="approve-filter-pending">รออนุมัติ</button>
+                                            <button class="btn btn-secondary" style="padding:8px 16px;font-size:13px;"
+                                                id="approve-filter-approved">อนุมัติ</button>
+                                            <button class="btn btn-secondary" style="padding:8px 16px;font-size:13px;"
+                                                id="approve-filter-rejected">ไม่อนุมัติ</button>
+                                        </div>
+                                        <div style="font-size:13px;color:var(--text-muted);">ผู้อนุมัติ: <strong
+                                                id="current-approver-name-label" style="color:var(--text-primary);">ครูวิชัย
+                                                เรียนดี</strong></div>
+                                    </div>
+                                    <!-- สถานะอยู่คอลัมน์แรกและเป็น dropdown เปลี่ยนสถานะได้เลย (เหมือนตารางของนักเรียน) -->
+                                    <div class="table-container" id="view-approve">
+                                        <table class="premium-table sl-approve-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:130px;">สถานะ</th>
+                                                    <th style="width:70px;">วันที่ยื่น</th>
+                                                    <th>ชื่อคุณครู</th>
+                                                    <th>ประเภทการลา</th>
+                                                    <th>วันที่ขอลา</th>
+                                                    <th style="text-align:center;">วันสุทธิ</th>
+                                                    <th style="width:140px;">เหตุผลการลา</th>
+                                                    <th style="text-align:center;">เอกสารแนบ</th>
+                                                    <th style="width:70px;text-align:center;">ดู</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="approval-table-body"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- โหมดปฏิทิน (opt-in) -->
+                                <div class="list-panel hidden" id="staff-calendar-panel">
+                                    <div class="card-header" style="flex-wrap:wrap;gap:12px;">
+                                        <h3><svg viewBox="0 0 24 24">
+                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                <line x1="16" y1="2" x2="16" y2="6" />
+                                                <line x1="8" y1="2" x2="8" y2="6" />
+                                                <line x1="3" y1="10" x2="21" y2="10" />
+                                            </svg>ปฏิทินภาพรวมการลาของบุคลากรครู</h3>
+                                        <div class="calendar-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                                            <div class="calendar-mode-switcher" style="display:flex;background:rgba(255,255,255,0.05);padding:3px;border-radius:var(--border-radius-md);border:1px solid var(--border-color);">
+                                                <button class="cal-mode-btn active" id="cal-mode-month" data-mode="month">รายเดือน</button>
+                                                <button class="cal-mode-btn" id="cal-mode-week" data-mode="week">รายสัปดาห์</button>
+                                                <button class="cal-mode-btn" id="cal-mode-day" data-mode="day">รายวัน</button>
+                                            </div>
+                                            <div style="display:flex;align-items:center;gap:8px;">
+                                                <button class="btn btn-secondary" id="calendar-prev-month-btn" style="padding:6px 12px;font-size:13px;">
+                                                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
+                                                        <polyline points="15 18 9 12 15 6" />
+                                                    </svg>ก่อนหน้า
+                                                </button>
+                                                <span id="calendar-month-year-label" style="font-weight:600;font-size:14px;min-width:170px;text-align:center;">-</span>
+                                                <button class="btn btn-secondary" id="calendar-next-month-btn" style="padding:6px 12px;font-size:13px;">
+                                                    ถัดไป<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;">
+                                                        <polyline points="9 18 15 12 9 6" />
+                                                    </svg>
+                                                </button>
+                                                <button class="btn btn-secondary" id="calendar-today-btn" style="padding:6px 12px;font-size:12px;">วันนี้</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="leave-calendar-container"></div>
                                 </div>
                             </div>
                         </div>
@@ -998,7 +1017,7 @@
                                     </svg><input type="text" class="glass-input search-input" id="teacher-profile-search"
                                         placeholder="ค้นหาชื่อหรือรหัสคุณครู..." oninput="renderTeacherProfileList()"></div>
                                 <div id="teacher-profile-list-container" style="display:flex;flex-direction:column;gap:8px;max-height:520px;overflow-y:auto;padding-right:4px;">
-                                    <!-- Teacher cards populated by JS; click one to open the detail modal -->
+                                    <!-- Teacher cards populated by JS; click one to open the detail drawer -->
                                 </div>
                             </div>
                         </div>
@@ -1006,27 +1025,20 @@
 
                 </section><!-- end module-leave -->
 
-                <!-- Modal: Individual teacher leave profile (quota + history), opened from the "ประวัติการลารายบุคคล" list -->
-                <div class="modal-overlay" id="modal-teacher-profile">
-                    <div class="modal-card" style="max-width:640px;">
-                        <div class="modal-header">
-                            <h3 id="modal-teacher-profile-title" style="display:flex;align-items:center;gap:8px;">
-                                <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                                <span>ประวัติการลารายบุคคล</span>
-                            </h3>
-                            <button class="modal-close-btn" onclick="closeModal('modal-teacher-profile')">&times;</button>
+                <!-- Drawer ด้านขวา: รายละเอียดการลา / ประวัติการลารายบุคคล / ประวัติการตั้งค่าการลา
+                     (แทน modal-detail + modal-teacher-profile เดิม — แบบเดียวกับ #drawer-detail ของ leave-features.html) -->
+                <div class="drawer-overlay" id="staff-drawer-overlay" onclick="closeStaffDrawer()"></div>
+                <aside class="drawer-panel drawer-wide" id="staff-drawer" aria-labelledby="staff-drawer-title">
+                    <div class="drawer-title">
+                        <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                            <button class="modal-close-btn" id="staff-drawer-back-btn" style="display:none;flex-shrink:0;font-size:18px;" onclick="staffDrawerGoBack()" title="ย้อนกลับ">&lsaquo;</button>
+                            <h3 id="staff-drawer-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;">รายละเอียด</h3>
                         </div>
-                        <div class="modal-body" id="modal-teacher-profile-body" style="max-height:65vh;overflow-y:auto;">
-                            <!-- Quota cards + history timeline injected here -->
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" onclick="closeModal('modal-teacher-profile')" style="width:100%;">ปิดหน้าต่าง</button>
-                        </div>
+                        <button class="modal-close-btn" style="flex-shrink:0;" onclick="closeStaffDrawer()" aria-label="ปิด">&times;</button>
                     </div>
-                </div>
+                    <div id="staff-drawer-body"></div>
+                    <div id="staff-drawer-footer" style="display:flex;gap:10px;margin-top:18px;"></div>
+                </aside>
 
                 <!-- =================================================================
                  MODULE: PERSONNEL — จาก personnel.html
@@ -2271,6 +2283,15 @@
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                         <polyline points="14 2 14 8 20 8" />
                                     </svg>กำหนดผู้ลงนามตามประเภทเอกสาร</h3>
+                                <!-- บันทึกทั้งรายชื่อผู้ลงนามและการกำหนดตามประเภทเอกสาร (handler อยู่ใน settings.js) -->
+                                <button class="btn btn-secondary btn-sm" id="btn-save-doc-signatories">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                                        <polyline points="17 21 17 13 7 13 7 21" />
+                                        <polyline points="7 3 7 8 15 8" />
+                                    </svg>บันทึก
+                                </button>
                             </div>
                             <div class="doc-sign-list" id="doc-sign-list"></div>
                         </div>
@@ -2371,7 +2392,6 @@
                                 <table class="data-table">
                                     <thead>
                                         <tr>
-                                            <th style="width:56px;"></th>
                                             <th>ชื่อประเภทบุคลากร</th>
                                             <th>รหัส</th>
                                             <th style="text-align:center;">ตำแหน่งที่สังกัด</th>
@@ -2479,7 +2499,6 @@
                                 <table class="data-table">
                                     <thead>
                                         <tr>
-                                            <th style="width:56px;"></th>
                                             <th>ชื่อตำแหน่ง</th>
                                             <th>รหัส</th>
                                             <th>สังกัดประเภทบุคลากร</th>
@@ -2583,7 +2602,6 @@
                                 <table class="data-table">
                                     <thead>
                                         <tr>
-                                            <th style="width:56px;"></th>
                                             <th>ชื่อแผนก/กลุ่มสาระการเรียนรู้</th>
                                             <th>รหัส</th>
                                             <th>หัวหน้าแผนก</th>
@@ -2659,17 +2677,6 @@
         </div>
     </div>
 
-    <!-- Modal: Leave Detail -->
-    <div class="modal-overlay" id="modal-detail">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>รายละเอียดการลาและหลักฐานประกอบ</h3><button class="modal-close-btn"
-                    onclick="App.closeModal('modal-detail')">&times;</button>
-            </div>
-            <div class="modal-body" id="detail-modal-body"></div>
-            <div class="modal-footer" id="detail-modal-footer"></div>
-        </div>
-    </div>
 
     <!-- Modal: Add Shift (Settings) -->
     <div class="modal-overlay" id="modal-shift">

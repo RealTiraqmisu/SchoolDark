@@ -304,6 +304,141 @@ function closeModal(id) {
 }
 
 // -------------------------------------------------------------
+// IMPACT CONFIRM — ป๊อปอัปยืนยันก่อน "แก้ไข / ลบ / ปิดใช้งาน / บันทึก" การตั้งค่า
+// บอกให้ชัดว่าอะไรจะเปลี่ยน (ตาราง เดิม → ใหม่) และ "ส่งผลกับ" หน้าไหนของระบบ
+// component กลางอยู่ที่ ../shared/impact-confirm.js (โหลดใน app.html แล้ว)
+// ข้อความ summary / impacts เป็น HTML — ชื่อที่ผู้ใช้กรอกเองต้องผ่าน icEsc() ก่อนเสมอ
+// ส่วน changes (before/after) component จะ escape ให้เอง
+// -------------------------------------------------------------
+
+function icEsc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[c]));
+}
+
+function showImpactConfirm(opts) {
+    if (window.ImpactConfirm) {
+        ImpactConfirm.show(opts);
+        return;
+    }
+    // สำรองกรณีโหลด impact-confirm.js ไม่ได้ — ใช้ confirm() ของเบราว์เซอร์แทน
+    const plain = String(opts.summary || "").replace(/<[^>]+>/g, "");
+    if (window.confirm(`${opts.title || "ยืนยัน"}\n\n${plain}`)) {
+        if (typeof opts.onConfirm === "function") opts.onConfirm();
+    } else if (typeof opts.onCancel === "function") {
+        opts.onCancel();
+    }
+}
+
+// หมายเหตุท้ายป๊อปอัปของหน้าที่แก้แบบร่าง (settingsStateDraft) — ยังต้องกดปุ่มบันทึกของหน้าอีกครั้ง
+const IC_DRAFT_NOTE = "ตอนนี้เป็นการแก้ในแบบร่าง — จะมีผลจริงกับหน้าอื่นเมื่อกดปุ่ม \"บันทึก\" ด้านล่างของหน้านี้";
+
+const IC_COLOR_LABEL = { primary: "น้ำเงิน", success: "เขียว", warning: "ส้ม", danger: "แดง", info: "ฟ้า" };
+const IC_WEEKDAY_ORDER = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+const IC_WEEKDAY_LABEL = { mon: "จ.", tue: "อ.", wed: "พ.", thu: "พฤ.", fri: "ศ.", sat: "ส.", sun: "อา." };
+const IC_HOLIDAY_TYPE_LABEL = { national: "วันหยุดราชการ/นักขัตฤกษ์", school: "วันหยุดทั่วไป", special: "วันหยุดกรณีพิเศษ" };
+
+// ชื่อหน้าที่ใช้ในข้อความ "ส่งผลกับ" (ตรงกับชื่อเมนูใน app.js VIEW_TITLES)
+const IC_PAGE = {
+    jobLicense: "ตำแหน่ง & ใบประกอบฯ (ข้อมูลบุคลากร)",
+    directory: "รายชื่อบุคลากร",
+    importHub: "นำเข้าข้อมูลบุคลากร (Excel)",
+    leaveQuota: "ตั้งค่าการลาบุคลากร › ขั้นตอนที่ 3 โควตาวันลา",
+    leaveForm: "ยื่นคำขอลา",
+    positions: "ตั้งค่าตำแหน่ง",
+    thisPage: "ตารางในหน้านี้"
+};
+
+function icWeekdaysText(days) {
+    const list = IC_WEEKDAY_ORDER.filter(d => (days || []).includes(d)).map(d => IC_WEEKDAY_LABEL[d]);
+    return list.length ? list.join(" ") : "ไม่มีวันทำงาน";
+}
+
+function icStatusText(active) {
+    return active ? "เปิดใช้งาน" : "ปิดใช้งาน";
+}
+
+// ครูในระบบการลา (systemState.teachers ใน index.js) ที่ผูกกับประเภทบุคลากรนี้ —
+// โควตาวันลาของครูกลุ่มนี้มาจาก getStaffQuota() ตามประเภทบุคลากร
+function countLeaveTeachersForStaffType(staffTypeId) {
+    const list = (typeof systemState !== "undefined" && systemState && Array.isArray(systemState.teachers)) ? systemState.teachers : [];
+    return list.filter(t => t.staffTypeId === staffTypeId).length;
+}
+
+function staffTypeNamesText(ids) {
+    const names = (ids || []).map(id => (settingsStateDraft.staffTypes.find(t => t.id === id) || {}).name).filter(Boolean);
+    return names.length ? names.join(", ") : "ยังไม่ระบุ";
+}
+
+// เปรียบเทียบรายการ master data (ก่อน → หลัง) เพื่อสรุปในป๊อปอัปของปุ่ม "บันทึก" สุดท้าย
+// fields: [{ key, label, fmt? }] — คืน { changes, counts, touchedIds, orderChanged }
+function diffMasterList(beforeList, afterList, fields, opts) {
+    opts = opts || {};
+    const idKey = opts.idKey || "id";
+    const nameOf = opts.nameOf || (x => x.name);
+    const hasActive = opts.hasActive !== false;
+    const beforeMap = new Map((beforeList || []).map(x => [x[idKey], x]));
+    const afterMap = new Map((afterList || []).map(x => [x[idKey], x]));
+    const changes = [];
+    const counts = { added: 0, removed: 0, edited: 0, disabled: 0, enabled: 0 };
+    const touchedIds = [];
+
+    (afterList || []).forEach(item => {
+        const old = beforeMap.get(item[idKey]);
+        if (!old) {
+            counts.added++;
+            changes.push({ label: "เพิ่มใหม่", before: "—", after: nameOf(item) });
+            return;
+        }
+        let fieldChanged = false, statusChanged = false;
+        fields.forEach(f => {
+            const fmt = f.fmt || (v => (v == null ? "" : String(v)));
+            const b = fmt(old[f.key], old), a = fmt(item[f.key], item);
+            if (b !== a) {
+                fieldChanged = true;
+                changes.push({ label: `${nameOf(old)} · ${f.label}`, before: b, after: a });
+            }
+        });
+        if (hasActive && !!old.active !== !!item.active) {
+            statusChanged = true;
+            if (item.active) counts.enabled++; else counts.disabled++;
+            changes.push({ label: `${nameOf(item)} · สถานะ`, before: icStatusText(old.active), after: icStatusText(item.active) });
+        }
+        if (fieldChanged) counts.edited++;
+        if (fieldChanged || statusChanged) touchedIds.push(item[idKey]);
+    });
+
+    (beforeList || []).forEach(old => {
+        if (!afterMap.has(old[idKey])) {
+            counts.removed++;
+            touchedIds.push(old[idKey]);
+            changes.push({ label: "ลบ", before: nameOf(old), after: "(ถูกลบ)" });
+        }
+    });
+
+    let orderChanged = false;
+    if (opts.checkOrder) {
+        const sortIds = list => [...list].filter(x => beforeMap.has(x[idKey]) && afterMap.has(x[idKey]))
+            .sort((a, b) => (a.order || 0) - (b.order || 0)).map(x => x[idKey]).join("|");
+        orderChanged = sortIds(beforeList || []) !== sortIds(afterList || []);
+        if (orderChanged) changes.push({ label: "ลำดับการแสดง", before: "ลำดับเดิม", after: "จัดลำดับใหม่" });
+    }
+
+    return { changes, counts, touchedIds, orderChanged };
+}
+
+// ข้อความสรุปสั้นๆ เช่น "เพิ่ม 1 · แก้ไข 2 · ปิดใช้งาน 1"
+function diffCountsText(diff) {
+    const c = diff.counts, parts = [];
+    if (c.added) parts.push(`เพิ่ม ${c.added}`);
+    if (c.edited) parts.push(`แก้ไข ${c.edited}`);
+    if (c.disabled) parts.push(`ปิดใช้งาน ${c.disabled}`);
+    if (c.enabled) parts.push(`เปิดใช้งาน ${c.enabled}`);
+    if (c.removed) parts.push(`ลบ ${c.removed}`);
+    if (diff.orderChanged) parts.push("จัดลำดับใหม่");
+    return parts.join(" · ");
+}
+
+// -------------------------------------------------------------
 // VIEW SWITCHING
 // -------------------------------------------------------------
 
@@ -593,11 +728,37 @@ function changeHomeroomRole(index, role) {
 function removeHomeroomTeacher(index) {
     const cls = settingsStateDraft.editingHomeroomClass;
     const yearMap = getHomeroomYearMap(getSelectedHomeroomYear());
-    if (!cls || !yearMap[cls]) return;
-    yearMap[cls].splice(index, 1);
-    if (yearMap[cls].length === 0) delete yearMap[cls];
-    renderHomeroomModal();
-    renderHomeroomView();
+    if (!cls || !yearMap[cls] || !yearMap[cls][index]) return;
+
+    const year = getSelectedHomeroomYear();
+    const target = yearMap[cls][index];
+    const teacherName = homeroomTeacherName(target.teacherId);
+    const roleLabel = HOMEROOM_ROLE_LABEL[target.role] || "ครู";
+    const remaining = yearMap[cls].length - 1;
+    const homeroomLeft = yearMap[cls].filter((a, i) => i !== index && a.role === "homeroom").length;
+
+    const impacts = [
+        { where: `ห้อง ${icEsc(cls)} ปีการศึกษา ${icEsc(year)}`, detail: remaining > 0 ? `จะเหลือครู ${remaining} คน` : "จะไม่มีครูเหลือในห้องนี้ (ขึ้นว่า \"ยังไม่กำหนด\")" }
+    ];
+    if (target.role === "homeroom" && homeroomLeft === 0) {
+        impacts.push({ where: "ครูประจำชั้นของห้องนี้", detail: "จะว่าง — ควรเพิ่มครูประจำชั้นคนใหม่ก่อนกดบันทึก" });
+    }
+    impacts.push({ where: "หน้าการมาเรียน / การลาเรียนของนักเรียน", detail: "ยังไม่ได้ดึงรายชื่อจากหน้านี้ (ยังใช้รายชื่อตัวอย่าง) จึงยังไม่เปลี่ยนตาม" });
+
+    showImpactConfirm({
+        title: "เอาครูออกจากห้อง",
+        tone: "warning",
+        summary: `เอา <b>${icEsc(teacherName)}</b> (${icEsc(roleLabel)}) ออกจากห้อง <b>${icEsc(cls)}</b>`,
+        impacts,
+        note: IC_DRAFT_NOTE,
+        confirmLabel: "เอาออก",
+        onConfirm: () => {
+            yearMap[cls].splice(index, 1);
+            if (yearMap[cls].length === 0) delete yearMap[cls];
+            renderHomeroomModal();
+            renderHomeroomView();
+        }
+    });
 }
 
 // Render Schedule View (reads from draft)
@@ -879,21 +1040,16 @@ function renderStaffTypesView() {
     if (!tbody) return;
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบประเภทบุคลากรที่ค้นหา</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบประเภทบุคลากรที่ค้นหา</td></tr>`;
         return;
     }
 
     tbody.innerHTML = filtered.map((t) => {
-        const realIdx = sorted.findIndex(x => x.id === t.id);
         const dot = STAFF_TYPE_COLOR_HEX[t.color] || "#9ca3af";
         const usedCount = countPersonnelForStaffType(t.id);
         const posCount = countPositionsForStaffType(t.id);
         return `
             <tr style="${t.active ? "" : "opacity:.55;"}">
-                <td style="text-align:center;white-space:nowrap;">
-                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนขึ้น" onclick="moveStaffType('${t.id}', -1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
-                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนลง" onclick="moveStaffType('${t.id}', 1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-                </td>
                 <td>
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dot};flex-shrink:0;"></span>
@@ -927,27 +1083,60 @@ function renderStaffTypesView() {
     }).join("");
 }
 
-function moveStaffType(id, dir) {
-    const list = settingsStateDraft.staffTypes;
-    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
-    const idx = sorted.findIndex(t => t.id === id);
-    const swapIdx = idx + dir;
-    if (idx === -1 || swapIdx < 0 || swapIdx >= sorted.length) return;
+// ผลของการ "ปิดใช้งาน" ประเภทบุคลากร — ใช้ทั้งตอนกดสวิตช์ปิด และตอนลบไม่ได้แล้วเสนอให้ปิดแทน
+function staffTypeDisableImpacts(t) {
+    const usedCount = countPersonnelForStaffType(t.id);
+    const positions = settingsStateDraft.positions.filter(p => (p.typeIds || []).includes(t.id));
+    const onlyThis = positions.filter(p => p.typeIds.length === 1);
+    const leaveCount = countLeaveTeachersForStaffType(t.id);
+    const name = icEsc(t.name);
 
-    const a = sorted[idx], b = sorted[swapIdx];
-    const tmp = a.order;
-    a.order = b.order;
-    b.order = tmp;
-
-    renderStaffTypesView();
+    const impacts = [
+        { where: IC_PAGE.jobLicense, detail: `ช่อง "ประเภทบุคลากร" จะไม่มี "${name}" ให้เลือก` }
+    ];
+    if (usedCount > 0) {
+        impacts.push({ where: `บุคลากรที่เป็นประเภทนี้ ${usedCount} คน`, detail: "ข้อมูลเดิมยังอยู่ แต่ถ้าเปิดแก้ไขประวัติแล้วกดบันทึก ประเภทจะถูกเปลี่ยนเป็นตัวเลือกแรกในรายการ" });
+    }
+    if (positions.length > 0) {
+        impacts.push({
+            where: IC_PAGE.positions,
+            detail: `ตำแหน่งที่ผูกกับประเภทนี้ ${positions.length} ตำแหน่ง` +
+                (onlyThis.length ? ` — ในนี้ ${onlyThis.length} ตำแหน่ง (${onlyThis.map(p => icEsc(p.name)).join(", ")}) ผูกกับประเภทนี้อย่างเดียว จะเลือกในฟอร์มบุคลากรไม่ได้` : "")
+        });
+    }
+    impacts.push({
+        where: IC_PAGE.leaveQuota,
+        detail: `แถวโควตาวันลาของ "${name}" จะถูกซ่อน` +
+            (leaveCount ? ` — ครู ${leaveCount} คนในระบบการลายังใช้โควตาเดิมของประเภทนี้ในหน้า "${IC_PAGE.leaveForm}" แต่จะปรับโควตาไม่ได้จนกว่าจะเปิดใช้งานกลับ` : "")
+    });
+    return impacts;
 }
 
 window.toggleStaffTypeActive = function (id, isActive) {
     const t = settingsStateDraft.staffTypes.find(x => x.id === id);
     if (!t) return;
-    t.active = isActive;
-    renderStaffTypesView();
-    showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${t.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+
+    const apply = () => {
+        t.active = isActive;
+        renderStaffTypesView();
+        showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${t.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+    };
+    if (isActive) {
+        apply();
+        return;
+    }
+
+    showImpactConfirm({
+        title: "ปิดใช้งานประเภทบุคลากร",
+        tone: "warning",
+        summary: `ปิดใช้งาน <b>"${icEsc(t.name)}"</b> — ข้อมูลไม่ถูกลบ เปิดกลับได้ภายหลัง`,
+        changes: [{ label: "สถานะ", before: icStatusText(true), after: icStatusText(false) }],
+        impacts: staffTypeDisableImpacts(t),
+        note: IC_DRAFT_NOTE,
+        confirmLabel: "ปิดใช้งาน",
+        onConfirm: apply,
+        onCancel: renderStaffTypesView // คืนสวิตช์กลับเป็น "เปิด"
+    });
 };
 
 function openAddStaffTypeModal() {
@@ -993,8 +1182,48 @@ function saveStaffTypeFromModal() {
 
     if (settingsStateDraft.editingStaffTypeId) {
         const t = settingsStateDraft.staffTypes.find(x => x.id === settingsStateDraft.editingStaffTypeId);
-        t.name = name; t.code = code; t.desc = desc; t.color = color;
-        showToast("แก้ไขแบบร่างประเภทบุคลากรแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+        const changes = [
+            { label: "ชื่อ", before: t.name, after: name },
+            { label: "รหัส", before: t.code || "", after: code },
+            { label: "คำอธิบาย", before: t.desc || "", after: desc },
+            { label: "สี", before: IC_COLOR_LABEL[t.color] || t.color || "", after: IC_COLOR_LABEL[color] || color }
+        ].filter(c => c.before !== c.after);
+
+        if (changes.length === 0) {
+            closeModal("modal-staff-type");
+            showToast("ไม่มีการเปลี่ยนแปลง", "info");
+            return;
+        }
+
+        const impacts = [];
+        if (t.name !== name) {
+            const usedCount = countPersonnelForStaffType(t.id);
+            const posCount = countPositionsForStaffType(t.id);
+            impacts.push({ where: IC_PAGE.jobLicense, detail: "ตัวเลือกในช่อง \"ประเภทบุคลากร\" จะแสดงชื่อใหม่" });
+            if (usedCount > 0) impacts.push({ where: IC_PAGE.directory, detail: `ป้ายประเภทของบุคลากร ${usedCount} คนจะแสดงชื่อใหม่` });
+            if (posCount > 0) impacts.push({ where: IC_PAGE.positions, detail: `ป้ายประเภทของตำแหน่ง ${posCount} ตำแหน่งที่ผูกอยู่จะแสดงชื่อใหม่` });
+            if (t.active) impacts.push({ where: IC_PAGE.leaveQuota, detail: "ชื่อแถวในตารางโควตาวันลาจะเปลี่ยนตาม (ค่าโควตาเดิมไม่เปลี่ยน)" });
+        }
+        if (changes.some(c => c.label !== "ชื่อ")) {
+            impacts.push({ where: IC_PAGE.thisPage, detail: "รหัส / คำอธิบาย / สี ใช้แสดงผลในหน้าตั้งค่านี้เท่านั้น" });
+        }
+
+        showImpactConfirm({
+            title: "แก้ไขประเภทบุคลากร",
+            tone: "warning",
+            summary: `แก้ไขประเภทบุคลากร <b>"${icEsc(t.name)}"</b>`,
+            changes,
+            impacts,
+            note: IC_DRAFT_NOTE,
+            confirmLabel: "ยืนยันการแก้ไข",
+            onConfirm: () => {
+                t.name = name; t.code = code; t.desc = desc; t.color = color;
+                closeModal("modal-staff-type");
+                renderStaffTypesView();
+                showToast("แก้ไขแบบร่างประเภทบุคลากรแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+            }
+        });
+        return;
     } else {
         const maxOrder = settingsStateDraft.staffTypes.reduce((m, t) => Math.max(m, t.order || 0), 0);
         const newId = `ST${String(settingsStateDraft.staffTypes.length + 1).padStart(2, "0")}`;
@@ -1015,14 +1244,19 @@ window.deleteStaffType = function (id) {
 
     if (usedCount > 0 || posCount > 0) {
         const reasons = [];
-        if (usedCount > 0) reasons.push(`มีบุคลากร ${usedCount} คน`);
-        if (posCount > 0) reasons.push(`มีตำแหน่ง ${posCount} ตำแหน่งสังกัดอยู่`);
-        App.showConfirm({
+        if (usedCount > 0) reasons.push(`บุคลากร ${usedCount} คน`);
+        if (posCount > 0) reasons.push(`ตำแหน่ง ${posCount} ตำแหน่ง`);
+        showImpactConfirm({
             title: "ลบประเภทบุคลากรไม่ได้",
-            message: `"${t.name}" ${reasons.join(" และ ")} — กรุณาย้ายบุคลากร/ตำแหน่งเหล่านั้นไปประเภทอื่นก่อน หรือกด "ปิดใช้งาน" แทนการลบ`,
-            confirmLabel: "ปิดใช้งานแทน",
-            requireNote: false,
+            tone: "danger",
+            summary: `<b>"${icEsc(t.name)}"</b> ยังมี${reasons.join(" และ ")}ผูกอยู่ ถ้าลบ ข้อมูลเหล่านั้นจะอ้างอิงประเภทที่ไม่มีอยู่แล้ว<br>` +
+                `ให้ย้ายไปประเภทอื่นก่อน หรือกด <b>"ปิดใช้งานแทน"</b> (ข้อมูลเดิมอยู่ครบ เปิดกลับได้ภายหลัง)`,
+            changes: t.active ? [{ label: "สถานะ", before: icStatusText(true), after: icStatusText(false) }] : [],
+            impacts: t.active ? staffTypeDisableImpacts(t) : [],
+            note: t.active ? IC_DRAFT_NOTE : "ประเภทนี้ถูกปิดใช้งานอยู่แล้ว",
+            confirmLabel: t.active ? "ปิดใช้งานแทน" : "ตกลง",
             onConfirm: () => {
+                if (!t.active) return;
                 t.active = false;
                 renderStaffTypesView();
                 showToast(`ปิดใช้งาน "${t.name}" แทนการลบแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "warning");
@@ -1031,11 +1265,24 @@ window.deleteStaffType = function (id) {
         return;
     }
 
-    App.showConfirm({
-        title: "ยืนยันการลบ",
-        message: `ต้องการลบประเภทบุคลากร "${t.name}" ใช่หรือไม่?`,
+    const leaveCount = countLeaveTeachersForStaffType(id);
+    const deleteImpacts = [
+        { where: IC_PAGE.jobLicense, detail: `ช่อง "ประเภทบุคลากร" จะไม่มี "${icEsc(t.name)}" ให้เลือก` },
+        { where: IC_PAGE.positions, detail: "ช่องเลือกประเภทที่สังกัดของตำแหน่งจะไม่มีประเภทนี้" },
+        {
+            where: IC_PAGE.leaveQuota,
+            detail: "แถวโควตาวันลาของประเภทนี้จะหายไป" +
+                (leaveCount ? ` — ครู ${leaveCount} คนในระบบการลาที่ยังอ้างอิงประเภทนี้ จะใช้โควตาเดิมต่อไปแต่ปรับแก้ไม่ได้อีก` : "")
+        }
+    ];
+
+    showImpactConfirm({
+        title: "ลบประเภทบุคลากร",
+        tone: "danger",
+        summary: `ลบประเภทบุคลากร <b>"${icEsc(t.name)}"</b> ออกจากระบบ (ไม่มีบุคลากรหรือตำแหน่งผูกอยู่)`,
+        impacts: deleteImpacts,
+        note: "เมื่อกดบันทึกด้านล่างแล้วจะกู้คืนไม่ได้ — ถ้าอาจกลับมาใช้อีก แนะนำให้ปิดใช้งานแทน",
         confirmLabel: "ลบ",
-        requireNote: false,
         onConfirm: () => {
             settingsStateDraft.staffTypes = settingsStateDraft.staffTypes.filter(x => x.id !== id);
             renderStaffTypesView();
@@ -1079,7 +1326,7 @@ function renderPositionsView() {
     if (!tbody) return;
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบตำแหน่งที่ค้นหา</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบตำแหน่งที่ค้นหา</td></tr>`;
         return;
     }
 
@@ -1092,10 +1339,6 @@ function renderPositionsView() {
 
         return `
             <tr style="${p.active ? "" : "opacity:.55;"}">
-                <td style="text-align:center;white-space:nowrap;">
-                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนขึ้น" onclick="movePosition('${p.id}', -1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
-                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนลง" onclick="movePosition('${p.id}', 1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-                </td>
                 <td style="font-weight:600;color:var(--text-primary);">${p.name}</td>
                 <td style="font-family:var(--font-heading);color:var(--text-muted);">${p.code || "-"}</td>
                 <td><div style="display:flex;flex-wrap:wrap;gap:4px;max-width:260px;">${typeTags || '<span style="color:var(--text-muted);font-size:11px;">ยังไม่ระบุ</span>'}</div></td>
@@ -1119,27 +1362,45 @@ function renderPositionsView() {
     }).join("");
 }
 
-function movePosition(id, dir) {
-    const list = settingsStateDraft.positions;
-    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
-    const idx = sorted.findIndex(p => p.id === id);
-    const swapIdx = idx + dir;
-    if (idx === -1 || swapIdx < 0 || swapIdx >= sorted.length) return;
-
-    const a = sorted[idx], b = sorted[swapIdx];
-    const tmp = a.order;
-    a.order = b.order;
-    b.order = tmp;
-
-    renderPositionsView();
+// ผลของการ "ปิดใช้งาน" ตำแหน่ง — ใช้ทั้งตอนกดสวิตช์ปิด และตอนลบไม่ได้แล้วเสนอให้ปิดแทน
+function positionDisableImpacts(p) {
+    const usedCount = countPersonnelForPosition(p.id);
+    const name = icEsc(p.name);
+    const impacts = [
+        { where: IC_PAGE.jobLicense, detail: `ช่อง "ตำแหน่งปัจจุบัน" (ประเภท ${icEsc(staffTypeNamesText(p.typeIds))}) จะไม่มี "${name}" ให้เลือก` }
+    ];
+    if (usedCount > 0) {
+        impacts.push({ where: `บุคลากรที่ใช้ตำแหน่งนี้ ${usedCount} คน`, detail: "ข้อมูลเดิมยังอยู่ แต่ถ้าเปิดแก้ไขประวัติแล้วกดบันทึก ตำแหน่งจะถูกเปลี่ยนเป็นตำแหน่งแรกของประเภทนั้น" });
+    }
+    impacts.push({ where: IC_PAGE.importHub, detail: `ชื่อตำแหน่ง "${name}" ในไฟล์จะไม่ถูกจับคู่ ระบบจะใช้ตำแหน่งแรกที่เปิดใช้งานแทน` });
+    return impacts;
 }
 
 window.togglePositionActive = function (id, isActive) {
     const p = settingsStateDraft.positions.find(x => x.id === id);
     if (!p) return;
-    p.active = isActive;
-    renderPositionsView();
-    showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${p.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+
+    const apply = () => {
+        p.active = isActive;
+        renderPositionsView();
+        showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${p.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+    };
+    if (isActive) {
+        apply();
+        return;
+    }
+
+    showImpactConfirm({
+        title: "ปิดใช้งานตำแหน่ง",
+        tone: "warning",
+        summary: `ปิดใช้งานตำแหน่ง <b>"${icEsc(p.name)}"</b> — ข้อมูลไม่ถูกลบ เปิดกลับได้ภายหลัง`,
+        changes: [{ label: "สถานะ", before: icStatusText(true), after: icStatusText(false) }],
+        impacts: positionDisableImpacts(p),
+        note: IC_DRAFT_NOTE,
+        confirmLabel: "ปิดใช้งาน",
+        onConfirm: apply,
+        onCancel: renderPositionsView // คืนสวิตช์กลับเป็น "เปิด"
+    });
 };
 
 function openAddPositionModal() {
@@ -1204,8 +1465,56 @@ function savePositionFromModal() {
 
     if (settingsStateDraft.editingPositionId) {
         const p = settingsStateDraft.positions.find(x => x.id === settingsStateDraft.editingPositionId);
-        p.name = name; p.code = code; p.typeIds = typeIds;
-        showToast("แก้ไขแบบร่างตำแหน่งแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+        const sameTypes = [...(p.typeIds || [])].sort().join("|") === [...typeIds].sort().join("|");
+        const changes = [
+            { label: "ชื่อ", before: p.name, after: name },
+            { label: "รหัส", before: p.code || "", after: code }
+        ];
+        if (!sameTypes) changes.push({ label: "ประเภทที่สังกัด", before: staffTypeNamesText(p.typeIds), after: staffTypeNamesText(typeIds) });
+        const realChanges = changes.filter(c => c.before !== c.after);
+
+        if (realChanges.length === 0) {
+            closeModal("modal-position");
+            showToast("ไม่มีการเปลี่ยนแปลง", "info");
+            return;
+        }
+
+        const usedCount = countPersonnelForPosition(p.id);
+        const impacts = [];
+        if (p.name !== name) {
+            impacts.push({ where: IC_PAGE.jobLicense, detail: "ตัวเลือกในช่อง \"ตำแหน่งปัจจุบัน\" จะแสดงชื่อใหม่" });
+            if (usedCount > 0) {
+                impacts.push({ where: `${IC_PAGE.directory} / เอกสารที่พิมพ์`, detail: `บุคลากร ${usedCount} คนที่ใช้ตำแหน่งนี้ยังแสดงชื่อเดิม "${icEsc(p.name)}" จนกว่าจะเปิดแก้ไขประวัติแล้วกดบันทึก` });
+            }
+            impacts.push({ where: IC_PAGE.importHub, detail: `ชื่อตำแหน่งในไฟล์ต้องตรงกับ "${icEsc(name)}" จึงจะจับคู่ได้` });
+        }
+        if (!sameTypes) {
+            impacts.push({ where: IC_PAGE.jobLicense, detail: `ตำแหน่งนี้จะให้เลือกได้เฉพาะเมื่อเลือกประเภท ${icEsc(staffTypeNamesText(typeIds))}` });
+            const mismatched = personnelListSafe().filter(t => t.job?.positionId === p.id && t.job?.staffTypeId && !typeIds.includes(t.job.staffTypeId)).length;
+            if (mismatched > 0) {
+                impacts.push({ where: `บุคลากร ${mismatched} คน`, detail: "เป็นประเภทที่ถูกเอาออกจากตำแหน่งนี้ ถ้าเปิดแก้ไขประวัติแล้วกดบันทึก ตำแหน่งจะถูกเปลี่ยนเป็นตำแหน่งแรกของประเภทนั้น" });
+            }
+        }
+        if (p.code !== code && realChanges.length === 1) {
+            impacts.push({ where: IC_PAGE.thisPage, detail: "รหัสตำแหน่งใช้แสดงผลในหน้าตั้งค่านี้เท่านั้น" });
+        }
+
+        showImpactConfirm({
+            title: "แก้ไขตำแหน่ง",
+            tone: "warning",
+            summary: `แก้ไขตำแหน่ง <b>"${icEsc(p.name)}"</b>`,
+            changes: realChanges,
+            impacts,
+            note: IC_DRAFT_NOTE,
+            confirmLabel: "ยืนยันการแก้ไข",
+            onConfirm: () => {
+                p.name = name; p.code = code; p.typeIds = typeIds;
+                closeModal("modal-position");
+                renderPositionsView();
+                showToast("แก้ไขแบบร่างตำแหน่งแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+            }
+        });
+        return;
     } else {
         const maxOrder = settingsStateDraft.positions.reduce((m, p) => Math.max(m, p.order || 0), 0);
         const newId = `POS${String(settingsStateDraft.positions.length + 1).padStart(2, "0")}`;
@@ -1223,12 +1532,17 @@ window.deletePosition = function (id) {
 
     const usedCount = countPersonnelForPosition(id);
     if (usedCount > 0) {
-        App.showConfirm({
+        showImpactConfirm({
             title: "ลบตำแหน่งไม่ได้",
-            message: `"${p.name}" มีบุคลากร ${usedCount} คนใช้ตำแหน่งนี้อยู่ — กรุณาย้ายบุคลากรเหล่านั้นไปตำแหน่งอื่นก่อน หรือกด "ปิดใช้งาน" แทนการลบ`,
-            confirmLabel: "ปิดใช้งานแทน",
-            requireNote: false,
+            tone: "danger",
+            summary: `<b>"${icEsc(p.name)}"</b> ยังมีบุคลากร ${usedCount} คนใช้ตำแหน่งนี้อยู่ ถ้าลบ ประวัติของบุคลากรเหล่านั้นจะอ้างอิงตำแหน่งที่ไม่มีอยู่แล้ว<br>` +
+                `ให้ย้ายบุคลากรไปตำแหน่งอื่นก่อน หรือกด <b>"ปิดใช้งานแทน"</b> (ข้อมูลเดิมอยู่ครบ เปิดกลับได้ภายหลัง)`,
+            changes: p.active ? [{ label: "สถานะ", before: icStatusText(true), after: icStatusText(false) }] : [],
+            impacts: p.active ? positionDisableImpacts(p) : [],
+            note: p.active ? IC_DRAFT_NOTE : "ตำแหน่งนี้ถูกปิดใช้งานอยู่แล้ว",
+            confirmLabel: p.active ? "ปิดใช้งานแทน" : "ตกลง",
             onConfirm: () => {
+                if (!p.active) return;
                 p.active = false;
                 renderPositionsView();
                 showToast(`ปิดใช้งาน "${p.name}" แทนการลบแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "warning");
@@ -1237,11 +1551,16 @@ window.deletePosition = function (id) {
         return;
     }
 
-    App.showConfirm({
-        title: "ยืนยันการลบ",
-        message: `ต้องการลบตำแหน่ง "${p.name}" ใช่หรือไม่?`,
+    showImpactConfirm({
+        title: "ลบตำแหน่ง",
+        tone: "danger",
+        summary: `ลบตำแหน่ง <b>"${icEsc(p.name)}"</b> ออกจากระบบ (ไม่มีบุคลากรใช้ตำแหน่งนี้)`,
+        impacts: [
+            { where: IC_PAGE.jobLicense, detail: `ช่อง "ตำแหน่งปัจจุบัน" (ประเภท ${icEsc(staffTypeNamesText(p.typeIds))}) จะไม่มีตำแหน่งนี้ให้เลือก` },
+            { where: IC_PAGE.importHub, detail: `ชื่อตำแหน่ง "${icEsc(p.name)}" ในไฟล์จะไม่ถูกจับคู่ ระบบจะใช้ตำแหน่งแรกที่เปิดใช้งานแทน` }
+        ],
+        note: "เมื่อกดบันทึกด้านล่างแล้วจะกู้คืนไม่ได้ — ถ้าอาจกลับมาใช้อีก แนะนำให้ปิดใช้งานแทน",
         confirmLabel: "ลบ",
-        requireNote: false,
         onConfirm: () => {
             settingsStateDraft.positions = settingsStateDraft.positions.filter(x => x.id !== id);
             renderPositionsView();
@@ -1274,7 +1593,7 @@ function renderDepartmentsView() {
     if (!tbody) return;
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบแผนก/กลุ่มสาระการเรียนรู้ที่ค้นหา</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:24px;">ไม่พบแผนก/กลุ่มสาระการเรียนรู้ที่ค้นหา</td></tr>`;
         return;
     }
 
@@ -1284,10 +1603,6 @@ function renderDepartmentsView() {
         const headName = departmentHeadName(d.headTeacherId);
         return `
             <tr style="${d.active ? "" : "opacity:.55;"}">
-                <td style="text-align:center;white-space:nowrap;">
-                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนขึ้น" onclick="moveDepartment('${d.id}', -1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
-                    <button class="icon-btn" style="width:22px;height:22px;" title="เลื่อนลง" onclick="moveDepartment('${d.id}', 1)"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
-                </td>
                 <td>
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${dot};flex-shrink:0;"></span>
@@ -1319,27 +1634,45 @@ function renderDepartmentsView() {
     }).join("");
 }
 
-function moveDepartment(id, dir) {
-    const list = settingsStateDraft.departments;
-    const sorted = [...list].sort((a, b) => (a.order || 0) - (b.order || 0));
-    const idx = sorted.findIndex(d => d.id === id);
-    const swapIdx = idx + dir;
-    if (idx === -1 || swapIdx < 0 || swapIdx >= sorted.length) return;
-
-    const a = sorted[idx], b = sorted[swapIdx];
-    const tmp = a.order;
-    a.order = b.order;
-    b.order = tmp;
-
-    renderDepartmentsView();
+// ผลของการ "ปิดใช้งาน" แผนก/กลุ่มสาระ — ใช้ทั้งตอนกดสวิตช์ปิด และตอนลบไม่ได้แล้วเสนอให้ปิดแทน
+function departmentDisableImpacts(d) {
+    const usedCount = countPersonnelForDepartment(d.id);
+    const name = icEsc(d.name);
+    const impacts = [
+        { where: IC_PAGE.jobLicense, detail: `ช่อง "กลุ่มสาระการเรียนรู้" จะไม่มี "${name}" ให้เลือก` }
+    ];
+    if (usedCount > 0) {
+        impacts.push({ where: `บุคลากรที่สังกัดแผนกนี้ ${usedCount} คน`, detail: "ข้อมูลเดิมยังอยู่ แต่ถ้าเปิดแก้ไขประวัติแล้วกดบันทึก กลุ่มสาระจะถูกเปลี่ยนเป็นตัวเลือกแรกในรายการ" });
+    }
+    impacts.push({ where: IC_PAGE.importHub, detail: `ชื่อกลุ่มสาระ "${name}" ในไฟล์จะไม่ถูกจับคู่ ระบบจะใช้กลุ่มสาระแรกที่เปิดใช้งานแทน` });
+    return impacts;
 }
 
 window.toggleDepartmentActive = function (id, isActive) {
     const d = settingsStateDraft.departments.find(x => x.id === id);
     if (!d) return;
-    d.active = isActive;
-    renderDepartmentsView();
-    showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${d.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+
+    const apply = () => {
+        d.active = isActive;
+        renderDepartmentsView();
+        showToast(`${isActive ? "เปิด" : "ปิด"}ใช้งาน "${d.name}" แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "info");
+    };
+    if (isActive) {
+        apply();
+        return;
+    }
+
+    showImpactConfirm({
+        title: "ปิดใช้งานแผนก/กลุ่มสาระการเรียนรู้",
+        tone: "warning",
+        summary: `ปิดใช้งาน <b>"${icEsc(d.name)}"</b> — ข้อมูลไม่ถูกลบ เปิดกลับได้ภายหลัง`,
+        changes: [{ label: "สถานะ", before: icStatusText(true), after: icStatusText(false) }],
+        impacts: departmentDisableImpacts(d),
+        note: IC_DRAFT_NOTE,
+        confirmLabel: "ปิดใช้งาน",
+        onConfirm: apply,
+        onCancel: renderDepartmentsView // คืนสวิตช์กลับเป็น "เปิด"
+    });
 };
 
 // เติม option ของ "หัวหน้าแผนก" ใหม่ทุกครั้งที่เปิดโมดัล (ไม่ cache) เพื่อให้บุคลากรที่เพิ่งเพิ่ม
@@ -1399,8 +1732,49 @@ function saveDepartmentFromModal() {
 
     if (settingsStateDraft.editingDepartmentId) {
         const d = settingsStateDraft.departments.find(x => x.id === settingsStateDraft.editingDepartmentId);
-        d.name = name; d.code = code; d.desc = desc; d.color = color; d.headTeacherId = headTeacherId;
-        showToast("แก้ไขแบบร่างแผนก/กลุ่มสาระการเรียนรู้แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+        const changes = [
+            { label: "ชื่อ", before: d.name, after: name },
+            { label: "รหัส", before: d.code || "", after: code },
+            { label: "คำอธิบาย", before: d.desc || "", after: desc },
+            { label: "สี", before: IC_COLOR_LABEL[d.color] || d.color || "", after: IC_COLOR_LABEL[color] || color },
+            { label: "หัวหน้าแผนก", before: departmentHeadName(d.headTeacherId) || "ไม่ระบุ", after: departmentHeadName(headTeacherId) || "ไม่ระบุ" }
+        ].filter(c => c.before !== c.after);
+
+        if (changes.length === 0) {
+            closeModal("modal-department");
+            showToast("ไม่มีการเปลี่ยนแปลง", "info");
+            return;
+        }
+
+        const usedCount = countPersonnelForDepartment(d.id);
+        const impacts = [];
+        if (d.name !== name) {
+            impacts.push({ where: IC_PAGE.jobLicense, detail: "ตัวเลือกในช่อง \"กลุ่มสาระการเรียนรู้\" จะแสดงชื่อใหม่" });
+            if (usedCount > 0) {
+                impacts.push({ where: IC_PAGE.directory, detail: `บุคลากร ${usedCount} คนในแผนกนี้ยังแสดงชื่อเดิม "${icEsc(d.name)}" จนกว่าจะเปิดแก้ไขประวัติแล้วกดบันทึก` });
+            }
+            impacts.push({ where: IC_PAGE.importHub, detail: `ชื่อกลุ่มสาระในไฟล์ต้องตรงกับ "${icEsc(name)}" จึงจะจับคู่ได้` });
+        }
+        if (changes.some(c => c.label !== "ชื่อ")) {
+            impacts.push({ where: IC_PAGE.thisPage, detail: "รหัส / คำอธิบาย / สี / หัวหน้าแผนก ใช้แสดงผลในหน้าตั้งค่านี้เท่านั้น (ยังไม่เชื่อมกับหน้าอื่น)" });
+        }
+
+        showImpactConfirm({
+            title: "แก้ไขแผนก/กลุ่มสาระการเรียนรู้",
+            tone: "warning",
+            summary: `แก้ไข <b>"${icEsc(d.name)}"</b>`,
+            changes,
+            impacts,
+            note: IC_DRAFT_NOTE,
+            confirmLabel: "ยืนยันการแก้ไข",
+            onConfirm: () => {
+                d.name = name; d.code = code; d.desc = desc; d.color = color; d.headTeacherId = headTeacherId;
+                closeModal("modal-department");
+                renderDepartmentsView();
+                showToast("แก้ไขแบบร่างแผนก/กลุ่มสาระการเรียนรู้แล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+            }
+        });
+        return;
     } else {
         const maxOrder = settingsStateDraft.departments.reduce((m, d) => Math.max(m, d.order || 0), 0);
         const newId = `DEP${String(settingsStateDraft.departments.length + 1).padStart(2, "0")}`;
@@ -1418,12 +1792,17 @@ window.deleteDepartment = function (id) {
 
     const usedCount = countPersonnelForDepartment(id);
     if (usedCount > 0) {
-        App.showConfirm({
+        showImpactConfirm({
             title: "ลบแผนก/กลุ่มสาระการเรียนรู้ไม่ได้",
-            message: `"${d.name}" มีบุคลากร ${usedCount} คนสังกัดอยู่ — กรุณาย้ายบุคลากรเหล่านั้นไปแผนกอื่นก่อน หรือกด "ปิดใช้งาน" แทนการลบ`,
-            confirmLabel: "ปิดใช้งานแทน",
-            requireNote: false,
+            tone: "danger",
+            summary: `<b>"${icEsc(d.name)}"</b> ยังมีบุคลากร ${usedCount} คนสังกัดอยู่ ถ้าลบ ประวัติของบุคลากรเหล่านั้นจะอ้างอิงแผนกที่ไม่มีอยู่แล้ว<br>` +
+                `ให้ย้ายบุคลากรไปแผนกอื่นก่อน หรือกด <b>"ปิดใช้งานแทน"</b> (ข้อมูลเดิมอยู่ครบ เปิดกลับได้ภายหลัง)`,
+            changes: d.active ? [{ label: "สถานะ", before: icStatusText(true), after: icStatusText(false) }] : [],
+            impacts: d.active ? departmentDisableImpacts(d) : [],
+            note: d.active ? IC_DRAFT_NOTE : "แผนกนี้ถูกปิดใช้งานอยู่แล้ว",
+            confirmLabel: d.active ? "ปิดใช้งานแทน" : "ตกลง",
             onConfirm: () => {
+                if (!d.active) return;
                 d.active = false;
                 renderDepartmentsView();
                 showToast(`ปิดใช้งาน "${d.name}" แทนการลบแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)`, "warning");
@@ -1432,11 +1811,16 @@ window.deleteDepartment = function (id) {
         return;
     }
 
-    App.showConfirm({
-        title: "ยืนยันการลบ",
-        message: `ต้องการลบแผนก/กลุ่มสาระการเรียนรู้ "${d.name}" ใช่หรือไม่?`,
+    showImpactConfirm({
+        title: "ลบแผนก/กลุ่มสาระการเรียนรู้",
+        tone: "danger",
+        summary: `ลบ <b>"${icEsc(d.name)}"</b> ออกจากระบบ (ไม่มีบุคลากรสังกัดอยู่)`,
+        impacts: [
+            { where: IC_PAGE.jobLicense, detail: "ช่อง \"กลุ่มสาระการเรียนรู้\" จะไม่มีตัวเลือกนี้" },
+            { where: IC_PAGE.importHub, detail: `ชื่อกลุ่มสาระ "${icEsc(d.name)}" ในไฟล์จะไม่ถูกจับคู่ ระบบจะใช้กลุ่มสาระแรกที่เปิดใช้งานแทน` }
+        ].concat(d.headTeacherId ? [{ where: "หัวหน้าแผนก", detail: `การกำหนด ${icEsc(departmentHeadName(d.headTeacherId))} เป็นหัวหน้าแผนกจะหายไปด้วย` }] : []),
+        note: "เมื่อกดบันทึกด้านล่างแล้วจะกู้คืนไม่ได้ — ถ้าอาจกลับมาใช้อีก แนะนำให้ปิดใช้งานแทน",
         confirmLabel: "ลบ",
-        requireNote: false,
         onConfirm: () => {
             settingsStateDraft.departments = settingsStateDraft.departments.filter(x => x.id !== id);
             renderDepartmentsView();
@@ -1451,28 +1835,87 @@ window.deleteDepartment = function (id) {
 
 // Save School Info
 document.getElementById("btn-save-school").addEventListener("click", () => {
-    settingsStateDraft.schoolNameTh = document.getElementById("school-name-th").value;
-    settingsStateDraft.schoolNameEn = document.getElementById("school-name-en").value;
-    settingsStateDraft.schoolCode = document.getElementById("school-code").value;
-    settingsStateDraft.schoolPhone = document.getElementById("school-phone").value;
-    settingsStateDraft.schoolAddress = document.getElementById("school-address").value;
-    
-    // Commit draft to active state
-    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
-    saveStateToLocalStorage();
-    showToast("บันทึกข้อมูลโรงเรียนสำเร็จ", "success");
+    const next = {
+        schoolNameTh: document.getElementById("school-name-th").value,
+        schoolNameEn: document.getElementById("school-name-en").value,
+        schoolCode: document.getElementById("school-code").value,
+        schoolPhone: document.getElementById("school-phone").value,
+        schoolAddress: document.getElementById("school-address").value
+    };
+    const labels = { schoolNameTh: "ชื่อโรงเรียน (ไทย)", schoolNameEn: "ชื่อโรงเรียน (อังกฤษ)", schoolCode: "รหัสโรงเรียน", schoolPhone: "เบอร์โทรศัพท์", schoolAddress: "ที่อยู่" };
+    const changes = Object.keys(next)
+        .filter(k => String(settingsState[k] || "") !== String(next[k]))
+        .map(k => ({ label: labels[k], before: settingsState[k] || "", after: next[k] }));
+
+    if (changes.length === 0) {
+        showToast("ไม่มีการเปลี่ยนแปลงข้อมูลโรงเรียน", "info");
+        return;
+    }
+
+    const impacts = [];
+    if (settingsState.schoolNameTh !== next.schoolNameTh) {
+        impacts.push({ where: "พอร์ทัลผู้ปกครอง", detail: "ชื่อโรงเรียนบนแถบด้านบนของทุกหน้าจะเปลี่ยนเป็นชื่อใหม่" });
+    }
+    if (changes.some(c => c.label !== labels.schoolNameTh)) {
+        impacts.push({ where: "หน้าการตั้งค่าทั่วไปนี้", detail: "ชื่ออังกฤษ / รหัส / เบอร์โทร / ที่อยู่ ยังไม่ได้ถูกดึงไปใช้ในหน้าอื่น" });
+    }
+
+    showImpactConfirm({
+        title: "บันทึกข้อมูลโรงเรียน",
+        tone: "info",
+        summary: `บันทึกการแก้ไขข้อมูลโรงเรียน ${changes.length} รายการ`,
+        changes,
+        impacts,
+        confirmLabel: "บันทึก",
+        onConfirm: () => {
+            Object.assign(settingsStateDraft, next);
+            // Commit draft to active state
+            settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+            saveStateToLocalStorage();
+            showToast("บันทึกข้อมูลโรงเรียนสำเร็จ", "success");
+        }
+    });
 });
 
 // Save Academic Info
 document.getElementById("btn-save-acad").addEventListener("click", () => {
-    settingsStateDraft.acadYear = document.getElementById("acad-year").value;
-    settingsStateDraft.acadStart = document.getElementById("acad-start").value;
-    settingsStateDraft.acadEnd = document.getElementById("acad-end").value;
-    
-    // Commit draft to active state
-    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
-    saveStateToLocalStorage();
-    showToast("บันทึกปีการศึกษาปัจจุบันเรียบร้อยแล้ว", "success");
+    const next = {
+        acadYear: document.getElementById("acad-year").value,
+        acadStart: document.getElementById("acad-start").value,
+        acadEnd: document.getElementById("acad-end").value
+    };
+    const changes = [
+        { label: "ปีการศึกษาปัจจุบัน", before: settingsState.acadYear || "", after: next.acadYear },
+        { label: "วันเปิดภาคเรียน", before: formatThaiDate(settingsState.acadStart), after: formatThaiDate(next.acadStart) },
+        { label: "วันปิดภาคเรียน", before: formatThaiDate(settingsState.acadEnd), after: formatThaiDate(next.acadEnd) }
+    ].filter(c => String(c.before) !== String(c.after));
+
+    if (changes.length === 0) {
+        showToast("ไม่มีการเปลี่ยนแปลงปีการศึกษา", "info");
+        return;
+    }
+
+    const impacts = [];
+    if (String(settingsState.acadYear) !== String(next.acadYear)) {
+        impacts.push({ where: "ข้อมูลครูประจำชั้น", detail: `ปีที่เลือกไว้เริ่มต้นจะเป็นปีการศึกษา ${icEsc(next.acadYear)} (เห็นผลหลังโหลดหน้าใหม่)` });
+    }
+    impacts.push({ where: "แดชบอร์ดการมาเรียน (ปุ่ม \"ภาคเรียนนี้\")", detail: "ไม่เปลี่ยนตาม — หน้านั้นใช้วันเปิด-ปิดภาคจาก ศูนย์ตั้งค่า › ข้อมูลปีการศึกษา" });
+
+    showImpactConfirm({
+        title: "บันทึกปีการศึกษาปัจจุบัน",
+        tone: "info",
+        summary: "เปลี่ยนปีการศึกษาและช่วงวันที่ของปีการศึกษาปัจจุบัน",
+        changes,
+        impacts,
+        confirmLabel: "บันทึก",
+        onConfirm: () => {
+            Object.assign(settingsStateDraft, next);
+            // Commit draft to active state
+            settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+            saveStateToLocalStorage();
+            showToast("บันทึกปีการศึกษาปัจจุบันเรียบร้อยแล้ว", "success");
+        }
+    });
 });
 
 // ---- Homeroom teachers (ครูประจำชั้น) ----
@@ -1488,42 +1931,163 @@ document.getElementById("btn-homeroom-done").addEventListener("click", () => {
     renderHomeroomView();
 });
 
+// ข้อความรายชื่อครูของห้องหนึ่ง เช่น "ครูประจำชั้น: A / ครูที่ปรึกษา: B"
+function homeroomAssignText(list) {
+    if (!list || list.length === 0) return "ยังไม่กำหนด";
+    return ["homeroom", "advisor"].map(role => {
+        const names = list.filter(a => a.role === role).map(a => homeroomTeacherName(a.teacherId));
+        return names.length ? `${role === "homeroom" ? "ประจำชั้น" : "ที่ปรึกษา"}: ${names.join(", ")}` : "";
+    }).filter(Boolean).join(" / ");
+}
+
 document.getElementById("btn-save-homeroom").addEventListener("click", () => {
-    // Commit draft to active state
-    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
-    saveStateToLocalStorage();
+    const commit = () => {
+        // Commit draft to active state
+        settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+        saveStateToLocalStorage();
 
-    // ยืนยันแล้วว่าเป็นข้อมูลของปีนี้จริง — เอาแถบ "ดึงมาจากปีที่แล้ว" ออก
-    homeroomAutoFillNote = null;
-    renderHomeroomView();
+        // ยืนยันแล้วว่าเป็นข้อมูลของปีนี้จริง — เอาแถบ "ดึงมาจากปีที่แล้ว" ออก
+        homeroomAutoFillNote = null;
+        renderHomeroomView();
 
-    const year = getSelectedHomeroomYear();
-    const count = Object.keys(settingsState.homeroom[year] || {}).length;
-    showToast(`บันทึกครูประจำชั้นปีการศึกษา ${year} แล้ว (${count} ห้อง)`, "success");
+        const year = getSelectedHomeroomYear();
+        const count = Object.keys(settingsState.homeroom[year] || {}).length;
+        showToast(`บันทึกครูประจำชั้นปีการศึกษา ${year} แล้ว (${count} ห้อง)`, "success");
+    };
+
+    // เทียบทุกปีในแบบร่างกับที่บันทึกไว้ (ผู้ใช้อาจสลับปีแล้วแก้หลายปีก่อนกดบันทึก)
+    const before = settingsState.homeroom || {};
+    const after = settingsStateDraft.homeroom || {};
+    const changes = [];
+    const newYears = [];
+    Object.keys(after).sort().forEach(year => {
+        // ปีที่ยังไม่เคยบันทึก (ถูกเติมอัตโนมัติจากปีที่แล้ว) → เทียบกับปีที่แล้ว ให้เห็นเฉพาะห้องที่แก้จริง
+        let base = before[year];
+        if (!(year in before)) {
+            if (Object.keys(after[year] || {}).length === 0) return; // ปีว่างที่แค่เปิดดู ไม่นับเป็นการเปลี่ยนแปลง
+            const prevYear = String(parseInt(year, 10) - 1);
+            base = before[prevYear] || {};
+            newYears.push(prevYear in before ? `${year} (เทียบกับปี ${prevYear} ที่ดึงมา)` : year);
+        }
+        const rooms = new Set([...Object.keys(base || {}), ...Object.keys(after[year] || {})]);
+        homeroomClassList().filter(cls => rooms.has(cls)).forEach(cls => {
+            const b = homeroomAssignText((base || {})[cls]);
+            const a = homeroomAssignText((after[year] || {})[cls]);
+            if (b !== a) changes.push({ label: `${year} · ${cls}`, before: b, after: a });
+        });
+    });
+
+    if (changes.length === 0 && newYears.length === 0) {
+        showToast("ไม่มีการเปลี่ยนแปลงรายชื่อครูประจำชั้น", "info");
+        return;
+    }
+
+    const summaryParts = [];
+    if (changes.length) summaryParts.push(`เปลี่ยนครูประจำชั้น/ครูที่ปรึกษา <b>${changes.length} ห้อง</b>`);
+    if (newYears.length) summaryParts.push(`ยืนยันรายชื่อชุดแรกของปีการศึกษา ${newYears.map(icEsc).join(", ")}`);
+
+    showImpactConfirm({
+        title: "บันทึกครูประจำชั้น",
+        tone: "info",
+        summary: summaryParts.join(" และ "),
+        changes,
+        impacts: [
+            { where: "หน้าข้อมูลครูประจำชั้น", detail: "รายชื่อที่บันทึกจะเป็นต้นทางให้ปีการศึกษาถัดไปดึงไปใช้อัตโนมัติ" },
+            { where: "หน้าการมาเรียน / การลาเรียนของนักเรียน", detail: "ยังไม่ได้ดึงรายชื่อจากหน้านี้ (ยังใช้รายชื่อตัวอย่าง) จึงยังไม่เปลี่ยนตาม" }
+        ],
+        confirmLabel: "บันทึก",
+        onConfirm: commit
+    });
 });
 
 // Save Work Hours, Shifts, and Holidays (Task 4)
 document.getElementById("btn-save-hours").addEventListener("click", () => {
-    settingsStateDraft.workStart = document.getElementById("work-start").value;
-    settingsStateDraft.workEnd = document.getElementById("work-end").value;
-    settingsStateDraft.lunchStart = document.getElementById("lunch-start").value;
-    settingsStateDraft.lunchEnd = document.getElementById("lunch-end").value;
-    settingsStateDraft.lateThreshold = parseInt(document.getElementById("late-threshold").value) || 15;
-    settingsStateDraft.earlyOutThreshold = parseInt(document.getElementById("early-out-threshold").value) || 15;
-    settingsStateDraft.otStart = document.getElementById("ot-start").value;
-
     const newWorkdays = [];
     document.querySelectorAll(".weekday-selector input").forEach(cb => {
         if (cb.checked) newWorkdays.push(cb.value);
     });
-    settingsStateDraft.workdays = newWorkdays;
+    const next = {
+        workStart: document.getElementById("work-start").value,
+        workEnd: document.getElementById("work-end").value,
+        lunchStart: document.getElementById("lunch-start").value,
+        lunchEnd: document.getElementById("lunch-end").value,
+        lateThreshold: parseInt(document.getElementById("late-threshold").value) || 15,
+        earlyOutThreshold: parseInt(document.getElementById("early-out-threshold").value) || 15,
+        otStart: document.getElementById("ot-start").value,
+        workdays: newWorkdays
+    };
 
-    // Commit draft (including special shifts and holidays) to main state
-    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
-    saveStateToLocalStorage();
-    
-    renderScheduleView();
-    showToast("บันทึกการตั้งค่าวันเวลา วันหยุด และกะงานเรียบร้อยแล้ว", "success");
+    // สรุปสิ่งที่เปลี่ยน: เวลาทำงาน + กะงานพิเศษ + วันหยุด (ปุ่มนี้บันทึกทั้ง 3 ส่วนพร้อมกัน)
+    const cur = settingsState;
+    const timeRows = [
+        { key: "workStart", label: "เวลาเข้างาน", fmt: v => `${v} น.` },
+        { key: "workEnd", label: "เวลาเลิกงาน", fmt: v => `${v} น.` },
+        { key: "lunchStart", label: "พักกลางวัน เริ่ม", fmt: v => `${v} น.` },
+        { key: "lunchEnd", label: "พักกลางวัน สิ้นสุด", fmt: v => `${v} น.` },
+        { key: "lateThreshold", label: "เกณฑ์มาสาย", fmt: v => `${v} นาที` },
+        { key: "earlyOutThreshold", label: "เกณฑ์กลับก่อนเวลา", fmt: v => `${v} นาที` },
+        { key: "otStart", label: "เริ่มนับ OT", fmt: v => `${v} น.` },
+        { key: "workdays", label: "วันทำงาน", fmt: v => icWeekdaysText(v) }
+    ];
+    const timeChanges = timeRows
+        .map(r => ({ key: r.key, label: r.label, before: r.fmt(cur[r.key]), after: r.fmt(next[r.key]) }))
+        .filter(c => c.before !== c.after);
+    const shiftDiff = diffMasterList(cur.shifts, settingsStateDraft.shifts, [
+        { key: "name", label: "ชื่อกะ" },
+        { key: "start", label: "เวลาเริ่ม" },
+        { key: "end", label: "เวลาสิ้นสุด" }
+    ], { hasActive: false, nameOf: s => `กะ ${s.name}` });
+    const holidayDiff = diffMasterList(cur.holidays, settingsStateDraft.holidays, [
+        { key: "name", label: "ชื่อวันหยุด" },
+        { key: "type", label: "ประเภท", fmt: v => IC_HOLIDAY_TYPE_LABEL[v] || v || "" }
+    ], { idKey: "date", hasActive: false, nameOf: h => `วันหยุด ${formatThaiDate(h.date)} ${h.name}` });
+
+    const changes = timeChanges.map(c => ({ label: c.label, before: c.before, after: c.after }))
+        .concat(shiftDiff.changes, holidayDiff.changes);
+
+    if (changes.length === 0) {
+        showToast("ไม่มีการเปลี่ยนแปลงที่ต้องบันทึก", "info");
+        return;
+    }
+
+    const changedKeys = timeChanges.map(c => c.key);
+    const impacts = [];
+    if (changedKeys.some(k => ["workStart", "workEnd", "lateThreshold"].includes(k))) {
+        impacts.push({ where: "การ์ดสรุปด้านบนของหน้านี้", detail: "เวลาเข้า-ออกงานและเกณฑ์มาสายจะแสดงค่าใหม่" });
+    }
+    if (changedKeys.some(k => ["workStart", "workEnd", "lateThreshold", "earlyOutThreshold", "otStart", "lunchStart", "lunchEnd"].includes(k))) {
+        impacts.push({ where: "การตัดสินสถานะ \"มาสาย / กลับก่อนเวลา / OT\" ของบุคลากร", detail: "จะใช้ค่าใหม่เมื่อเชื่อมระบบลงเวลาเข้า-ออกงาน (ตอนนี้ยังไม่มีหน้าที่คำนวณจากค่านี้)" });
+    }
+    if (changedKeys.includes("workdays") || holidayDiff.changes.length) {
+        impacts.push({ where: IC_PAGE.leaveForm, detail: "การนับจำนวนวันลายังไม่เปลี่ยนตาม — ระบบยังนับ จ.–ศ. และวันหยุดราชการชุดกลางของระบบ" });
+    }
+    if (shiftDiff.changes.length) {
+        impacts.push({ where: "กะงานพิเศษ", detail: "แสดงในหน้านี้เท่านั้น ยังไม่ได้ผูกกับบุคลากรคนใด" });
+    }
+    impacts.push({ where: "เวลาเข้า-เลิกเรียนของนักเรียน", detail: "ไม่กระทบ — ตั้งค่าแยกอีกหน้าหนึ่ง" });
+
+    const parts = [];
+    if (timeChanges.length) parts.push(`เวลาทำงาน ${timeChanges.length} รายการ`);
+    if (shiftDiff.changes.length) parts.push(`กะงานพิเศษ (${diffCountsText(shiftDiff)})`);
+    if (holidayDiff.changes.length) parts.push(`วันหยุด (${diffCountsText(holidayDiff)})`);
+
+    showImpactConfirm({
+        title: "บันทึกการตั้งค่าวันเวลาเข้าออก",
+        tone: "info",
+        summary: `บันทึกการเปลี่ยนแปลง: ${parts.join(" · ")}`,
+        changes,
+        impacts,
+        confirmLabel: "บันทึก",
+        onConfirm: () => {
+            Object.assign(settingsStateDraft, next);
+            // Commit draft (including special shifts and holidays) to main state
+            settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+            saveStateToLocalStorage();
+
+            renderScheduleView();
+            showToast("บันทึกการตั้งค่าวันเวลา วันหยุด และกะงานเรียบร้อยแล้ว", "success");
+        }
+    });
 });
 
 // Weekday selector interactive styling
@@ -1563,10 +2127,39 @@ document.getElementById("btn-confirm-shift")?.addEventListener("click", () => {
         // Edit Mode
         const shift = settingsStateDraft.shifts.find(s => s.id === settingsStateDraft.editingShiftId);
         if (shift) {
-            shift.name = name;
-            shift.start = start;
-            shift.end = end;
-            showToast("แก้ไขแบบร่างกะงานเรียบร้อยแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+            const changes = [
+                { label: "ชื่อกะ", before: shift.name, after: name },
+                { label: "เวลาเริ่ม", before: `${shift.start} น.`, after: `${start} น.` },
+                { label: "เวลาสิ้นสุด", before: `${shift.end} น.`, after: `${end} น.` }
+            ].filter(c => c.before !== c.after);
+
+            if (changes.length === 0) {
+                closeModal("modal-shift");
+                showToast("ไม่มีการเปลี่ยนแปลง", "info");
+                return;
+            }
+
+            showImpactConfirm({
+                title: "แก้ไขกะงานพิเศษ",
+                tone: "warning",
+                summary: `แก้ไขกะ <b>"${icEsc(shift.name)}"</b>`,
+                changes,
+                impacts: [
+                    { where: "ตั้งค่าวันเวลาเข้าออก › จัดการกะพิเศษ", detail: "รายการกะในหน้านี้จะแสดงค่าใหม่" },
+                    { where: "หน้าอื่นในระบบ", detail: "ยังไม่มี — กะงานพิเศษยังไม่ได้ผูกกับบุคลากรหรือการคำนวณเวลาเข้า-ออกงาน" }
+                ],
+                note: IC_DRAFT_NOTE,
+                confirmLabel: "ยืนยันการแก้ไข",
+                onConfirm: () => {
+                    shift.name = name;
+                    shift.start = start;
+                    shift.end = end;
+                    closeModal("modal-shift");
+                    renderScheduleView();
+                    showToast("แก้ไขแบบร่างกะงานเรียบร้อยแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+                }
+            });
+            return;
         }
     } else {
         // Add Mode
@@ -1594,9 +2187,25 @@ window.editShift = function(id) {
 
 // Delete Shift (removes from draft)
 window.deleteShift = function(id) {
-    settingsStateDraft.shifts = settingsStateDraft.shifts.filter(s => s.id !== id);
-    renderScheduleView();
-    showToast("ลบแบบร่างกะงานแล้ว (กรุณากดบันทึกด้านล่างเพื่อยืนยัน)", "warning");
+    const shift = settingsStateDraft.shifts.find(s => s.id === id);
+    if (!shift) return;
+
+    showImpactConfirm({
+        title: "ลบกะงานพิเศษ",
+        tone: "danger",
+        summary: `ลบกะ <b>"${icEsc(shift.name)}"</b> (${icEsc(shift.start)} – ${icEsc(shift.end)} น.)`,
+        impacts: [
+            { where: "ตั้งค่าวันเวลาเข้าออก › จัดการกะพิเศษ", detail: "กะนี้จะหายจากรายการ" },
+            { where: "หน้าอื่นในระบบ", detail: "ไม่กระทบ — กะงานพิเศษยังไม่ได้ผูกกับบุคลากรคนใด" }
+        ],
+        note: IC_DRAFT_NOTE,
+        confirmLabel: "ลบ",
+        onConfirm: () => {
+            settingsStateDraft.shifts = settingsStateDraft.shifts.filter(s => s.id !== id);
+            renderScheduleView();
+            showToast("ลบแบบร่างกะงานแล้ว (กรุณากดบันทึกด้านล่างเพื่อยืนยัน)", "warning");
+        }
+    });
 };
 
 // Holiday Modal Show
@@ -1633,9 +2242,25 @@ document.getElementById("btn-confirm-holiday")?.addEventListener("click", () => 
 
 // Delete Holiday (removes from draft)
 window.deleteHoliday = function(date) {
-    settingsStateDraft.holidays = settingsStateDraft.holidays.filter(h => h.date !== date);
-    renderScheduleView();
-    showToast("ลบแบบร่างวันหยุดแล้ว (กรุณากดบันทึกด้านล่างเพื่อยืนยัน)", "warning");
+    const holiday = settingsStateDraft.holidays.find(h => h.date === date);
+    if (!holiday) return;
+
+    showImpactConfirm({
+        title: "ลบวันหยุดโรงเรียน",
+        tone: "danger",
+        summary: `ลบวันหยุด <b>${icEsc(formatThaiDate(holiday.date))} "${icEsc(holiday.name)}"</b>`,
+        impacts: [
+            { where: "ตั้งค่าวันเวลาเข้าออก › วันหยุดโรงเรียน", detail: "วันนี้จะหายจากตารางวันหยุด" },
+            { where: IC_PAGE.leaveForm, detail: "การนับจำนวนวันลายังไม่เปลี่ยน — ระบบยังใช้วันหยุดราชการชุดกลาง ไม่ได้อ่านจากตารางนี้" }
+        ],
+        note: IC_DRAFT_NOTE,
+        confirmLabel: "ลบ",
+        onConfirm: () => {
+            settingsStateDraft.holidays = settingsStateDraft.holidays.filter(h => h.date !== date);
+            renderScheduleView();
+            showToast("ลบแบบร่างวันหยุดแล้ว (กรุณากดบันทึกด้านล่างเพื่อยืนยัน)", "warning");
+        }
+    });
 };
 
 // Signatory Modal Show
@@ -1673,12 +2298,50 @@ document.getElementById("btn-confirm-signatory")?.addEventListener("click", () =
         // Edit mode
         const sign = settingsStateDraft.signatories.find(s => s.id === settingsStateDraft.editingSignatoryId);
         if (sign) {
-            sign.prefix = prefix;
-            sign.name = name;
-            sign.position = position;
-            sign.order = order;
-            sign.docTypes = docTypes;
-            showToast("แก้ไขข้อมูลแบบร่างผู้ลงนามแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+            const changes = [
+                { label: "ชื่อ", before: `${sign.prefix || ""}${sign.name}`, after: `${prefix}${name}` },
+                { label: "ตำแหน่ง", before: sign.position, after: position },
+                { label: "ลำดับการลงนาม", before: `ลำดับที่ ${sign.order}`, after: `ลำดับที่ ${order}` },
+                { label: "ประเภทเอกสาร", before: (sign.docTypes || []).join(", ") || "ไม่มี", after: docTypes.join(", ") || "ไม่มี" }
+            ].filter(c => c.before !== c.after);
+
+            if (changes.length === 0) {
+                closeModal("modal-signatory");
+                showToast("ไม่มีการเปลี่ยนแปลง", "info");
+                return;
+            }
+
+            const assignedDocs = settingsStateDraft.docSignatories
+                .filter(item => (item.signatoryIds || []).includes(sign.id))
+                .map(item => item.docType);
+            const impacts = [
+                { where: "การ์ดผู้ลงนามหลัก", detail: "จะแสดงข้อมูลใหม่" }
+            ];
+            if (assignedDocs.length) {
+                impacts.push({ where: "กำหนดผู้ลงนามตามเอกสาร", detail: `ผู้ลงนามของ ${assignedDocs.map(icEsc).join(", ")} จะแสดงข้อมูลใหม่` });
+            }
+            impacts.push({ where: "เอกสารที่พิมพ์ (เช่น ใบลา)", detail: "ยังไม่เปลี่ยนตาม — ตอนนี้ยังไม่ได้ดึงรายชื่อผู้ลงนามจากหน้านี้ไปพิมพ์" });
+
+            showImpactConfirm({
+                title: "แก้ไขข้อมูลผู้ลงนาม",
+                tone: "warning",
+                summary: `แก้ไขผู้ลงนาม <b>${icEsc((sign.prefix || "") + sign.name)}</b>`,
+                changes,
+                impacts,
+                note: signatoryDraftNote(),
+                confirmLabel: "ยืนยันการแก้ไข",
+                onConfirm: () => {
+                    sign.prefix = prefix;
+                    sign.name = name;
+                    sign.position = position;
+                    sign.order = order;
+                    sign.docTypes = docTypes;
+                    closeModal("modal-signatory");
+                    renderSignatoriesView();
+                    showToast("แก้ไขข้อมูลแบบร่างผู้ลงนามแล้ว (กรุณากดบันทึกด้านล่างอีกครั้ง)", "info");
+                }
+            });
+            return;
         }
     } else {
         // Add mode
@@ -1690,6 +2353,14 @@ document.getElementById("btn-confirm-signatory")?.addEventListener("click", () =
     closeModal("modal-signatory");
     renderSignatoriesView();
 });
+
+// หมายเหตุท้ายป๊อปอัปของหน้าผู้ลงนาม — ถ้าหน้าไม่มีปุ่ม #btn-save-doc-signatories (เพิ่มใน app.html แล้ว 2026-09-29)
+// ให้บอกผู้ใช้ตามจริงว่ายังบันทึกถาวรไม่ได้
+function signatoryDraftNote() {
+    return document.getElementById("btn-save-doc-signatories")
+        ? IC_DRAFT_NOTE
+        : "ตอนนี้เป็นการแก้ในแบบร่าง — หน้านี้ยังไม่มีปุ่มบันทึก การเปลี่ยนแปลงจะหายเมื่อออกจากหน้า";
+}
 
 // Edit Signatory
 window.editSignatory = function(id) {
@@ -1712,18 +2383,42 @@ window.editSignatory = function(id) {
 
 // Delete Signatory (removes from draft)
 window.deleteSignatory = function(id) {
-    settingsStateDraft.signatories = settingsStateDraft.signatories.filter(s => s.id !== id);
-    
-    // Remove references in document assignments draft
-    settingsStateDraft.docSignatories.forEach(item => {
-        if (item.signatoryId === id) item.signatoryId = "";
-        if (item.signatoryIds) {
-            item.signatoryIds = item.signatoryIds.filter(x => x !== id);
+    const sign = settingsStateDraft.signatories.find(s => s.id === id);
+    if (!sign) return;
+
+    const assigned = settingsStateDraft.docSignatories.filter(item => (item.signatoryIds || []).includes(id));
+    const leftEmpty = assigned.filter(item => item.signatoryIds.length === 1).map(item => item.docType);
+    const impacts = [];
+    if (assigned.length) {
+        impacts.push({ where: "กำหนดผู้ลงนามตามเอกสาร", detail: `จะถูกเอาออกจาก ${assigned.map(item => icEsc(item.docType)).join(", ")}` });
+    }
+    if (leftEmpty.length) {
+        impacts.push({ where: "เอกสารที่จะไม่มีผู้ลงนามเลย", detail: `${leftEmpty.map(icEsc).join(", ")} — ควรเลือกผู้ลงนามคนใหม่ก่อนกดบันทึก` });
+    }
+    impacts.push({ where: "เอกสารที่พิมพ์ (เช่น ใบลา)", detail: "ยังไม่เปลี่ยนตาม — ตอนนี้ยังไม่ได้ดึงรายชื่อผู้ลงนามจากหน้านี้ไปพิมพ์" });
+
+    showImpactConfirm({
+        title: "ลบผู้ลงนาม",
+        tone: "danger",
+        summary: `ลบ <b>${icEsc((sign.prefix || "") + sign.name)}</b> (${icEsc(sign.position)}) ออกจากรายชื่อผู้ลงนาม`,
+        impacts,
+        note: signatoryDraftNote(),
+        confirmLabel: "ลบ",
+        onConfirm: () => {
+            settingsStateDraft.signatories =settingsStateDraft.signatories.filter(s => s.id !== id);
+
+            // Remove references in document assignments draft
+            settingsStateDraft.docSignatories.forEach(item => {
+                if (item.signatoryId === id) item.signatoryId = "";
+                if (item.signatoryIds) {
+                    item.signatoryIds = item.signatoryIds.filter(x => x !== id);
+                }
+            });
+
+            renderSignatoriesView();
+            showToast("ลบรายชื่อผู้ลงนามออกจากแบบร่างแล้ว (กรุณากดบันทึกด้านล่าง)", "warning");
         }
     });
-
-    renderSignatoriesView();
-    showToast("ลบรายชื่อผู้ลงนามออกจากแบบร่างแล้ว (กรุณากดบันทึกด้านล่าง)", "warning");
 };
 
 // Multiple Signatories Checkbox assignment helper (Task 3)
@@ -1747,11 +2442,56 @@ window.assignDocSignatoryMultiple = function(docType, signatoryId, isChecked) {
 
 // Save Document Signatories and Signatories list to DB (Task 3 & 4)
 document.getElementById("btn-save-doc-signatories")?.addEventListener("click", () => {
-    // Commit draft to active state
-    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
-    saveStateToLocalStorage();
-    renderSignatoriesView();
-    showToast("บันทึกข้อมูลผู้ลงนามและการมอบหมายเอกสารเรียบร้อยแล้ว", "success");
+    const signName = s => `${s.prefix || ""}${s.name}`;
+    const signDiff = diffMasterList(settingsState.signatories, settingsStateDraft.signatories, [
+        { key: "name", label: "ชื่อ", fmt: (v, s) => signName(s) },
+        { key: "position", label: "ตำแหน่ง" },
+        { key: "order", label: "ลำดับการลงนาม", fmt: v => `ลำดับที่ ${v}` },
+        { key: "docTypes", label: "ประเภทเอกสาร", fmt: v => (v || []).join(", ") || "ไม่มี" }
+    ], { hasActive: false, nameOf: signName });
+
+    // ผู้ลงนามของแต่ละเอกสาร (เดิม → ใหม่) — ชื่อหาจากทั้งรายการเดิมและแบบร่าง เผื่อคนที่ถูกลบไปแล้ว
+    const allSigns = [...settingsState.signatories, ...settingsStateDraft.signatories];
+    const namesOf = ids => (ids || []).map(id => { const s = allSigns.find(x => x.id === id); return s ? signName(s) : id; }).join(", ") || "ยังไม่กำหนด";
+    const docChanges = settingsStateDraft.docSignatories.map(item => {
+        const old = settingsState.docSignatories.find(x => x.docType === item.docType) || {};
+        return { label: `ผู้ลงนาม: ${item.docType}`, before: namesOf(old.signatoryIds), after: namesOf(item.signatoryIds) };
+    }).filter(c => c.before !== c.after);
+
+    const changes = signDiff.changes.concat(docChanges);
+    if (changes.length === 0) {
+        showToast("ไม่มีการเปลี่ยนแปลงที่ต้องบันทึก", "info");
+        return;
+    }
+
+    const emptyDocs = settingsStateDraft.docSignatories.filter(item => !(item.signatoryIds || []).length).map(item => item.docType);
+    const impacts = [
+        { where: "ผู้ลงนามเอกสาร", detail: "รายชื่อผู้ลงนามหลักและการกำหนดผู้ลงนามตามเอกสารจะเป็นค่าใหม่" }
+    ];
+    if (emptyDocs.length) {
+        impacts.push({ where: "เอกสารที่ยังไม่มีผู้ลงนาม", detail: emptyDocs.map(icEsc).join(", ") });
+    }
+    impacts.push({ where: "เอกสารที่พิมพ์ (เช่น ใบลา)", detail: "ยังไม่เปลี่ยนตาม — ตอนนี้ยังไม่ได้ดึงรายชื่อผู้ลงนามจากหน้านี้ไปพิมพ์" });
+
+    const parts = [];
+    if (signDiff.changes.length) parts.push(`ผู้ลงนามหลัก (${diffCountsText(signDiff)})`);
+    if (docChanges.length) parts.push(`ผู้ลงนามตามเอกสาร ${docChanges.length} ประเภท`);
+
+    showImpactConfirm({
+        title: "บันทึกผู้ลงนามเอกสาร",
+        tone: "info",
+        summary: `บันทึกการเปลี่ยนแปลง: ${parts.join(" · ")}`,
+        changes,
+        impacts,
+        confirmLabel: "บันทึก",
+        onConfirm: () => {
+            // Commit draft to active state
+            settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+            saveStateToLocalStorage();
+            renderSignatoriesView();
+            showToast("บันทึกข้อมูลผู้ลงนามและการมอบหมายเอกสารเรียบร้อยแล้ว", "success");
+        }
+    });
 });
 
 // ---- Staff Types (ประเภทบุคลากร) ----
@@ -1761,10 +2501,43 @@ document.getElementById("staff-type-search")?.addEventListener("input", debounce
 document.getElementById("staff-type-filter-status")?.addEventListener("change", renderStaffTypesView);
 
 document.getElementById("btn-save-staff-types")?.addEventListener("click", () => {
-    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
-    saveStateToLocalStorage();
-    renderStaffTypesView();
-    showToast("บันทึกประเภทบุคลากรเรียบร้อยแล้ว", "success");
+    const diff = diffMasterList(settingsState.staffTypes, settingsStateDraft.staffTypes, [
+        { key: "name", label: "ชื่อ" },
+        { key: "code", label: "รหัส" },
+        { key: "desc", label: "คำอธิบาย" },
+        { key: "color", label: "สี", fmt: v => IC_COLOR_LABEL[v] || v || "" }
+    ], { checkOrder: true });
+
+    if (diff.changes.length === 0) {
+        showToast("ไม่มีการเปลี่ยนแปลงที่ต้องบันทึก", "info");
+        return;
+    }
+
+    const activeCount = settingsStateDraft.staffTypes.filter(t => t.active).length;
+    const affected = personnelListSafe().filter(t => diff.touchedIds.includes(t.job?.staffTypeId)).length;
+    const impacts = [
+        { where: IC_PAGE.jobLicense, detail: `ช่อง "ประเภทบุคลากร" จะมีตัวเลือก ${activeCount} ประเภท (เฉพาะที่เปิดใช้งาน) ตามลำดับที่ตั้งไว้` },
+        { where: IC_PAGE.leaveQuota, detail: `ตารางโควตาวันลาแยกตามประเภทจะมี ${activeCount} แถวตามประเภทที่เปิดใช้งาน` },
+        { where: IC_PAGE.positions, detail: "ช่องเลือกประเภทที่สังกัดของตำแหน่ง และป้ายประเภทในตารางตำแหน่ง" }
+    ];
+    if (affected > 0) {
+        impacts.push({ where: IC_PAGE.directory, detail: `บุคลากร ${affected} คนอยู่ในประเภทที่ถูกแก้ไขหรือปิดใช้งาน` });
+    }
+
+    showImpactConfirm({
+        title: "บันทึกประเภทบุคลากร",
+        tone: "info",
+        summary: `บันทึกการเปลี่ยนแปลงประเภทบุคลากร: ${diffCountsText(diff)}`,
+        changes: diff.changes,
+        impacts,
+        confirmLabel: "บันทึก",
+        onConfirm: () => {
+            settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+            saveStateToLocalStorage();
+            renderStaffTypesView();
+            showToast("บันทึกประเภทบุคลากรเรียบร้อยแล้ว", "success");
+        }
+    });
 });
 
 // ---- Positions (ตำแหน่ง) ----
@@ -1775,10 +2548,41 @@ document.getElementById("position-filter-status")?.addEventListener("change", re
 document.getElementById("position-filter-type")?.addEventListener("change", renderPositionsView);
 
 document.getElementById("btn-save-positions")?.addEventListener("click", () => {
-    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
-    saveStateToLocalStorage();
-    renderPositionsView();
-    showToast("บันทึกตำแหน่งเรียบร้อยแล้ว", "success");
+    const diff = diffMasterList(settingsState.positions, settingsStateDraft.positions, [
+        { key: "name", label: "ชื่อ" },
+        { key: "code", label: "รหัส" },
+        { key: "typeIds", label: "ประเภทที่สังกัด", fmt: v => staffTypeNamesText(v) }
+    ], { checkOrder: true });
+
+    if (diff.changes.length === 0) {
+        showToast("ไม่มีการเปลี่ยนแปลงที่ต้องบันทึก", "info");
+        return;
+    }
+
+    const activeCount = settingsStateDraft.positions.filter(p => p.active).length;
+    const affected = personnelListSafe().filter(t => diff.touchedIds.includes(t.job?.positionId)).length;
+    const impacts = [
+        { where: IC_PAGE.jobLicense, detail: `ช่อง "ตำแหน่งปัจจุบัน" จะมีตัวเลือก ${activeCount} ตำแหน่ง (เฉพาะที่เปิดใช้งาน กรองตามประเภทบุคลากรที่เลือก)` },
+        { where: IC_PAGE.importHub, detail: "การจับคู่ชื่อตำแหน่งในไฟล์ Excel จะใช้รายการใหม่นี้" }
+    ];
+    if (affected > 0) {
+        impacts.push({ where: IC_PAGE.directory, detail: `บุคลากร ${affected} คนใช้ตำแหน่งที่ถูกแก้ไขหรือปิดใช้งาน — ชื่อตำแหน่งที่แสดงในประวัติจะอัปเดตเมื่อเปิดแก้ไขแล้วกดบันทึก` });
+    }
+
+    showImpactConfirm({
+        title: "บันทึกตำแหน่ง",
+        tone: "info",
+        summary: `บันทึกการเปลี่ยนแปลงตำแหน่ง: ${diffCountsText(diff)}`,
+        changes: diff.changes,
+        impacts,
+        confirmLabel: "บันทึก",
+        onConfirm: () => {
+            settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+            saveStateToLocalStorage();
+            renderPositionsView();
+            showToast("บันทึกตำแหน่งเรียบร้อยแล้ว", "success");
+        }
+    });
 });
 
 // ---- Departments / Learning Areas (แผนก/กลุ่มสาระการเรียนรู้) ----
@@ -1788,10 +2592,43 @@ document.getElementById("department-search")?.addEventListener("input", debounce
 document.getElementById("department-filter-status")?.addEventListener("change", renderDepartmentsView);
 
 document.getElementById("btn-save-departments")?.addEventListener("click", () => {
-    settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
-    saveStateToLocalStorage();
-    renderDepartmentsView();
-    showToast("บันทึกแผนก/กลุ่มสาระการเรียนรู้เรียบร้อยแล้ว", "success");
+    const diff = diffMasterList(settingsState.departments, settingsStateDraft.departments, [
+        { key: "name", label: "ชื่อ" },
+        { key: "code", label: "รหัส" },
+        { key: "desc", label: "คำอธิบาย" },
+        { key: "color", label: "สี", fmt: v => IC_COLOR_LABEL[v] || v || "" },
+        { key: "headTeacherId", label: "หัวหน้าแผนก", fmt: v => departmentHeadName(v) || "ไม่ระบุ" }
+    ], { checkOrder: true });
+
+    if (diff.changes.length === 0) {
+        showToast("ไม่มีการเปลี่ยนแปลงที่ต้องบันทึก", "info");
+        return;
+    }
+
+    const activeCount = settingsStateDraft.departments.filter(d => d.active).length;
+    const affected = personnelListSafe().filter(t => diff.touchedIds.includes(t.job?.departmentId)).length;
+    const impacts = [
+        { where: IC_PAGE.jobLicense, detail: `ช่อง "กลุ่มสาระการเรียนรู้" จะมีตัวเลือก ${activeCount} รายการ (เฉพาะที่เปิดใช้งาน)` },
+        { where: IC_PAGE.importHub, detail: "การจับคู่ชื่อกลุ่มสาระ/แผนกในไฟล์ Excel จะใช้รายการใหม่นี้" }
+    ];
+    if (affected > 0) {
+        impacts.push({ where: IC_PAGE.directory, detail: `บุคลากร ${affected} คนอยู่ในแผนกที่ถูกแก้ไขหรือปิดใช้งาน — ชื่อที่แสดงในประวัติจะอัปเดตเมื่อเปิดแก้ไขแล้วกดบันทึก` });
+    }
+
+    showImpactConfirm({
+        title: "บันทึกแผนก/กลุ่มสาระการเรียนรู้",
+        tone: "info",
+        summary: `บันทึกการเปลี่ยนแปลงแผนก/กลุ่มสาระ: ${diffCountsText(diff)}`,
+        changes: diff.changes,
+        impacts,
+        confirmLabel: "บันทึก",
+        onConfirm: () => {
+            settingsState = JSON.parse(JSON.stringify(settingsStateDraft));
+            saveStateToLocalStorage();
+            renderDepartmentsView();
+            showToast("บันทึกแผนก/กลุ่มสาระการเรียนรู้เรียบร้อยแล้ว", "success");
+        }
+    });
 });
 
 // -------------------------------------------------------------

@@ -2140,3 +2140,42 @@ table.premium-table tbody tr:hover { background-color: rgba(0, 0, 0, 0.01); }
 .note-leave-link:hover {
   color: var(--primary);
 }
+
+/* ============================================================
+   SHARED (app.html + leave-features.html) — ย้ายมาจาก leave-features.css (2026-09-29)
+   drawer ด้านขวา, สวิตช์ ตาราง/ปฏิทิน, ป้ายจำนวนรอตรวจสอบ, dropdown สถานะคำขอ
+   ============================================================ */
+/* ===== TABLE / CALENDAR VIEW TOGGLE (inside the main list tab) ===== */
+.view-mode-switcher { display: inline-flex; background: rgba(255,255,255,0.05); padding: 3px;
+  border-radius: var(--border-radius-md); border: 1px solid var(--border-color); }
+.view-mode-btn { background: transparent; border: none; color: var(--text-muted); font-size: 12px;
+  font-weight: 500; padding: 6px 14px; cursor: pointer; border-radius: var(--border-radius-sm);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast); display: inline-flex; align-items: center; gap: 6px; }
+.view-mode-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+.view-mode-btn.active { background: var(--primary); color: #fff; font-weight: 600; }
+.list-panel.hidden { display: none; }
+
+/* ===== PENDING-COUNT PILL (inline KPI ในหัวแท็บรายการหลัก) ===== */
+.header-pending-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
+  border-radius: 999px; background: var(--warning-bg); color: var(--warning);
+  font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.header-pending-pill svg { width: 14px; height: 14px; stroke: var(--warning); flex-shrink: 0; }
+.header-pending-pill strong { font-size: 14px; font-weight: 800; }
+.header-pending-pill.info { background: var(--info-bg); color: var(--info); }
+.header-pending-pill.info svg { stroke: var(--info); }
+.drawer-overlay { position: fixed; inset: 0; display: none; background: rgba(0,0,0,.45); z-index: 90; }
+.drawer-overlay.active { display: block; }
+.drawer-panel { position: fixed; top: 0; right: -540px; width: 440px; max-width: 94vw; height: 100vh; z-index: 91; background: var(--bg-main); border-left: 1px solid var(--border-color); padding: 24px; overflow-y: auto; transition: right .22s ease; box-shadow: var(--shadow-lg); }
+.drawer-panel.drawer-wide { width: 520px; }
+.drawer-panel.active { right: 0; }
+.drawer-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color); }
+.sl-status-select { appearance: none; -webkit-appearance: none; border: 1px solid transparent; border-radius: 999px; padding: 5px 28px 5px 12px; font-family: var(--font-body); font-size: 12px; font-weight: 700; cursor: pointer;
+  background-repeat: no-repeat; background-position: right 10px center; background-size: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); }
+.sl-status-select:hover { border-color: currentColor; }
+.sl-status-select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.sl-status-select.warning { color: var(--warning); background-color: var(--warning-bg); }
+.sl-status-select.success { color: var(--success); background-color: var(--success-bg); }
+.sl-status-select.danger { color: var(--danger); background-color: var(--danger-bg); }
+.sl-status-select option { color: var(--text-primary); background: var(--bg-card); font-weight: 600; }
+.sl-approve-table tr.sl-row-pending td:first-child { box-shadow: inset 3px 0 0 var(--warning); }

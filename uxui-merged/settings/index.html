@@ -86,13 +86,27 @@
         var group = CrossNav.NAV_GROUPS.filter(function (g) { return g.id === 'settings'; })[0];
         if (!group) return;
 
-        var sectionsHtml = group.items.filter(function (item) { return item.section; }).map(function (item) {
+        // เมนูเดี่ยวที่ไม่มีหมวดย่อย (ไม่มี section/children เช่น "ตั้งค่าบัตรขออนุญาต") ได้หมวดของตัวเอง
+        // ชื่อ/ไอคอนหมวดตามเมนูนั้น ณ ตำแหน่งที่มันอยู่ใน NAV_GROUPS — ตัดเมนูที่ชี้กลับมาหน้านี้เอง (ศูนย์รวมการตั้งค่า) ออก
+        var sectionItems = [];
+        group.items.forEach(function (item) {
+          if (item.section) { sectionItems.push(item); return; }
+          if (!item.page || item.page === 'settings/index.html' || item.hubOnly) return;
+          sectionItems.push({
+            section: 'settings-' + (item.view || item.label), label: item.label, icon: item.icon || 'gear', keywords: item.keywords,
+            children: [{ label: item.label, page: item.page, module: item.module, view: item.view, hash: item.hash, desc: item.desc, keywords: item.keywords }]
+          });
+        });
+
+        var sectionsHtml = sectionItems.map(function (item) {
           var cardsHtml = (item.children || []).map(function (child) {
             var hash = child.hash ? '#' + child.hash : CrossNav.hashFor(child, null);
             var href = CrossNav.hrefTo(child.page) + hash;
             var badge = systemBadge(child.page);
+            // ข้อความที่ใช้ค้นหา: ชื่อการ์ด + คำอธิบาย + ชื่อหมวด + ชื่อระบบ + keywords ของหมวด
+            var searchText = [child.label, child.desc, item.label, badge.label, item.keywords, child.keywords].join(' ').toLowerCase();
             return (
-              '<a href="' + escapeHtml(href) + '" class="custom-card border border-slate-200 rounded-2xl p-5 hover:border-primary hover:shadow-lg transition-all block relative">' +
+              '<a href="' + escapeHtml(href) + '" data-search="' + escapeHtml(searchText) + '" class="settings-card custom-card border border-slate-200 rounded-2xl p-5 hover:border-primary hover:shadow-lg transition-all block relative">' +
               '<span class="absolute top-4 right-4 text-[10px] font-bold px-2 py-0.5 rounded-full border ' + badge.cls + '">' + escapeHtml(badge.label) + '</span>' +
               '<div class="font-bold text-slate-900 text-sm pr-16">' + escapeHtml(child.label) + '</div>' +
               (child.desc ? '<div class="text-xs text-slate-500 mt-1.5">' + escapeHtml(child.desc) + '</div>' : '') +
@@ -101,7 +115,7 @@
           }).join('');
 
           return (
-            '<section id="' + escapeHtml(item.section) + '" class="mb-10 scroll-mt-24">' +
+            '<section id="' + escapeHtml(item.section) + '" class="settings-section mb-10 scroll-mt-24">' +
             '<div class="flex items-center gap-2 mb-4">' +
             '<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">' + CrossNav.svg(item.icon, 'h-4.5 w-4.5') + '</div>' +
             '<h3 class="text-lg font-bold text-slate-900">' + escapeHtml(item.label) + '</h3>' +
@@ -112,16 +126,57 @@
         }).join('');
 
         mount.innerHTML =
-          '<p class="text-sm text-slate-500 mb-8 max-w-2xl">รวมการตั้งค่าของทั้งระบบบุคลากร/การลา และระบบรับสมัครนักเรียนไว้ในที่เดียว ' +
+          '<p class="text-sm text-slate-500 mb-5 max-w-2xl">รวมการตั้งค่าของทั้งระบบบุคลากร/การลา และระบบรับสมัครนักเรียนไว้ในที่เดียว ' +
           'กดเข้าไปที่การ์ดเพื่อไปยังหน้าตั้งค่านั้น ๆ ได้ทันที</p>' +
-          sectionsHtml;
+          '<div class="relative max-w-xl mb-8">' +
+          '<i data-lucide="search" class="h-4 w-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>' +
+          '<input id="settings-search" type="search" autocomplete="off" placeholder="ค้นหาการตั้งค่า เช่น โควตาลา, ผู้อนุมัติ, บัตรขออนุญาต, ห้องสอบ..." ' +
+          'aria-label="ค้นหาการตั้งค่า" class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm shadow-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20">' +
+          '</div>' +
+          sectionsHtml +
+          '<div id="settings-search-empty" class="hidden rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">' +
+          'ไม่พบการตั้งค่าที่ตรงกับ "<span id="settings-search-term" class="font-semibold text-slate-700"></span>"</div>';
 
         if (window.lucide) lucide.createIcons();
+        bindSearch();
 
         if (location.hash) {
           var target = document.getElementById(location.hash.slice(1));
           if (target) target.scrollIntoView({ block: 'start' });
         }
+      }
+
+      // ค้นหา: กรองการ์ดจากชื่อ/คำอธิบาย/หมวด (ทุกคำที่พิมพ์ต้องเจอ) ซ่อนหมวดที่ไม่เหลือการ์ด — Enter เปิดการ์ดแรกที่เจอ
+      function bindSearch() {
+        var input = document.getElementById('settings-search');
+        if (!input) return;
+        function apply() {
+          var words = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+          var total = 0;
+          document.querySelectorAll('.settings-section').forEach(function (sec) {
+            var shown = 0;
+            sec.querySelectorAll('.settings-card').forEach(function (card) {
+              var text = card.getAttribute('data-search');
+              var ok = words.every(function (w) { return text.indexOf(w) !== -1; });
+              card.classList.toggle('hidden', !ok);
+              if (ok) shown++;
+            });
+            sec.classList.toggle('hidden', shown === 0);
+            total += shown;
+          });
+          document.getElementById('settings-search-term').textContent = input.value.trim();
+          document.getElementById('settings-search-empty').classList.toggle('hidden', total > 0);
+        }
+        input.addEventListener('input', apply);
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            var first = document.querySelector('.settings-card:not(.hidden)');
+            if (first && input.value.trim()) first.click();
+          } else if (e.key === 'Escape') {
+            input.value = '';
+            apply();
+          }
+        });
       }
 
       document.addEventListener('DOMContentLoaded', renderHub);

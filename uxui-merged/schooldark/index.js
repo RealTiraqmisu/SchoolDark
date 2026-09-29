@@ -171,7 +171,8 @@ let systemState = {
     settings: {},
     teachers: [],
     requests: [],
-    currentRole: "teacher", // 'teacher' or 'head'
+    // แสดงมุมมองหัวหน้าครู/ผู้อนุมัติเสมอ (ถอดตัวสลับ "จำลองสถานะ" ออกแล้ว 2026-09-29)
+    currentRole: "head",
     selectedTeacherId: "T001",
     activeView: "form",
     tempAttachment: null,
@@ -475,11 +476,24 @@ function renderSettingsView() {
 }
 
 function removeApprover(index) {
-    App.showConfirm({
-        title: "ยืนยันการลบ",
-        message: "แน่ใจหรือไม่? ชื่อนี้จะถูกลบออกจากรายการผู้อนุมัติ",
-        confirmLabel: "ลบ",
-        requireNote: false,
+    const name = systemState.settings.approvers[index];
+    const pending = systemState.requests.filter(r => r.status === "pending").length;
+    const impacts = [
+        { where: "อนุมัติการลา (บุคลากร)", detail: `${name} จะไม่อยู่ในรายชื่อผู้มีสิทธิ์อนุมัติใบลาอีก` },
+        { where: "ใบลาที่รออนุมัติ", detail: pending ? `ใบลา ${pending} ใบที่รออยู่ยังคงอยู่ ผู้อนุมัติที่เหลือพิจารณาต่อได้` : "ตอนนี้ไม่มีใบลาที่รออนุมัติ" },
+        { where: "ขั้นตอนที่ 2 ของวิซาร์ด", detail: "ลำดับขั้นตอนอนุมัติใบลาในตัวอย่างด้านขวาจะเปลี่ยนตาม" }
+    ];
+    if (index === 0) {
+        const next = systemState.settings.approvers[1];
+        impacts.push({ where: "ชื่อผู้อนุมัติที่แสดงในหน้าอนุมัติการลา", detail: next ? `จะเปลี่ยนเป็น ${next}` : "จะไม่มีผู้อนุมัติเหลืออยู่ — ควรเพิ่มคนใหม่" });
+    }
+    ImpactConfirm.show({
+        title: "ลบผู้อนุมัติการลา",
+        tone: "danger",
+        summary: `ต้องการลบ <strong>${name}</strong> ออกจากรายชื่อผู้อนุมัติการลาใช่หรือไม่?`,
+        impacts,
+        note: "เพิ่มกลับได้ทุกเมื่อจากช่อง \"เพิ่มรายชื่อผู้อนุมัติการลา\" ด้านบน",
+        confirmLabel: "ลบผู้อนุมัติ",
         onConfirm: () => {
             systemState.settings.approvers.splice(index, 1);
             saveStateToLocalStorage();
@@ -579,14 +593,26 @@ function saveSettingsFromDOM() {
 
 function saveAllSettings() {
     saveSettingsFromDOM();
-    showToast("บันทึกการตั้งค่าระบบลาทั้งหมดเรียบร้อยแล้ว", "success");
-    
-    // Complete visual journey state indicator
-    updateJourneyStepProgress("settings", 6);
+    const active = getActiveStaffSettingsVersion();
+    const changes = active ? diffStaffSettings(active.settings, systemState.settings) : [];
 
-    setTimeout(() => {
-        goToSettingsStep(1);
-    }, 1000);
+    ImpactConfirm.show({
+        title: "บันทึกการตั้งค่าการลาบุคลากร",
+        tone: changes.length ? "warning" : "info",
+        summary: changes.length
+            ? `มีการเปลี่ยนแปลง <strong>${changes.length} รายการ</strong> จากเวอร์ชันที่ใช้อยู่ (${staffCycleLabel(active.settings)})`
+            : "ยังไม่มีการเปลี่ยนแปลงจากเวอร์ชันที่ใช้อยู่ — กดบันทึกเพื่อยืนยันการตั้งค่าเดิมได้",
+        changes,
+        impacts: STAFF_SETTINGS_IMPACTS,
+        note: "ระบบจะเก็บเป็นเวอร์ชันใหม่ใน \"ประวัติการตั้งค่า\" — ถ้าต้องการกลับไปใช้ค่าเดิม นำเวอร์ชันเก่ากลับมาใช้ได้ทุกเมื่อ",
+        confirmLabel: "บันทึกการตั้งค่า",
+        onConfirm: () => {
+            if (changes.length) pushStaffSettingsVersion("บันทึกการตั้งค่าระบบการลาบุคลากร");
+            showToast("บันทึกการตั้งค่าระบบลาทั้งหมดเรียบร้อยแล้ว", "success");
+            updateJourneyStepProgress("settings", 6);
+            setTimeout(() => goToSettingsStep(1), 1000);
+        }
+    });
 }
 
 // Settings Wizard step control
@@ -596,6 +622,10 @@ function goToSettingsStep(stepNum) {
     }
     
     systemState.currentSettingsStep = stepNum;
+    // เลื่อนขึ้นบนสุดทุกครั้งที่เปลี่ยนขั้นตอน (กดถัดไป/ย้อนกลับ/คลิกขั้น)
+    const contentBody = document.querySelector(".content-body");
+    if (contentBody) contentBody.scrollTop = 0;
+    window.scrollTo(0, 0);
     
     // Toggle active pane
     document.querySelectorAll(".settings-step-pane").forEach(pane => {
@@ -650,6 +680,228 @@ function prevSettingsStep() {
         goToSettingsStep(step - 1);
         showToast(`ย้อนกลับมายังขั้นตอนที่ ${step - 1}`, "info");
     }
+}
+
+// -------------------------------------------------------------
+// ประวัติการตั้งค่าการลาบุคลากร (แยกตามรอบปีการทำงาน) — ดูรายละเอียด / นำเวอร์ชันเก่ากลับมาใช้
+// เก็บใน localStorage "schooldark_leave_settings_versions" (คู่กับ schooldark_settings ที่เป็นค่าที่ใช้อยู่)
+// -------------------------------------------------------------
+const STAFF_SETTINGS_VERSIONS_KEY = "schooldark_leave_settings_versions";
+
+const STAFF_SETTINGS_IMPACTS = [
+    { where: "ยื่นคำขอลา (บุคลากร)", detail: "โควตาคงเหลือ ตัวเลือกลาครึ่งวัน การบังคับแนบใบรับรองแพทย์ และจำนวนวันที่ต้องยื่นล่วงหน้า" },
+    { where: "อนุมัติการลา (บุคลากร)", detail: "รายชื่อผู้อนุมัติ และโควตาในประวัติการลารายบุคคล" },
+    { where: "การแจ้งเตือน", detail: "เกณฑ์เตือนการมาสายสะสม และการเตือนเอกสารใกล้หมดอายุ (วีซ่า / Work Permit / ใบประกอบวิชาชีพ)" }
+];
+
+function cloneStaffSettings(settings) {
+    return JSON.parse(JSON.stringify(settings));
+}
+
+function staffCycleLabel(settings) {
+    const y = parseInt(String(settings.cutoffDate || "").slice(0, 4), 10);
+    return y ? `รอบปีการทำงาน ${y + 543}` : "รอบปีการทำงาน";
+}
+
+function loadStaffSettingsVersions() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(STAFF_SETTINGS_VERSIONS_KEY));
+        if (Array.isArray(saved) && saved.length) return saved;
+    } catch (e) { /* ใช้ค่าตัวอย่างด้านล่าง */ }
+    // ค่าตัวอย่าง: รอบปีที่แล้ว 2 รอบ + รอบปัจจุบัน (= ค่าที่ใช้อยู่ตอนนี้)
+    const cur = cloneStaffSettings(systemState.settings);
+    const seeded = [
+        {
+            id: "LSV-0001", savedDate: "2024-01-05", savedBy: "ครูวิชัย เรียนดี", status: "past",
+            note: "ตั้งค่าเริ่มต้นของรอบปี 2567",
+            settings: { ...cloneStaffSettings(cur), cutoffDate: "2024-12-31", quotaVacation: 8, ruleAdvanceDays: 5, ruleRollover: false, alertLate1: 5, alertLate2: 10 }
+        },
+        {
+            id: "LSV-0002", savedDate: "2025-01-06", savedBy: "ครูวิชัย เรียนดี", status: "past",
+            note: "เพิ่มโควตาลากิจ/พักผ่อนเป็น 10 วัน และเปิดการทบยอดวันลาพักผ่อน",
+            settings: { ...cloneStaffSettings(cur), cutoffDate: "2025-12-31", ruleAdvanceDays: 3 }
+        },
+        {
+            id: "LSV-0003", savedDate: "2026-01-05", savedBy: "ครูวิชัย เรียนดี", status: "active",
+            note: "ใช้การตั้งค่าเดิมต่อในรอบปี 2569",
+            settings: cur
+        }
+    ];
+    localStorage.setItem(STAFF_SETTINGS_VERSIONS_KEY, JSON.stringify(seeded));
+    return seeded;
+}
+
+function saveStaffSettingsVersions(list) {
+    localStorage.setItem(STAFF_SETTINGS_VERSIONS_KEY, JSON.stringify(list));
+}
+
+function getActiveStaffSettingsVersion() {
+    return loadStaffSettingsVersions().find(v => v.status === "active");
+}
+
+function pushStaffSettingsVersion(note) {
+    const list = loadStaffSettingsVersions();
+    list.forEach(v => { if (v.status === "active") v.status = "past"; });
+    list.push({
+        id: "LSV-" + String(list.length + 1).padStart(4, "0"),
+        savedDate: new Date().toISOString().split("T")[0],
+        savedBy: systemState.settings.approvers[0] || "ผู้ดูแลระบบ",
+        status: "active",
+        note,
+        settings: cloneStaffSettings(systemState.settings)
+    });
+    saveStaffSettingsVersions(list);
+}
+
+// "เดิม → ใหม่" ของทุกช่องในวิซาร์ด 6 ขั้น
+function diffStaffSettings(o, n) {
+    const onOff = v => v ? "เปิด" : "ปิด";
+    const days = v => `${v} วัน`;
+    const rows = [
+        ["วันตัดรอบปีการทำงาน", formatThaiDate(o.cutoffDate), formatThaiDate(n.cutoffDate)],
+        ["ผู้อนุมัติการลา", (o.approvers || []).join(", ") || "-", (n.approvers || []).join(", ") || "-"],
+        ["โควตาลาป่วย", days(o.quotaSick), days(n.quotaSick)],
+        ["โควตาลาพักผ่อน / ลากิจ", days(o.quotaVacation), days(n.quotaVacation)],
+        ["โควตาลาคลอดบุตร", days(o.quotaMaternity), days(n.quotaMaternity)],
+        ["ลาครึ่งวัน", onOff(o.ruleHalfDay), onOff(n.ruleHalfDay)],
+        ["บังคับใบรับรองแพทย์", onOff(o.ruleSickDoc), onOff(n.ruleSickDoc)],
+        ["ยื่นใบลาล่วงหน้า", days(o.ruleAdvanceDays), days(n.ruleAdvanceDays)],
+        ["ทบยอดวันลาพักผ่อน", onOff(o.ruleRollover), onOff(n.ruleRollover)],
+        ["ทบสะสมสูงสุด", days(o.ruleRolloverMax), days(n.ruleRolloverMax)],
+        ["เตือนมาสายครั้งที่ 1", `${o.alertLate1} ครั้ง`, `${n.alertLate1} ครั้ง`],
+        ["เตือนมาสายครั้งที่ 2", `${o.alertLate2} ครั้ง`, `${n.alertLate2} ครั้ง`],
+        ["เตือนวีซ่าล่วงหน้า", days(o.alertVisa), days(n.alertVisa)],
+        ["เตือน Work Permit ล่วงหน้า", days(o.alertWorkpermit), days(n.alertWorkpermit)],
+        ["เตือนใบประกอบวิชาชีพล่วงหน้า", days(o.alertLicense), days(n.alertLicense)]
+    ];
+    const changes = rows.filter(([, b, a]) => b !== a).map(([label, before, after]) => ({ label, before, after }));
+    // โควตาแยกตามประเภทบุคลากร
+    const oo = o.staffTypeQuotaOverrides || {}, no = n.staffTypeQuotaOverrides || {};
+    Object.keys({ ...oo, ...no }).forEach(id => {
+        // ประเภทที่ยังไม่ได้ตั้งแยก = ใช้ค่าเริ่มต้นของเวอร์ชันนั้น (ensureStaffTypeQuotaSeeded เติมให้เองตอนเปิดขั้นตอนที่ 3)
+        const fmt = (q, s) => {
+            q = q || {};
+            return `ป่วย ${q.sick ?? s.quotaSick} / กิจ ${q.vacation ?? s.quotaVacation} / คลอด ${q.maternity ?? s.quotaMaternity}`;
+        };
+        const before = fmt(oo[id], o), after = fmt(no[id], n);
+        if (before !== after) changes.push({ label: `โควตา${staffTypeNameSafe(id)}`, before, after });
+    });
+    return changes;
+}
+
+function openStaffSettingsHistoryDrawer() {
+    const list = [...loadStaffSettingsVersions()].sort((a, b) => b.savedDate.localeCompare(a.savedDate));
+    const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+    const badge = s => s === "active" ? `<span class="badge badge-approved">ใช้งานอยู่</span>` : `<span class="badge" style="background:rgba(0,0,0,0.05);color:var(--text-muted);">ในอดีต</span>`;
+    let lastGroup = "";
+    const items = list.map(v => {
+        const group = staffCycleLabel(v.settings);
+        const head = group !== lastGroup ? `<div class="setting-section-title" style="margin-top:${lastGroup ? 10 : 0}px;">${group}</div>` : "";
+        lastGroup = group;
+        const d = new Date(v.savedDate);
+        return head + `
+            <div class="history-item" style="cursor:pointer;" onclick="viewStaffSettingsVersion('${v.id}')">
+                <div class="history-date-box">
+                    <span class="history-date-month">${thaiMonths[d.getMonth()]}</span>
+                    <span class="history-date-day">${String(d.getDate()).padStart(2, "0")}</span>
+                </div>
+                <div class="history-info">
+                    <div class="history-type">บันทึกเมื่อ ${formatThaiDate(v.savedDate)}</div>
+                    <div class="history-duration">${v.note}</div>
+                </div>
+                ${badge(v.status)}
+            </div>`;
+    }).join("");
+
+    openStaffDrawer({
+        title: "ประวัติการตั้งค่าการลาบุคลากร",
+        body: `
+            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px;">
+                การตั้งค่าที่เคยบันทึกไว้ แยกตามรอบปีการทำงาน คลิกแต่ละรายการเพื่อดูรายละเอียด หรือกด "นำการตั้งค่านี้มาใช้"
+            </p>
+            <div style="display:flex;flex-direction:column;gap:8px;">${items}</div>
+        `,
+        refresh: openStaffSettingsHistoryDrawer
+    });
+}
+
+function viewStaffSettingsVersion(versionId) {
+    const v = loadStaffSettingsVersions().find(x => x.id === versionId);
+    if (!v) return;
+    const s = v.settings;
+    const row = (label, value) => `<div class="summary-row"><span class="summary-label">${label}:</span><span class="summary-value">${value}</span></div>`;
+    const onOff = x => x ? "เปิด" : "ปิด";
+    const overrides = s.staffTypeQuotaOverrides || {};
+    const overrideRows = Object.keys(overrides).map(id => {
+        const q = overrides[id];
+        return `<tr><td>${staffTypeNameSafe(id)}</td><td style="text-align:center;">${q.sick}</td><td style="text-align:center;">${q.vacation}</td><td style="text-align:center;">${q.maternity}</td></tr>`;
+    }).join("");
+
+    openStaffDrawer({
+        title: `รายละเอียด: ${staffCycleLabel(s)}`,
+        body: `
+            <div class="summary-table" style="margin-bottom:16px;">
+                ${row("บันทึกเมื่อ", `${formatThaiDate(v.savedDate)} โดย ${v.savedBy}`)}
+                ${row("สถานะ", v.status === "active" ? "ใช้งานอยู่" : "ในอดีต")}
+                ${row("หมายเหตุ", v.note)}
+            </div>
+            <div class="setting-section-title">รอบปีและผู้อนุมัติ</div>
+            <div class="summary-table" style="margin:10px 0 16px;">
+                ${row("วันตัดรอบปีการทำงาน", formatThaiDate(s.cutoffDate))}
+                ${row("ผู้อนุมัติการลา", (s.approvers || []).join(" → ") || "-")}
+            </div>
+            <div class="setting-section-title">โควตาวันลาต่อปี (ค่าเริ่มต้น)</div>
+            <div class="summary-table" style="margin:10px 0 16px;">
+                ${row("ลาป่วย", `${s.quotaSick} วัน`)}
+                ${row("ลาพักผ่อน / ลากิจ", `${s.quotaVacation} วัน`)}
+                ${row("ลาคลอดบุตร", `${s.quotaMaternity} วัน`)}
+            </div>
+            ${overrideRows ? `
+            <div class="setting-section-title">โควตาแยกตามประเภทบุคลากร</div>
+            <div class="table-container" style="margin:10px 0 16px;">
+                <table class="premium-table"><thead><tr><th>ประเภท</th><th style="text-align:center;">ป่วย</th><th style="text-align:center;">พักผ่อน/กิจ</th><th style="text-align:center;">คลอด</th></tr></thead><tbody>${overrideRows}</tbody></table>
+            </div>` : ""}
+            <div class="setting-section-title">เงื่อนไขและการแจ้งเตือน</div>
+            <div class="summary-table" style="margin-top:10px;">
+                ${row("ลาครึ่งวัน", onOff(s.ruleHalfDay))}
+                ${row("บังคับใบรับรองแพทย์ (ลาป่วยเกิน 3 วัน)", onOff(s.ruleSickDoc))}
+                ${row("ยื่นใบลาล่วงหน้า", `${s.ruleAdvanceDays} วัน`)}
+                ${row("ทบยอดวันลาพักผ่อน", s.ruleRollover ? `เปิด (สูงสุด ${s.ruleRolloverMax} วัน)` : "ปิด")}
+                ${row("เตือนมาสายสะสม", `${s.alertLate1} / ${s.alertLate2} ครั้ง`)}
+                ${row("เตือนเอกสารหมดอายุล่วงหน้า", `วีซ่า ${s.alertVisa} · Work Permit ${s.alertWorkpermit} · ใบประกอบฯ ${s.alertLicense} วัน`)}
+            </div>
+        `,
+        footer: v.status === "active" ? "" : `<button class="btn btn-primary" style="flex:1;" onclick="useStaffSettingsVersion('${v.id}')">นำการตั้งค่านี้มาใช้</button>`,
+        backTo: openStaffSettingsHistoryDrawer,
+        refresh: () => viewStaffSettingsVersion(versionId)
+    });
+}
+
+function useStaffSettingsVersion(versionId) {
+    const v = loadStaffSettingsVersions().find(x => x.id === versionId);
+    if (!v) return;
+    const changes = diffStaffSettings(systemState.settings, v.settings);
+    ImpactConfirm.show({
+        title: "นำการตั้งค่าเก่ากลับมาใช้",
+        summary: `จะนำการตั้งค่าของ <strong>${staffCycleLabel(v.settings)}</strong> (บันทึกเมื่อ ${formatThaiDate(v.savedDate)}) มาใช้แทนค่าปัจจุบันทันที`,
+        changes,
+        impacts: [
+            ...STAFF_SETTINGS_IMPACTS,
+            { where: "วิซาร์ดตั้งค่าการลา", detail: "ทุกขั้นตอนจะแสดงค่าของเวอร์ชันนี้ แก้ต่อแล้วบันทึกใหม่ได้" },
+            { where: "ประวัติการตั้งค่า", detail: "เวอร์ชันเดิมยังเก็บไว้ครบ ระบบจะสร้างเวอร์ชันใหม่ขึ้นมาแทน" }
+        ],
+        note: "ถ้าเป็นการตั้งค่าของรอบปีที่แล้ว อย่าลืมตรวจ \"วันตัดรอบปีการทำงาน\" ในขั้นตอนที่ 1 ให้เป็นรอบปีปัจจุบัน",
+        confirmLabel: "นำมาใช้",
+        onConfirm: () => {
+            systemState.settings = cloneStaffSettings(v.settings);
+            saveStateToLocalStorage();
+            pushStaffSettingsVersion(`นำการตั้งค่าของ${staffCycleLabel(v.settings)} กลับมาใช้`);
+            closeStaffDrawer();
+            systemState.currentSettingsStep = 1;
+            renderSettingsView();
+            showToast(`นำการตั้งค่าของ${staffCycleLabel(v.settings)} กลับมาใช้แล้ว`, "success");
+        }
+    });
 }
 
 // -------------------------------------------------------------
@@ -1200,31 +1452,70 @@ function cancelEditing() {
 // SECTION 3: LEAVE APPROVAL VIEW LOGIC
 // -------------------------------------------------------------
 
-function renderApprovalView(filterStatus = "all") {
+// สถานะคำขอแสดงเป็น dropdown ในคอลัมน์แรก (แบบเดียวกับตารางอนุมัติการลานักเรียนใน leave-features.js)
+// ใช้ class .sl-status-select ร่วมกัน (อยู่ใน app.css)
+const STAFF_STATUS_OPTIONS = [
+    { value: "pending", label: "รออนุมัติ", cls: "warning" },
+    { value: "approved", label: "อนุมัติ", cls: "success" },
+    { value: "rejected", label: "ไม่อนุมัติ", cls: "danger" }
+];
+
+function staffStatusSelectHTML(req) {
+    const cur = STAFF_STATUS_OPTIONS.find(o => o.value === req.status) || STAFF_STATUS_OPTIONS[0];
+    const approver = systemState.settings.approvers[0] || "ผู้อนุมัติ";
+    const tip = req.status === "pending" ? "เลือกเพื่ออนุมัติหรือไม่อนุมัติ"
+        : `${req.status === "approved" ? "อนุมัติ" : "ปฏิเสธ"}โดย: ${approver}${req.comment ? " — " + req.comment : ""}`;
+    return `<select class="sl-status-select ${cur.cls}" aria-label="สถานะคำขอของ ${req.teacherName}" title="${tip}" onchange="onStaffStatusSelect('${req.id}', this)">
+        ${STAFF_STATUS_OPTIONS.map(o => `<option value="${o.value}"${o.value === req.status ? " selected" : ""}>${o.label}</option>`).join("")}
+    </select>`;
+}
+
+function onStaffStatusSelect(reqId, sel) {
+    const req = systemState.requests.find(r => r.id === reqId);
+    if (!req) return;
+    const next = sel.value;
+    sel.value = req.status; // คืนค่าเดิมไว้ก่อน — ตารางจะ render ใหม่เองเมื่อยืนยันแล้ว
+    if (next === req.status) return;
+    if (next === "approved") approveRequestDirect(reqId);
+    else if (next === "rejected") rejectRequestDirect(reqId);
+    else resetRequestStatus(reqId);
+}
+
+let staffListMode = "table";
+let staffApproveFilter = "all";
+
+function setStaffListMode(mode, btn) {
+    staffListMode = mode;
+    document.getElementById("staff-table-panel").classList.toggle("hidden", mode !== "table");
+    document.getElementById("staff-calendar-panel").classList.toggle("hidden", mode !== "calendar");
+    if (btn) {
+        btn.parentElement.querySelectorAll(".view-mode-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+    }
+    if (mode === "calendar") renderLeaveCalendar();
+}
+
+function renderApprovalView(filterStatus) {
+    if (filterStatus !== undefined) staffApproveFilter = filterStatus;
     const tableBody = document.getElementById("approval-table-body");
     tableBody.innerHTML = "";
-
-    if (systemState.currentRole !== "head") {
-        tableBody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--danger); padding: 32px; font-weight:600;">ปฏิเสธการเข้าถึง: สำหรับหัวหน้าครูเท่านั้น</td></tr>`;
-        return;
-    }
 
     // Render the searchable teacher list for the "ประวัติการลารายบุคคล" tab
     renderTeacherProfileList();
 
-    // Render leave calendar
-    renderLeaveCalendar();
+    // ปฏิทินอยู่ในโหมด "ปฏิทิน" (ซ่อนไว้เป็นค่าเริ่มต้น) — วาดเฉพาะตอนเปิดดูอยู่
+    if (staffListMode === "calendar") renderLeaveCalendar();
 
-    const filtered = systemState.requests.filter(r => {
-        if (filterStatus === "all") return true;
-        return r.status === filterStatus;
-    });
+    const pendingEl = document.getElementById("staff-approve-pending-count");
+    if (pendingEl) pendingEl.textContent = systemState.requests.filter(r => r.status === "pending").length;
+
+    const filtered = systemState.requests.filter(r => staffApproveFilter === "all" || r.status === staffApproveFilter);
 
     // Display selected approver
     document.getElementById("current-approver-name-label").textContent = systemState.settings.approvers[0] || "ผู้บริหารสูงสุด";
 
     if (filtered.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 32px;">ไม่พบรายการคำขอการลาในหมวดหมู่นี้</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 32px;">ไม่พบรายการคำขอการลาในหมวดหมู่นี้</td></tr>`;
         return;
     }
 
@@ -1235,60 +1526,30 @@ function renderApprovalView(filterStatus = "all") {
         return b.id.localeCompare(a.id);
     });
 
+    const typeLabel = { "sick": "ลาป่วย", "vacation": "ลากิจ / พักผ่อน", "maternity": "ลาคลอด" };
     filtered.forEach(req => {
         const tr = document.createElement("tr");
-        
-        let statusBadge = "";
-        let actionButtons = "";
-        
-        if (req.status === "pending") {
-            statusBadge = `<span class="badge badge-pending">รออนุมัติ</span>`;
-            actionButtons = `
-                <div style="display: flex; gap: 6px; justify-content: center;">
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 11px; border-radius: 6px;" onclick="approveRequestDirect('${req.id}')">อนุมัติ</button>
-                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 11px; border-radius: 6px;" onclick="rejectRequestDirect('${req.id}')">ปฏิเสธ</button>
-                </div>
-            `;
-        } else if (req.status === "approved") {
-            statusBadge = `<span class="badge badge-approved">อนุมัติ</span>`;
-            actionButtons = `
-                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
-                    <span style="font-size:10px; color: var(--text-muted); text-align:center; display:block;">อนุมัติโดย: ${systemState.settings.approvers[0] || "ผู้อนุมัติ"}</span>
-                    <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; line-height: 1;" onclick="resetRequestStatus('${req.id}')">เปลี่ยนสถานะ</button>
-                </div>
-            `;
-        } else {
-            statusBadge = `<span class="badge badge-rejected">ไม่อนุมัติ</span>`;
-            actionButtons = `
-                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
-                    <span style="font-size:10px; color: var(--danger); text-align:center; display:block;">ปฏิเสธคำขอการลา</span>
-                    <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; line-height: 1;" onclick="resetRequestStatus('${req.id}')">เปลี่ยนสถานะ</button>
-                </div>
-            `;
-        }
-
-        const typeLabel = { "sick": "ลาป่วย", "vacation": "ลากิจ / พักผ่อน", "maternity": "ลาคลอด" };
+        if (req.status === "pending") tr.className = "sl-row-pending";
         const durationDisplay = req.durationType !== "full" ? " (ครึ่งวัน)" : "";
-        
+
         let fileLink = "-";
         if (req.attachment) {
-            fileLink = `<a href="#" style="color: var(--primary); font-weight: 500;" onclick="viewAttachmentMock('${req.attachment.name}'); return false;">
+            fileLink = `<a href="#" style="color: var(--primary); font-weight: 500;" onclick="viewAttachmentMock('${req.attachment.name}'); return false;" title="${req.attachment.name}">
                 <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;vertical-align:middle;margin-right:2px;"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
             </a>`;
         }
 
         tr.innerHTML = `
+            <td>${staffStatusSelectHTML(req)}</td>
             <td>${formatThaiDate(req.submittedDate)}</td>
             <td style="font-weight: 600; color: var(--text-primary);">${req.teacherName}</td>
             <td>${typeLabel[req.leaveType] || req.leaveType}${durationDisplay}</td>
             <td>${formatThaiDate(req.startDate)} - ${formatThaiDate(req.endDate)}</td>
             <td style="text-align: center; font-weight: 600;">${req.netDays}</td>
-            <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${req.reason}">${req.reason}</td>
+            <td style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${req.reason}">${req.reason}</td>
             <td style="text-align: center;">${fileLink}</td>
-            <td>${statusBadge}</td>
-            <td>${actionButtons}</td>
             <td style="text-align: center;">
-                <button class="btn btn-secondary btn-icon" style="width:28px; height:28px; border-radius:6px; padding:0;" onclick="viewRequestDetails('${req.id}')">
+                <button class="btn btn-secondary btn-icon" style="width:28px; height:28px; border-radius:6px; padding:0;" onclick="viewRequestDetails('${req.id}')" title="ดูรายละเอียด">
                     <svg viewBox="0 0 24 24" style="width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                 </button>
             </td>
@@ -1791,35 +2052,38 @@ function resetCalendarToToday() {
     renderLeaveCalendar();
 }
 
+function adjustTeacherQuota(req, sign) {
+    const teacher = systemState.teachers.find(t => t.id === req.teacherId);
+    if (!teacher) return;
+    const key = { sick: "sickUsed", vacation: "vacationUsed", maternity: "maternityUsed" }[req.leaveType];
+    if (key) teacher[key] = Math.max(0, (teacher[key] || 0) + sign * req.netDays);
+}
+
+// หลังเปลี่ยนสถานะ: บันทึก + วาดตาราง/ปฏิทิน/badge ใหม่ + รีเฟรช drawer ที่เปิดค้างอยู่
+function afterStaffStatusChange() {
+    saveStateToLocalStorage();
+    renderApprovalView();
+    updateApprovalBadge();
+    if (typeof staffDrawerRefresh === "function" && document.getElementById("staff-drawer").classList.contains("active")) {
+        staffDrawerRefresh();
+    }
+}
+
 function approveRequestDirect(reqId) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
-    
+
     App.showConfirm({
         title: "ยืนยันอนุมัติใบลา",
         message: `ยืนยันการอนุมัติใบลาของ <strong style="color:var(--primary);">${req.teacherName}</strong><br>ประเภท: ${typeLabelShort(req.leaveType)} (${req.netDays} วัน)`,
         confirmLabel: "อนุมัติ",
         requireNote: true,
         onConfirm: (note) => {
-            // Update request state
             req.status = "approved";
             req.comment = note || "อนุมัติในระบบ";
-            
-            // Deduct quota from teacher
-            const teacher = systemState.teachers.find(t => t.id === req.teacherId);
-            if (teacher) {
-                if (req.leaveType === "sick") teacher.sickUsed += req.netDays;
-                else if (req.leaveType === "vacation") teacher.vacationUsed += req.netDays;
-                else if (req.leaveType === "maternity") teacher.maternityUsed += req.netDays;
-            }
-            
-            saveStateToLocalStorage();
-            renderApprovalView();
-            updateApprovalBadge();
+            adjustTeacherQuota(req, +1); // หักโควตาของครู
+            afterStaffStatusChange();
             showToast(`อนุมัติใบลาของ ${req.teacherName} สำเร็จ`, "success");
-            
-            // Sync steps
-            updateJourneyStepProgress("approve", 3);
         }
     });
 }
@@ -1827,22 +2091,19 @@ function approveRequestDirect(reqId) {
 function rejectRequestDirect(reqId) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
-    
+
     App.showConfirm({
         title: "ปฏิเสธคำขอการลา",
-        message: `คุณกำลังปฏิเสธใบลาของ <strong style="color:var(--danger);">${req.teacherName}</strong>`,
+        message: `คุณกำลังปฏิเสธใบลาของ <strong style="color:var(--danger);">${req.teacherName}</strong>` +
+            (req.status === "approved" ? `<br><span style="font-size:12px;color:var(--text-muted);">ใบลานี้อนุมัติไปแล้ว — ระบบจะคืนโควตา ${req.netDays} วันให้ครูอัตโนมัติ</span>` : ""),
         confirmLabel: "ปฏิเสธ",
         requireNote: true,
         onConfirm: (note) => {
+            if (req.status === "approved") adjustTeacherQuota(req, -1); // เปลี่ยนจากอนุมัติ → ไม่อนุมัติ ต้องคืนโควตา
             req.status = "rejected";
             req.comment = note;
-            
-            saveStateToLocalStorage();
-            renderApprovalView();
-            updateApprovalBadge();
+            afterStaffStatusChange();
             showToast(`ปฏิเสธคำขอการลาของ ${req.teacherName}`, "danger");
-            
-            updateJourneyStepProgress("approve", 3);
         }
     });
 }
@@ -1850,41 +2111,68 @@ function rejectRequestDirect(reqId) {
 function resetRequestStatus(reqId) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
-    
-    if (!confirm(`คุณต้องการยกเลิกการตัดสินใจและเปลี่ยนสถานะคำขอของ ${req.teacherName} กลับเป็น "รออนุมัติ" ใช่หรือไม่?`)) return;
-    
-    // If it was approved, we must refund the used quota
-    if (req.status === "approved") {
-        const teacher = systemState.teachers.find(t => t.id === req.teacherId);
-        if (teacher) {
-            if (req.leaveType === "sick") teacher.sickUsed = Math.max(0, teacher.sickUsed - req.netDays);
-            else if (req.leaveType === "vacation") teacher.vacationUsed = Math.max(0, teacher.vacationUsed - req.netDays);
-            else if (req.leaveType === "maternity") teacher.maternityUsed = Math.max(0, teacher.maternityUsed - req.netDays);
+
+    App.showConfirm({
+        title: "เปลี่ยนสถานะกลับเป็นรออนุมัติ",
+        message: `ยกเลิกผลการพิจารณาใบลาของ <strong>${req.teacherName}</strong> และเปลี่ยนกลับเป็น "รออนุมัติ"` +
+            (req.status === "approved" ? `<br><span style="font-size:12px;color:var(--text-muted);">ระบบจะคืนโควตา ${req.netDays} วันให้ครูอัตโนมัติ</span>` : ""),
+        confirmLabel: "เปลี่ยนสถานะ",
+        requireNote: false,
+        onConfirm: () => {
+            if (req.status === "approved") adjustTeacherQuota(req, -1);
+            req.status = "pending";
+            req.comment = "";
+            afterStaffStatusChange();
+            showToast(`เปลี่ยนคำขอของ ${req.teacherName} กลับเป็นรออนุมัติแล้ว`, "warning");
         }
-    }
-    
-    req.status = "pending";
-    req.comment = "";
-    
-    saveStateToLocalStorage();
-    renderApprovalView();
-    updateApprovalBadge();
-    showToast(`ยกเลิกการตัดสินใจของคำขอ ${req.teacherName} เรียบร้อยแล้ว`, "warning");
-    
-    updateJourneyStepProgress("approve", 1);
+    });
 }
 
-// Detailed Review screen for Approver Modal
-function viewRequestDetails(reqId) {
+// -------------------------------------------------------------
+// DRAWER ด้านขวา (แทน modal-detail / modal-teacher-profile เดิม)
+// staffDrawerRefresh = วาดเนื้อหาปัจจุบันใหม่ (หลังเปลี่ยนสถานะ), staffDrawerBackTo = ปุ่ม ‹ ย้อนกลับ
+// -------------------------------------------------------------
+let staffDrawerRefresh = null;
+let staffDrawerBackTo = null;
+
+function openStaffDrawer({ title, body, footer = "", backTo = null, refresh = null }) {
+    document.getElementById("staff-drawer-title").textContent = title;
+    document.getElementById("staff-drawer-body").innerHTML = body;
+    document.getElementById("staff-drawer-footer").innerHTML = footer;
+    document.getElementById("staff-drawer-footer").style.display = footer ? "flex" : "none";
+    staffDrawerBackTo = backTo;
+    staffDrawerRefresh = refresh;
+    document.getElementById("staff-drawer-back-btn").style.display = backTo ? "inline-flex" : "none";
+    document.getElementById("staff-drawer-overlay").classList.add("active");
+    document.getElementById("staff-drawer").classList.add("active");
+}
+
+function closeStaffDrawer() {
+    document.getElementById("staff-drawer-overlay").classList.remove("active");
+    document.getElementById("staff-drawer").classList.remove("active");
+    staffDrawerRefresh = null;
+    staffDrawerBackTo = null;
+}
+
+function staffDrawerGoBack() {
+    if (typeof staffDrawerBackTo === "function") staffDrawerBackTo();
+}
+
+document.addEventListener("keydown", (e) => {
+    const drawer = document.getElementById("staff-drawer");
+    if (e.key === "Escape" && drawer && drawer.classList.contains("active") && !document.querySelector(".ic-overlay, .modal-overlay.active")) {
+        closeStaffDrawer();
+    }
+});
+
+// รายละเอียดคำขอลา — backTo: ฟังก์ชันสำหรับปุ่ม ‹ (เช่น กลับไปหน้าประวัติรายบุคคลของครูคนนั้น)
+function viewRequestDetails(reqId, backTo = null) {
     const req = systemState.requests.find(r => r.id === reqId);
     if (!req) return;
 
-    const modalBody = document.getElementById("detail-modal-body");
-    const modalFooter = document.getElementById("detail-modal-footer");
-    
     const typeLabel = { "sick": "ลาป่วย", "vacation": "ลาพักผ่อน / ลากิจ", "maternity": "ลาคลอด" };
     const durationLabel = { "full": "ลาเต็มวัน", "morning": "ลาครึ่งเช้า (0.5 วัน)", "afternoon": "ลาครึ่งบ่าย (0.5 วัน)" };
-    
+
     let attachmentHtml = "<span style='color: var(--text-muted);'>ไม่มีเอกสารแนบ</span>";
     if (req.attachment) {
         attachmentHtml = `
@@ -1897,13 +2185,12 @@ function viewRequestDetails(reqId) {
         `;
     }
 
-    let statusLabel = "";
-    if (req.status === "pending") statusLabel = `<span class="badge badge-pending">รออนุมัติ</span>`;
-    else if (req.status === "approved") statusLabel = `<span class="badge badge-approved">อนุมัติ</span>`;
-    else statusLabel = `<span class="badge badge-rejected">ปฏิเสธการลา</span>`;
-
-    modalBody.innerHTML = `
+    const body = `
         <div class="summary-table">
+            <div class="summary-row">
+                <span class="summary-label">สถานะ:</span>
+                <span class="summary-value">${staffStatusSelectHTML(req)}</span>
+            </div>
             <div class="summary-row">
                 <span class="summary-label">รหัสเอกสาร:</span>
                 <span class="summary-value">${req.id}</span>
@@ -1929,47 +2216,37 @@ function viewRequestDetails(reqId) {
                 <span class="summary-value" style="color: var(--primary); font-size:16px;">${req.netDays} วัน</span>
             </div>
             <div class="summary-row">
+                <span class="summary-label">วันที่ยื่น:</span>
+                <span class="summary-value">${formatThaiDate(req.submittedDate)}</span>
+            </div>
+            <div class="summary-row" style="flex-direction: column; gap: 6px;">
                 <span class="summary-label">เหตุผลการขอลา:</span>
-                <span class="summary-value" style="font-weight: normal; text-align: right; max-width: 250px;">${req.reason}</span>
+                <span class="summary-value" style="font-weight: normal; text-align: left;">${req.reason}</span>
             </div>
             <div class="summary-row" style="flex-direction: column; gap: 8px; border-bottom: none;">
                 <span class="summary-label" style="margin-bottom: 4px;">เอกสารหลักฐานแนบ:</span>
                 <div>${attachmentHtml}</div>
             </div>
-            <div class="summary-row" style="margin-top: 10px;">
-                <span class="summary-label">สถานะปัจจุบัน:</span>
-                <span class="summary-value">${statusLabel}</span>
-            </div>
             ${req.comment ? `
-            <div class="summary-row" style="flex-direction: column; border-bottom: none; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; margin-top: 10px;">
+            <div class="summary-row" style="flex-direction: column; border-bottom: none; background: rgba(0,0,0,0.02); padding: 10px; border-radius: 8px; margin-top: 10px;">
                 <span class="summary-label" style="font-size: 12px;">ข้อคิดเห็นจากผู้อนุมัติ:</span>
                 <span class="summary-value" style="text-align: left; font-weight: normal; margin-top: 4px; color: var(--text-secondary);">${req.comment}</span>
             </div>` : ""}
         </div>
     `;
 
-    // Manage footer actions: Show approval buttons only if pending
-    if (req.status === "pending" && systemState.currentRole === "head") {
-        modalFooter.innerHTML = `
-            <button class="btn btn-danger" onclick="rejectRequestDirect('${req.id}'); closeModal('modal-detail');">ไม่อนุมัติ</button>
-            <button class="btn btn-success" onclick="approveRequestDirect('${req.id}'); closeModal('modal-detail');">อนุมัติใบลา</button>
-        `;
-    } else if (systemState.currentRole === "head" && (req.status === "approved" || req.status === "rejected")) {
-        modalFooter.innerHTML = `
-            <button class="btn btn-warning" onclick="resetRequestStatus('${req.id}'); closeModal('modal-detail');">ยกเลิกผลและเปลี่ยนสถานะ</button>
-        `;
-    } else {
-        modalFooter.innerHTML = `
-            <button class="btn btn-primary" onclick="closeModal('modal-detail')" style="width: 100%;">ตกลง</button>
-        `;
-    }
+    const footer = req.status === "pending" ? `
+        <button class="btn btn-danger" style="flex:1;" onclick="rejectRequestDirect('${req.id}')">ไม่อนุมัติ</button>
+        <button class="btn btn-success" style="flex:1;" onclick="approveRequestDirect('${req.id}')">อนุมัติใบลา</button>
+    ` : "";
 
-    openModal("modal-detail");
-    
-    // Sync steps
-    if (systemState.currentRole === "head") {
-        updateJourneyStepProgress("approve", 1);
-    }
+    openStaffDrawer({
+        title: `รายละเอียดการลา: ${req.teacherName}`,
+        body,
+        footer,
+        backTo,
+        refresh: () => viewRequestDetails(reqId, backTo)
+    });
 }
 
 function viewAttachmentMock(filename) {
@@ -1985,42 +2262,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 1. Initialize databases
     initializeDatabase();
+    // สร้างประวัติการตั้งค่าตั้งต้นก่อนผู้ใช้แก้วิซาร์ด — ไม่งั้นเวอร์ชัน "ที่ใช้อยู่" จะจับค่าที่แก้ค้างไว้แทน
+    loadStaffSettingsVersions();
     
     // 2. Sync sidebar visibility based on role
     updateSidebarVisibility();
-
-    // 4. Role Selector Switch
-    const roleSelect = document.getElementById("mock-user-role-select");
-    roleSelect.addEventListener("change", (e) => {
-        const role = e.target.value;
-        systemState.currentRole = role;
-        systemState.editingRequestId = null;
-        
-        // Adjust display based on role
-        const avatar = document.getElementById("avatar-display");
-        const username = document.getElementById("username-display");
-        const roleLabel = document.getElementById("userrole-display");
-        
-        if (role === "head") {
-            avatar.textContent = "ผอ";
-            avatar.style.background = "linear-gradient(135deg, var(--warning), var(--danger))";
-            username.textContent = "ครูวิชัย เรียนดี (ผอ.)";
-            roleLabel.textContent = "ตำแหน่ง: ผู้อำนวยการสถานศึกษา";
-            systemState.selectedTeacherId = "T001"; // Reset
-        } else {
-            avatar.textContent = "ครู";
-            avatar.style.background = "linear-gradient(135deg, var(--primary), var(--info))";
-            username.textContent = "ครูสมชาย ใจดี";
-            roleLabel.textContent = "ตำแหน่ง: ครูประจำชั้น ม.1/1";
-            systemState.selectedTeacherId = "T001";
-        }
-        
-        showToast(`สลับจำลองสิทธิ์เป็น: ${role === "head" ? "ผู้อนุมัติ (ผอ.)" : "คุณครูผู้ขอลา"}`, "info");
-        
-        // Dynamic sidebar updates and view navigation
-        updateSidebarVisibility();
-        navigateToView(systemState.activeView || "form");
-    });
 
     // 6. Settings interactions
     document.getElementById("add-approver-btn").addEventListener("click", addApprover);
@@ -2202,11 +2448,10 @@ function renderTeacherProfileList() {
     }).join('');
 }
 
+// ประวัติการลารายบุคคล — เปิดใน drawer ด้านขวา (เดิมเป็น modal-teacher-profile)
 function openTeacherProfileModal(teacherId) {
     const teacher = systemState.teachers.find(t => t.id === teacherId);
     if (!teacher) return;
-
-    document.getElementById("modal-teacher-profile-title").querySelector("span").textContent = `ประวัติการลา: ${teacher.name}`;
 
     const sickUsed = teacher.sickUsed || 0;
     const vacationUsed = teacher.vacationUsed || 0;
@@ -2255,7 +2500,7 @@ function openTeacherProfileModal(teacherId) {
             }
 
             return `
-                <div class="history-item" style="cursor:pointer;" onclick="closeModal('modal-teacher-profile'); viewRequestDetails('${req.id}');">
+                <div class="history-item" style="cursor:pointer;" onclick="viewRequestDetails('${req.id}', () => openTeacherProfileModal('${teacherId}'))">
                     <div class="history-date-box">
                         <span class="history-date-month">${monthStr}</span>
                         <span class="history-date-day">${dayStr}</span>
@@ -2273,15 +2518,17 @@ function openTeacherProfileModal(teacherId) {
         }).join('');
     }
 
-    document.getElementById("modal-teacher-profile-body").innerHTML = `
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">${teacher.role || "-"} · รหัส: ${teacher.id}</div>
-        <div class="setting-section-title">โควต้าการลาคงเหลือ</div>
-        <div class="grid-3" style="margin-top:12px;margin-bottom:24px;">${quotaCardsHtml}</div>
-        <div class="setting-section-title">ประวัติการลาในปีนี้</div>
-        <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">${historyHtml}</div>
-    `;
-
-    openModal("modal-teacher-profile");
+    openStaffDrawer({
+        title: `ประวัติการลา: ${teacher.name}`,
+        body: `
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">${teacher.role || "-"} · รหัส: ${teacher.id}</div>
+            <div class="setting-section-title">โควต้าการลาคงเหลือ</div>
+            <div class="grid-3" style="margin-top:12px;margin-bottom:24px;">${quotaCardsHtml}</div>
+            <div class="setting-section-title">ประวัติการลาในปีนี้</div>
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">${historyHtml}</div>
+        `,
+        refresh: () => openTeacherProfileModal(teacherId)
+    });
 }
 
 // -------------------------------------------------------------
