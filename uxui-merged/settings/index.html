@@ -88,6 +88,7 @@
         // ชื่อ/ไอคอนหมวดตามเมนูนั้น ณ ตำแหน่งที่มันอยู่ใน NAV_GROUPS — ตัดเมนูที่ชี้กลับมาหน้านี้เอง (ศูนย์รวมการตั้งค่า) ออก
         var sectionItems = [];
         group.items.forEach(function (item) {
+          if (!CrossNav.canSee(item)) return;
           if (item.section) { sectionItems.push(item); return; }
           if (!item.page || item.page === 'settings/index.html' || item.hubOnly) return;
           sectionItems.push({
@@ -115,7 +116,6 @@
           return (
             '<section id="' + escapeHtml(item.section) + '" class="settings-section mb-10 scroll-mt-24">' +
             '<div class="flex items-center gap-2 mb-4">' +
-            '<div class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">' + CrossNav.svg(item.icon, 'h-4.5 w-4.5') + '</div>' +
             '<h3 class="text-lg font-bold text-slate-900">' + escapeHtml(item.label) + '</h3>' +
             '</div>' +
             '<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">' + cardsHtml + '</div>' +

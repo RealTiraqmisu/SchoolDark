@@ -250,6 +250,7 @@ function switchView(viewName) {
 
 // ปุ่มลอย demo อยู่ท้าย <body> (นอก .view-section เพราะ transform จาก fadeIn ทำให้ position:fixed เพี้ยน) จึงต้องซ่อน/แสดงเองตาม wizard
 function syncWizardDemoFab() {
+    window.XDemo?.refresh();
     const fab = document.getElementById('wizard-demo-fab');
     if (!fab) return;
     const wizard = document.getElementById('view-personnel-wizard');
@@ -2630,8 +2631,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('form-education-body')?.addEventListener('submit', handleWizardNext);
     document.getElementById('form-job-license-body')?.addEventListener('submit', handleWizardNext);
 
-    // Demo-fill ต่อ microstep (ปุ่มลอย neon มุมขวาล่างของ wizard)
-    document.getElementById('wizard-demo-fab')?.addEventListener('click', fillWizardDemo);
+    // Demo-fill ต่อ microstep (ปุ่มอยู่ในแผงสาธิตลอย shared/demo-panel.js ผ่าน XDemo.register)
+    // ปุ่มย้ายเข้าแผงสาธิตกลาง (shared/demo-panel.js) แล้ว — 2026-09-30 (noeysod)
+    window.XDemo?.register({
+        id: 'personnel-wizard-fill',
+        label: '⚡ กรอกข้อมูลตัวอย่าง (หัวข้อที่เปิดอยู่)',
+        run: () => fillWizardDemo(),
+        when: () => {
+            const w = document.getElementById('view-personnel-wizard');
+            return !!(w && w.classList.contains('active') && w.offsetParent !== null);
+        }
+    });
     const demoObserver = new MutationObserver(syncWizardDemoFab);
     const wizardForFab = document.getElementById('view-personnel-wizard');
     const moduleForFab = document.getElementById('module-personnel');

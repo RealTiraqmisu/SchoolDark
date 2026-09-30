@@ -499,3 +499,10 @@ noeysod เขียนงานเป็น to-do list ใน `uxui-merged/noey
 - (2026-09-30) หน้าตั้งค่า admission 4 หน้าใช้ `.xpage xpage--wide` แล้ว (เอา `max-w-1400/6xl/4xl` ออก) และลบกล่องไอคอนที่ header/ชื่อหน้าออกจาก admission/settings/apply (JS ของ `#tab-icon-tile` ใส่ null-guard ไว้)
 
 - (2026-09-30) merge งานของแคร์ (8df292e) เข้า dev แล้ว (phase 1): เก็บโครงสร้างตั้งค่าที่ `settings/` + งานแคร์ที่ยังลงโค้ดใน `schooldark/` (staff drawer, ตั้งค่าบัตรขออนุญาต `view-ticket-settings`, impact-confirm.js) · งานแคร์ที่ต้องพอร์ตไป `settings/` ยังค้าง (U5, U6, U9-U12, `btn-save-doc-signatories`, เอาปุ่มเลื่อนขึ้น/ลงออก) ดู `schooldark/CHANGES-FOR-CARE.md` ข้อ 23 · บอกแคร์ให้ pull dev ก่อนแก้หน้าตั้งค่าอีก
+
+## (2026-09-30) admin/ครู + แผงสาธิตลอย
+- เนยสดเลือกพอร์ทัลเดียว เมนูกรองตามบทบาท + หมวด "งานของฉัน"
+- ขอบเขตรอบนี้ = แผง + ป้ายผู้ใช้ + ซ่อนเมนู (ไม่แตะ logic หน้า)
+- ตาราง actor 5 ตัวและสิทธิ์ต่อเมนูอยู่ใน `roles` ของ NAV_GROUPS
+- ย้ายแค่ปุ่ม ⚡ wizard บุคลากร เข้าแผง
+- ยังไม่ทำ: ผูก actor กับ `currentRole` ของ schooldark, รวมแผงของ `apply/` และ `parent/`, ป้องกันการเข้าหน้าตรง ๆ ด้วย URL (แค่มีข้อความเตือนในแผง)

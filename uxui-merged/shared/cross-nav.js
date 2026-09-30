@@ -28,6 +28,40 @@
 
   var COLLAPSE_KEY = 'xnav-collapsed';
   var SCROLL_KEY = 'xnav-sidebar-scroll';
+  var ACTOR_KEY = 'xdemo_actor';
+  // บทบาทจำลองสำหรับสาธิต (แผงลอย shared/demo-panel.js) — admin เห็นทุกเมนูเสมอ
+  var ACTORS = [
+    { key: 'admin', name: 'แอดมิน ระบบ', role: 'ผู้ดูแลระบบ', avatar: 'AD' },
+    { key: 'director', name: 'ดร.วิชัย เรียนดี', role: 'ผู้อำนวยการ', avatar: 'วร' },
+    { key: 'hr', name: 'สมปอง ทองดี', role: 'เจ้าหน้าที่บุคคล', avatar: 'สท' },
+    { key: 'registrar', name: 'เจ้าหน้าที่ทะเบียน', role: 'งานทะเบียน/รับสมัคร', avatar: 'ทบ' },
+    { key: 'teacher', name: 'ครูสมศรี ใจดี', role: 'ครู / ครูประจำชั้น', avatar: 'สศ' }
+  ];
+  function currentActor() {
+    var k = null;
+    try { k = localStorage.getItem(ACTOR_KEY); } catch (e) {}
+    return ACTORS.filter(function (a) { return a.key === k; })[0] || ACTORS[0];
+  }
+  function canSee(item) {
+    var actor = currentActor();
+    return actor.key === 'admin' || !item.roles || item.roles.indexOf(actor.key) !== -1;
+  }
+  function setActor(key) {
+    try { localStorage.setItem(ACTOR_KEY, key); } catch (e) {}
+    location.reload();
+  }
+  window.XDemo = window.XDemo || {
+    actions: [],
+    // a = { id, label, run: function, when?: function -> boolean } ; id ซ้ำ = แทนตัวเดิม
+    register: function (a) {
+      this.actions = this.actions.filter(function (x) { return x.id !== a.id; });
+      this.actions.push(a);
+      this.refresh();
+    },
+    refresh: function () {
+      try { document.dispatchEvent(new CustomEvent('xdemo:change')); } catch (e) {}
+    }
+  };
 
   // ------------------------------------------------------------------
   // ตำแหน่งปัจจุบัน: คำนวณจาก URL เทียบกับ root ของ uxui-merged เสมอ
@@ -138,7 +172,7 @@
   // ------------------------------------------------------------------
   // NAV_GROUPS — แหล่งข้อมูลเมนูจุดเดียวของทั้งโปรเจกต์
   // แต่ละ item: { id?, icon, label, page, module?, view?, badgeId?, children?, hubOnly?,
-  //               anchor?, shortcut?, section? }
+  //               anchor?, shortcut?, section?, roles? }
   // children: [{ label, step? | tab? | subtab? }]           — เมนูย่อยในหน้าเดียวกัน (SPA)
   //        หรือ [{ label, page, module?, view?, hash?, desc? }] — เมนูย่อยที่ลิงก์ไปคนละไฟล์
   //             (ถ้ามี view + page ตรงกับหน้าปัจจุบัน จะกลายเป็น submenu-item แบบ SPA แทน)
@@ -148,6 +182,7 @@
   // shortcut: true = ใส่คลาส .menu-shortcut (สไตล์เส้นประจาง ๆ) ให้ดูรู้ว่าเป็นทางลัด
   // section: id ของ <section> ในหน้า settings/index.html ที่ item นี้ตรงกับหมวดไหน
   // desc: คำอธิบายสั้น ๆ ใต้ label ของ child ตอนแสดงในการ์ดหน้า settings/index.html
+  // roles: [...] = บทบาทที่เห็นเมนูนี้ใน sidebar (ไม่ใส่ = ทุกบทบาท, [] = admin เท่านั้น; admin เห็นทุกอย่างเสมอ) — key ตาม ACTORS
   // ------------------------------------------------------------------
   var SD_APP = 'schooldark/app.html';
   var SD_LEAVE = 'schooldark/leave-features.html';
@@ -174,27 +209,34 @@
       ]
     },
     {
+      id: 'mine',
+      label: 'งานของฉัน',
+      items: [
+        { id: 'menu-leave-form', icon: 'fileText', label: 'ยื่นคำขอลา (บุคลากร)', page: SD_APP, module: 'leave', view: 'leave-form', keywords: 'ใบลา ลาป่วย ลากิจ ลาพักผ่อน บุคลากร ครู' }
+      ]
+    },
+    {
       label: 'งานทะเบียนนักเรียน',
       items: [
-        { icon: 'users', label: 'ข้อมูลนักเรียน', page: 'admission/students.html', keywords: 'ทะเบียน นักเรียน' }
+        { icon: 'users', label: 'ข้อมูลนักเรียน', page: 'admission/students.html', keywords: 'ทะเบียน นักเรียน', roles: ['director', 'registrar', 'teacher'] }
       ]
     },
     {
       // หน้าสมัครออนไลน์ฝั่งผู้สมัครอยู่ที่กลุ่ม 'public' (apply/) — กลุ่มนี้คือฝั่งเจ้าหน้าที่
       label: 'งานรับสมัครออนไลน์',
       items: [
-        { icon: 'clipboardList', label: 'บอร์ดรับสมัคร', page: 'admission/index.html', keywords: 'สมัครเรียน ม.1 ม.4 ผู้สมัคร' }
+        { icon: 'clipboardList', label: 'บอร์ดรับสมัคร', page: 'admission/index.html', keywords: 'สมัครเรียน ม.1 ม.4 ผู้สมัคร', roles: ['director', 'registrar'] }
       ]
     },
     {
       // งานกิจการนักเรียน: Team C เป็นเจ้าของหลัก แต่ฝั่งเราก็มีส่วนที่ต้องทำด้วย จึงมีเมนูอยู่ที่นี่
       label: 'งานกิจการนักเรียน',
       items: [
-        { icon: 'dashboard', label: 'แดชบอร์ดการมาเรียน', page: SD_LEAVE, view: 'student-dashboard', keywords: 'สถิติ สรุป กราฟ ขาด สาย ลา บัตรขออนุญาต รายห้อง' },
-        { icon: 'check', label: 'เช็คชื่อนักเรียน', page: SD_LEAVE, view: 'attendance-check', keywords: 'เช็คชื่อ มาเรียน ขาด สาย ครูประจำชั้น' },
-        { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย' },
+        { icon: 'dashboard', label: 'แดชบอร์ดการมาเรียน', page: SD_LEAVE, view: 'student-dashboard', keywords: 'สถิติ สรุป กราฟ ขาด สาย ลา บัตรขออนุญาต รายห้อง', roles: ['director', 'teacher'] },
+        { icon: 'check', label: 'เช็คชื่อนักเรียน', page: SD_LEAVE, view: 'attendance-check', keywords: 'เช็คชื่อ มาเรียน ขาด สาย ครูประจำชั้น', roles: ['teacher'] },
+        { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย', roles: ['director', 'teacher'] },
         {
-          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย',
+          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย', roles: ['teacher'],
           children: [
             { label: '1. ค้นหานักเรียน', step: '1' },
             { label: '2. เลือกประเภท', step: '2' },
@@ -202,7 +244,7 @@
           ]
         },
         {
-          icon: 'calendar', label: 'รายการบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-calendar', keywords: 'ปฏิทิน อนุมัติบัตร รายงาน สรุป',
+          icon: 'calendar', label: 'รายการบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-calendar', keywords: 'ปฏิทิน อนุมัติบัตร รายงาน สรุป', roles: ['director', 'teacher'],
           badgeId: 'sidebar-ticket-badge', badgeClass: 'danger',
           children: [
             { label: 'รายการบัตรขออนุญาตของนักเรียน', tab: 'tk-list' },
@@ -216,15 +258,15 @@
       label: 'งานบุคลากร',
       items: [
         // รายชื่อบุคลากรมีที่เดียว (เดิมมี "รายชื่อบุคลากรและอาจารย์" ใน leave-features.html ซ้ำอีกอัน)
-        { id: 'menu-directory', icon: 'users', label: 'รายชื่อบุคลากร', page: SD_APP, module: 'personnel', view: 'directory', keywords: 'ครู อาจารย์ พนักงาน staff' },
+        { id: 'menu-directory', icon: 'users', label: 'รายชื่อบุคลากร', page: SD_APP, module: 'personnel', view: 'directory', keywords: 'ครู อาจารย์ พนักงาน staff', roles: ['director', 'hr'] },
         {
-          id: 'menu-import-hub', icon: 'upload', label: 'นำเข้าข้อมูล', page: SD_APP, module: 'personnel', view: 'import-hub', keywords: 'excel import อัปโหลด รูปภาพ',
+          id: 'menu-import-hub', icon: 'upload', label: 'นำเข้าข้อมูล', page: SD_APP, module: 'personnel', view: 'import-hub', keywords: 'excel import อัปโหลด รูปภาพ', roles: ['hr'],
           children: [
             { label: 'อัพโหลดไฟล์ Excel', subtab: 'import-excel-tab' },
             { label: 'อัพโหลดรูปภาพประจำตัวบุคลากร', subtab: 'import-photo-tab' }
           ]
         },
-        { id: 'menu-print-studio', icon: 'printer', label: 'พิมพ์ & QR Studio', page: SD_APP, module: 'personnel', view: 'print-studio', keywords: 'qr พิมพ์ บัตร print' }
+        { id: 'menu-print-studio', icon: 'printer', label: 'พิมพ์ & QR Studio', page: SD_APP, module: 'personnel', view: 'print-studio', keywords: 'qr พิมพ์ บัตร print', roles: ['hr'] }
       ]
     },
     {
@@ -232,9 +274,8 @@
       // เช่นแดชบอร์ดการมาเรียนดึงใบลาที่อนุมัติแล้ว; การลาบุคลากรอาจเชื่อมงานบุคลากรภายหลัง)
       label: 'งานบริหารการลา',
       items: [
-        { id: 'menu-leave-form', icon: 'fileText', label: 'ยื่นคำขอลา (บุคลากร)', page: SD_APP, module: 'leave', view: 'leave-form', keywords: 'ใบลา ลาป่วย ลากิจ ลาพักผ่อน บุคลากร ครู' },
         {
-          id: 'menu-leave-approve', icon: 'checkCircle', label: 'อนุมัติการลา (บุคลากร)', page: SD_APP, module: 'leave', view: 'leave-approve', keywords: 'ใบลา อนุมัติ ปฏิทิน บุคลากร ครู',
+          id: 'menu-leave-approve', icon: 'checkCircle', label: 'อนุมัติการลา (บุคลากร)', page: SD_APP, module: 'leave', view: 'leave-approve', keywords: 'ใบลา อนุมัติ ปฏิทิน บุคลากร ครู', roles: ['director', 'hr'],
           badgeId: 'sidebar-approval-badge', badgeClass: 'badge-pending',
           children: [
             { label: 'รายการคำขอ', tab: 'requests' },
@@ -242,10 +283,10 @@
           ]
         },
         {
-          icon: 'fileText', label: 'ยื่นขอลา (นักเรียน)', page: SD_LEAVE, view: 'sl-submit', keywords: 'ลาป่วย ลากิจ นักเรียน นักเรียน'
+          icon: 'fileText', label: 'ยื่นขอลา (นักเรียน)', page: SD_LEAVE, view: 'sl-submit', keywords: 'ลาป่วย ลากิจ นักเรียน นักเรียน', roles: ['teacher']
         },
         {
-          icon: 'checkCircle', label: 'อนุมัติการลา (นักเรียน)', page: SD_LEAVE, view: 'approve', keywords: 'ลาเรียน อนุมัติ ปฏิทิน นักเรียน',
+          icon: 'checkCircle', label: 'อนุมัติการลา (นักเรียน)', page: SD_LEAVE, view: 'approve', keywords: 'ลาเรียน อนุมัติ ปฏิทิน นักเรียน', roles: ['director', 'teacher'],
           badgeId: 'sidebar-approve-badge', badgeClass: 'danger',
           children: [
             { label: 'รายการคำขอ', tab: 'requests' },
@@ -253,7 +294,7 @@
           ]
         },
         {
-          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย',
+          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย', roles: ['teacher'],
           children: [
             { label: '1. ค้นหานักเรียน', step: '1' },
             { label: '2. เลือกประเภท', step: '2' },
@@ -274,9 +315,9 @@
       id: 'settings',
       label: 'การตั้งค่า',
       items: [
-        { icon: 'dashboard', label: 'ศูนย์รวมการตั้งค่า', page: 'settings/index.html' },
+        { icon: 'dashboard', label: 'ศูนย์รวมการตั้งค่า', page: 'settings/index.html', roles: ['hr', 'registrar'] },
         {
-          icon: 'home', label: 'ตั้งค่าโรงเรียน', page: 'settings/index.html', anchor: 'school', section: 'school',
+          icon: 'home', label: 'ตั้งค่าโรงเรียน', page: 'settings/school.html', section: 'school', roles: [],
           children: [
             { label: 'ข้อมูลโรงเรียน & ตั้งค่าระบบ', page: 'settings/school.html', hash: 'tab=school', origin: 'schooldark', desc: 'ชื่อโรงเรียน รหัส ที่อยู่ ปีการศึกษาปัจจุบัน' },
             { label: 'ข้อมูลห้องเรียน', page: 'settings/school.html', hash: 'tab=classrooms', desc: 'ห้องเรียน อาคาร ความจุ' },
@@ -289,7 +330,7 @@
           ]
         },
         {
-          icon: 'users', label: 'ตั้งค่าบุคลากร', page: 'settings/index.html', anchor: 'personnel', section: 'personnel',
+          icon: 'users', label: 'ตั้งค่าบุคลากร', page: 'settings/personnel.html', section: 'personnel', roles: ['hr'],
           children: [
             { label: 'วันเวลาเข้าออก', page: 'settings/personnel.html', hash: 'tab=schedule', origin: 'schooldark', desc: 'เวลาทำงาน กะ วันหยุด' },
             { label: 'สิทธิ์ผู้ใช้งาน', page: 'settings/personnel.html', hash: 'tab=permissions', origin: 'schooldark', desc: 'บทบาทและสิทธิ์การเข้าถึงระบบ' },
@@ -300,7 +341,7 @@
           ]
         },
         {
-          icon: 'calendar', label: 'ตั้งค่าการลา', page: 'settings/index.html', anchor: 'leave', section: 'leave',
+          icon: 'calendar', label: 'ตั้งค่าการลา', page: 'settings/leave.html', section: 'leave', roles: ['hr'],
           children: [
             { label: 'ตั้งค่าการลาบุคลากร', page: 'settings/leave.html', hash: 'tab=staff', origin: 'schooldark', desc: 'รอบปี ผู้อนุมัติ โควตา เงื่อนไข' },
             { label: 'ตั้งค่าการลาเรียนนักเรียน', page: 'settings/leave.html', hash: 'tab=student', origin: 'schooldark', desc: 'ประเภทการลา ผู้อนุมัติ โควตา' }
@@ -308,10 +349,10 @@
         },
         {
           icon: 'ticket', label: 'ตั้งค่าบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-settings', desc: 'ประเภทบัตร ผู้อนุมัติ เงื่อนไข การพิมพ์บัตร',
-          keywords: 'บัตรขออนุญาต ประเภทบัตร ผู้อนุมัติ พิมพ์บัตร'
+          keywords: 'บัตรขออนุญาต ประเภทบัตร ผู้อนุมัติ พิมพ์บัตร', roles: []
         },
         {
-          icon: 'clipboardList', label: 'ตั้งค่ารับสมัคร', page: 'settings/index.html', anchor: 'admission', section: 'admission',
+          icon: 'clipboardList', label: 'ตั้งค่ารับสมัคร', page: 'settings/index.html', anchor: 'admission', section: 'admission', roles: ['registrar'],
           children: [
             { label: 'ตั้งค่าฟอร์มรับสมัคร', page: 'admission/settings.html', desc: 'ฟิลด์ฟอร์มรับสมัครออนไลน์' },
             { label: 'ตั้งค่าแผนการเรียน & กำหนดการ', page: 'admission/course_settings.html', desc: 'แผนการเรียนและกำหนดการรับสมัคร' },
@@ -444,7 +485,7 @@
   function renderGroups() {
     var out = [];
     NAV_GROUPS.forEach(function (group) {
-      var visible = group.items.filter(function (it) { return !it.hubOnly; });
+      var visible = group.items.filter(function (it) { return !it.hubOnly && canSee(it); });
       if (!visible.length) return;
       out.push((out.length ? '<div class="sidebar-divider"></div>' : '') +
         (group.label ? '<li><p class="menu-label">' + escapeHtml(group.label) + '</p></li>' : '') + visible.map(renderItem).join(''));
@@ -459,17 +500,12 @@
 
   // ------------------------------------------------------------------
   // Footer (ป้ายผู้ใช้งาน) — คง id เดิมของ schooldark ไว้เผื่อสคริปต์ของเพื่อน
-  // (index.js) อ่าน/เขียนค่าเวลาสลับ role จำลอง; หน้าอื่นใช้ค่าเริ่มต้นเฉย ๆ
+  // (index.js) อ่าน/เขียนค่าเวลาสลับ role จำลอง; ป้ายนี้ตาม "actor" ที่เลือกในแผงสาธิต
+  // (shared/demo-panel.js) ทุกหน้า — ค่าเริ่มต้นคือ admin
   // ------------------------------------------------------------------
   function renderFooter() {
-    var avatar = 'AD', name = 'แอดมิน ระบบ', role = 'ผู้ดูแลระบบ';
-    if (IS_SCHOOLDARK && CURRENT.indexOf('leave-features') !== -1) {
-      avatar = 'สท'; name = 'สมปอง ทองดี'; role = 'เจ้าหน้าที่บุคคล';
-    } else if (IS_ADMISSION) {
-      avatar = 'รบ'; name = 'ระบบรับสมัคร'; role = 'Admitify Spark';
-    } else if (CURRENT_DIR === 'settings') {
-      avatar = 'ตค'; name = 'ศูนย์ตั้งค่า'; role = 'ทุกระบบ';
-    }
+    var actor = currentActor();
+    var avatar = escapeHtml(actor.avatar), name = actor.name, role = actor.role;
     return (
       '<div class="sidebar-footer">' +
       '<div class="user-profile-badge">' +
@@ -894,6 +930,11 @@
       if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
     }
   } catch (e) {}
+
+  // โหลดแผงสาธิตลอย (สลับ actor + ปุ่มกรอกข้อมูลตัวอย่าง) — ไม่โหลดบนหน้า hub
+  var demoScript = document.createElement('script');
+  demoScript.src = hrefTo('shared/demo-panel.js');
+  document.head.appendChild(demoScript);
   } // end if (!IS_HUB)
 
   // ------------------------------------------------------------------
@@ -930,7 +971,8 @@
   }
 
   // ให้หน้า settings/index.html (ศูนย์รวมการตั้งค่า) อ่านข้อมูลเมนูชุดเดียวกันนี้ไปเรนเดอร์การ์ดเอง
-  window.CrossNav = { NAV_GROUPS: NAV_GROUPS, hrefTo: hrefTo, hashFor: hashFor, svg: svg, escapeHtml: escapeHtml };
+  window.CrossNav = { NAV_GROUPS: NAV_GROUPS, hrefTo: hrefTo, hashFor: hashFor, svg: svg, escapeHtml: escapeHtml,
+    ACTORS: ACTORS, currentActor: currentActor, canSee: canSee, setActor: setActor };
 })();
 
 /* ======================================================================

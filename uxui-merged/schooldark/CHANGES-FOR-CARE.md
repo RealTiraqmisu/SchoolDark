@@ -211,6 +211,14 @@
 - **หน้าตาเปลี่ยน**: **ใช่** — พื้นหลังหน้าเป็นเทาอ่อน การ์ด/แถบหัว/modal ยังขาว สีเด่นของแคร์เหมือนเดิม · มีผลทุกหน้าที่โหลด `app.css` (`app.html`, `leave-features.html`)
 - **ย้อน**: `--bg-app` กลับเป็น `hsl(210, 40%, 94%)`, `main.main-content` กลับเป็น `var(--bg-main)`, ลบ `background-color` ใน `header.top-header`, `.sd-filter-sticky` กลับเป็น `var(--bg-main)`
 
+### 18. แผงสาธิตลอย + เมนูกรองตามบทบาท (2026-09-30) (`schooldark/app.html`, `schooldark/personnel.js`, `shared/cross-nav.js`, `shared/demo-panel.js`)
+- **ปุ่ม ⚡ กรอกข้อมูลตัวอย่างของ wizard บุคลากร ย้ายเข้าแผงสาธิตลอย** `shared/demo-panel.js`: ลบปุ่ม `#wizard-demo-fab` ออกจาก `app.html` (CSS `.demo-fab` ใน `app.css` ยังอยู่ ไม่ได้แตะ), `personnel.js` ลงทะเบียนปุ่มผ่าน `window.XDemo?.register({id:'personnel-wizard-fill', ...})` แทนการผูก click กับปุ่มเดิม และ `syncWizardDemoFab()` เรียก `window.XDemo?.refresh()` เป็นบรรทัดแรก (ให้แผงเช็ค `when()` ใหม่ตอน wizard เปิด/ปิด) — MutationObserver เดิมยังอยู่
+- **ป้ายผู้ใช้ท้าย sidebar ตาม actor ที่เลือกในแผง** (เดิม `leave-features.html` แสดง "สมปอง ทองดี" ตายตัว; ตอนนี้ค่าเริ่มต้นทุกหน้าคือ "แอดมิน ระบบ")
+- **เมนู sidebar กรองตาม field `roles` ใน `NAV_GROUPS`** (`cross-nav.js`) — admin (ค่าเริ่มต้น) เห็นทุกเมนูเหมือนเดิม; ตารางสิทธิ์ต่อเมนูดูที่ `roles` ของแต่ละ item
+- **"ยื่นคำขอลา (บุคลากร)" ย้ายไปหมวดใหม่ "งานของฉัน"** (ทุกบทบาทเห็น) จากหมวด "งานบริหารการลา" — item เดิม id `menu-leave-form` ไม่เปลี่ยน
+- **ข้อควรรู้**: `systemState.currentRole` ใน `index.js` ยังเป็น `"head"` ไม่ได้ผูกกับ actor ของแผง (รอบนี้ซ่อนเมนูอย่างเดียว ไม่แตะ logic หน้า)
+- **ย้อน**: คืนบรรทัดปุ่ม `#wizard-demo-fab` ใน `app.html`, ใน `personnel.js` ลบบล็อก `XDemo.register` + บรรทัด `window.XDemo?.refresh();` แล้วคืน `document.getElementById('wizard-demo-fab')?.addEventListener('click', fillWizardDemo);` — ส่วนกลาง: ลบ `shared/demo-panel.js`, ลบโค้ด actor/XDemo/roles/โหลดแผงใน `cross-nav.js`
+
 ### ข้อสังเกต (ยังไม่ได้แก้ — ของแคร์ตัดสินใจเอง)
 - `leave-features.js` ท้ายไฟล์เรียก `renderAllHistory()` แต่ `renderAllHistory` อ่าน `#all-search` ซึ่งไม่มีใน HTML แล้ว → ขึ้น `Uncaught TypeError: Cannot read properties of null (reading 'value')` ใน console ตอนโหลด (เป็นมาก่อนรอบนี้ ไม่ได้ทำให้หน้าพัง เพราะเป็นบรรทัดสุดท้าย) — แก้ได้โดยลบการเรียกนั้นหรือเช็ค null
 - `settings.js` ผูก click กับ `.menu-item[data-view]` ทุกตัว (ไม่จำกัดเฉพาะเมนูตั้งค่า) — ยังไม่ได้แตะ แค่จดไว้

@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e" pages="4">
     <diagram id="yF1pshRlCJWSYqJKthHk" name="Page-1">
-        <mxGraphModel dx="8534" dy="4736" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+        <mxGraphModel dx="22294" dy="5289" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -3153,7 +3153,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="atReNgXkoredxxKh92eq" name="noeysod use case">
-        <mxGraphModel dx="712" dy="369" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1474" dy="813" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -3678,7 +3678,7 @@
                 <mxCell id="62Ep-_7N-phhB2V-hljm-11" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="แสดงข้อมูลการเยี่ยมบ้าน" vertex="1">
                     <mxGeometry height="69.20454545454545" width="140" x="1110" y="2116.0045454545457" as="geometry"/>
                 </mxCell>
-                <mxCell id="62Ep-_7N-phhB2V-hljm-14" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="ตั้งค่าบัญชีผู้ปกครอง" vertex="1">
+                <mxCell id="62Ep-_7N-phhB2V-hljm-14" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="ตั้งค่าบัญชีผู้ปกครอง" vertex="1">
                     <mxGeometry height="69.20454545454545" width="140" x="1110" y="2195.9954545454543" as="geometry"/>
                 </mxCell>
                 <mxCell id="62Ep-_7N-phhB2V-hljm-39" edge="1" parent="1" source="62Ep-_7N-phhB2V-hljm-9" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;">
@@ -3686,6 +3686,9 @@
                         <mxPoint x="1120" y="2081" as="sourcePoint"/>
                         <mxPoint x="990" y="1990" as="targetPoint"/>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="29kmzWjzNggLmozmCGEc-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="ส่งออกไฟล์" vertex="1">
+                    <mxGeometry height="69.2" width="140" x="1335" y="779.9999999999998" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
