@@ -192,24 +192,7 @@
       items: [
         { icon: 'dashboard', label: 'แดชบอร์ดการมาเรียน', page: SD_LEAVE, view: 'student-dashboard', keywords: 'สถิติ สรุป กราฟ ขาด สาย ลา บัตรขออนุญาต รายห้อง' },
         { icon: 'check', label: 'เช็คชื่อนักเรียน', page: SD_LEAVE, view: 'attendance-check', keywords: 'เช็คชื่อ มาเรียน ขาด สาย ครูประจำชั้น' },
-        { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย' },
-        {
-          icon: 'ticket', label: 'ยื่นบัตรขออนุญาต', page: SD_LEAVE, view: 'leave-card', keywords: 'ออกนอกโรงเรียน เข้าห้องเรียน สาย',
-          children: [
-            { label: '1. ค้นหานักเรียน', step: '1' },
-            { label: '2. เลือกประเภท', step: '2' },
-            { label: '3. กรอกรายละเอียด', step: '3' }
-          ]
-        },
-        {
-          icon: 'calendar', label: 'รายการบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-calendar', keywords: 'ปฏิทิน อนุมัติบัตร รายงาน สรุป',
-          badgeId: 'sidebar-ticket-badge', badgeClass: 'danger',
-          children: [
-            { label: 'รายการบัตรขออนุญาตของนักเรียน', tab: 'tk-list' },
-            { label: 'ประวัติรายบุคคล', tab: 'personal' },
-            { label: 'สรุปรวมตามชั้นเรียน', tab: 'summary' }
-          ]
-        }
+        { icon: 'table', label: 'รายงานการมาเรียน', page: SD_LEAVE, view: 'attendance-report', keywords: 'รายงาน มาโรงเรียน เวลาเข้า เวลาออก ขาด สาย' }
       ]
     },
     {
@@ -258,6 +241,15 @@
             { label: '1. ค้นหานักเรียน', step: '1' },
             { label: '2. เลือกประเภท', step: '2' },
             { label: '3. กรอกรายละเอียด', step: '3' }
+          ]
+        },
+        {
+          icon: 'calendar', label: 'รายการบัตรขออนุญาต', page: SD_LEAVE, view: 'ticket-calendar', keywords: 'ปฏิทิน อนุมัติบัตร รายงาน สรุป',
+          badgeId: 'sidebar-ticket-badge', badgeClass: 'danger',
+          children: [
+            { label: 'รายการบัตรขออนุญาตของนักเรียน', tab: 'tk-list' },
+            { label: 'ประวัติรายบุคคล', tab: 'personal' },
+            { label: 'สรุปรวมตามชั้นเรียน', tab: 'summary' }
           ]
         }
       ]
