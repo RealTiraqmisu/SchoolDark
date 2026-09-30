@@ -2305,7 +2305,8 @@ function viewSLRequestDetails(id) {
       <div class="summary-row" style="margin-top:10px;"><span class="summary-label">สถานะปัจจุบัน:</span><span class="summary-value">${statusBadgeHTML(r.status)}</span></div>
       ${r.comment ? `<div class="summary-row" style="flex-direction:column;border-bottom:none;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;margin-top:10px;"><span class="summary-label" style="font-size:12px;">ข้อคิดเห็นจากผู้อนุมัติ:</span><span class="summary-value" style="text-align:left;font-weight:normal;margin-top:4px;color:var(--text-secondary);">${r.comment}</span></div>` : ''}
     </div>
-    <div style="margin-top:14px;"><button class="btn btn-secondary" style="width:100%;" onclick="printLeaveRequestPreview('${r.id}')"><svg class="icon"><use href="#i-print"/></svg> พิมพ์ใบลา</button></div>
+    <div style="margin-top:14px;"><button class="btn btn-secondary" style="width:100%;" onclick="openSLProfileFromRequest('${r.id}')"><svg class="icon"><use href="#i-users"/></svg> ดูรายละเอียดการลารายบุคคล</button></div>
+    <div style="margin-top:10px;"><button class="btn btn-secondary" style="width:100%;" onclick="printLeaveRequestPreview('${r.id}')"><svg class="icon"><use href="#i-print"/></svg> พิมพ์ใบลา</button></div>
     ${r.status === 'รอตรวจสอบ' ? `<div style="margin-top:10px;"><button class="btn btn-secondary" style="width:100%;" onclick="editSLRequest('${r.id}')"><svg class="icon"><use href="#i-edit"/></svg> แก้ไขรายการ</button></div>` : ''}
     <div style="display:flex;gap:10px;margin-top:12px;">${footerHtml}</div>
   `;
@@ -2313,6 +2314,16 @@ function viewSLRequestDetails(id) {
   detailDrawerRefresh = () => viewSLRequestDetails(id);
   document.getElementById('drawer-overlay').classList.add('active');
   document.getElementById('drawer-detail').classList.add('active');
+}
+
+// ปุ่ม "ดูรายละเอียดการลารายบุคคล" ใน drawer ใบลา → เปิดโควตา + ประวัติการลาของนักเรียนคนนั้นใน drawer เดิม
+// พร้อมปุ่มย้อนกลับมาที่ใบลาใบนี้ (ถ้าเดิมเปิดมาจากรายการของวันในปฏิทิน ปุ่มย้อนของใบลาจะหายไป — ยอมรับได้)
+function openSLProfileFromRequest(id) {
+  const r = STUDENT_LEAVE_REQUESTS.find(x => x.id === id);
+  if (!r) return;
+  openSLProfileDrawer(r.studentId);
+  detailDrawerBackTo = () => viewSLRequestDetails(id);
+  updateDetailDrawerBackBtn();
 }
 
 // Renders the classic Thai leave-request form ("แบบใบลา") for one student leave
@@ -5035,8 +5046,9 @@ function renderSDOverview() {
     <div class="glass-card sd-kpi sd-kpi-main">
       <span class="sd-kpi-label">อัตราการมาเรียน</span>
       <strong class="sd-kpi-value${low ? ' low' : ''}">${sdPct(t.rate)}</strong>
-      <span class="sd-kpi-sub">${delta || `นักเรียน ${sdNum(t.students)} คน · ${nDays} วันเรียน`}</span>
-      ${t.none ? `<span class="sd-kpi-sub">ไม่นับที่ยังไม่เช็คชื่อ ${sdNum(t.none)} คน-วัน</span>` : ''}
+      <span class="sd-kpi-sub">จากนักเรียน ${sdNum(t.students)} คน · ${nDays} วันเรียน</span>
+      ${delta ? `<span class="sd-kpi-sub">${delta}</span>` : ''}
+      ${t.none ? `<span class="sd-kpi-sub">ไม่นับวันที่ยังไม่เช็คชื่อ (นักเรียน ${sdNum(d.people.filter(p => p.none > 0).length)} คน)</span>` : ''}
     </div>`;
   const statTiles = SD_STATUS_KEYS.map(c => {
     const kids = d.people.filter(p => p[c.key] > 0).length;
@@ -5212,6 +5224,13 @@ function sdThresholdSet(n) {
   return { key: 'threshold', label: `เกณฑ์ ${SD_RISK.rate}%`, data: Array(n).fill(SD_RISK.rate), borderColor: '#94a0b2', backgroundColor: '#94a0b2',
            borderWidth: 1.5, borderDash: [6, 4], pointRadius: 0, pointHoverRadius: 0, fill: false, order: 9 };
 }
+// คำอธิบายใต้หัวกราฟ — แตกเป็นชิ้นสั้นๆ พร้อมสัญลักษณ์ (เส้นประ/จุดแดง) ให้กวาดตาอ่านได้ ไม่ใช่ประโยคยาว
+// parts: [{ text, key?: 'dash'|'dot'|'ok', hint?: true }]  (text เป็นข้อความจากระบบ ไม่ใช่ input ผู้ใช้)
+function sdSubLine(el, parts) {
+  el.innerHTML = parts.filter(Boolean).map(p =>
+    `<span class="sd-sub-item${p.hint ? ' sd-sub-hint' : ''}">${p.key ? `<i class="sd-sub-key sd-sub-${p.key}" aria-hidden="true"></i>` : ''}${p.text}</span>`
+  ).join('');
+}
 function sdRateAxis(values) {
   const nums = values.filter(v => v !== null && v !== undefined);
   const min = Math.min(SD_RISK.rate, ...nums);
@@ -5246,9 +5265,11 @@ function renderSDTrendChart() {
     const cur = days.map(d => d.rate === null || partial(d) ? null : Math.round(d.rate * 10) / 10);
     const isLow = v => v !== null && v < SD_RISK.rate;
     const lowCount = cur.filter(isLow).length;
-    sub.textContent = `% ที่มาเรียน (ตรงเวลา + สาย) · เส้นประ = เกณฑ์ ${SD_RISK.rate}%` +
-      (lowCount ? ` · จุดแดง = ต่ำกว่าเกณฑ์ (${lowCount} วัน)` : ' · ผ่านเกณฑ์ทุกวัน') +
-      (partialCount ? ` · ไม่แสดง ${partialCount} วันที่ยังเช็คชื่อไม่ถึงครึ่ง` : '');
+    sdSubLine(sub, [
+      { text: `นักเรียน ${sdNum(sdData.total.students)} คน` },
+      { key: 'dash', text: `เกณฑ์ ${SD_RISK.rate}%` },
+      lowCount ? { key: 'dot', text: `ต่ำกว่าเกณฑ์ ${lowCount} วัน` } : { key: 'ok', text: 'ผ่านเกณฑ์ทุกวัน' }
+    ]);
     sdChart('sd-chart-trend', {
       type: 'line',
       data: { labels, datasets: [
@@ -5268,7 +5289,7 @@ function renderSDTrendChart() {
               title: dayTitle,
               label: c => {
                 const d = days[c.dataIndex];
-                return [` มาเรียน ${c.parsed.y}%${isLow(c.parsed.y) ? ' (ต่ำกว่าเกณฑ์)' : ''}`, ` ขาด ${d.absent} · สาย ${d.late} · ลา ${d.leave}` + (d.none ? ` · ยังไม่เช็ค ${d.none}` : '')];
+                return [` มาเรียน ${c.parsed.y}%${isLow(c.parsed.y) ? ' (ต่ำกว่าเกณฑ์)' : ''}`, ` มา ${d.present}/${d.checked + d.none} คน`, ` ขาด ${d.absent} · สาย ${d.late} · ลา ${d.leave}` + (d.none ? ` · ยังไม่เช็ค ${d.none}` : '')];
               }
             }
           }
@@ -5284,7 +5305,11 @@ function renderSDTrendChart() {
     key: c.key, label: c.label, data: days.map(d => d[c.key]), backgroundColor: c.color,
     borderColor: surface, borderWidth: { top: 2 }, borderSkipped: false, maxBarThickness: 28
   }));
-  sub.textContent = 'จำนวนนักเรียนต่อวัน · แท่งยิ่งสูง = วันนั้นมีคนไม่ได้มาตรงเวลามาก · คลิกชื่อด้านบนเพื่อซ่อน/แสดง';
+  sdSubLine(sub, [
+    { text: 'จำนวนคนต่อวัน' },
+    { text: 'แท่งสูง = คนไม่มาตรงเวลามาก' },
+    { text: 'คลิกชื่อสถานะเพื่อซ่อน/แสดง', hint: true }
+  ]);
   sdChart('sd-chart-trend', {
     type: 'bar', data: { labels, datasets },
     options: {
@@ -5342,8 +5367,12 @@ function renderSDRoomChart() {
   back.hidden = !d.grade;
   back.title = d.room ? `กลับไปดูทุกห้องของ ${d.grade}` : 'กลับไปดูทุกชั้นปี';
   back.setAttribute('aria-label', back.title);
-  document.getElementById('sd-rooms-chart-sub').textContent =
-    `เส้นประ = เกณฑ์ ${SD_RISK.rate}% · จุดแดง = ต่ำกว่าเกณฑ์ · ` + (byGrade ? 'คลิกชั้นปีเพื่อดูแยกห้อง' : 'คลิกห้องเพื่อดูรายชื่อนักเรียน');
+  sdSubLine(document.getElementById('sd-rooms-chart-sub'), [
+    { text: `${d.days.length} วันเรียน` },
+    { key: 'dash', text: `เกณฑ์ ${SD_RISK.rate}%` },
+    { key: 'dot', text: 'ต่ำกว่าเกณฑ์' },
+    { text: byGrade ? 'คลิกชั้นปีเพื่อดูแยกห้อง' : 'คลิกห้องเพื่อดูรายชื่อ', hint: true }
+  ]);
   const rates = rows.map(r => r.rate).filter(v => v !== null);
   if (!rates.length || !d.days.length) { box.innerHTML = '<div class="sd-dots-empty">ไม่มีข้อมูลในช่วงที่เลือก</div>'; return; }
   const min = Math.max(0, Math.floor((Math.min(SD_RISK.rate, ...rates) - 5) / 5) * 5);
@@ -5360,7 +5389,7 @@ function renderSDRoomChart() {
         <span class="sd-dot-track"><span class="sd-dot-none">${r.students ? 'ยังไม่เช็คชื่อ' : 'ยังไม่มีรายชื่อนักเรียน'}</span></span><strong class="sd-dot-val">-</strong></div>`;
     }
     const lowCls = (r.rate < SD_RISK.rate ? ' low' : '') + (r.cls === currentCls ? ' current' : '');
-    const tip = `${r.cls}: มาเรียน ${sdPct(r.rate)} · ขาด ${r.absent} · สาย ${r.late} · ลา ${r.leave} (คน-วัน)`;
+    const tip = `${r.cls}: มาเรียน ${sdPct(r.rate)} · นักเรียน ${sdNum(r.students)} คน · ${d.days.length} วันเรียน`;
     return `<button type="button" class="sd-dot-row${lowCls}" onclick="${click}" title="${tip}">
       <span class="sd-dot-label">${r.cls}<small>${meta}</small></span>
       <span class="sd-dot-track">${th}<i class="sd-dot" style="left:${pos(r.rate)}"></i></span>
@@ -5372,10 +5401,11 @@ function renderSDRoomChart() {
 
 // ---- ตาราง ----
 function sdCell(n) { return `<td class="num${n ? '' : ' zero'}">${sdNum(n)}</td>`; }
-function sdRateCell(v) {
+// basis = บรรทัดเล็กใต้ % บอกฐานที่ใช้คิด (จำนวนนักเรียนจริง + จำนวนวัน — ไม่ใช้ "คน-วัน")
+function sdRateCell(v, basis) {
   if (v === null) return '<td class="num zero">-</td>';
   const low = v < SD_RISK.rate;
-  return `<td class="num"><span class="sd-rate${low ? ' low' : ''}"><span class="sd-rate-bar"><i style="width:${Math.min(100, v)}%"></i></span><strong>${sdPct(v)}</strong></span></td>`;
+  return `<td class="num"><span class="sd-rate${low ? ' low' : ''}"><span class="sd-rate-bar"><i style="width:${Math.min(100, v)}%"></i></span><strong>${sdPct(v)}</strong></span>${basis ? `<small class="sd-rate-basis">${basis}</small>` : ''}</td>`;
 }
 
 function renderSDRooms() {
@@ -5393,7 +5423,7 @@ function renderSDRooms() {
   };
   const cells = r => `${sdCell(r.students)}
       ${sdCell(r.ontime)}${sdCell(r.late)}${sdCell(r.absent)}${sdCell(r.leave)}
-      ${sdCell(r.early)}${sdCell(r.tickets)}${sdCell(r.none)}${sdRateCell(r.rate)}
+      ${sdCell(r.early)}${sdCell(r.tickets)}${sdCell(r.none)}${sdRateCell(r.rate, `${sdNum(r.students)} คน · ${d.days.length} วัน`)}
       <td>${r.risk ? `<span class="badge danger">${r.risk} คน</span>` : '<span class="zero">-</span>'}</td>`;
   const row = (r, isTotal) => !isTotal && !r.students
     ? `<tr class="sd-room-empty"><td><strong>${r.cls}</strong></td><td>${r.teacher || ''}</td><td colspan="11">ยังไม่มีรายชื่อนักเรียนในห้องนี้</td></tr>`
@@ -5481,7 +5511,7 @@ function renderSDPeople() {
       <td class="num">${p.s.no}</td><td>${p.s.cls}</td><td>${p.s.id}</td>
       <td><strong>${studentFullName(p.s)}</strong></td>
       ${sdCell(p.ontime)}${sdCell(p.late)}${sdCell(p.absent)}${sdCell(p.leave)}${sdCell(p.early)}${sdCell(p.tickets)}${sdCell(p.none)}
-      ${sdRateCell(p.rate)}
+      ${sdRateCell(p.rate, `มา ${p.present}/${p.checked} วัน`)}
       <td><div class="sd-flags">${p.flags.map(f => `<span class="badge danger">${f}</span>`).join('') || '<span class="zero">-</span>'}</div></td>
     </tr>`).join('') ||
     `<tr><td colspan="${SD_PEOPLE_COLS.length}" style="text-align:center;padding:32px;color:var(--text-muted);">ไม่พบนักเรียนตามเงื่อนไขที่เลือก</td></tr>`;

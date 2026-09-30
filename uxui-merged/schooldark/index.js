@@ -1019,6 +1019,50 @@ function renderApprovalView(filterStatus) {
     });
 }
 
+// Export รายการคำขอลาเป็น Excel — ใช้ตัวกรองสถานะเดียวกับตาราง (staffApproveFilter) และเรียงแบบเดียวกัน
+function exportStaffLeaveExcel() {
+    loadScriptOnce(LAZY_LIBS.xlsx).then(() => {
+        const typeLabel = { "sick": "ลาป่วย", "vacation": "ลากิจ / พักผ่อน", "maternity": "ลาคลอด" };
+        const durationLabel = { "full": "เต็มวัน", "morning": "ครึ่งวันเช้า", "afternoon": "ครึ่งวันบ่าย" };
+        const statusLabel = Object.fromEntries(STAFF_STATUS_OPTIONS.map(o => [o.value, o.label]));
+        const rows = systemState.requests
+            .filter(r => staffApproveFilter === "all" || r.status === staffApproveFilter)
+            .sort((a, b) => {
+                if (a.status === "pending" && b.status !== "pending") return -1;
+                if (a.status !== "pending" && b.status === "pending") return 1;
+                return b.id.localeCompare(a.id);
+            });
+        if (rows.length === 0) {
+            showToast("ไม่มีรายการคำขอให้ Export ในหมวดหมู่นี้", "warning");
+            return;
+        }
+        const headers = ["เลขที่คำขอ", "สถานะ", "วันที่ยื่น", "รหัสบุคลากร", "ชื่อคุณครู", "ประเภทการลา", "ช่วงเวลา",
+            "วันที่เริ่มลา", "วันที่สิ้นสุด", "วันสุทธิ", "เหตุผลการลา", "เอกสารแนบ", "ความเห็นผู้อนุมัติ"];
+        const data = rows.map(r => [
+            r.id,
+            statusLabel[r.status] || r.status,
+            formatThaiDate(r.submittedDate),
+            r.teacherId || "",
+            r.teacherName,
+            typeLabel[r.leaveType] || r.leaveType,
+            durationLabel[r.durationType] || r.durationType || "",
+            formatThaiDate(r.startDate),
+            formatThaiDate(r.endDate),
+            r.netDays,
+            r.reason || "",
+            r.attachment ? r.attachment.name : "-",
+            r.comment || ""
+        ]);
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+        ws["!cols"] = headers.map((h, i) => ({ wch: Math.max(h.length, ...data.map(row => String(row[i]).length)) + 2 }));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "คำขอลาบุคลากร");
+        const filterName = staffApproveFilter === "all" ? "ทั้งหมด" : statusLabel[staffApproveFilter];
+        XLSX.writeFile(wb, `รายการคำขอลาบุคลากร_${filterName}.xlsx`);
+        showToast(`Export ${rows.length} รายการเรียบร้อย`, "success");
+    }).catch(() => showToast("โหลดไลบรารี Excel ไม่สำเร็จ (ต้องเชื่อมต่ออินเทอร์เน็ต)", "danger"));
+}
+
 function updateApprovalBadge() {
     const pendingCount = systemState.requests.filter(r => r.status === "pending").length;
     const badge = document.getElementById("sidebar-approval-badge");

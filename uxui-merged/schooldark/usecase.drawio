@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="p2" name="ข้อมูลบุคลากร">
-        <mxGraphModel dx="906" dy="828" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1396" dy="487" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -44,12 +44,12 @@
         </mxGraphModel>
     </diagram>
     <diagram id="p3" name="การลาของบุคลากร">
-        <mxGraphModel dx="1432" dy="1228" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1696" dy="991" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="p3-sys" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fontStyle=1;fontSize=15;fillColor=none;strokeColor=#333333;strokeWidth=2;spacingTop=8;" value="การลาของบุคลากร" vertex="1">
-                    <mxGeometry height="910" width="400" x="300" as="geometry"/>
+                    <mxGeometry height="820" width="400" x="300" as="geometry"/>
                 </mxCell>
                 <mxCell id="p3-uc0" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="เพิ่ม ลบ แก้ไขคำขอลาของตนเอง" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="70" as="geometry"/>
@@ -57,32 +57,26 @@
                 <mxCell id="p3-uc2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ติดตามสถานะคำขอลาของตนเอง" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="168" as="geometry"/>
                 </mxCell>
-                <mxCell id="p3-uc4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูรายละเอียดคำขอลาและเอกสารแนบ" vertex="1">
-                    <mxGeometry height="78" width="320" x="340" y="372" as="geometry"/>
-                </mxCell>
                 <mxCell id="p3-uc3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;เปลี่ยนสถานะ&lt;/span&gt;คำขอลาบุคลากร" vertex="1">
-                    <mxGeometry height="78" width="320" x="340" y="476" as="geometry"/>
+                    <mxGeometry height="78" width="320" x="340" y="380" as="geometry"/>
                 </mxCell>
-                <mxCell id="p3-uc6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูปฏิทินภาพรวมการลาบุคลากร" vertex="1">
-                    <mxGeometry height="78" width="320" x="340" y="580" as="geometry"/>
+                <mxCell id="p3-uc7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูประวัติการลารายบุคคล" vertex="1">
+                    <mxGeometry height="78" width="320" x="340" y="484" as="geometry"/>
                 </mxCell>
-                <mxCell id="p3-uc7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูประวัติการลาและโควตาคงเหลือรายบุคคล" vertex="1">
-                    <mxGeometry height="78" width="320" x="340" y="680" as="geometry"/>
-                </mxCell>
-                <mxCell id="p3-uc8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ตั้งค่าระบบการลาบุคลากร" vertex="1">
-                    <mxGeometry height="78" width="320" x="340" y="790" as="geometry"/>
+                <mxCell id="p3-uc8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;fillColor=#f8cecc;strokeColor=#b85450;" value="ตั้งค่าระบบการลาบุคลากร" vertex="1">
+                    <mxGeometry height="78" width="320" x="340" y="704" as="geometry"/>
                 </mxCell>
                 <mxCell id="p3-A3" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=12;fontStyle=1;" value="ครู / บุคลากร" vertex="1">
                     <mxGeometry height="60" width="30" x="110" y="236" as="geometry"/>
                 </mxCell>
                 <mxCell id="p3-A4" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=12;fontStyle=1;" value="ผู้อนุมัติการลาบุคลากร" vertex="1">
-                    <mxGeometry height="60" width="30" x="110" y="574" as="geometry"/>
+                    <mxGeometry height="60" width="30" x="110" y="478" as="geometry"/>
                 </mxCell>
                 <mxCell id="p3-A2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=12;fontStyle=1;" value="เจ้าหน้าที่บุคคล" vertex="1">
-                    <mxGeometry height="60" width="30" x="860" y="630.0033333333333" as="geometry"/>
+                    <mxGeometry height="60" width="30" x="860" y="434.00333333333333" as="geometry"/>
                 </mxCell>
                 <mxCell id="p3-A1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=12;fontStyle=1;" value="ผู้ดูแลระบบ" vertex="1">
-                    <mxGeometry height="60" width="30" x="860" y="800" as="geometry"/>
+                    <mxGeometry height="60" width="30" x="860" y="634" as="geometry"/>
                 </mxCell>
                 <mxCell id="p3-1" edge="1" parent="1" source="p3-A3" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc0">
                     <mxGeometry relative="1" as="geometry"/>
@@ -93,26 +87,16 @@
                 <mxCell id="p3-5" edge="1" parent="1" source="p3-A4" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc3">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="p3-6" edge="1" parent="1" source="p3-A3" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc4">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="p3-7" edge="1" parent="1" source="p3-A4" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc4">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="p3-9" edge="1" parent="1" source="p3-A4" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc6">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="p3-10" edge="1" parent="1" source="p3-A2" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc6">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
                 <mxCell id="p3-11" edge="1" parent="1" source="p3-A4" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc7">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="p3-12" edge="1" parent="1" source="p3-A2" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc7">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="p3-13" edge="1" parent="1" source="p3-A1" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="p3-uc8">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="p3-13" edge="1" parent="1" source="p3-A1" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" target="p3-uc8">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="774" as="sourcePoint"/>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="AbJq6KaOCqU-m74RxPJY-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;ดูประวัติการลาและโควตาคงเหลือของตนเอง&lt;/span&gt;" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="270" as="geometry"/>
@@ -123,11 +107,44 @@
                         <mxPoint x="470" y="330" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
+                <mxCell id="U1XVhd5N-WndVfxa0oj2-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="Export รายการคำขอลาเป็น Excel" vertex="1">
+                    <mxGeometry height="78" width="320" x="340" y="594" as="geometry"/>
+                </mxCell>
+                <mxCell id="U1XVhd5N-WndVfxa0oj2-3" edge="1" parent="1" source="p3-A1" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" target="U1XVhd5N-WndVfxa0oj2-1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="774" as="sourcePoint"/>
+                        <mxPoint x="780" y="867" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="U1XVhd5N-WndVfxa0oj2-4" edge="1" parent="1" source="U1XVhd5N-WndVfxa0oj2-1" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryPerimeter=0;" target="p3-A4">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="554" as="sourcePoint"/>
+                        <mxPoint x="220" y="627" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="U1XVhd5N-WndVfxa0oj2-5" edge="1" parent="1" source="p3-A2" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="U1XVhd5N-WndVfxa0oj2-1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1020" y="654" as="sourcePoint"/>
+                        <mxPoint x="820" y="727" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="U1XVhd5N-WndVfxa0oj2-6" edge="1" parent="1" source="p3-A1" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" target="p3-uc7">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="774" as="sourcePoint"/>
+                        <mxPoint x="890" y="754" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="NKk1_ou-7teipzaZtYPs-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="extend ดูทั้งภาพใหญ่ภาพย่อย" vertex="1">
+                    <mxGeometry height="30" width="100" x="300" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="NKk1_ou-7teipzaZtYPs-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="เช็ค usecase ตั้งค่า ว่าควรมีไหม" vertex="1">
+                    <mxGeometry height="30" width="100" x="580" y="770" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
     <diagram id="p4" name="การตั้งค่าระบบ">
-        <mxGraphModel dx="1432" dy="1228" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1696" dy="991" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -161,9 +178,6 @@
                 <mxCell id="p4-A1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=12;fontStyle=1;" value="ผู้ดูแลระบบ" vertex="1">
                     <mxGeometry height="60" width="30" x="110" y="418" as="geometry"/>
                 </mxCell>
-                <mxCell id="p4-A2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=12;fontStyle=1;" value="เจ้าหน้าที่บุคคล" vertex="1">
-                    <mxGeometry height="60" width="30" x="860" y="797" as="geometry"/>
-                </mxCell>
                 <mxCell id="p4-1" edge="1" parent="1" source="p4-A1" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p4-uc0">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
@@ -188,14 +202,14 @@
                 <mxCell id="p4-8" edge="1" parent="1" source="p4-A1" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="p4-uc7">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="p4-9" edge="1" parent="1" source="p4-A2" style="endArrow=none;html=1;strokeColor=#98a2b3;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="p4-uc7">
-                    <mxGeometry relative="1" as="geometry"/>
+                <mxCell id="JlcscmzXVl12QnwG4Yci-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="เช็ค usecase ตั้งค่า ว่าควรมีไหม" vertex="1">
+                    <mxGeometry height="30" width="100" x="750" y="478" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
     <diagram id="p5" name="การมาเรียนของนักเรียน">
-        <mxGraphModel dx="1193" dy="690" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1826" dy="637" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -210,6 +224,9 @@
                 </mxCell>
                 <mxCell id="p5-uc6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูรายงานการมาโรงเรียน" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="474" as="geometry"/>
+                </mxCell>
+                <mxCell id="DbGEsID_sKWVCSJ2aFR_-2" edge="1" parent="1" source="p5-uc7" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="DbGEsID_sKWVCSJ2aFR_-1">
+                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="p5-uc7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="Export รายงานการมาเรียนเป็น Excel" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="578" as="geometry"/>
@@ -259,11 +276,14 @@
                         <mxPoint x="560" y="665" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
+                <mxCell id="DbGEsID_sKWVCSJ2aFR_-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="เอาออกเลย เป็น alternative flow ของการดูรายงาน" vertex="1">
+                    <mxGeometry height="30" width="180" x="760" y="626" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
     <diagram id="p6" name="การลาเรียนของนักเรียน">
-        <mxGraphModel dx="755" dy="690" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1696" dy="591" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -273,20 +293,39 @@
                 <mxCell id="p6-uc0" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ยื่นคำขอลาแทนนักเรียน" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="155" as="geometry"/>
                 </mxCell>
+                <mxCell id="7NaewEHFzSnrC7DcRdvT-5" edge="1" parent="1" source="p6-uc3" style="edgeStyle=none;html=1;" target="7NaewEHFzSnrC7DcRdvT-4">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="p6-uc3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="แก้ไขหรือลบคำขอลาที่ยังไม่ถูกดำเนินการ" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="260" as="geometry"/>
                 </mxCell>
                 <mxCell id="p6-uc4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="อนุมัติ / ไม่อนุมัติการลาเรียน" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="476" as="geometry"/>
                 </mxCell>
+                <mxCell id="7NaewEHFzSnrC7DcRdvT-7" edge="1" parent="1" source="p6-uc5" style="edgeStyle=none;html=1;">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="910" y="420" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
                 <mxCell id="p6-uc5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูรายละเอียดคำขอลา" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="370" as="geometry"/>
+                </mxCell>
+                <mxCell id="7NaewEHFzSnrC7DcRdvT-6" edge="1" parent="1" source="p6-uc9" style="edgeStyle=none;html=1;entryX=0;entryY=1;entryDx=0;entryDy=0;" target="7NaewEHFzSnrC7DcRdvT-8">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="940" y="450" as="targetPoint"/>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="p6-uc9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูประวัติการลาและโควตาวันลาคงเหลือของนักเรียน" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="590" as="geometry"/>
                 </mxCell>
+                <mxCell id="7NaewEHFzSnrC7DcRdvT-2" edge="1" parent="1" source="p6-uc10" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="7NaewEHFzSnrC7DcRdvT-1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="p6-uc10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="พิมพ์ใบลาของนักเรียน" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="710" as="geometry"/>
+                </mxCell>
+                <mxCell id="7NaewEHFzSnrC7DcRdvT-3" edge="1" parent="1" source="p6-uc11" style="edgeStyle=none;html=1;entryX=0;entryY=1;entryDx=0;entryDy=0;" target="7NaewEHFzSnrC7DcRdvT-1">
+                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="p6-uc11" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="Export รายการคำขอลาเป็น Excel" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="820" as="geometry"/>
@@ -381,11 +420,26 @@
                         <mxPoint x="870" y="854" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
+                <mxCell id="Pkli9qLOdjdGqM0APr5J-1" edge="1" parent="1" source="p6-A1" style="endArrow=none;html=1;strokeColor=#00CC00;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" target="p6-uc11">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="330" y="1011" as="sourcePoint"/>
+                        <mxPoint x="530" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="7NaewEHFzSnrC7DcRdvT-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="เอาออกเลย ไม่จำเป็น" vertex="1">
+                    <mxGeometry height="30" width="180" x="700" y="750" as="geometry"/>
+                </mxCell>
+                <mxCell id="7NaewEHFzSnrC7DcRdvT-4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="include เพราะต้องดูรายละเอียดก่อนแก้" vertex="1">
+                    <mxGeometry height="30" width="180" x="800" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="7NaewEHFzSnrC7DcRdvT-8" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="ดูประวัติ รวมกับ&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;ดูรายละเอียดคำขอลา&lt;/span&gt;" vertex="1">
+                    <mxGeometry height="30" width="210" x="910" y="410" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
     <diagram id="p7" name="บัตรขออนุญาตนักเรียน">
-        <mxGraphModel dx="1294" dy="1583" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1978" dy="1090" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -395,7 +449,7 @@
                 <mxCell id="p7-uc0" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="บันทึกบัตรขออนุญาต" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="p7-uc1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="พิมพ์บัตรขออนุญาต" vertex="1">
+                <mxCell id="p7-uc1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;fillColor=#FF9999;" value="พิมพ์บัตรขออนุญาต" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="164" as="geometry"/>
                 </mxCell>
                 <mxCell id="p7-uc2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ลบ แก้ไขบัตรที่ยังไม่ถูกดำเนินการ" vertex="1">
@@ -407,16 +461,25 @@
                 <mxCell id="p7-uc4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูรายละเอียดบัตรขออนุญาต" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="370" as="geometry"/>
                 </mxCell>
+                <mxCell id="VUs0kTmHdtO-OJuJptkr-2" edge="1" parent="1" source="p7-uc7" style="edgeStyle=none;html=1;" target="VUs0kTmHdtO-OJuJptkr-1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="p7-uc7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูประวัติบัตรขออนุญาตรายบุคคล" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="590" as="geometry"/>
                 </mxCell>
                 <mxCell id="p7-uc8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="ดูสรุปบัตรขออนุญาตตามชั้นเรียน" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="700" as="geometry"/>
                 </mxCell>
-                <mxCell id="p7-uc9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="พิมพ์รายงานประวัติบัตรขออนุญาต" vertex="1">
+                <mxCell id="VUs0kTmHdtO-OJuJptkr-6" edge="1" parent="1" source="p7-uc9" style="edgeStyle=none;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="VUs0kTmHdtO-OJuJptkr-5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p7-uc9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;fillColor=#FF9999;" value="พิมพ์รายงานประวัติบัตรขออนุญาต" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="804" as="geometry"/>
                 </mxCell>
-                <mxCell id="p7-uc10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;" value="Export รายการบัตรขออนุญาตเป็น Excel" vertex="1">
+                <mxCell id="VUs0kTmHdtO-OJuJptkr-7" edge="1" parent="1" source="p7-uc10" style="edgeStyle=none;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="VUs0kTmHdtO-OJuJptkr-5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="p7-uc10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=12;spacing=10;fillColor=#FF9999;" value="Export รายการบัตรขออนุญาตเป็น Excel" vertex="1">
                     <mxGeometry height="78" width="320" x="340" y="908" as="geometry"/>
                 </mxCell>
                 <mxCell id="p7-A7" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=12;fontStyle=1;" value="ผู้ปกครอง" vertex="1">
@@ -504,6 +567,24 @@
                         <mxPoint x="290" y="825" as="sourcePoint"/>
                         <mxPoint x="490" y="690" as="targetPoint"/>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="WdzkIk1R_Y6miNp2rGLH-1" edge="1" parent="1" source="p7-A1" style="endArrow=none;html=1;strokeColor=#00CC00;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" target="p7-uc10">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="360" y="1093" as="sourcePoint"/>
+                        <mxPoint x="560" y="1060" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="VUs0kTmHdtO-OJuJptkr-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="จุดประสงค์เดียวกัน" vertex="1">
+                    <mxGeometry height="30" width="210" x="790" y="530" as="geometry"/>
+                </mxCell>
+                <mxCell id="VUs0kTmHdtO-OJuJptkr-3" edge="1" parent="1" source="p7-uc4" style="edgeStyle=none;html=1;entryX=0.189;entryY=0.037;entryDx=0;entryDy=0;entryPerimeter=0;" target="VUs0kTmHdtO-OJuJptkr-1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="VUs0kTmHdtO-OJuJptkr-4" edge="1" parent="1" source="p7-uc8" style="edgeStyle=none;html=1;entryX=0.634;entryY=1.111;entryDx=0;entryDy=0;entryPerimeter=0;" target="VUs0kTmHdtO-OJuJptkr-1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="VUs0kTmHdtO-OJuJptkr-5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;rounded=0;" value="alternative flow" vertex="1">
+                    <mxGeometry height="30" width="210" x="750" y="882" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

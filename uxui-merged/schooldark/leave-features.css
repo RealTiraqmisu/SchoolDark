@@ -277,6 +277,15 @@
     .sd-hbar-track i { display: block; height: 100%; min-width: 0; border-radius: 4px; background: var(--primary); }
     .sd-chart-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
     .sd-chart-head .sd-chart-sub { margin-bottom: 0; }
+    /* คำอธิบายใต้หัวกราฟ: ชิ้นสั้นๆ คั่นด้วยจุดจาง + สัญลักษณ์ตรงกับในกราฟ — เล็กและจางกว่าหัวข้อ ไม่แย่งความสนใจจากกราฟ */
+    .sd-chart-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 0; font-size: 11.5px; line-height: 1.6; }
+    .sd-sub-item { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .sd-sub-item + .sd-sub-item::before { content: ''; width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: .45; margin: 0 8px; }
+    .sd-sub-hint { opacity: .75; }
+    .sd-sub-key { display: inline-block; flex-shrink: 0; }
+    .sd-sub-dash { width: 14px; border-top: 1.5px dashed #94a0b2; }
+    .sd-sub-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--danger); }
+    .sd-sub-ok { width: 7px; height: 7px; border-radius: 50%; background: var(--success, #22a06b); }
     .sd-seg { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--border-color); border-radius: var(--br-md); background: var(--bg-card); }
     .sd-seg button { border: 0; background: transparent; color: var(--text-secondary); border-radius: var(--br-sm); padding: 5px 12px; cursor: pointer; font-family: var(--font-body); font-size: 12px; font-weight: 600; }
     .sd-seg button:hover { color: var(--text-primary); }
@@ -333,6 +342,7 @@
     .sd-rate-bar i { display: block; height: 100%; border-radius: 3px; background: var(--success); }
     .sd-rate.low .sd-rate-bar i { background: var(--danger); }
     .sd-rate.low strong { color: var(--danger); }
+    .sd-rate-basis { display: block; font-size: 11px; color: var(--text-muted); white-space: nowrap; margin-top: 2px; }
     .sd-flags { display: flex; gap: 4px; flex-wrap: wrap; }
     .sd-people-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
     .sd-chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
