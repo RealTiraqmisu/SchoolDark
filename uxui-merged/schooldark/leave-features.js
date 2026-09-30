@@ -5077,6 +5077,13 @@ function sdFilterByStatus(key) {
   sdState.sortKey = key === 'risk' ? 'flags' : key; sdState.sortDir = -1;
   sdGoTab('sd-people');
 }
+// จากกราฟแท่งซ้อนรายวัน: เปลี่ยนช่วงเวลาเป็นวันนั้น แล้วเปิดแท็บรายบุคคลกรองตามสถานะที่กด
+function sdFilterDayStatus(date, key) {
+  sdPeriod = sdDayPeriod(date);
+  sdOnFilterChange();
+  if (key === 'all') { sdState.status = 'all'; sdState.sortKey = 'cls'; sdState.sortDir = 1; sdGoTab('sd-people'); }
+  else sdFilterByStatus(key);
+}
 function sdClearPeopleFilters() {
   sdState.status = 'all'; sdState.page = 1;
   sdState.sortKey = 'cls'; sdState.sortDir = 1;
@@ -5301,25 +5308,39 @@ function renderSDTrendChart() {
   }
 
   // status — แท่งซ้อนรายวัน ขาด (ล่าง) / สาย / ลา : แท่งยิ่งสูง = วันนั้นมีคนไม่ได้มาตรงเวลามาก
+  // ท่อนสีที่เลือกดู (null = ทุกสถานะ) — กรองเฉพาะในกราฟนี้ ไม่กระทบส่วนอื่นของหน้า
+  const focus = SD_STATUS_KEYS.some(c => c.key === sdState.trendFocus) ? sdState.trendFocus : null;
   const datasets = SD_STATUS_KEYS.map(c => ({
     key: c.key, label: c.label, data: days.map(d => d[c.key]), backgroundColor: c.color,
-    borderColor: surface, borderWidth: { top: 2 }, borderSkipped: false, maxBarThickness: 28
+    borderColor: surface, borderWidth: { top: 2 }, borderSkipped: false, maxBarThickness: 28,
+    hidden: !!focus && focus !== c.key
   }));
+  const focusLabel = focus && SD_STATUS_KEYS.find(c => c.key === focus).label;
   sdSubLine(sub, [
     { text: 'จำนวนคนต่อวัน' },
-    { text: 'แท่งสูง = คนไม่มาตรงเวลามาก' },
-    { text: 'คลิกชื่อสถานะเพื่อซ่อน/แสดง', hint: true }
+    { text: focus ? `แสดงเฉพาะ "${focusLabel}"` : 'แท่งสูง = คนไม่มาตรงเวลามาก' },
+    { text: focus ? 'คลิกแท่งอีกครั้งเพื่อดูทุกสถานะ' : 'คลิกท่อนสีเพื่อดูเฉพาะสถานะนั้น', hint: true }
   ]);
+  // คลิกท่อนสี = ดูเฉพาะสถานะนั้นในกราฟ · คลิกซ้ำ (หรือคลิกตอนกรองอยู่) = กลับมาดูทุกสถานะ
+  const segAt = (evt, chart) => chart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false)[0];
   sdChart('sd-chart-trend', {
     type: 'bar', data: { labels, datasets },
     options: {
       responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      onHover: (evt, _els, chart) => { chart.canvas.style.cursor = segAt(evt, chart) ? 'pointer' : ''; },
+      onClick: (evt, _els, chart) => {
+        const seg = segAt(evt, chart);
+        if (!seg) return;
+        const key = datasets[seg.datasetIndex].key;
+        sdState.trendFocus = focus ? null : key;
+        renderSDTrendChart();
+      },
       plugins: {
         legend: SD_LEGEND,
         tooltip: { callbacks: {
           title: dayTitle,
           label: c => ` ${c.dataset.label}: ${c.parsed.y} คน`,
-          footer: items => ` รวม ${items.reduce((s, i) => s + i.parsed.y, 0)} คน`
+          footer: items => [` รวม ${items.reduce((s, i) => s + i.parsed.y, 0)} คน`, focus ? ' คลิกเพื่อดูทุกสถานะ' : ' คลิกเพื่อดูเฉพาะสถานะนี้']
         } }
       },
       scales: { y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: SD_GRID }, border: { display: false } }, x: { ...x, stacked: true } }
