@@ -68,9 +68,7 @@
     .tab-content.active { display: block; animation: fadeIn .2s ease; }
 
     /* ===== STICKY TAB BAR ===== */
-    .view-tabs-sticky { top: 0; 
-      margin: 0 -32px 16px; padding: 10px 32px 8px;
-      background: var(--bg-main); }
+    .view-tabs-sticky { top: 0; margin: 0 -32px 16px; padding: 10px 32px 8px;}
     .view-tabs-sticky .tabs { margin-bottom: 0; }
 
 
@@ -240,29 +238,22 @@
     .sd-filter-note { font-size: 12px; color: var(--warning); margin-top: 8px; }
     .sd-filter-note:empty { display: none; }
 
-    /* ภาพรวม 3 ชั้น: ตัวเลขหลัก + แท่งสัดส่วน / แถบต้องติดตาม */
-    .sd-hero, .sd-mix { padding: 18px 22px; }
-    .sd-hero-label, .sd-mix-title { font-size: 13px; font-weight: 700; color: var(--text-secondary); }
-    .sd-hero-value { font-family: var(--font-heading); font-size: 44px; font-weight: 700; color: var(--text-primary); line-height: 1.1; margin: 6px 0 8px; font-variant-numeric: tabular-nums; }
-    .sd-hero-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 12px; color: var(--text-muted); }
+    /* ภาพรวม: การ์ดตัวเลข (อัตรามาเรียน + ขาด/สาย/ลา) / แถบต้องติดตาม */
+    .sd-kpis { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    @media (max-width: 900px) { .sd-kpis { grid-template-columns: repeat(2, 1fr); } }
+    .sd-kpi { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 14px 18px; text-align: left; font-family: var(--font-body); color: var(--text-primary); }
+    button.sd-kpi { cursor: pointer; border: 1px solid var(--border-color); }
+    button.sd-kpi:hover { border-color: var(--primary); }
+    .sd-kpi-label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text-secondary); }
+    .sd-kpi-label i { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .sd-kpi-value { font-family: var(--font-heading); font-size: 28px; font-weight: 700; line-height: 1.2; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+    .sd-kpi-main .sd-kpi-value { font-size: 36px; }
+    .sd-kpi-value.low { color: var(--danger); }
+    .sd-kpi-value small { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-muted); margin-left: 4px; }
+    .sd-kpi-sub { font-size: 12px; color: var(--text-muted); }
     .sd-delta { display: inline-flex; align-items: center; gap: 3px; font-weight: 700; color: var(--text-primary); }
     .sd-delta.up svg { stroke: var(--success); }
     .sd-delta.down svg { stroke: var(--danger); }
-    .sd-hero-foot { margin-top: 10px; }
-    .sd-hero-explain { font-size: 14px; color: var(--text-secondary); margin: -2px 0 6px; }
-    .sd-hero-explain strong { color: var(--text-primary); }
-    .sd-hero-detail { font-size: 11.5px; line-height: 1.6; color: var(--text-muted); margin-bottom: 10px; }
-    .sd-mix-bar { display: flex; gap: 2px; height: 14px; margin: 12px 0 12px; border-radius: 4px; overflow: hidden; background: var(--bg-card); }
-    .sd-mix-bar span { display: block; min-width: 3px; height: 100%; }
-    .sd-mix-bar span:first-child { border-radius: 4px 0 0 4px; }
-    .sd-mix-bar span:last-child { border-radius: 0 4px 4px 0; }
-    .sd-mix-legend { display: flex; flex-wrap: wrap; gap: 6px 8px; }
-    .sd-mix-item { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; background: transparent; border-radius: var(--br-sm); padding: 4px 8px; margin-left: -8px; cursor: pointer; font-family: var(--font-body); font-size: 13px; color: var(--text-secondary); }
-    .sd-mix-item:hover { border-color: var(--border-color); background: rgba(0,0,0,.02); }
-    .sd-mix-item i { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-    .sd-mix-item strong { color: var(--text-primary); font-variant-numeric: tabular-nums; }
-    .sd-mix-avg { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); font-size: 12px; color: var(--text-muted); }
-    .sd-mix-avg strong { color: var(--text-primary); font-variant-numeric: tabular-nums; }
     .sd-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 12px 18px; margin-bottom: 16px; border: 1px solid var(--warning-bg); background: color-mix(in srgb, var(--warning-bg) 55%, var(--bg-card)); border-radius: var(--br-md); }
     .sd-actions[hidden] { display: none; }
     .sd-actions-title { font-size: 12px; font-weight: 700; color: var(--warning); display: inline-flex; align-items: center; gap: 6px; margin-right: 4px; }
@@ -291,6 +282,36 @@
     .sd-seg button:hover { color: var(--text-primary); }
     .sd-seg button.active { background: var(--primary-glow); color: var(--primary); }
     .sd-chart-box { position: relative; height: 260px; }
+    /* dot plot อัตรามาเรียนแยกชั้นปี/ห้อง — แถว: ชื่อ | แกน (จุด + เส้นประเกณฑ์) | ค่า % ; ทั้งแถวกดได้ */
+    #sd-rooms-chart-card[hidden] { display: none; }
+    .sd-rooms-chart-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .sd-rooms-chart-head h4 { margin: 0; }
+    #sd-rooms-back { width: 28px; height: 28px; font-size: 13px; border: 0; background-color: white; cursor: pointer; border-radius: 6px; transition: .15s;}
+    #sd-rooms-back:hover { background: rgba(0, 0, 0, 0.06); opacity: 1; }
+    #sd-rooms-back[hidden] { display: none; }
+    .sd-dots { display: flex; flex-direction: column; }
+    .sd-dot-row { display: grid; grid-template-columns: 150px 1fr 64px; align-items: center; gap: 14px; width: 100%; padding: 7px 10px; border: 0; border-radius: var(--br-sm); background: transparent; font-family: var(--font-body); text-align: left; color: var(--text-primary); }
+    button.sd-dot-row { cursor: pointer; }
+    button.sd-dot-row:hover { background: var(--primary-glow); }
+    /* ห้องที่เลือกอยู่ในตัวกรอง (เลือกห้องเดียว) — กราฟยังแสดงทุกห้องของชั้นนั้น แต่เน้นห้องนี้ */
+    .sd-dot-row.current { background: var(--primary-glow); box-shadow: inset 3px 0 0 var(--primary); }
+    .sd-dot-row.current .sd-dot-label { color: var(--primary); }
+    .sd-dot-label { font-size: 14px; font-weight: 700; display: flex; flex-direction: column; line-height: 1.3; }
+    .sd-dot-label small { font-size: 11.5px; font-weight: 500; color: var(--text-muted); }
+    .sd-dot-track { position: relative; height: 22px; }
+    .sd-dot-row:not(.axis) .sd-dot-track::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--border-color); }
+    .sd-dot-th { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1.5px dashed #94a0b2; }
+    .sd-dot { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 2px var(--bg-card); }
+    .sd-dot-row.low .sd-dot { background: var(--danger); }
+    .sd-dot-val { font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; }
+    .sd-dot-row.low .sd-dot-val { color: var(--danger); }
+    .sd-dot-none { position: absolute; left: 0; top: 50%; transform: translateY(-50%); padding-right: 8px; background: var(--bg-card); font-size: 12px; color: var(--text-muted); }
+    .sd-dot-row.empty .sd-dot-label, .sd-dot-row.empty .sd-dot-val { color: var(--text-muted); }
+    .sd-dot-row.axis { padding-top: 2px; padding-bottom: 0; }
+    .sd-dot-row.axis .sd-dot-track { height: 16px; }
+    .sd-dot-row.axis .sd-dot-track span { position: absolute; transform: translateX(-50%); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .sd-dots-empty { padding: 32px 0; text-align: center; font-size: 13px; color: var(--text-muted); }
+    @media (max-width: 600px) { .sd-dot-row { grid-template-columns: 90px 1fr 54px; gap: 8px; } }
     .sd-chart-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 16px; font-size: 13px; color: var(--text-muted); }
 
     .sd-table th.num, .sd-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -301,6 +322,11 @@
     .sd-table tr.sd-room-row { cursor: pointer; }
     .sd-table tr.sd-room-row:hover td { background: var(--primary-glow); }
     .sd-table tr.sd-total td { font-weight: 700; background: rgba(0,0,0,.03); }
+    .sd-table tr.sd-grade-row { cursor: pointer; }
+    .sd-table tr.sd-grade-row td { font-weight: 700; background: var(--primary-glow); border-top: 2px solid var(--border-color); }
+    .sd-table tr.sd-grade-row:hover td { color: var(--primary); }
+    .sd-table tr.sd-room-empty td { color: var(--text-muted); font-size: 12.5px; }
+    .sd-table tr.sd-room-empty td:first-child strong { color: var(--text-secondary); font-size: 14px; }
     .sd-table .zero { color: var(--text-muted); }
     .sd-rate { display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end; }
     .sd-rate-bar { width: 48px; height: 6px; border-radius: 3px; background: rgba(0,0,0,.07); overflow: hidden; }
@@ -343,4 +369,4 @@
     .sd-drawer-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
     .sd-drawer-empty { font-size: 13px; color: var(--text-muted); padding: 4px 0 8px; }
     .sd-drawer-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border-color); }
-    #view-student-dashboard .view-tabs-sticky { scroll-margin-top: 76px; }
+    #view-student-dashboard .view-tabs-sticky, #sd-rooms-chart-card { scroll-margin-top: 76px; }

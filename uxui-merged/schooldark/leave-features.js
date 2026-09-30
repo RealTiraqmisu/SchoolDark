@@ -4661,19 +4661,13 @@ const SD_PAGE_SIZE = 50;
 // เกณฑ์ "กลุ่มเฝ้าระวัง": % มาเรียนต่ำกว่า rate (เมื่อเช็คชื่อแล้วอย่างน้อย minChecked วัน),
 // ขาดติดกันตั้งแต่ streak วันเรียน, หรือใช้บัตรขออนุญาตตั้งแต่ tickets ใบในช่วงที่เลือก
 const SD_RISK = { rate: 80, minChecked: 5, streak: 3, tickets: 3 };
-// สีของแต่ละสถานะ (แท่งสัดส่วน, กราฟแท่งแยกห้อง, กราฟเส้น "แยกสถานะ") — ลำดับ ตรงเวลา → ลา → สาย
-// → ขาด ไม่วาง เขียว↔ส้ม ติดกัน เพราะคนตาบอดสีแดง-เขียวแยกคู่นี้ไม่ออก; early ใช้ aqua แยกจากชุดสี
-// badge เดิม — ชุดสีเส้นตรวจด้วย validate_palette (--pairs all) แล้ว
-const SD_CATS = [
-  { key: 'ontime', label: 'มาตรงเวลา', color: '--success' },
-  { key: 'leave', label: 'ลา', color: '--info' },
-  { key: 'late', label: 'มาสาย', color: '--warning' },
-  { key: 'absent', label: 'ขาดเรียน', color: '--danger' },
-  { key: 'none', label: 'ยังไม่เช็คชื่อ', color: '--text-muted' }
+// การ์ดตัวเลข ขาด/สาย/ลา + กราฟแท่งซ้อนรายวัน (โหมด "ขาด / สาย / ลา") — เรียงจากล่างขึ้นบนของแท่ง
+// ชุดสีแท่งซ้อน (ขาด↔สาย↔ลา ติดกันตามลำดับนี้) ตรวจด้วย validate_palette แล้ว ผ่านทุกข้อ
+const SD_STATUS_KEYS = [
+  { key: 'absent', label: 'ขาดเรียน', color: '#d5203e' },
+  { key: 'late', label: 'มาสาย', color: '#c47f08' },
+  { key: 'leave', label: 'ลา', color: '#0b8fc1' }
 ];
-const SD_LINE_COLORS = { late: '#c47f08', absent: '#d5203e', leave: '#0b8fc1', early: '#1baf7a', tickets: '#5336e2', none: '#7b899d' };
-// สีประจำห้อง (โหมด "เทียบห้อง") — ผูกกับห้อง ไม่ใช่ลำดับที่แสดง: ห้องเดิมได้สีเดิมเสมอแม้เปลี่ยนตัวกรอง
-const SD_ROOM_COLORS = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#4a3aa7', '#e34948'];
 const SD_SUM_KEYS = ['ontime', 'late', 'absent', 'leave', 'none', 'early', 'tickets', 'lastNone'];
 const SD_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const SD_PRESETS = [
@@ -4790,15 +4784,24 @@ function sdClassValue() {
   return { grade, room: cls ? cls.split('/')[1] : '' };
 }
 function sdClassKey() { return document.getElementById('sd-room').value || document.getElementById('sd-grade').value; }
+// ห้องเรียนทั้งหมดของโรงเรียน (ตั้งค่าโรงเรียน › ข้อมูลห้องเรียน) รวมกับห้องที่มีนักเรียนอยู่จริง —
+// แดชบอร์ดแสดงครบทุกห้องแม้ห้องนั้นยังไม่มีรายชื่อนักเรียน (ไม่ใช่แค่ห้องที่มีใน STUDENTS)
+function sdAllClassrooms() {
+  let list = [];
+  try { list = ((window.SchoolStore && SchoolStore.get('school_classrooms')) || []).map(c => c.level + '/' + c.room); } catch (e) {}
+  STUDENTS.forEach(s => list.push(s.cls));
+  return [...new Set(list)].sort((a, b) => a.localeCompare(b, 'th', { numeric: true }));
+}
 function sdFillGradeSelect() {
+  const grades = [...new Set(sdAllClassrooms().map(c => c.split('/')[0]))];
   document.getElementById('sd-grade').innerHTML = '<option value="">ทุกชั้นปี</option>' +
-    studentGradeOptions().map(g => `<option value="${g}">${g}</option>`).join('');
+    grades.map(g => `<option value="${g}">${g}</option>`).join('');
 }
 function sdFillRoomSelect() {
   const grade = document.getElementById('sd-grade').value;
-  const grades = grade ? [grade] : studentGradeOptions();
+  const list = sdAllClassrooms().filter(c => !grade || c.split('/')[0] === grade);
   document.getElementById('sd-room').innerHTML = '<option value="">ทุกห้อง</option>' +
-    grades.flatMap(g => attRoomsOfGrade(g).map(r => `<option value="${g}/${r}">${grade ? 'ห้อง ' + r : g + '/' + r}</option>`)).join('');
+    list.map(c => `<option value="${c}">${grade ? 'ห้อง ' + c.split('/')[1] : c}</option>`).join('');
 }
 // ตั้งค่าตัวกรองชั้นเรียนจาก key ('' / 'ม.1' / 'ม.1/1')
 function sdSetClassKey(key) {
@@ -4842,7 +4845,7 @@ function renderStudentDashboardView() {
     sdFillGradeSelect();
     const saved = attLoad(SD_FILTER_KEY, null) || {};
     sdSetClassKey(saved.cls || '');
-    if (['rate', 'status', 'rooms'].includes(saved.trend)) sdState.trend = saved.trend;
+    if (['rate', 'status'].includes(saved.trend)) sdState.trend = saved.trend;
     // ปุ่มลัด (เดือนนี้/สัปดาห์นี้/…) คำนวณใหม่ตามวันนี้เสมอ ส่วนช่วงที่เลื่อนเอง/กำหนดเองใช้ค่าที่เก็บไว้
     const p = saved.preset && saved.preset !== 'custom' ? sdPresetPeriod(saved.preset) : saved.period;
     sdPeriod = p && p.from && p.to ? p : sdPresetPeriod('month');
@@ -4913,15 +4916,13 @@ function _sdCompute(period, grade, room) {
 
   const blank = () => ({ ontime: 0, late: 0, absent: 0, leave: 0, none: 0, early: 0, tickets: 0, lastNone: 0 });
   const daily = days.map(date => ({ date, ...blank(), tickets: ticketByDate[date] || 0 }));
-  const roomDaily = {}; // cls → [{ ontime, late, absent, leave, none }] ต่อวันเรียน (โหมดกราฟ "เทียบห้อง")
   const people = students.map(s => {
     const p = { s, ...blank(), streak: 0 };
-    const rd = roomDaily[s.cls] || (roomDaily[s.cls] = days.map(() => ({ ontime: 0, late: 0, absent: 0, leave: 0, none: 0 })));
     let run = 0;
     days.forEach((d, i) => {
       const rec = getAttendance(s, d);
       const cat = attCategory(rec.statusIn);
-      p[cat]++; daily[i][cat]++; rd[i][cat]++;
+      p[cat]++; daily[i][cat]++;
       if (rec.statusOut === 'ออกก่อนเวลา') { p.early++; daily[i].early++; }
       if (i === lastIdx && cat === 'none') p.lastNone = 1;
       run = cat === 'absent' ? run + 1 : 0;
@@ -4937,7 +4938,6 @@ function _sdCompute(period, grade, room) {
     return p;
   });
   daily.forEach(sdFinish);
-  Object.values(roomDaily).forEach(arr => arr.forEach(sdFinish));
 
   const roomMap = new Map();
   const total = { cls: 'รวม', teacher: '', students: 0, risk: 0, ...blank() };
@@ -4954,12 +4954,26 @@ function _sdCompute(period, grade, room) {
   rooms.forEach(sdFinish);
   sdFinish(total);
 
+  // ทุกห้องตามตัวกรอง (รวมห้องที่ยังไม่มีรายชื่อนักเรียน → students 0, rate null) + สรุปรายชั้นปี
+  const allRooms = sdAllClassrooms().filter(c => studentMatchesGradeRoom(c, grade, room))
+    .map(c => roomMap.get(c) || sdFinish({ cls: c, teacher: homeroomTeacherName(c), students: 0, risk: 0, ...blank() }));
+  const gradeMap = new Map();
+  allRooms.forEach(r => {
+    const g = r.cls.split('/')[0];
+    let o = gradeMap.get(g);
+    if (!o) { o = { cls: g, roomCount: 0, students: 0, risk: 0, ...blank() }; gradeMap.set(g, o); }
+    o.roomCount++; o.students += r.students; o.risk += r.risk;
+    SD_SUM_KEYS.forEach(k => { o[k] += r[k]; });
+  });
+  const grades = [...gradeMap.values()];
+  grades.forEach(sdFinish);
+
   // เรื่องที่รอดำเนินการ (แถบ "ต้องติดตาม") — เฉพาะนักเรียนตามตัวกรอง และคาบเกี่ยวช่วงที่เลือก
   const pendingTickets = tickets.filter(t => t.status === 'รอตรวจสอบ').length;
   const pendingLeaves = STUDENT_LEAVE_REQUESTS.filter(r => ids.has(r.studentId) && r.status === 'รอตรวจสอบ' && r.startDate <= to && r.endDate >= from).length;
 
   const ticketTypes = TICKET_TYPES.map(type => ({ type, count: tickets.filter(t => t.type === type).length }));
-  return { from, to, capped, grade, room, days, lastDay: days[lastIdx] || null, people, daily, roomDaily, rooms, total, tickets, ticketTypes, pendingTickets, pendingLeaves };
+  return { from, to, capped, grade, room, days, lastDay: days[lastIdx] || null, people, daily, rooms, allRooms, grades, total, tickets, ticketTypes, pendingTickets, pendingLeaves };
 }
 
 // ---- แสดงผล ----
@@ -4980,17 +4994,21 @@ function renderStudentDashboard() {
   renderSDOverview();
   renderSDTrendChart();
   renderSDTicketChart();
+  renderSDRoomChart(); // อยู่นอกแท็บ — วาดทุกครั้งไม่ว่าอยู่แท็บไหน
   renderSDTab();
 }
 function renderSDTab() {
   if (!sdData) return;
   if (sdState.tab === 'sd-people') renderSDPeople();
-  else { renderSDRooms(); renderSDRoomChart(); }
+  else renderSDRooms();
 }
-function sdGoTab(tab) {
+// keepChart: เลื่อนไปที่การ์ดกราฟแยกห้องแทนแถบแท็บ (กดห้องจากกราฟ/ตาราง → เห็นกราฟต่อพร้อมรายชื่อ)
+function sdGoTab(tab, keepChart) {
   const btn = document.querySelector(`#view-student-dashboard .tab-btn[data-tab="${tab}"]`);
   if (btn) btn.click();
-  document.querySelector('#view-student-dashboard .view-tabs-sticky').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const chart = document.getElementById('sd-rooms-chart-card');
+  const target = keepChart && !chart.hidden ? chart : document.querySelector('#view-student-dashboard .view-tabs-sticky');
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 const SD_ARROW_UP = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>';
@@ -5000,28 +5018,35 @@ const SD_ALERT = '<svg class="icon" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 1
 function renderSDOverview() {
   const d = sdData, t = d.total;
 
-  // ชั้น 2: แท่งสัดส่วนแท่งเดียว + ค่าเฉลี่ยต่อวันเรียน
-  const all = t.checked + t.none;
-  const cats = SD_CATS.filter(c => t[c.key] > 0);
-  const share = n => all ? (n / all * 100) : 0;
-  const perDay = n => { const v = d.days.length ? n / d.days.length : 0; return v >= 10 ? Math.round(v).toLocaleString('th-TH') : (Math.round(v * 10) / 10).toLocaleString('th-TH'); };
-  const clickable = { leave: 1, late: 1, absent: 1, none: 1 };
-  document.getElementById('sd-mix').innerHTML = !all
-    ? `<div class="sd-mix-title">สัดส่วนการมาเรียน</div><div class="sd-chart-sub" style="margin-top:12px;">ไม่มีข้อมูลในช่วงที่เลือก</div>`
-    : `<div class="sd-mix-title">สัดส่วนการมาเรียน <span style="font-weight:500;color:var(--text-muted);">· นักเรียน ${sdNum(t.students)} คน × ${d.days.length} วันเรียน</span></div>
-      <div class="sd-mix-bar" role="img" aria-label="${cats.map(c => c.label + ' ' + share(t[c.key]).toFixed(1) + '%').join(', ')}">
-        ${cats.map(c => `<span style="flex:${t[c.key]};background:var(${c.color});" title="${c.label} ${share(t[c.key]).toFixed(1)}% (${sdNum(t[c.key])} คน-วัน)"></span>`).join('')}
-      </div>
-      <div class="sd-mix-legend">
-        ${cats.map(c => {
-          const inner = `<i style="background:var(${c.color});"></i>${c.label} <strong>${share(t[c.key]).toFixed(1)}%</strong>`;
-          return clickable[c.key]
-            ? `<button type="button" class="sd-mix-item" onclick="sdFilterByStatus('${c.key}')" title="ดูรายชื่อนักเรียนที่มี${c.label}">${inner}</button>`
-            : `<span class="sd-mix-item" style="cursor:default;">${inner}</span>`;
-        }).join('')}
-      </div>
-      <div class="sd-mix-avg">เฉลี่ยต่อวันเรียน: มาสาย <strong>${perDay(t.late)}</strong> คน · ขาดเรียน <strong>${perDay(t.absent)}</strong> คน ·
-        ลา <strong>${perDay(t.leave)}</strong> คน · ออกก่อนเวลา <strong>${perDay(t.early)}</strong> คน · บัตรขออนุญาต <strong>${perDay(d.tickets.length)}</strong> ใบ</div>`;
+  // ชั้น 1–2: การ์ดตัวเลข — อัตรามาเรียน (เทียบช่วงก่อนหน้า) + ขาด/สาย/ลา เฉลี่ยต่อวันเรียน
+  // ดูแวบเดียวรู้ว่าดีขึ้นหรือแย่ลง และวันหนึ่ง ๆ มีคนขาด/สาย/ลากี่คน (กดการ์ดเพื่อดูรายชื่อ)
+  const nDays = d.days.length;
+  const perDay = n => { const v = nDays ? n / nDays : 0; return v >= 10 ? Math.round(v).toLocaleString('th-TH') : (Math.round(v * 10) / 10).toLocaleString('th-TH'); };
+  const prevRate = sdPrev ? sdPrev.total.rate : null;
+  let delta = '';
+  if (t.rate !== null && prevRate !== null) {
+    const diff = Math.round((t.rate - prevRate) * 10) / 10;
+    delta = diff === 0
+      ? `เท่ากับ${sdPeriodLabel(sdPrev.period)}`
+      : `<span class="sd-delta ${diff > 0 ? 'up' : 'down'}">${diff > 0 ? SD_ARROW_UP : SD_ARROW_DOWN}${Math.abs(diff).toFixed(1)} จุด</span> จาก${sdPeriodLabel(sdPrev.period)}`;
+  }
+  const low = t.rate !== null && t.rate < SD_RISK.rate;
+  const mainTile = `
+    <div class="glass-card sd-kpi sd-kpi-main">
+      <span class="sd-kpi-label">อัตราการมาเรียน</span>
+      <strong class="sd-kpi-value${low ? ' low' : ''}">${sdPct(t.rate)}</strong>
+      <span class="sd-kpi-sub">${delta || `นักเรียน ${sdNum(t.students)} คน · ${nDays} วันเรียน`}</span>
+      ${t.none ? `<span class="sd-kpi-sub">ไม่นับที่ยังไม่เช็คชื่อ ${sdNum(t.none)} คน-วัน</span>` : ''}
+    </div>`;
+  const statTiles = SD_STATUS_KEYS.map(c => {
+    const kids = d.people.filter(p => p[c.key] > 0).length;
+    return `
+    <button type="button" class="glass-card sd-kpi" onclick="sdFilterByStatus('${c.key}')" title="ดูรายชื่อนักเรียนที่${c.label}">
+      <span class="sd-kpi-label"><i style="background:${c.color};"></i>${c.label}</span>
+      <strong class="sd-kpi-value">${nDays > 1 ? perDay(t[c.key]) : sdNum(t[c.key])}<small>${nDays > 1 ? 'คน/วัน' : 'คน'}</small></strong>
+      <span class="sd-kpi-sub">${nDays > 1 ? `รวม ${sdNum(t[c.key])} ครั้ง · ` : ''}${sdNum(kids)} คน</span>
+    </button>`;
+  }).join('');
 
   // ชั้น 3: ต้องติดตาม — แสดงเฉพาะเรื่องที่ต้องลงมือทำ ไม่มีเลย → ซ่อนทั้งแถบ
   const uncheckedRooms = d.rooms.filter(r => r.lastNone > 0).length;
@@ -5050,7 +5075,7 @@ function sdOpenRoom(cls) {
   sdSetClassKey(cls);
   sdState.status = 'all'; sdState.sortKey = 'no'; sdState.sortDir = 1;
   sdOnFilterChange();
-  sdGoTab('sd-people');
+  sdGoTab('sd-people', true);
 }
 
 // ---- drawer รายละเอียดนักเรียน (คลิกแถวในแท็บรายบุคคล) — ใช้ #drawer-detail ร่วมกับส่วนอื่นของหน้า
@@ -5200,124 +5225,81 @@ function sdSetTrendMode(mode) {
 }
 function renderSDTrendChart() {
   const mode = sdState.trend;
-  const title = { rate: 'อัตราการมาเรียนรายวัน', status: 'จำนวนนักเรียนรายวันแยกสถานะ', rooms: 'อัตราการมาเรียนรายวันแยกห้อง' }[mode];
-  document.getElementById('sd-trend-title').textContent = title;
+  document.getElementById('sd-trend-title').textContent = mode === 'rate' ? 'อัตราการมาเรียนรายวัน' : 'จำนวนนักเรียนที่ขาด / สาย / ลา รายวัน';
   const sub = document.getElementById('sd-trend-sub');
   const days = sdData.daily;
   if (!days.length) { sub.textContent = ''; sdChart('sd-chart-trend', null, 'ไม่มีวันเรียนในช่วงที่เลือก'); return; }
+  if (days.length < 2) { sub.textContent = ''; sdChart('sd-chart-trend', null, 'เลือกช่วงเวลามากกว่า 1 วันเพื่อดูแนวโน้มรายวัน (ตัวเลขของวันที่เลือกดูได้จากการ์ดด้านบน)'); return; }
   const labels = days.map(d => sdShortDate(d.date));
-  const x = { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } };
-  const pointR = days.length > 31 ? 0 : 3;
-  const surface = sdColor('--bg-card');
-  const line = (extra) => ({ borderWidth: 2, cubicInterpolationMode: 'monotone', // monotone: เส้นโค้งไม่พุ่งเกิน 100%
-                              pointRadius: pointR, pointHoverRadius: 5, pointBorderColor: surface, pointBorderWidth: 2, spanGaps: true, fill: false, ...extra });
+  const x = { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 } };
   const dayTitle = items => thaiDateLong(days[items[0].dataIndex].date);
+  const surface = sdColor('--bg-card');
 
   if (mode === 'rate') {
-    if (!days.some(d => d.rate !== null)) { sub.textContent = ''; sdChart('sd-chart-trend', null, 'ยังไม่มีข้อมูลการเช็คชื่อในช่วงที่เลือก'); return; }
-    const primary = sdColor('--primary');
-    const cur = days.map(d => d.rate === null ? null : Math.round(d.rate * 10) / 10);
-    // ช่วงก่อนหน้า: จับคู่ตาม "วันเรียนลำดับที่ n" (วันที่ 1 ของช่วงนี้ ↔ วันเรียนที่ 1 ของช่วงก่อน)
-    const prevDays = sdPrev ? sdPrev.daily : [];
-    const prev = days.map((_, i) => prevDays[i] && prevDays[i].rate !== null ? Math.round(prevDays[i].rate * 10) / 10 : null);
-    const datasets = [line({ key: 'cur', label: sdPeriodLabel(sdPeriod), data: cur, borderColor: primary, backgroundColor: primary, order: 1 })];
-    if (prev.some(v => v !== null)) datasets.push(line({ key: 'prev', label: sdPeriodLabel(sdPrev.period), data: prev, borderColor: '#b9c1cd', backgroundColor: '#b9c1cd', borderWidth: 1.5, pointRadius: 0, order: 2 }));
-    datasets.push(sdThresholdSet(days.length));
-    sub.textContent = `% ที่มาเรียน (ตรงเวลา + สาย) ของนักเรียนที่เช็คชื่อแล้ว` + (datasets.length > 2 ? ` · เส้นสีเทา = ${sdPeriodLabel(sdPrev.period)} เทียบวันเรียนลำดับเดียวกัน` : '');
+    if (!days.some(d => d.rate !== null && d.none * 2 <= d.checked + d.none)) { sub.textContent = ''; sdChart('sd-chart-trend', null, 'ยังไม่มีข้อมูลการเช็คชื่อในช่วงที่เลือก'); return; }
+    // เส้นเดียว + เส้นประเกณฑ์ — จุดแสดงเฉพาะวันที่ต่ำกว่าเกณฑ์ (สีแดง) ให้เห็นวันที่มีปัญหาได้ทันที
+    // (เอาเส้นช่วงก่อนหน้าออกแล้ว — การเทียบช่วงก่อนหน้าย้ายไปอยู่ที่การ์ด "อัตราการมาเรียน" ด้านบน)
+    const primary = sdColor('--primary'), danger = sdColor('--danger');
+    // วันที่เช็คชื่อไม่ถึงครึ่ง (เช่นวันนี้ที่หลายห้องยังไม่เช็ค) ไม่ลงจุด — % จากคนไม่กี่คนทำให้เส้นดิ่งผิดความจริง
+    const partial = d => d.none * 2 > d.checked + d.none;
+    const partialCount = days.filter(d => d.rate !== null && partial(d)).length;
+    const cur = days.map(d => d.rate === null || partial(d) ? null : Math.round(d.rate * 10) / 10);
+    const isLow = v => v !== null && v < SD_RISK.rate;
+    const lowCount = cur.filter(isLow).length;
+    sub.textContent = `% ที่มาเรียน (ตรงเวลา + สาย) · เส้นประ = เกณฑ์ ${SD_RISK.rate}%` +
+      (lowCount ? ` · จุดแดง = ต่ำกว่าเกณฑ์ (${lowCount} วัน)` : ' · ผ่านเกณฑ์ทุกวัน') +
+      (partialCount ? ` · ไม่แสดง ${partialCount} วันที่ยังเช็คชื่อไม่ถึงครึ่ง` : '');
     sdChart('sd-chart-trend', {
-      type: 'line', data: { labels, datasets },
+      type: 'line',
+      data: { labels, datasets: [
+        { key: 'cur', label: 'อัตรามาเรียน', data: cur, borderColor: primary, backgroundColor: primary, fill: false,
+          borderWidth: 2, cubicInterpolationMode: 'monotone', spanGaps: true, order: 1,
+          pointRadius: cur.map(v => isLow(v) ? 4 : 0), pointHoverRadius: 5,
+          pointBackgroundColor: cur.map(v => isLow(v) ? danger : primary), pointBorderColor: surface, pointBorderWidth: 2 },
+        sdThresholdSet(days.length)
+      ] },
       options: {
         responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: SD_LEGEND,
+          legend: { display: false },
           tooltip: {
             filter: item => item.dataset.key !== 'threshold',
             callbacks: {
               title: dayTitle,
               label: c => {
-                if (c.dataset.key === 'prev') return ` ${sdShortDate(prevDays[c.dataIndex].date)} (ช่วงก่อนหน้า): ${c.parsed.y}%`;
                 const d = days[c.dataIndex];
-                return [` มาเรียน ${c.parsed.y}%`, ` สาย ${d.late} · ขาด ${d.absent} · ลา ${d.leave}` + (d.none ? ` · ยังไม่เช็ค ${d.none}` : '')];
+                return [` มาเรียน ${c.parsed.y}%${isLow(c.parsed.y) ? ' (ต่ำกว่าเกณฑ์)' : ''}`, ` ขาด ${d.absent} · สาย ${d.late} · ลา ${d.leave}` + (d.none ? ` · ยังไม่เช็ค ${d.none}` : '')];
               }
             }
           }
         },
-        scales: { y: sdRateAxis([...cur, ...prev]), x }
+        scales: { y: sdRateAxis(cur), x }
       }
     });
     return;
   }
 
-  if (mode === 'status') {
-    const keys = [['late', 'มาสาย'], ['absent', 'ขาดเรียน'], ['leave', 'ลา'], ['early', 'ออกก่อนเวลา'], ['tickets', 'บัตรขออนุญาต (ใบ)']];
-    if (days.some(d => d.none)) keys.push(['none', 'ยังไม่เช็คชื่อ']);
-    const datasets = keys.map(([k, label]) => line({
-      key: k, label, data: days.map(d => d[k]), borderColor: SD_LINE_COLORS[k], backgroundColor: SD_LINE_COLORS[k],
-      borderDash: k === 'tickets' ? [5, 4] : k === 'none' ? [2, 3] : [], borderWidth: 2
-    }));
-    sub.textContent = 'จำนวนนักเรียนต่อวัน · บัตรขออนุญาตนับเป็นใบ (เส้นประ) · คลิกชื่อด้านบนเพื่อซ่อน/แสดงเส้น';
-    sdChart('sd-chart-trend', {
-      type: 'line', data: { labels, datasets },
-      options: {
-        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: SD_LEGEND,
-          tooltip: { callbacks: { title: dayTitle, label: c => ` ${c.dataset.label.replace(' (ใบ)', '')}: ${c.parsed.y} ${c.dataset.key === 'tickets' ? 'ใบ' : 'คน'}` } }
-        },
-        scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: SD_GRID }, border: { display: false } }, x }
-      }
-    });
-    return;
-  }
-
-  // rooms — สีผูกกับห้อง (ลำดับในรายชื่อห้องทั้งโรงเรียน) ไม่ใช่ลำดับที่แสดง
-  const allRooms = [...new Set(STUDENTS.map(s => s.cls))].sort((a, b) => a.localeCompare(b, 'th', { numeric: true }));
-  const rooms = sdData.rooms.map(r => r.cls);
-  if (rooms.length > SD_ROOM_COLORS.length) {
-    sub.textContent = '';
-    sdChart('sd-chart-trend', null, `มี ${rooms.length} ห้องในตัวกรองนี้ — เลือกชั้นเรียนให้เหลือไม่เกิน ${SD_ROOM_COLORS.length} ห้องเพื่อเทียบ`);
-    return;
-  }
-  const datasets = rooms.map(cls => {
-    const color = SD_ROOM_COLORS[allRooms.indexOf(cls) % SD_ROOM_COLORS.length];
-    return line({ key: cls, label: cls, baseColor: color, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0,
-      data: sdData.roomDaily[cls].map(v => v.rate === null ? null : Math.round(v.rate * 10) / 10) });
-  });
-  datasets.push(sdThresholdSet(days.length));
-  sub.textContent = 'ชี้ที่เส้นหรือชื่อห้องเพื่อเน้น · คลิกชื่อห้องเพื่อซ่อน/แสดง';
-  const highlight = (chart, idx) => {
-    let changed = false;
-    chart.data.datasets.forEach((ds, i) => {
-      if (!ds.baseColor) return;
-      const c = idx === null || i === idx ? ds.baseColor : ds.baseColor + '33';
-      const w = idx !== null && i === idx ? 3 : 2;
-      if (ds.borderColor !== c || ds.borderWidth !== w) { ds.borderColor = c; ds.backgroundColor = c; ds.borderWidth = w; changed = true; }
-    });
-    if (changed) chart.update('none');
-  };
+  // status — แท่งซ้อนรายวัน ขาด (ล่าง) / สาย / ลา : แท่งยิ่งสูง = วันนั้นมีคนไม่ได้มาตรงเวลามาก
+  const datasets = SD_STATUS_KEYS.map(c => ({
+    key: c.key, label: c.label, data: days.map(d => d[c.key]), backgroundColor: c.color,
+    borderColor: surface, borderWidth: { top: 2 }, borderSkipped: false, maxBarThickness: 28
+  }));
+  sub.textContent = 'จำนวนนักเรียนต่อวัน · แท่งยิ่งสูง = วันนั้นมีคนไม่ได้มาตรงเวลามาก · คลิกชื่อด้านบนเพื่อซ่อน/แสดง';
   sdChart('sd-chart-trend', {
-    type: 'line', data: { labels, datasets },
+    type: 'bar', data: { labels, datasets },
     options: {
       responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-      onHover: (e, els, chart) => {
-        const near = chart.getElementsAtEventForMode(e.native, 'nearest', { intersect: false }, false)[0];
-        highlight(chart, near && chart.data.datasets[near.datasetIndex].baseColor ? near.datasetIndex : null);
-      },
       plugins: {
-        legend: { ...SD_LEGEND,
-          onHover: (e, item, legend) => highlight(legend.chart, legend.chart.data.datasets[item.datasetIndex].baseColor ? item.datasetIndex : null),
-          onLeave: (e, item, legend) => highlight(legend.chart, null) },
-        tooltip: {
-          filter: item => item.dataset.key !== 'threshold' && item.parsed.y !== null,
-          itemSort: (a, b) => b.parsed.y - a.parsed.y,
-          callbacks: { title: dayTitle, label: c => ` ${c.dataset.label}: ${c.parsed.y}%` }
-        }
+        legend: SD_LEGEND,
+        tooltip: { callbacks: {
+          title: dayTitle,
+          label: c => ` ${c.dataset.label}: ${c.parsed.y} คน`,
+          footer: items => ` รวม ${items.reduce((s, i) => s + i.parsed.y, 0)} คน`
+        } }
       },
-      scales: { y: sdRateAxis(datasets.flatMap(ds => ds.data)), x }
+      scales: { y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: SD_GRID }, border: { display: false } }, x: { ...x, stacked: true } }
     }
   });
-  const canvas = document.getElementById('sd-chart-trend');
-  canvas.onmouseleave = () => { if (sdCharts['sd-chart-trend']) highlight(sdCharts['sd-chart-trend'], null); };
 }
 
 // บัตรขออนุญาตแยกประเภท — แท่ง HTML (ชื่อประเภท + จำนวนอยู่บรรทัดบน แท่งอยู่ใต้) แทน Chart.js เพราะ
@@ -5335,41 +5317,57 @@ function renderSDTicketChart() {
     </li>`).join('') + '</ul>';
 }
 
+// อัตรามาเรียนแยกชั้นปี/ห้อง — dot plot HTML (จุดบนแกน % + เส้นประเกณฑ์) แทนแท่งซ้อน 5 สีเดิม
+// ทุกชั้นปี → แถวละชั้นปี (กดเพื่อเจาะดูห้องของชั้นนั้น), เลือกชั้นปี → แถวละห้อง (กดเพื่อดูรายชื่อ)
+// เลือกห้องเดียว → ซ่อนการ์ดนี้ (ตารางด้านล่างพอแล้ว) ; แกนเริ่มที่ค่าต่ำสุด −5% ไม่ใช่ 0 ได้เพราะเป็นจุด ไม่ใช่แท่ง
+// (อัตรามาเรียนส่วนใหญ่อยู่ช่วง 85–100% ถ้าเริ่มที่ 0 ทุกห้องจะดูเท่ากันหมด)
+// ย้อนจากมุมมองรายห้อง (เจาะจากแถวชั้นปี) กลับไปรายชั้นปี — ล้างเฉพาะตัวกรองชั้นเรียน ช่วงเวลาคงเดิม
+// ถอยทีละระดับ: ห้องเดียว → ทุกห้องของชั้นนั้น → ทุกชั้นปี
+function sdBackToGrades() {
+  sdSetClassKey(sdData && sdData.room ? sdData.grade : '');
+  sdOnFilterChange();
+}
 function renderSDRoomChart() {
-  const rooms = sdData.rooms;
+  const d = sdData;
+  const card = document.getElementById('sd-rooms-chart-card');
   const box = document.getElementById('sd-chart-rooms-box');
-  if (!rooms.length || !sdData.days.length) {
-    box.style.height = '160px';
-    sdChart('sd-chart-rooms', null, 'ไม่มีข้อมูลในช่วงที่เลือก');
-    return;
-  }
-  box.style.height = Math.max(160, 70 + rooms.length * 36) + 'px';
-  const surface = sdColor('--bg-card');
-  const datasets = SD_CATS.filter(c => rooms.some(r => r[c.key] > 0)).map(c => ({
-    label: c.label,
-    data: rooms.map(r => { const all = r.checked + r.none; return all ? Math.round(r[c.key] / all * 1000) / 10 : 0; }),
-    counts: rooms.map(r => r[c.key]),
-    backgroundColor: sdColor(c.color),
-    borderColor: surface, borderWidth: { right: 2 }, borderSkipped: false,
-    barThickness: 20
-  }));
-  sdChart('sd-chart-rooms', {
-    type: 'bar',
-    data: { labels: rooms.map(r => r.cls), datasets },
-    options: {
-      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-      onClick: (e, els) => { if (els.length) sdOpenRoom(rooms[els[0].index].cls); },
-      onHover: (e, els) => { e.native.target.style.cursor = els.length ? 'pointer' : 'default'; },
-      plugins: {
-        legend: SD_LEGEND,
-        tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.x}% (${sdNum(c.dataset.counts[c.dataIndex])} คน-วัน)` } }
-      },
-      scales: {
-        x: { stacked: true, min: 0, max: 100, ticks: { callback: v => v + '%' }, grid: { color: SD_GRID }, border: { display: false } },
-        y: { stacked: true, grid: { display: false } }
-      }
+  const byGrade = !d.grade && d.grades.length > 1;
+  // เลือกห้องเดียว → ยังแสดงทุกห้องของชั้นนั้น (คำนวณเพิ่มเฉพาะชั้นนั้น) แล้วเน้นห้องที่เลือกไว้ กราฟไม่หาย
+  const rows = byGrade ? d.grades : d.room ? sdCompute(sdPeriod, d.grade, '').allRooms : d.allRooms;
+  const currentCls = d.room ? `${d.grade}/${d.room}` : '';
+  card.hidden = rows.length < 2;
+  if (card.hidden) return;
+  document.getElementById('sd-rooms-chart-title').textContent = byGrade ? 'อัตราการมาเรียนแยกชั้นปี' : `อัตราการมาเรียนแยกห้อง · ${d.grade}`;
+  const back = document.getElementById('sd-rooms-back');
+  back.hidden = !d.grade;
+  back.title = d.room ? `กลับไปดูทุกห้องของ ${d.grade}` : 'กลับไปดูทุกชั้นปี';
+  back.setAttribute('aria-label', back.title);
+  document.getElementById('sd-rooms-chart-sub').textContent =
+    `เส้นประ = เกณฑ์ ${SD_RISK.rate}% · จุดแดง = ต่ำกว่าเกณฑ์ · ` + (byGrade ? 'คลิกชั้นปีเพื่อดูแยกห้อง' : 'คลิกห้องเพื่อดูรายชื่อนักเรียน');
+  const rates = rows.map(r => r.rate).filter(v => v !== null);
+  if (!rates.length || !d.days.length) { box.innerHTML = '<div class="sd-dots-empty">ไม่มีข้อมูลในช่วงที่เลือก</div>'; return; }
+  const min = Math.max(0, Math.floor((Math.min(SD_RISK.rate, ...rates) - 5) / 5) * 5);
+  const pos = v => ((v - min) / (100 - min) * 100).toFixed(2) + '%';
+  const step = 100 - min > 30 ? 10 : 5;
+  const ticks = [];
+  for (let v = min; v <= 100; v += step) ticks.push(v);
+  const th = `<i class="sd-dot-th" style="left:${pos(SD_RISK.rate)}"></i>`;
+  const rowHtml = r => {
+    const meta = byGrade ? `${r.roomCount} ห้อง · ${sdNum(r.students)} คน` : `${sdNum(r.students)} คน`;
+    const click = byGrade ? `sdSetClassKey('${r.cls}');sdOnFilterChange()` : `sdOpenRoom('${r.cls}')`;
+    if (r.rate === null) {
+      return `<div class="sd-dot-row empty"><span class="sd-dot-label">${r.cls}<small>${meta}</small></span>
+        <span class="sd-dot-track"><span class="sd-dot-none">${r.students ? 'ยังไม่เช็คชื่อ' : 'ยังไม่มีรายชื่อนักเรียน'}</span></span><strong class="sd-dot-val">-</strong></div>`;
     }
-  });
+    const lowCls = (r.rate < SD_RISK.rate ? ' low' : '') + (r.cls === currentCls ? ' current' : '');
+    const tip = `${r.cls}: มาเรียน ${sdPct(r.rate)} · ขาด ${r.absent} · สาย ${r.late} · ลา ${r.leave} (คน-วัน)`;
+    return `<button type="button" class="sd-dot-row${lowCls}" onclick="${click}" title="${tip}">
+      <span class="sd-dot-label">${r.cls}<small>${meta}</small></span>
+      <span class="sd-dot-track">${th}<i class="sd-dot" style="left:${pos(r.rate)}"></i></span>
+      <strong class="sd-dot-val">${sdPct(r.rate)}</strong></button>`;
+  };
+  box.innerHTML = rows.map(rowHtml).join('') +
+    `<div class="sd-dot-row axis" aria-hidden="true"><span class="sd-dot-label"></span><span class="sd-dot-track">${ticks.map(v => `<span style="left:${pos(v)}">${v}%</span>`).join('')}</span><span class="sd-dot-val"></span></div>`;
 }
 
 // ---- ตาราง ----
@@ -5393,15 +5391,26 @@ function renderSDRooms() {
     if (!r.lastNone) return `<td><span class="badge success">ครบ ${r.students} คน</span></td>`;
     return `<td><span class="badge warning">ยังไม่เช็ค ${r.lastNone}/${r.students}</span></td>`;
   };
-  const row = (r, isTotal) => `
-    <tr class="${isTotal ? 'sd-total' : 'sd-room-row'}" ${isTotal ? '' : `onclick="sdOpenRoom('${r.cls}')" title="ดูรายชื่อนักเรียน ${r.cls}"`}>
-      <td><strong>${r.cls}</strong></td><td>${r.teacher || ''}</td>${sdCell(r.students)}
+  const cells = r => `${sdCell(r.students)}
       ${sdCell(r.ontime)}${sdCell(r.late)}${sdCell(r.absent)}${sdCell(r.leave)}
       ${sdCell(r.early)}${sdCell(r.tickets)}${sdCell(r.none)}${sdRateCell(r.rate)}
-      <td>${r.risk ? `<span class="badge danger">${r.risk} คน</span>` : '<span class="zero">-</span>'}</td>${checkCell(r)}
+      <td>${r.risk ? `<span class="badge danger">${r.risk} คน</span>` : '<span class="zero">-</span>'}</td>`;
+  const row = (r, isTotal) => !isTotal && !r.students
+    ? `<tr class="sd-room-empty"><td><strong>${r.cls}</strong></td><td>${r.teacher || ''}</td><td colspan="11">ยังไม่มีรายชื่อนักเรียนในห้องนี้</td></tr>`
+    : `<tr class="${isTotal ? 'sd-total' : 'sd-room-row'}" ${isTotal ? '' : `onclick="sdOpenRoom('${r.cls}')" title="ดูรายชื่อนักเรียน ${r.cls}"`}>
+      <td><strong>${r.cls}</strong></td><td>${r.teacher || ''}</td>${cells(r)}${checkCell(r)}
     </tr>`;
-  document.getElementById('sd-room-tbody').innerHTML = d.rooms.length
-    ? d.rooms.map(r => row(r)).join('') + (d.rooms.length > 1 ? row(d.total, true) : '')
+  // ทุกชั้นปี → แถวสรุปของชั้นปี (กดเพื่อกรองชั้นนั้น) ตามด้วยทุกห้องของชั้นนั้น
+  const gradeRow = g => `
+    <tr class="sd-grade-row" onclick="sdSetClassKey('${g.cls}');sdOnFilterChange()" title="กรองเฉพาะ ${g.cls}">
+      <td><strong>${g.cls}</strong></td><td>${g.roomCount} ห้อง</td>${cells(g)}<td></td>
+    </tr>`;
+  const grouped = !d.grade && d.grades.length > 1;
+  const body = grouped
+    ? d.grades.map(g => gradeRow(g) + d.allRooms.filter(r => r.cls.split('/')[0] === g.cls).map(r => row(r)).join('')).join('')
+    : d.allRooms.map(r => row(r)).join('');
+  document.getElementById('sd-room-tbody').innerHTML = d.allRooms.length
+    ? body + (d.allRooms.length > 1 ? row(d.total, true) : '')
     : `<tr><td colspan="13" style="text-align:center;padding:32px;color:var(--text-muted);">ไม่พบข้อมูลตามเงื่อนไขที่เลือก</td></tr>`;
 }
 
@@ -5515,7 +5524,7 @@ function _sdExportExcel() {
   const roomRow = r => [r.cls, r.teacher || '-', r.students, r.ontime, r.late, r.absent, r.leave, r.early, r.tickets, r.none, r1(r.rate), r.risk];
   const roomSheet = [
     ['ห้อง', 'ครูประจำชั้น', 'นักเรียน (คน)', 'มาตรงเวลา', 'มาสาย', 'ขาดเรียน', 'ลา', 'ออกก่อนเวลา', 'บัตรขออนุญาต', 'ยังไม่เช็คชื่อ', '% มาเรียน', 'กลุ่มเฝ้าระวัง (คน)'],
-    ...d.rooms.map(roomRow), roomRow(t)
+    ...d.allRooms.map(roomRow), roomRow(t)
   ];
   const peopleSheet = [
     ['ห้อง', 'เลขที่', 'รหัสนักเรียน', 'ชื่อ-นามสกุล', 'มาตรงเวลา', 'มาสาย', 'ขาดเรียน', 'ลา', 'ออกก่อนเวลา', 'บัตรขออนุญาต', 'ยังไม่เช็คชื่อ', 'วันที่เช็คชื่อแล้ว', '% มาเรียน', 'ขาดติดกันสูงสุด (วัน)', 'เฝ้าระวัง'],

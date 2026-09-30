@@ -1125,8 +1125,8 @@
 
       <!-- ================================================================
            VIEW: แดชบอร์ดการมาเรียนของนักเรียน — สรุปเช็คชื่อ/ยังไม่เช็คชื่อ/ขาด/สาย/ลา/บัตรขออนุญาต
-           แถบตัวกรอง (ช่วงเวลา + ‹ › + ชั้นเรียน) ติดบนสุด → ภาพรวม 3 ชั้น (ตัวเลขหลัก / แท่งสัดส่วน /
-           ต้องติดตาม) → กราฟรายวัน 3 มุมมอง → แท็บ "รายห้อง" / "รายบุคคล" → Export Excel หลายชีต
+           แถบตัวกรอง (ช่วงเวลา + ‹ › + ชั้นเรียน) ติดบนสุด → การ์ดตัวเลข (อัตรามาเรียน + ขาด/สาย/ลา) /
+           ต้องติดตาม → กราฟรายวัน 2 มุมมอง → แท็บ "รายห้อง" / "รายบุคคล" → Export Excel หลายชีต
            ข้อมูลคำนวณสดจาก getAttendance() + HISTORY (ดู sdCompute) ภาคเรียนอ่านจาก SchoolStore
       ================================================================= -->
       <section id="view-student-dashboard" class="module-view">
@@ -1151,12 +1151,6 @@
           </div>
           <div class="sd-filter-note" id="sd-filter-note"></div>
         </div>
-
-        <!-- ชั้น 1–2: ตัวเลขหลัก + แท่งสัดส่วน -->
-        <div class="sd-overview">
-          <!-- <div class="glass-card sd-hero" id="sd-hero"></div> -->
-          <div class="glass-card sd-mix" id="sd-mix"></div>
-        </div>
         <!-- ชั้น 3: ต้องติดตาม (ซ่อนเมื่อไม่มีเรื่องค้าง) -->
         <div class="sd-actions" id="sd-actions" hidden></div>
 
@@ -1169,8 +1163,7 @@
               </div>
               <div class="sd-seg" id="sd-trend-modes" role="tablist" aria-label="มุมมองกราฟ">
                 <button type="button" data-mode="rate" class="active" onclick="sdSetTrendMode('rate')">อัตรามาเรียน</button>
-                <button type="button" data-mode="status" onclick="sdSetTrendMode('status')">แยกสถานะ</button>
-                <button type="button" data-mode="rooms" onclick="sdSetTrendMode('rooms')">เทียบห้อง</button>
+                <button type="button" data-mode="status" onclick="sdSetTrendMode('status')">ขาด / สาย / ลา</button>
               </div>
             </div>
             <div class="sd-chart-box" id="sd-chart-trend-box"><canvas id="sd-chart-trend"></canvas></div>
@@ -1182,6 +1175,17 @@
           </div>
         </div>
 
+        <!-- อัตรามาเรียนแยกชั้นปี/ห้อง — อยู่นอกแท็บ ให้เห็นทั้งแท็บรายห้องและรายบุคคล -->
+        <div class="glass-card sd-chart-card" id="sd-rooms-chart-card" style="margin-bottom:16px;">
+          <div class="sd-rooms-chart-head">
+            <!-- ปุ่มย้อนกลับมุมมองรายชั้นปี — โผล่เฉพาะตอนเจาะดูรายห้องของชั้นใดชั้นหนึ่ง (ล้างแค่ตัวกรองชั้น ไม่แตะช่วงเวลา) -->
+            <button type="button" id="sd-rooms-back" onclick="sdBackToGrades()" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <h4 id="sd-rooms-chart-title">อัตราการมาเรียนแยกชั้นปี</h4>
+          </div>
+          <div class="sd-chart-sub" id="sd-rooms-chart-sub"></div>
+          <div class="sd-dots" id="sd-chart-rooms-box"></div>
+        </div>
+
         <div class="view-tabs-sticky">
           <div class="tabs">
             <button class="tab-btn active" data-tab="sd-rooms">รายห้อง</button>
@@ -1191,11 +1195,6 @@
 
         <!-- Tab: รายห้อง -->
         <div class="tab-content active" id="tab-sd-rooms">
-          <div class="glass-card sd-chart-card" style="margin-bottom:16px;">
-            <h4>สัดส่วนการมาเรียนแยกห้อง</h4>
-            <div class="sd-chart-sub">% ของจำนวนคน-วันเรียนทั้งหมดของห้องในช่วงที่เลือก · คลิกแท่งเพื่อดูรายชื่อ</div>
-            <div class="sd-chart-box" id="sd-chart-rooms-box"><canvas id="sd-chart-rooms"></canvas></div>
-          </div>
           <div class="glass-card" style="padding: 20px 24px;">
             <div class="card-header" style="margin-bottom: 12px;flex-wrap:wrap;gap:8px;">
               <h3><svg class="icon" style="stroke: var(--primary);"><use href="#i-building"/></svg> สรุปแยกห้องเรียน</h3>

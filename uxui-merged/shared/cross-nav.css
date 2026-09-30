@@ -41,7 +41,7 @@
       เพื่อให้ app.js / อินไลน์สคริปต์ของ leave-features.html bind ได้เหมือนเดิม)
       ---------------------------------------------------------------- */
 aside.sidebar {
-    width: 280px;
+    width: 300px;
     flex-shrink: 0;
     background-color: var(--xnav-bg);
     border-right: 1px solid var(--xnav-border);
@@ -115,10 +115,10 @@ aside.sidebar {
 .sidebar-toggle-btn svg { transition: transform 150ms ease; }
 
 /* สถานะย่อ sidebar — สลับทันที ไม่ animate (แก้แลค 1/5 ต่อ) */
-aside.sidebar.collapsed { width: 72px; padding: 24px 12px; }
+aside.sidebar.collapsed { width: 80px; padding: 24px 12px; }
 aside.sidebar.collapsed .logo-group,
 aside.sidebar.collapsed .menu-label,
-aside.sidebar.collapsed .menu-item span,
+aside.sidebar.collapsed .menu-item span:not(.badge),
 aside.sidebar.collapsed .sidebar-footer .user-info { display: none; }
 aside.sidebar.collapsed .sidebar-logo { justify-content: center; }
 aside.sidebar.collapsed .menu-item { justify-content: center; padding: 12px; }
@@ -127,6 +127,33 @@ aside.sidebar.collapsed .sidebar-toggle-btn svg { transform: rotate(180deg); }
 aside.sidebar.collapsed .user-avatar { height: auto; background: transparent; }
 aside.sidebar.collapsed .submenu,
 aside.sidebar.collapsed .submenu-toggle { display: none; }
+/* badge ตัวเลขแจ้งเตือนเป็นวงกลมมุมขวาบน ทับไอคอนเมนู ทั้งตอนขยายและตอนย่อ (!important เพราะ badge มี
+   inline style padding/margin จาก cross-nav.js) — display ยังให้ JS ของหน้าคุมเหมือนเดิม (none = ไม่มีรายการรอ)
+   ตอนขยาย: ไอคอนอยู่ที่ padding-left 14px กว้าง 18px → วาง badge ที่ left 24px ให้คร่อมมุมขวาบนของไอคอน */
+aside.sidebar.collapsed .sidebar-menu .menu-item .badge { left: auto; right: 6px; }
+aside.sidebar .sidebar-menu .menu-item .badge { /* aside.sidebar นำหน้า: ให้ชนะสีจาง .sidebar-menu .badge.danger ด้านล่าง */
+    position: absolute; top: 3px; left: 24px;
+    min-width: 17px; height: 17px; padding: 0 4px !important; margin: 0 !important;
+    justify-content: center; font-size: 10px !important; line-height: 1;
+    color: #fff; background: var(--xnav-danger);
+    box-shadow: 0 0 0 2px var(--xnav-bg);
+    pointer-events: none;
+}
+/* tooltip ชื่อเมนูตอน hover ขณะย่อ — element เดียวต่อหน้า สร้างโดย cross-nav.js
+   (position: fixed เพื่อไม่โดน overflow ของ .sidebar-menu ตัดทิ้ง) */
+.xnav-tip {
+    position: fixed; z-index: 10000; transform: translateY(-50%);
+    padding: 6px 10px; border-radius: 6px;
+    background: #0f172a; color: #fff;
+    font-family: inherit; font-size: 12.5px; font-weight: 500; line-height: 1.4; white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .18);
+    pointer-events: none; opacity: 0; transition: opacity 80ms ease;
+}
+.xnav-tip.show { opacity: 1; }
+.xnav-tip::before {
+    content: ''; position: absolute; left: -4px; top: 50%; margin-top: -4px;
+    border: 4px solid transparent; border-left: 0; border-right-color: #0f172a;
+}
 
 .menu-label {
     font-size: 10px;
@@ -478,6 +505,10 @@ aside.sidebar.collapsed .menu-item.menu-shortcut::after { display: none; }
 /* ปิด animation ของ sidebar ตอนโหลดหน้า — class ถูกใส่/ปลดโดย cross-nav.js (กันเมนูกาง/หุบให้เห็นหลายรอบ) */
 html.xnav-preload .sidebar,
 html.xnav-preload .sidebar * { transition: none !important; }
+
+/* เปิดหน้า schooldark ด้วย deep-link (#v=...) — ซ่อนเนื้อหาไว้จนสลับไป view ปลายทางเสร็จ
+   กัน view เริ่มต้นของหน้ากระพริบให้เห็นก่อน (class ถูกใส่/ปลดโดย cross-nav.js) */
+html.xnav-deeplinking .main-content { visibility: hidden; }
 
 /* sidebar ต้องขนาดเท่ากันทุกระบบ (ยึดฝั่ง admission/Tailwind preflight: line-height 1.5, ปุ่ม/ช่องกรอกสืบทอดฟอนต์)
    ไม่งั้นกดข้ามระบบแล้วทุกอย่างใต้เมาส์เลื่อน (schooldark ไม่มี preflight → line-height normal, ปุ่ม 13.33px) */
