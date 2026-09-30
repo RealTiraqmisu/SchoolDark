@@ -611,8 +611,38 @@
       var nowCollapsed = sidebarEl.classList.toggle('collapsed');
       document.documentElement.classList.toggle('xnav-collapsed', nowCollapsed);
       try { localStorage.setItem(COLLAPSE_KEY, nowCollapsed ? '1' : '0'); } catch (e) {}
+      hideTip();
     });
   }
+
+  // tooltip ชื่อเมนูตอน sidebar ย่อ (เหลือแค่ไอคอน) — element เดียว position: fixed ต่อท้าย <body>
+  // (ถ้าใช้ ::after ในเมนู จะโดน overflow ของ .sidebar-menu / .menu-item ตัดทิ้ง) ต่อท้ายด้วยตัวเลข badge ถ้ามี
+  var tipEl = document.createElement('div');
+  tipEl.className = 'xnav-tip';
+  tipEl.setAttribute('role', 'tooltip');
+  document.body.appendChild(tipEl);
+  function hideTip() { tipEl.classList.remove('show'); }
+  function showTip(el) {
+    var label = el.querySelector('span:not(.badge)');
+    var text = el.dataset.xnavLabel || (label ? label.textContent : '');
+    var badge = el.querySelector('.badge');
+    if (badge && badge.style.display !== 'none' && Number(badge.textContent) > 0) text += ' (' + badge.textContent + ')';
+    if (!text) { hideTip(); return; }
+    tipEl.textContent = text;
+    var r = el.getBoundingClientRect();
+    tipEl.style.left = (r.right + 10) + 'px';
+    tipEl.style.top = (r.top + r.height / 2) + 'px';
+    tipEl.classList.add('show');
+  }
+  sidebarEl.addEventListener('mouseover', function (e) {
+    if (!sidebarEl.classList.contains('collapsed')) return;
+    var el = e.target.closest('a.menu-item'); // ปุ่มค้นหามี title ของตัวเองอยู่แล้ว
+    if (el && sidebarEl.contains(el)) showTip(el); else hideTip();
+  });
+  sidebarEl.addEventListener('mouseleave', hideTip);
+  sidebarEl.addEventListener('click', hideTip);
+  var tipMenu = sidebarEl.querySelector('.sidebar-menu');
+  if (tipMenu) tipMenu.addEventListener('scroll', hideTip, { passive: true });
 
   // ไฮไลต์ item แบบ #anchor ของหน้าปัจจุบันตาม location.hash — hash ตรงกับ anchor ตัวไหน
   // ตัวนั้น active (+ กางเมนูย่อยของมัน) ถ้าไม่ตรงเลย ให้ item ของหน้านี้ที่ไม่มี anchor
@@ -703,6 +733,20 @@
       var kv = pair.split('=');
       if (kv[0]) hashParams[kv[0]] = decodeURIComponent(kv[1] || '');
     });
+    // ซ่อนเนื้อหาหน้า (.main-content) ไว้ก่อนจนกว่าจะสลับไป view ปลายทางเสร็จ — ไม่งั้นจะเห็น
+    // view เริ่มต้นของหน้า (dashboard / ยื่นบัตรขออนุญาต) กระพริบแวบหนึ่งก่อน (ดู cross-nav.css)
+    // สคริปต์นี้รันใน <aside> ก่อน <main> ถูก parse จึงซ่อนได้ตั้งแต่เฟรมแรก
+    var deepLinkDone = false;
+    function endDeepLink() {
+      if (deepLinkDone) return;
+      deepLinkDone = true;
+      requestAnimationFrame(function () { document.documentElement.classList.remove('xnav-deeplinking'); });
+      setTimeout(function () { document.documentElement.classList.remove('xnav-deeplinking'); }, 100); // สำรอง: แท็บซ่อนไม่ยิง rAF
+    }
+    if (hashParams.v) {
+      document.documentElement.classList.add('xnav-deeplinking');
+      setTimeout(endDeepLink, 2000); // กันหน้าค้างว่างถ้า deep-link พังด้วยเหตุใดก็ตาม
+    }
     // ต้องรอ DOMContentLoaded + setTimeout(0) — แค่ setTimeout(0) อย่างเดียวไม่พอ เพราะหน้าใหญ่
     // (leave-features.html ~330KB) timer จะยิงก่อนเบราว์เซอร์ parse ถึงสคริปต์ท้ายหน้าที่ผูก
     // click ให้เมนู คลิกเลยไม่มีผล แล้วหน้าค้างอยู่ view เริ่มต้น (เช่น กด "อนุมัติการลานักเรียน"
@@ -725,6 +769,7 @@
         target = document.querySelector('.submenu-item[data-view="' + view + '"]' + modSel + ':not([data-step]):not([data-tab]):not([data-subtab])');
       }
       if (target) target.click();
+      endDeepLink();
     }, 0); });
   }
 
@@ -911,11 +956,18 @@
         var sys = group.id === 'settings' ? 'settings' : group.id === 'parent' ? 'parent' : group.id === 'public' ? 'public' : (item.page.indexOf('schooldark/') === 0 ? 'schooldark' : 'admission');
         if (!seen[sys]) { seen[sys] = { sys: sys, label: bySystemLabel[sys], links: [] }; cards.push(seen[sys]); }
         var pageChildren = (item.children || []).filter(function (c) { return c.page; });
+        // ต้องต่อ hash (#m=..&v=.. หรือ #anchor) ด้วยเสมอ — ไม่งั้นเมนูของหน้า SPA (schooldark) จะไปตก
+        // view เริ่มต้นของหน้านั้นหมด (เช่น "เช็คชื่อนักเรียน" ไปโผล่ "ยื่นบัตรขออนุญาต")
+        // กันลิงก์ซ้ำในการ์ดเดียวกัน (เช่น "ยื่นบัตรขออนุญาต" อยู่ทั้งกลุ่มกิจการนักเรียนและกลุ่มการลา)
+        function pushLink(label, href) {
+          if (seen[sys].links.some(function (l) { return l.href === href; })) return;
+          seen[sys].links.push({ label: label, href: href });
+        }
         if (pageChildren.length) {
           // เช่น "ตั้งค่ารับสมัคร" → แสดงหน้าย่อยทั้งหมดเป็นลิงก์แยกกันในการ์ด
-          pageChildren.forEach(function (c) { seen[sys].links.push({ label: c.label, href: c.page + (c.hash ? '#' + c.hash : hashFor(c, null)) }); });
+          pageChildren.forEach(function (c) { pushLink(c.label, c.page + (c.hash ? '#' + c.hash : hashFor(c, null))); });
         } else {
-          seen[sys].links.push({ label: item.label, href: item.page });
+          pushLink(item.label, item.page + (item.anchor ? '#' + item.anchor : hashFor(item, null)));
         }
       });
     });
