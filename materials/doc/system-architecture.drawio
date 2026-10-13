@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="System Architecture" id="sd-arch-lr">
-        <mxGraphModel dx="2549" dy="770" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
+        <mxGraphModel dx="1849" dy="559" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -28,7 +28,7 @@
                         <mxPoint x="260" y="170" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="be_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=16;fontColor=#8DB4E2;fontStyle=1;fontFamily=Arial;" value="BACKEND (FASTAPI MICROSERVICES)" vertex="1">
+                <mxCell id="be_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=16;fontColor=#8DB4E2;fontStyle=1;fontFamily=Arial;" value="BACKEND" vertex="1">
                     <mxGeometry height="30" width="1090" x="380" y="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="be" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;" value="" vertex="1">
