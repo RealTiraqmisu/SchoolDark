@@ -1,172 +1,398 @@
-<mxfile host="app.diagrams.net">
-  <diagram name="Page-1" id="gQUkADZH2U-bxWxf6_56">
-    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
-      <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
-        <UserObject label="" mermaidData="{&#xa;  &quot;data&quot;: &quot;flowchart TD\n    %% กำหนดสีตกแต่งให้แต่ละส่วน\n    classDef frontend fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;\n    classDef gateway fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px;\n    classDef myteam fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;\n    classDef backend fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;\n    classDef db fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px;\n    classDef storage fill:#eceff1,stroke:#455a64,stroke-width:2px;\n\n    subgraph L1 [\&quot;1. ชั้นส่วนติดต่อผู้ใช้งาน (Frontend)\&quot;]\n        Web[\&quot;Unified Web Portal\\n(React / Next.js)\&quot;]:::frontend\n    end\n\n    subgraph L2 [\&quot;2. ชั้นตัวจัดการจราจร (API Gateway)\&quot;]\n        Nginx[\&quot;Nginx\\n(Load Balancer)\&quot;]:::gateway\n    end\n\n    subgraph L3 [\&quot;3. ชั้นเซิร์ฟเวอร์ (Backend Microservices) - รันใน VM เดียวกัน\&quot;]\n        ServiceA[\&quot;Team A\\n(ระบบวิชาการ)\&quot;]:::backend\n        ServiceB[\&quot;Team B\\n(ระบบงานทะเบียน &amp; IAM)\&quot;]:::myteam\n        ServiceC[\&quot;Team C\\n(ระบบใหม่)\&quot;]:::backend\n    end\n\n    subgraph L4 [\&quot;4. ชั้นฐานข้อมูล (Database) - 1 Container แยก Schema\&quot;]\n        SchemaA[(\&quot;Schema: academic\\n(สิทธิ์เฉพาะ Team A)\&quot;)]:::db\n        SchemaB[(\&quot;Schema: admission\\n(สิทธิ์เฉพาะ Team B)\&quot;)]:::db\n        SchemaC[(\&quot;Schema: domain_c\\n(สิทธิ์เฉพาะ Team C)\&quot;)]:::db\n    end\n    \n    subgraph L5 [\&quot;5. ชั้นทรัพยากรส่วนกลาง (Shared Resources)\&quot;]\n        MinIO[(\&quot;MinIO\\n(เก็บไฟล์แนบ/รูปภาพ)\&quot;)]:::storage\n        Redis[\&quot;Redis &amp; Celery\\n(ประมวลผลพื้นหลัง)\&quot;]:::storage\n    end\n\n    %% การเชื่อมต่อจาก Frontend ไป Nginx\n    Web --&gt;|HTTP Requests| Nginx\n\n    %% การส่งต่อ Request จาก Nginx ไปแต่ละ Team\n    Nginx --&gt;|/api/academic| ServiceA\n    Nginx --&gt;|/api/admission| ServiceB\n    Nginx --&gt;|/api/team-c| ServiceC\n\n    %% การทำงานข้ามโดเมนผ่าน API\n    ServiceA -.-&gt;|Internal API: ยืนยันสิทธิ์ &amp; ขอข้อมูลนักเรียน| ServiceB\n    ServiceC -.-&gt;|Internal API: ยืนยันสิทธิ์ &amp; ขอข้อมูลนักเรียน| ServiceB\n\n    %% การเชื่อมต่อฐานข้อมูล\n    ServiceA ===&gt;|Read / Write| SchemaA\n    ServiceB ===&gt;|Read / Write| SchemaB\n    ServiceC ===&gt;|Read / Write| SchemaC\n\n    %% การใช้งาน Shared Resources\n    ServiceA ---&gt; MinIO\n    ServiceB ---&gt; MinIO\n    ServiceC ---&gt; MinIO\n    ServiceB ---&gt; Redis&quot;,&#xa;  &quot;config&quot;: null&#xa;}" id="t9j-IwHOy3SKqKrkhznE-83">
-          <mxCell connectable="0" parent="1" style="group;transparentBounds=1;editIcon=1;lockedGroup=0;groupPadding=10;" vertex="1">
-            <mxGeometry as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="1. ส่วนติดต่อผู้ใช้งาน" mermaidId="n:L1" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="1. ชั้นส่วนติดต่อผู้ใช้งาน (Frontend)" id="t9j-IwHOy3SKqKrkhznE-84">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="124" width="297" x="1125.5" y="100" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="2. ตัวจัดการจราจร" mermaidId="n:L2" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="2. ชั้นตัวจัดการจราจร (API Gateway)" id="t9j-IwHOy3SKqKrkhznE-86">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="124" width="297" x="1125" y="273" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;b&gt;Nginx&lt;/b&gt;&lt;div&gt;(Load balancer)&lt;/div&gt;" mermaidId="n:Nginx" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Nginx&#xa;(Load Balancer)" id="t9j-IwHOy3SKqKrkhznE-87">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-86" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="54" width="164" x="67" y="45" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="3. ส่วนประมวลผล" mermaidId="n:L3" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="3. ชั้นเซิร์ฟเวอร์ (Backend Microservices) - รันใน VM เดียวกัน" id="t9j-IwHOy3SKqKrkhznE-88">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="150" width="824.25" x="845.75" y="440" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="4. ฐานข้อมูล" mermaidId="n:L4" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="4. ชั้นฐานข้อมูล (Database) - 1 Container แยก Schema" id="t9j-IwHOy3SKqKrkhznE-94">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;container=0;" vertex="1">
-            <mxGeometry height="347.14" width="242" x="1412" y="668.85" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="5. ส่วนจัดเก็บไฟล์และประมวลผลเบื้องหลัง" mermaidId="n:L5" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="5. ชั้นทรัพยากรส่วนกลาง (Shared Resources)" id="t9j-IwHOy3SKqKrkhznE-98">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;container=0;" vertex="1">
-            <mxGeometry height="140" width="345.5" x="920" y="668.85" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="HTTP Requests" mermaidId="e:Web-&gt;Nginx#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;" mermaidBaseValue="HTTP Requests" id="t9j-IwHOy3SKqKrkhznE-101">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="t9j-IwHOy3SKqKrkhznE-85" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;" target="t9j-IwHOy3SKqKrkhznE-87">
-            <mxGeometry relative="1" as="geometry">
-              <Array as="points" />
-            </mxGeometry>
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;div&gt;&lt;b&gt;Unified Web Portal&lt;/b&gt;&lt;/div&gt;Next.js" mermaidId="n:Web" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e3f2fd;strokeColor=#1565c0;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Unified Web Portal&#xa;(React / Next.js)" id="t9j-IwHOy3SKqKrkhznE-85">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e3f2fd;strokeColor=#1565c0;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="54" width="164" x="1192" y="145" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="Internal API&lt;div&gt;ยืนยันสิทธิ์และ&lt;/div&gt;&lt;div&gt;ขอข้อมูลนักเรียน&lt;/div&gt;" mermaidId="e:ServiceA-&gt;ServiceB#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.74;entryX=0.5;entryY=0;" mermaidBaseValue="Internal API: ยืนยันสิทธิ์ &amp; ขอข้อมูลนักเรียน" id="erSVtwGf3Det8ZdVcIj9-7">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-8" style="dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.5;entryX=1;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="erSVtwGf3Det8ZdVcIj9-9">
-            <mxGeometry relative="1" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;b&gt;FastAPI&lt;/b&gt;&lt;div&gt;Team C&lt;br&gt;(ระบบงานแนะแนว)&lt;/div&gt;" mermaidId="n:ServiceA" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Team A&#xa;(ระบบวิชาการ)" id="erSVtwGf3Det8ZdVcIj9-8">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="79" width="121" x="1500.05" y="480" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <mxCell id="erSVtwGf3Det8ZdVcIj9-125" edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-9" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;strokeColor=#EA6B66;" target="t9j-IwHOy3SKqKrkhznE-98">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <UserObject label="&lt;b&gt;FastAPI&lt;/b&gt;&lt;div&gt;Team B&lt;br&gt;(ระบบงานทะเบียน)&lt;/div&gt;" mermaidId="n:ServiceB" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#fff9c4;strokeColor=#fbc02d;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Team B&#xa;(ระบบงานทะเบียน &amp; IAM)" id="erSVtwGf3Det8ZdVcIj9-9">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#fff9c4;strokeColor=#fbc02d;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="79" width="140" x="1204.05" y="480" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;b&gt;FastAPI&lt;/b&gt;&lt;div&gt;Team A&lt;br&gt;&lt;/div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(51, 51, 51), rgb(204, 204, 204));&quot;&gt;(ระบบวิชาการ)&lt;/span&gt;" mermaidId="n:ServiceC" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Team C&#xa;(ระบบใหม่)" id="erSVtwGf3Det8ZdVcIj9-10">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="79" width="140" x="900.05" y="480" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="Internal API&lt;div&gt;ยืนยันสิทธิ์และ&lt;/div&gt;&lt;div&gt;ขอข้อมูลนักเรียน&lt;/div&gt;" mermaidId="e:ServiceC-&gt;ServiceB#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.69;exitY=1;entryX=0.04;entryY=0;" mermaidBaseValue="Internal API: ยืนยันสิทธิ์ &amp; ขอข้อมูลนักเรียน" id="erSVtwGf3Det8ZdVcIj9-11">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-10" style="dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="erSVtwGf3Det8ZdVcIj9-9">
-            <mxGeometry relative="1" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="/api/student-support" mermaidId="e:Nginx-&gt;ServiceA#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.83;entryX=0.5;entryY=0;" mermaidBaseValue="/api/academic" id="erSVtwGf3Det8ZdVcIj9-12">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="t9j-IwHOy3SKqKrkhznE-87" style="startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0.5;entryY=0;rounded=0;edgeStyle=orthogonalEdgeStyle;exitDx=0;exitDy=0;" target="erSVtwGf3Det8ZdVcIj9-8">
-            <mxGeometry relative="1" as="geometry">
-              <mxPoint x="1356.05" y="338" as="sourcePoint" />
-            </mxGeometry>
-          </mxCell>
-        </UserObject>
-        <UserObject label="/api/admission" mermaidId="e:Nginx-&gt;ServiceB#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.45;exitY=1;entryX=0.74;entryY=0;" mermaidBaseValue="/api/admission" id="erSVtwGf3Det8ZdVcIj9-13">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="t9j-IwHOy3SKqKrkhznE-87" style="startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="erSVtwGf3Det8ZdVcIj9-9">
-            <mxGeometry relative="1" x="-0.3821" as="geometry">
-              <mxPoint y="-1" as="offset" />
-              <mxPoint x="1274.05" y="347" as="sourcePoint" />
-            </mxGeometry>
-          </mxCell>
-        </UserObject>
-        <UserObject label="/api/academic" mermaidId="e:Nginx-&gt;ServiceC#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.69;entryX=0.5;entryY=0;" mermaidBaseValue="/api/team-c" id="erSVtwGf3Det8ZdVcIj9-14">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="t9j-IwHOy3SKqKrkhznE-87" style="startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.5;entryX=0.5;entryY=0;rounded=0;edgeStyle=orthogonalEdgeStyle;exitDx=0;exitDy=0;" target="erSVtwGf3Det8ZdVcIj9-10">
-            <mxGeometry relative="1" as="geometry">
-              <mxPoint x="1192.05" y="330" as="sourcePoint" />
-            </mxGeometry>
-          </mxCell>
-        </UserObject>
-        <UserObject label="Read / Write" mermaidId="e:ServiceA-&gt;SchemaA#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeWidth=3.5;endSize=3;startSize=3;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.69;entryX=0.5;entryY=0;" mermaidBaseValue="Read / Write" id="erSVtwGf3Det8ZdVcIj9-15">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-8" style="startArrow=none;endArrow=block;endSize=3;strokeWidth=1;startSize=3;strokeColor=#9933FF;html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=1;entryY=0.5;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#e1d5e7;" target="t9j-IwHOy3SKqKrkhznE-97">
-            <mxGeometry relative="1" as="geometry">
-              <Array as="points">
-                <mxPoint x="1750" y="519.5" />
-                <mxPoint x="1750" y="954.42" />
-              </Array>
-              <mxPoint x="1931.0500000000002" y="790" as="targetPoint" />
-            </mxGeometry>
-          </mxCell>
-        </UserObject>
-        <UserObject label="Read / Write" mermaidId="e:ServiceB-&gt;SchemaB#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeWidth=3.5;endSize=3;startSize=3;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.67;entryX=0.5;entryY=0;" mermaidBaseValue="Read / Write" id="erSVtwGf3Det8ZdVcIj9-16">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-9" style="startArrow=none;endArrow=block;endSize=3;strokeWidth=1;startSize=3;strokeColor=#9933FF;html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=1;exitDx=0;exitDy=0;fillColor=#e1d5e7;" target="t9j-IwHOy3SKqKrkhznE-96">
-            <mxGeometry relative="1" as="geometry">
-              <Array as="points">
-                <mxPoint x="1344.05" y="850.42" />
-              </Array>
-              <mxPoint x="1643.05" y="790" as="targetPoint" />
-            </mxGeometry>
-          </mxCell>
-        </UserObject>
-        <UserObject label="Read / Write" mermaidId="e:ServiceC-&gt;SchemaC#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeWidth=3.5;endSize=3;startSize=3;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.63;entryX=0.5;entryY=0;" mermaidBaseValue="Read / Write" id="erSVtwGf3Det8ZdVcIj9-17">
-          <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-10" style="startArrow=none;endArrow=block;endSize=3;strokeWidth=1;startSize=3;strokeColor=#9933FF;html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=1;entryX=0.5;entryY=0;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#e1d5e7;" target="t9j-IwHOy3SKqKrkhznE-95">
-            <mxGeometry relative="1" as="geometry">
-              <Array as="points">
-                <mxPoint x="1040.05" y="620" />
-                <mxPoint x="1533" y="620" />
-              </Array>
-              <mxPoint x="1353.05" y="790" as="targetPoint" />
-            </mxGeometry>
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;div&gt;&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;/div&gt;Schema: academic" mermaidId="n:SchemaA" mermaidBaseStyle="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Schema: academic&#xa;(สิทธิ์เฉพาะ Team A)" id="t9j-IwHOy3SKqKrkhznE-95">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="83.14" width="152" x="1457" y="704.69" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;div&gt;&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;/div&gt;Schema: admission" mermaidId="n:SchemaB" mermaidBaseStyle="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Schema: admission&#xa;(สิทธิ์เฉพาะ Team B)" id="t9j-IwHOy3SKqKrkhznE-96">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="83.14" width="157.89" x="1454.06" y="808.85" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;div&gt;&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;/div&gt;Schema:&amp;nbsp;&lt;span style=&quot;white-space: nowrap; background-color: rgba(232, 232, 232, 0.553);&quot;&gt;studentS&lt;/span&gt;upport" mermaidId="n:SchemaC" mermaidBaseStyle="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Schema: domain_c&#xa;(สิทธิ์เฉพาะ Team C)" id="t9j-IwHOy3SKqKrkhznE-97">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="83.14" width="180.51" x="1442.74" y="912.85" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;b&gt;MinIO&lt;/b&gt;&lt;br&gt;(เก็บไฟล์แนบ/รูปภาพ)" mermaidId="n:MinIO" mermaidBaseStyle="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#eceff1;strokeColor=#455a64;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="MinIO&#xa;(เก็บไฟล์แนบ/รูปภาพ)" id="t9j-IwHOy3SKqKrkhznE-99">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="67.01" width="152" x="1094.25" y="712.35" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="&lt;b&gt;Redis &amp;amp; Celery&lt;br&gt;&lt;/b&gt;(ประมวลผลพื้นหลัง)" mermaidId="n:Redis" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#eceff1;strokeColor=#455a64;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Redis &amp; Celery&#xa;(ประมวลผลพื้นหลัง)" id="erSVtwGf3Det8ZdVcIj9-5">
-          <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
-            <mxGeometry height="54" width="140" x="934.25" y="718.85" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <mxCell id="erSVtwGf3Det8ZdVcIj9-124" edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-10" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#EA6B66;" target="t9j-IwHOy3SKqKrkhznE-98">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="970.48" y="740" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="erSVtwGf3Det8ZdVcIj9-126" edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-8" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;strokeColor=#EA6B66;" target="t9j-IwHOy3SKqKrkhznE-98">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram name="System Architecture" id="sd-arch-lr">
+        <mxGraphModel dx="2549" dy="770" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="cl_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=16;fontColor=#8DB4E2;fontStyle=1;fontFamily=Arial;" value="CLIENT APPS" vertex="1">
+                    <mxGeometry height="30" width="190" x="70" y="102.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="400" width="150" x="90" y="142.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="cl_l" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=11;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="UNIFIED WEB PORTAL&lt;br&gt;(NEXT.JS)" vertex="1">
+                    <mxGeometry height="40" width="170" x="80" y="352.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="us_l" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=13;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="USER" vertex="1">
+                    <mxGeometry height="25" width="100" x="115" y="627.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_us" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" target="cl" value="เข้าใช้งานผ่าน Web">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="165" y="572.5" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_cl_id" edge="1" parent="1" source="cl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=-0.001;entryY=0.398;entryDx=0;entryDy=0;entryPerimeter=0;" target="gw" value="HTTPS /&lt;br&gt;REST API">
+                    <mxGeometry relative="1" x="0.0088" as="geometry">
+                        <mxPoint as="offset"/>
+                        <mxPoint x="217.72" y="260" as="sourcePoint"/>
+                        <mxPoint x="260" y="170" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="be_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=16;fontColor=#8DB4E2;fontStyle=1;fontFamily=Arial;" value="BACKEND (FASTAPI MICROSERVICES)" vertex="1">
+                    <mxGeometry height="30" width="1090" x="380" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="be" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="600" width="1130" x="340" y="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="gw_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=13;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="API GATEWAY" vertex="1">
+                    <mxGeometry height="45" width="190" x="380" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="gw" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;strokeWidth=1.5;" value="" vertex="1">
+                    <mxGeometry height="430" width="190" x="380" y="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="gw_n" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=15;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="NGINX" vertex="1">
+                    <mxGeometry height="25" width="170" x="390" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="gw_lb" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="LOAD BALANCER" vertex="1">
+                    <mxGeometry height="50" width="150" x="400" y="262" as="geometry"/>
+                </mxCell>
+                <mxCell id="gw_rp" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="REVERSE PROXY" vertex="1">
+                    <mxGeometry height="50" width="150" x="400" y="327" as="geometry"/>
+                </mxCell>
+                <mxCell id="gw_rt" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="ROUTING&lt;br&gt;/api/academic&lt;br&gt;/api/admission&lt;br&gt;/api/support" vertex="1">
+                    <mxGeometry height="170" width="150" x="400" y="392" as="geometry"/>
+                </mxCell>
+                <mxCell id="ds_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DEPLOYMENT SERVER" vertex="1">
+                    <mxGeometry height="30" width="260" x="960" y="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="ds_i" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#BDBDBD;dashed=1;fontSize=9;fontColor=#9E9E9E;fontFamily=Arial;" value="ICON&lt;br&gt;Server" vertex="1">
+                    <mxGeometry height="45" width="50" x="1225" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="ds_f" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#F4A261;fontStyle=0;fontFamily=Arial;" value="HOST MACHINE&lt;br&gt;(VM หลัก)" vertex="1">
+                    <mxGeometry height="40" width="200" x="940" y="620" as="geometry"/>
+                </mxCell>
+                <mxCell id="dk_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DOCKER CONTAINER" vertex="1">
+                    <mxGeometry height="40" width="330" x="640" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="dk" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#8FA8F5;fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="370" width="240" x="679" y="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="sa" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="90" width="220" x="689" y="225" as="geometry"/>
+                </mxCell>
+                <mxCell id="sa_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="SERVICE A · TEAM A" vertex="1">
+                    <mxGeometry height="22" width="130" x="771" y="237" as="geometry"/>
+                </mxCell>
+                <mxCell id="sa_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="ระบบวิชาการ&lt;br&gt;FASTAPI (PYTHON)" vertex="1">
+                    <mxGeometry height="40" width="118" x="771" y="263" as="geometry"/>
+                </mxCell>
+                <mxCell id="sb" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="90" width="220" x="689" y="350" as="geometry"/>
+                </mxCell>
+                <mxCell id="sb_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="SERVICE B · TEAM B" vertex="1">
+                    <mxGeometry height="22" width="130" x="771" y="362" as="geometry"/>
+                </mxCell>
+                <mxCell id="sb_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="ระบบงานทะเบียน &amp; IAM&lt;br&gt;FASTAPI (PYTHON)" vertex="1">
+                    <mxGeometry height="40" width="105" x="771" y="388" as="geometry"/>
+                </mxCell>
+                <mxCell id="sc" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="90" width="220" x="689" y="475" as="geometry"/>
+                </mxCell>
+                <mxCell id="sc_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="SERVICE C · TEAM C" vertex="1">
+                    <mxGeometry height="22" width="140" x="771" y="487" as="geometry"/>
+                </mxCell>
+                <mxCell id="sc_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="ระบบงานแนะแนว&lt;br&gt;FASTAPI (PYTHON)" vertex="1">
+                    <mxGeometry height="40" width="130" x="771" y="513" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_rt_sa" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.09999999999999998;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="sa" value="JSON&lt;br&gt;/api/academic">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="610" y="409"/>
+                            <mxPoint x="610" y="270"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_rt_sb" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;" target="sb" value="JSON&lt;br&gt;/api/admission">
+                    <mxGeometry relative="1" x="0.0132" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="550" y="480"/>
+                            <mxPoint x="620" y="480"/>
+                            <mxPoint x="620" y="395"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_rt_sc" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.75;entryX=0;entryY=0.5;exitDx=0;exitDy=0;" target="sc" value="JSON&lt;br&gt;/api/support">
+                    <mxGeometry relative="1" x="-0.0997" y="-5" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_ab" edge="1" parent="1" source="sa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=0.85;exitY=1;entryX=0.85;entryY=0;" target="sb" value="JSON (ยืนยันสิทธิ์)">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_cb" edge="1" parent="1" source="sc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=0.85;exitY=0;entryX=0.85;entryY=1;" target="sb" value="JSON (ยืนยันสิทธิ์)">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="db_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DATABASE" vertex="1">
+                    <mxGeometry height="30" width="390" x="1036" y="167" as="geometry"/>
+                </mxCell>
+                <mxCell id="db" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;strokeWidth=1.5;" value="" vertex="1">
+                    <mxGeometry height="200" width="390" x="1036" y="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="db_n" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="POSTGRESQL" vertex="1">
+                    <mxGeometry height="25" width="105" x="1041" y="325" as="geometry"/>
+                </mxCell>
+                <mxCell id="s_a" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: academic&lt;br&gt;(สิทธิ์เฉพาะ Team A)" vertex="1">
+                    <mxGeometry height="48" width="240" x="1166" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="s_b" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: admission&lt;br&gt;(สิทธิ์เฉพาะ Team B)" vertex="1">
+                    <mxGeometry height="48" width="240" x="1166" y="285" as="geometry"/>
+                </mxCell>
+                <mxCell id="s_c" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: support&lt;br&gt;(สิทธิ์เฉพาะ Team C)" vertex="1">
+                    <mxGeometry height="48" width="240" x="1166" y="342" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_db" edge="1" parent="1" source="dk" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.25;entryX=-0.007;entryY=0.466;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="db" value="SQL&lt;br&gt;(READ / WRITE)">
+                    <mxGeometry relative="1" x="0.0306" y="-17" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="sh_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="SHARED RESOURCES" vertex="1">
+                    <mxGeometry height="30" width="390" x="1036" y="425" as="geometry"/>
+                </mxCell>
+                <mxCell id="sh" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;strokeWidth=1.5;" value="" vertex="1">
+                    <mxGeometry height="120" width="390" x="1031" y="455" as="geometry"/>
+                </mxCell>
+                <mxCell id="mi_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="MINIO" vertex="1">
+                    <mxGeometry height="22" width="100" x="1116" y="489" as="geometry"/>
+                </mxCell>
+                <mxCell id="mi_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="เก็บไฟล์แนบ/รูปภาพ" vertex="1">
+                    <mxGeometry height="30" width="100" x="1116" y="513" as="geometry"/>
+                </mxCell>
+                <mxCell id="rd_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="REDIS &amp; CELERY" vertex="1">
+                    <mxGeometry height="22" width="130" x="1291" y="489" as="geometry"/>
+                </mxCell>
+                <mxCell id="rd_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="ประมวลผลพื้นหลัง" vertex="1">
+                    <mxGeometry height="30" width="130" x="1291" y="513" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_sh" edge="1" parent="1" source="dk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1.002;exitY=0.824;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="sh" value="FILE / TASK QUEUE">
+                    <mxGeometry relative="1" x="-0.0044" y="-15" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="&#xa;&lt;img src=&quot;https://cdn.prod.website-files.com/681c8426519d8db8f867c1e8/68821329161290c2dce9073b_MINIO_wordmark.svg&quot; alt=&quot;Understand the guidelines for using MinIO&#39;s marks - MinIO&quot;&gt;&#xa;&#xa;" link="&#xa;&lt;img src=&quot;https://cdn.prod.website-files.com/681c8426519d8db8f867c1e8/68821329161290c2dce9073b_MINIO_wordmark.svg&quot; alt=&quot;Understand the guidelines for using MinIO&#39;s marks - MinIO&quot;&gt;&#xa;&#xa;" id="ds">
+                    <mxCell parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=4 4;strokeWidth=1.5;strokeColor=none;fontFamily=Arial;fontSize=11;" vertex="1">
+                        <mxGeometry height="40" width="51.66" x="1055.1699999999998" y="500" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="Ae2aHEi4SgtzmzrH2gXE-9" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=light-dark(#FF9933,#FF9933);fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="455" width="790" x="650" y="150" as="geometry"/>
+                </mxCell>
+                <UserObject label="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/redis.webp&quot; alt=&quot;Redis Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" link="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/redis.webp&quot; alt=&quot;Redis Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-2">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;imageWidth=29;imageHeight=29;" vertex="1">
+                        <mxGeometry height="40" width="34.79" x="1238.71" y="480.5" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;img src=&quot;https://products.containerize.com/message-queue-software/celery/menu_image.png&quot; alt=&quot;Celery | Most Widely Deployed Open Source Message Broker&quot;&gt;" link="&lt;img src=&quot;https://products.containerize.com/message-queue-software/celery/menu_image.png&quot; alt=&quot;Celery | Most Widely Deployed Open Source Message Broker&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-3">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+                        <mxGeometry height="46" width="51.53" x="1230.23" y="500" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;img src=&quot;https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/960px-Postgresql_elephant.svg.png?utm_source=commons.wikimedia.org&amp;amp;utm_campaign=index&amp;amp;utm_content=thumbnail&amp;amp;_=20080116191800&quot; alt=&quot;File:Postgresql elephant.svg - Wikimedia Commons&quot;&gt;" link="&lt;img src=&quot;https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/960px-Postgresql_elephant.svg.png?utm_source=commons.wikimedia.org&amp;amp;utm_campaign=index&amp;amp;utm_content=thumbnail&amp;amp;_=20080116191800&quot; alt=&quot;File:Postgresql elephant.svg - Wikimedia Commons&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-4">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+                        <mxGeometry height="70" width="60" x="1061.5" y="240" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" link="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-5">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+                        <mxGeometry height="60" width="50.91" x="704.55" y="488" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" link="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-6">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+                        <mxGeometry height="60" width="50.91" x="704.54" y="363" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-7">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+                        <mxGeometry height="60" width="50.91" x="704.54" y="238" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/nginx.webp&quot; alt=&quot;Nginx Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" link="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/nginx.webp&quot; alt=&quot;Nginx Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-10">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+                        <mxGeometry height="60" width="40" x="455" y="190.5" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/nextjs.png&quot; alt=&quot;Nextjs Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" link="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/nextjs.png&quot; alt=&quot;Nextjs Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" id="zU_l7xKUVwcY_HQePlKB-1">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+                        <mxGeometry height="80" width="70" x="130" y="261.5" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?utm_source=commons.wikimedia.org&amp;amp;utm_campaign=index&amp;amp;utm_content=original&quot; alt=&quot;File:Sample User Icon.png - Wikimedia Commons&quot;&gt;" link="&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png?utm_source=commons.wikimedia.org&amp;amp;utm_campaign=index&amp;amp;utm_content=original&quot; alt=&quot;File:Sample User Icon.png - Wikimedia Commons&quot;&gt;" id="zU_l7xKUVwcY_HQePlKB-2">
+                    <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
+                        <mxGeometry height="70" width="70" x="130" y="557.5" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram name="Page-1" id="gQUkADZH2U-bxWxf6_56">
+        <mxGraphModel dx="1418" dy="679" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <UserObject label="" mermaidData="{&#xa;  &quot;data&quot;: &quot;flowchart TD\n    %% กำหนดสีตกแต่งให้แต่ละส่วน\n    classDef frontend fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;\n    classDef gateway fill:#ffe0b2,stroke:#ef6c00,stroke-width:2px;\n    classDef myteam fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;\n    classDef backend fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;\n    classDef db fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px;\n    classDef storage fill:#eceff1,stroke:#455a64,stroke-width:2px;\n\n    subgraph L1 [\&quot;1. ชั้นส่วนติดต่อผู้ใช้งาน (Frontend)\&quot;]\n        Web[\&quot;Unified Web Portal\\n(React / Next.js)\&quot;]:::frontend\n    end\n\n    subgraph L2 [\&quot;2. ชั้นตัวจัดการจราจร (API Gateway)\&quot;]\n        Nginx[\&quot;Nginx\\n(Load Balancer)\&quot;]:::gateway\n    end\n\n    subgraph L3 [\&quot;3. ชั้นเซิร์ฟเวอร์ (Backend Microservices) - รันใน VM เดียวกัน\&quot;]\n        ServiceA[\&quot;Team A\\n(ระบบวิชาการ)\&quot;]:::backend\n        ServiceB[\&quot;Team B\\n(ระบบงานทะเบียน &amp; IAM)\&quot;]:::myteam\n        ServiceC[\&quot;Team C\\n(ระบบใหม่)\&quot;]:::backend\n    end\n\n    subgraph L4 [\&quot;4. ชั้นฐานข้อมูล (Database) - 1 Container แยก Schema\&quot;]\n        SchemaA[(\&quot;Schema: academic\\n(สิทธิ์เฉพาะ Team A)\&quot;)]:::db\n        SchemaB[(\&quot;Schema: admission\\n(สิทธิ์เฉพาะ Team B)\&quot;)]:::db\n        SchemaC[(\&quot;Schema: domain_c\\n(สิทธิ์เฉพาะ Team C)\&quot;)]:::db\n    end\n    \n    subgraph L5 [\&quot;5. ชั้นทรัพยากรส่วนกลาง (Shared Resources)\&quot;]\n        MinIO[(\&quot;MinIO\\n(เก็บไฟล์แนบ/รูปภาพ)\&quot;)]:::storage\n        Redis[\&quot;Redis &amp; Celery\\n(ประมวลผลพื้นหลัง)\&quot;]:::storage\n    end\n\n    %% การเชื่อมต่อจาก Frontend ไป Nginx\n    Web --&gt;|HTTP Requests| Nginx\n\n    %% การส่งต่อ Request จาก Nginx ไปแต่ละ Team\n    Nginx --&gt;|/api/academic| ServiceA\n    Nginx --&gt;|/api/admission| ServiceB\n    Nginx --&gt;|/api/team-c| ServiceC\n\n    %% การทำงานข้ามโดเมนผ่าน API\n    ServiceA -.-&gt;|Internal API: ยืนยันสิทธิ์ &amp; ขอข้อมูลนักเรียน| ServiceB\n    ServiceC -.-&gt;|Internal API: ยืนยันสิทธิ์ &amp; ขอข้อมูลนักเรียน| ServiceB\n\n    %% การเชื่อมต่อฐานข้อมูล\n    ServiceA ===&gt;|Read / Write| SchemaA\n    ServiceB ===&gt;|Read / Write| SchemaB\n    ServiceC ===&gt;|Read / Write| SchemaC\n\n    %% การใช้งาน Shared Resources\n    ServiceA ---&gt; MinIO\n    ServiceB ---&gt; MinIO\n    ServiceC ---&gt; MinIO\n    ServiceB ---&gt; Redis&quot;,&#xa;  &quot;config&quot;: null&#xa;}" id="t9j-IwHOy3SKqKrkhznE-83">
+                    <mxCell connectable="0" parent="1" style="group;transparentBounds=1;editIcon=1;lockedGroup=0;groupPadding=10;" vertex="1">
+                        <mxGeometry as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="1. ส่วนติดต่อผู้ใช้งาน" mermaidId="n:L1" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="1. ชั้นส่วนติดต่อผู้ใช้งาน (Frontend)" id="t9j-IwHOy3SKqKrkhznE-84">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="124" width="297" x="1125.5" y="100" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="2. ตัวจัดการจราจร" mermaidId="n:L2" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="2. ชั้นตัวจัดการจราจร (API Gateway)" id="t9j-IwHOy3SKqKrkhznE-86">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="124" width="297" x="1125" y="273" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;b&gt;Nginx&lt;/b&gt;&lt;div&gt;(Load balancer)&lt;/div&gt;" mermaidId="n:Nginx" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Nginx&#xa;(Load Balancer)" id="t9j-IwHOy3SKqKrkhznE-87">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-86" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#ffe0b2;strokeColor=#ef6c00;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="54" width="164" x="67" y="45" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="3. ส่วนประมวลผล" mermaidId="n:L3" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="3. ชั้นเซิร์ฟเวอร์ (Backend Microservices) - รันใน VM เดียวกัน" id="t9j-IwHOy3SKqKrkhznE-88">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="150" width="824.25" x="845.75" y="440" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="4. ฐานข้อมูล" mermaidId="n:L4" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="4. ชั้นฐานข้อมูล (Database) - 1 Container แยก Schema" id="t9j-IwHOy3SKqKrkhznE-94">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;container=0;" vertex="1">
+                        <mxGeometry height="347.14" width="242" x="1412" y="668.85" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="5. ส่วนจัดเก็บไฟล์และประมวลผลเบื้องหลัง" mermaidId="n:L5" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="5. ชั้นทรัพยากรส่วนกลาง (Shared Resources)" id="t9j-IwHOy3SKqKrkhznE-98">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;container=0;" vertex="1">
+                        <mxGeometry height="140" width="345.5" x="920" y="668.85" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="HTTP Requests" mermaidId="e:Web-&gt;Nginx#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;" mermaidBaseValue="HTTP Requests" id="t9j-IwHOy3SKqKrkhznE-101">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="t9j-IwHOy3SKqKrkhznE-85" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;" target="t9j-IwHOy3SKqKrkhznE-87">
+                        <mxGeometry relative="1" as="geometry">
+                            <Array as="points"/>
+                        </mxGeometry>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;div&gt;&lt;b&gt;Unified Web Portal&lt;/b&gt;&lt;/div&gt;Next.js" mermaidId="n:Web" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e3f2fd;strokeColor=#1565c0;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Unified Web Portal&#xa;(React / Next.js)" id="t9j-IwHOy3SKqKrkhznE-85">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e3f2fd;strokeColor=#1565c0;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="54" width="164" x="1192" y="145" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="Internal API&lt;div&gt;ยืนยันสิทธิ์และ&lt;/div&gt;&lt;div&gt;ขอข้อมูลนักเรียน&lt;/div&gt;" mermaidId="e:ServiceA-&gt;ServiceB#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.74;entryX=0.5;entryY=0;" mermaidBaseValue="Internal API: ยืนยันสิทธิ์ &amp; ขอข้อมูลนักเรียน" id="erSVtwGf3Det8ZdVcIj9-7">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-8" style="dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.5;entryX=1;entryY=0.5;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="erSVtwGf3Det8ZdVcIj9-9">
+                        <mxGeometry relative="1" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;b&gt;FastAPI&lt;/b&gt;&lt;div&gt;Team C&lt;br&gt;(ระบบงานแนะแนว)&lt;/div&gt;" mermaidId="n:ServiceA" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Team A&#xa;(ระบบวิชาการ)" id="erSVtwGf3Det8ZdVcIj9-8">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="79" width="121" x="1500.05" y="480" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="erSVtwGf3Det8ZdVcIj9-125" edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-9" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;strokeColor=#EA6B66;" target="t9j-IwHOy3SKqKrkhznE-98">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <UserObject label="&lt;b&gt;FastAPI&lt;/b&gt;&lt;div&gt;Team B&lt;br&gt;(ระบบงานทะเบียน)&lt;/div&gt;" mermaidId="n:ServiceB" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#fff9c4;strokeColor=#fbc02d;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Team B&#xa;(ระบบงานทะเบียน &amp; IAM)" id="erSVtwGf3Det8ZdVcIj9-9">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#fff9c4;strokeColor=#fbc02d;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="79" width="140" x="1204.05" y="480" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;b&gt;FastAPI&lt;/b&gt;&lt;div&gt;Team A&lt;br&gt;&lt;/div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(51, 51, 51), rgb(204, 204, 204));&quot;&gt;(ระบบวิชาการ)&lt;/span&gt;" mermaidId="n:ServiceC" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Team C&#xa;(ระบบใหม่)" id="erSVtwGf3Det8ZdVcIj9-10">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e8f5e9;strokeColor=#2e7d32;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="79" width="140" x="900.05" y="480" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="Internal API&lt;div&gt;ยืนยันสิทธิ์และ&lt;/div&gt;&lt;div&gt;ขอข้อมูลนักเรียน&lt;/div&gt;" mermaidId="e:ServiceC-&gt;ServiceB#0" mermaidBaseStyle="curved=1;dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.69;exitY=1;entryX=0.04;entryY=0;" mermaidBaseValue="Internal API: ยืนยันสิทธิ์ &amp; ขอข้อมูลนักเรียน" id="erSVtwGf3Det8ZdVcIj9-11">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-10" style="dashed=1;dashPattern=2 3;fixDash=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="erSVtwGf3Det8ZdVcIj9-9">
+                        <mxGeometry relative="1" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="/api/student-support" mermaidId="e:Nginx-&gt;ServiceA#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.83;entryX=0.5;entryY=0;" mermaidBaseValue="/api/academic" id="erSVtwGf3Det8ZdVcIj9-12">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="t9j-IwHOy3SKqKrkhznE-87" style="startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=0.5;entryY=0;rounded=0;edgeStyle=orthogonalEdgeStyle;exitDx=0;exitDy=0;" target="erSVtwGf3Det8ZdVcIj9-8">
+                        <mxGeometry relative="1" as="geometry">
+                            <mxPoint x="1356.05" y="338" as="sourcePoint"/>
+                        </mxGeometry>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="/api/admission" mermaidId="e:Nginx-&gt;ServiceB#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.45;exitY=1;entryX=0.74;entryY=0;" mermaidBaseValue="/api/admission" id="erSVtwGf3Det8ZdVcIj9-13">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="t9j-IwHOy3SKqKrkhznE-87" style="startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="erSVtwGf3Det8ZdVcIj9-9">
+                        <mxGeometry relative="1" x="-0.3821" as="geometry">
+                            <mxPoint y="-1" as="offset"/>
+                            <mxPoint x="1274.05" y="347" as="sourcePoint"/>
+                        </mxGeometry>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="/api/academic" mermaidId="e:Nginx-&gt;ServiceC#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.69;entryX=0.5;entryY=0;" mermaidBaseValue="/api/team-c" id="erSVtwGf3Det8ZdVcIj9-14">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="t9j-IwHOy3SKqKrkhznE-87" style="startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.5;entryX=0.5;entryY=0;rounded=0;edgeStyle=orthogonalEdgeStyle;exitDx=0;exitDy=0;" target="erSVtwGf3Det8ZdVcIj9-10">
+                        <mxGeometry relative="1" as="geometry">
+                            <mxPoint x="1192.05" y="330" as="sourcePoint"/>
+                        </mxGeometry>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="Read / Write" mermaidId="e:ServiceA-&gt;SchemaA#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeWidth=3.5;endSize=3;startSize=3;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.69;entryX=0.5;entryY=0;" mermaidBaseValue="Read / Write" id="erSVtwGf3Det8ZdVcIj9-15">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-8" style="startArrow=none;endArrow=block;endSize=3;strokeWidth=1;startSize=3;strokeColor=#9933FF;html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.5;entryX=1;entryY=0.5;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#e1d5e7;" target="t9j-IwHOy3SKqKrkhznE-97">
+                        <mxGeometry relative="1" as="geometry">
+                            <Array as="points">
+                                <mxPoint x="1750" y="519.5"/>
+                                <mxPoint x="1750" y="954.42"/>
+                            </Array>
+                            <mxPoint x="1931.0500000000002" y="790" as="targetPoint"/>
+                        </mxGeometry>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="Read / Write" mermaidId="e:ServiceB-&gt;SchemaB#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeWidth=3.5;endSize=3;startSize=3;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.67;entryX=0.5;entryY=0;" mermaidBaseValue="Read / Write" id="erSVtwGf3Det8ZdVcIj9-16">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-9" style="startArrow=none;endArrow=block;endSize=3;strokeWidth=1;startSize=3;strokeColor=#9933FF;html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);entryX=0;entryY=0.5;rounded=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=1;exitDx=0;exitDy=0;fillColor=#e1d5e7;" target="t9j-IwHOy3SKqKrkhznE-96">
+                        <mxGeometry relative="1" as="geometry">
+                            <Array as="points">
+                                <mxPoint x="1344.05" y="850.42"/>
+                            </Array>
+                            <mxPoint x="1643.05" y="790" as="targetPoint"/>
+                        </mxGeometry>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="Read / Write" mermaidId="e:ServiceC-&gt;SchemaC#0" mermaidBaseStyle="curved=1;startArrow=none;endArrow=block;endSize=7;strokeWidth=3.5;endSize=3;startSize=3;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.63;entryX=0.5;entryY=0;" mermaidBaseValue="Read / Write" id="erSVtwGf3Det8ZdVcIj9-17">
+                    <mxCell edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-10" style="startArrow=none;endArrow=block;endSize=3;strokeWidth=1;startSize=3;strokeColor=#9933FF;html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=1;entryX=0.5;entryY=0;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#e1d5e7;" target="t9j-IwHOy3SKqKrkhznE-95">
+                        <mxGeometry relative="1" as="geometry">
+                            <Array as="points">
+                                <mxPoint x="1040.05" y="620"/>
+                                <mxPoint x="1533" y="620"/>
+                            </Array>
+                            <mxPoint x="1353.05" y="790" as="targetPoint"/>
+                        </mxGeometry>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;div&gt;&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;/div&gt;Schema: academic" mermaidId="n:SchemaA" mermaidBaseStyle="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Schema: academic&#xa;(สิทธิ์เฉพาะ Team A)" id="t9j-IwHOy3SKqKrkhznE-95">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="83.14" width="152" x="1457" y="704.69" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;div&gt;&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;/div&gt;Schema: admission" mermaidId="n:SchemaB" mermaidBaseStyle="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Schema: admission&#xa;(สิทธิ์เฉพาะ Team B)" id="t9j-IwHOy3SKqKrkhznE-96">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="83.14" width="157.89" x="1454.06" y="808.85" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;div&gt;&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;/div&gt;Schema:&amp;nbsp;&lt;span style=&quot;white-space: nowrap; background-color: rgba(232, 232, 232, 0.553);&quot;&gt;studentS&lt;/span&gt;upport" mermaidId="n:SchemaC" mermaidBaseStyle="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Schema: domain_c&#xa;(สิทธิ์เฉพาะ Team C)" id="t9j-IwHOy3SKqKrkhznE-97">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#6a1b9a;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="83.14" width="180.51" x="1442.74" y="912.85" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;b&gt;MinIO&lt;/b&gt;&lt;br&gt;(เก็บไฟล์แนบ/รูปภาพ)" mermaidId="n:MinIO" mermaidBaseStyle="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#eceff1;strokeColor=#455a64;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="MinIO&#xa;(เก็บไฟล์แนบ/รูปภาพ)" id="t9j-IwHOy3SKqKrkhznE-99">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="67.01" width="152" x="1094.25" y="712.35" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="&lt;b&gt;Redis &amp;amp; Celery&lt;br&gt;&lt;/b&gt;(ประมวลผลพื้นหลัง)" mermaidId="n:Redis" mermaidBaseStyle="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#eceff1;strokeColor=#455a64;fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" mermaidBaseValue="Redis &amp; Celery&#xa;(ประมวลผลพื้นหลัง)" id="erSVtwGf3Det8ZdVcIj9-5">
+                    <mxCell parent="t9j-IwHOy3SKqKrkhznE-83" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+                        <mxGeometry height="54" width="140" x="934.25" y="718.85" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="erSVtwGf3Det8ZdVcIj9-124" edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-10" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;strokeColor=#EA6B66;" target="t9j-IwHOy3SKqKrkhznE-98">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="970.48" y="740" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="erSVtwGf3Det8ZdVcIj9-126" edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-8" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;strokeColor=#EA6B66;" target="t9j-IwHOy3SKqKrkhznE-98">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
