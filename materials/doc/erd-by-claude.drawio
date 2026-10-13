@@ -1,0 +1,1480 @@
+<mxfile host="65bd71144e">
+    <diagram name="Chen ภาพรวม" id="pg-chen">
+        <mxGraphModel dx="3017" dy="2211" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="pg-chen-t3" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#b91c1c;" value="ฉบับเร่งส่งอาจารย์ · เนยสดจะออกแบบทับใหม่ · เลขาเจน plan 90 · 2026-10-13 · ยังไม่ตรวจ · 🟡 = สมมติ/อนุมาน · แบบ Chen: สี่เหลี่ยม=ตาราง · ข้าวหลามตัด=ความสัมพันธ์ 1:N · กรอบเส้นคู่ครอบข้าวหลามตัด=ตารางคั่นกลางของ M:N (associative entity)" vertex="1">
+                    <mxGeometry height="40" width="1500" x="40" y="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-t4" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#555555;" value="ตัวหนา = PK · UK = ห้ามซ้ำ · เส้นปลายตีนกา = ฝั่งหลาย · เส้นประแดง = อนุมาน · ชื่อตารางเป็น snake_case" vertex="1">
+                    <mxGeometry height="30" width="1500" x="40" y="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" value="ปีการศึกษาที่เปิดรับ&#xa;admission_round" vertex="1">
+                    <mxGeometry height="70" width="230" x="60" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" value="แผนการเรียนที่เปิดรับ&#xa;course_plan" vertex="1">
+                    <mxGeometry height="70" width="230" x="60" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" value="คน&#xa;person" vertex="1">
+                    <mxGeometry height="70" width="230" x="600" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" value="ใบสมัคร&#xa;application" vertex="1">
+                    <mxGeometry height="70" width="230" x="600" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" value="ข้อมูลประกอบใบสมัคร 5 ตาราง&#xa;(ที่อยู่ ผู้ปกครอง สุขภาพ เอกสาร ประวัติสถานะ)" vertex="1">
+                    <mxGeometry height="70" width="230" x="600" y="800" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" value="ห้องเรียน&#xa;classroom" vertex="1">
+                    <mxGeometry height="70" width="230" x="1140" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" value="นักเรียน&#xa;student" vertex="1">
+                    <mxGeometry height="70" width="230" x="1140" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=1;" value="ผู้ปกครอง&#xa;guardians" vertex="1">
+                    <mxGeometry height="70" width="230" x="1140" y="800" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=1;" value="ครู&#xa;teachers" vertex="1">
+                    <mxGeometry height="70" width="230" x="1680" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" value="ใบลานักเรียน&#xa;student_leave_form" vertex="1">
+                    <mxGeometry height="70" width="230" x="1680" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" value="บัตรขออนุญาต&#xa;tardy_slip" vertex="1">
+                    <mxGeometry height="70" width="230" x="1680" y="800" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" value="พนักงาน/ครู&#xa;employees" vertex="1">
+                    <mxGeometry height="70" width="230" x="2220" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" value="ประเภทการลา&#xa;student_leave_type" vertex="1">
+                    <mxGeometry height="70" width="230" x="2220" y="800" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=1;" value="ภาคเรียน (ทีม A)&#xa;academic_terms" vertex="1">
+                    <mxGeometry height="70" width="230" x="2220" y="1130" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" value="ข้อมูลประกอบพนักงาน 7 ตาราง&#xa;(การศึกษา ฝึกอบรม ใบอนุญาต TOEIC เครื่องราชฯ งาน ครอบครัว)" vertex="1">
+                    <mxGeometry height="70" width="230" x="2760" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" value="ที่อยู่พนักงาน&#xa;address" vertex="1">
+                    <mxGeometry height="70" width="230" x="2760" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-en21" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" value="ตำบล อำเภอ จังหวัด ประเทศ&#xa;4 ตาราง" vertex="1">
+                    <mxGeometry height="70" width="230" x="2760" y="800" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d22" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="มีแผน" vertex="1">
+                    <mxGeometry height="80" width="190" x="80" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e23" edge="1" parent="1" source="pg-chen-en5" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d22" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e24" edge="1" parent="1" source="pg-chen-en6" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d22" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d25" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="รับสมัครใน" vertex="1">
+                    <mxGeometry height="80" width="190" x="350" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e26" edge="1" parent="1" source="pg-chen-en5" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d25" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e27" edge="1" parent="1" source="pg-chen-en8" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d25" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d28" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="ยื่น" vertex="1">
+                    <mxGeometry height="80" width="190" x="620" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e29" edge="1" parent="1" source="pg-chen-en7" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d28" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e30" edge="1" parent="1" source="pg-chen-en8" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d28" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d31" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="ถูกเลือก" vertex="1">
+                    <mxGeometry height="80" width="190" x="350" y="465" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e32" edge="1" parent="1" source="pg-chen-en6" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d31" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e33" edge="1" parent="1" source="pg-chen-en8" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d31" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d34" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="มีข้อมูลประกอบ" vertex="1">
+                    <mxGeometry height="80" width="190" x="620" y="630" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e35" edge="1" parent="1" source="pg-chen-en8" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d34" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e36" edge="1" parent="1" source="pg-chen-en9" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d34" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d37" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="มอบตัวแล้วเป็น" vertex="1">
+                    <mxGeometry height="80" width="190" x="890" y="465" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e38" edge="1" parent="1" source="pg-chen-en8" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d37" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e39" edge="1" parent="1" source="pg-chen-en11" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d37" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d40" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="เป็น" vertex="1">
+                    <mxGeometry height="80" width="190" x="890" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e41" edge="1" parent="1" source="pg-chen-en7" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d40" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e42" edge="1" parent="1" source="pg-chen-en11" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d40" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d43" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="สังกัดปัจจุบัน" vertex="1">
+                    <mxGeometry height="80" width="190" x="1160" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e44" edge="1" parent="1" source="pg-chen-en10" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d43" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e45" edge="1" parent="1" source="pg-chen-en11" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d43" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-as46" parent="1" style="shape=ext;double=1;margin=3;rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=10;fontStyle=1;verticalAlign=bottom;spacingBottom=2;" value="student_class_histories" vertex="1">
+                    <mxGeometry height="130" width="270" x="1370" y="275" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d47" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="เคยอยู่ห้อง" vertex="1">
+                    <mxGeometry height="74" width="180" x="1415" y="295" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e48" edge="1" parent="1" source="pg-chen-en10" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-as46" value="M">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e49" edge="1" parent="1" source="pg-chen-en11" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-as46" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-as50" parent="1" style="shape=ext;double=1;margin=3;rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=10;fontStyle=1;verticalAlign=bottom;spacingBottom=2;" value="student_guardians" vertex="1">
+                    <mxGeometry height="130" width="270" x="1120" y="605" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d51" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="มีผู้ปกครอง" vertex="1">
+                    <mxGeometry height="74" width="180" x="1165" y="625" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e52" edge="1" parent="1" source="pg-chen-en11" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-as50" value="M">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e53" edge="1" parent="1" source="pg-chen-en12" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-as50" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d54" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="ยื่นใบลา" vertex="1">
+                    <mxGeometry height="80" width="190" x="1430" y="465" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e55" edge="1" parent="1" source="pg-chen-en11" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d54" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e56" edge="1" parent="1" source="pg-chen-en14" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d54" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d57" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="ขอบัตร" vertex="1">
+                    <mxGeometry height="80" width="190" x="1430" y="630" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e58" edge="1" parent="1" source="pg-chen-en11" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d57" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e59" edge="1" parent="1" source="pg-chen-en15" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d57" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-as60" parent="1" style="shape=ext;double=1;margin=3;rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dc2626;dashed=1;fontSize=10;fontStyle=1;verticalAlign=bottom;spacingBottom=2;" value="student_leave_approval" vertex="1">
+                    <mxGeometry height="130" width="270" x="1930" y="275" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d61" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#dc2626;dashed=1;" value="พิจารณา 🟡" vertex="1">
+                    <mxGeometry height="74" width="180" x="1975" y="295" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e62" edge="1" parent="1" source="pg-chen-en14" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#dc2626;dashed=1;labelBackgroundColor=#ffffff;" target="pg-chen-as60" value="M">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e63" edge="1" parent="1" source="pg-chen-en16" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#dc2626;dashed=1;labelBackgroundColor=#ffffff;" target="pg-chen-as60" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-as64" parent="1" style="shape=ext;double=1;margin=3;rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=10;fontStyle=1;verticalAlign=bottom;spacingBottom=2;" value="student_leave_setting_type" vertex="1">
+                    <mxGeometry height="130" width="270" x="2200" y="935" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d65" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="ตั้งค่าต่อภาคเรียน" vertex="1">
+                    <mxGeometry height="74" width="180" x="2245" y="955" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e66" edge="1" parent="1" source="pg-chen-en17" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-as64" value="M">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e67" edge="1" parent="1" source="pg-chen-en18" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-as64" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d68" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="มี" vertex="1">
+                    <mxGeometry height="80" width="190" x="2510" y="135" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e69" edge="1" parent="1" source="pg-chen-en16" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d68" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e70" edge="1" parent="1" source="pg-chen-en19" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d68" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d71" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="อยู่ที่" vertex="1">
+                    <mxGeometry height="80" width="190" x="2510" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e72" edge="1" parent="1" source="pg-chen-en16" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d71" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e73" edge="1" parent="1" source="pg-chen-en20" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d71" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d74" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#111111;" value="ระบุ" vertex="1">
+                    <mxGeometry height="80" width="190" x="2780" y="630" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e75" edge="1" parent="1" source="pg-chen-en21" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d74" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e76" edge="1" parent="1" source="pg-chen-en20" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#111111;labelBackgroundColor=#ffffff;" target="pg-chen-d74" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d77" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#dc2626;dashed=1;" value="เป็นครูประจำชั้น 🟡" vertex="1">
+                    <mxGeometry height="80" width="190" x="1430" y="135" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e78" edge="1" parent="1" source="pg-chen-en13" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#dc2626;dashed=1;labelBackgroundColor=#ffffff;" target="pg-chen-d77" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e79" edge="1" parent="1" source="pg-chen-en10" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#dc2626;dashed=1;labelBackgroundColor=#ffffff;" target="pg-chen-d77" value="N">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-d80" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#dc2626;dashed=1;" value="คือคนเดียวกัน 🟡" vertex="1">
+                    <mxGeometry height="80" width="190" x="1970" y="135" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e81" edge="1" parent="1" source="pg-chen-en13" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#dc2626;dashed=1;labelBackgroundColor=#ffffff;" target="pg-chen-d80" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-e82" edge="1" parent="1" source="pg-chen-en16" style="endArrow=none;html=1;fontSize=12;fontStyle=1;strokeColor=#dc2626;dashed=1;labelBackgroundColor=#ffffff;" target="pg-chen-d80" value="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-chen-t83" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=12;fontColor=#333333;" value="สีกล่อง: ฟ้า = ฝั่งเนยสด · เหลือง = ฝั่งแคลร์ · ชมพู = ข้อมูลอ้างอิงที่อยู่ · เทา = ตารางส่วนกลางใน Figma&#xa;เส้นประแดง = ความสัมพันธ์ที่เลขาอนุมานเอง (ยังไม่มีใครยืนยัน)&#xa;กรอบเส้นคู่ = associative entity: ตารางคั่นกลางของความสัมพันธ์หลายต่อหลาย (M:N) ชื่อตารางอยู่ที่ขอบล่างของกรอบ · 1:N ไม่เกิดตารางใหม่ (FK อยู่ฝั่ง N)&#xa;ใบสมัคร (application) เป็น entity ธรรมดา เพราะมีตารางลูกของตัวเอง · รายละเอียดแบบ Chen ของแต่ละฝั่งอยู่ใน erd-by-claude.md (ไม่ได้วาดใน drawio)" vertex="1">
+                    <mxGeometry height="150" width="2400" x="60" y="1260" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram name="ER เนยสด (รับสมัคร+ทะเบียน)" id="pg-nen">
+        <mxGraphModel dx="2640" dy="1935" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="pg-nen-t3" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#b91c1c;" value="ฉบับเร่งส่งอาจารย์ · เนยสดจะออกแบบทับใหม่ · เลขาเจน plan 90 · 2026-10-13 · ยังไม่ตรวจ · 🟡 = สมมติ/อนุมาน · ที่มา erd.drawio (เพื่อนเจนด้วย AI ยังไม่ตรวจ)" vertex="1">
+                    <mxGeometry height="40" width="1500" x="40" y="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-t4" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#555555;" value="ตัวหนา = PK · UK = ห้ามซ้ำ · เส้นปลายตีนกา = ฝั่งหลาย · เส้นประแดง = อนุมาน · ชื่อตารางเป็น snake_case" vertex="1">
+                    <mxGeometry height="30" width="1500" x="40" y="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb5" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="admission_round" vertex="1">
+                    <mxGeometry height="140" width="261" x="40" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r6" parent="pg-nen-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  round_id  INT" vertex="1">
+                    <mxGeometry height="22" width="261" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r7" parent="pg-nen-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    academic_year  INT  -- เช่น 2569" vertex="1">
+                    <mxGeometry height="22" width="261" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r8" parent="pg-nen-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="261" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r9" parent="pg-nen-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    is_open  BOOL" vertex="1">
+                    <mxGeometry height="22" width="261" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r10" parent="pg-nen-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    created_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="261" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb11" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="field_definition" vertex="1">
+                    <mxGeometry height="272" width="321" x="40" y="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r12" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  field_id  INT" vertex="1">
+                    <mxGeometry height="22" width="321" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r13" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  round_id  INT" vertex="1">
+                    <mxGeometry height="22" width="321" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r14" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    section_key  VARCHAR  -- personal, health" vertex="1">
+                    <mxGeometry height="22" width="321" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r15" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    group_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r16" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    field_key  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r17" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    label_th  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r18" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    label_en  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r19" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    data_type  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r20" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    is_required  BOOL" vertex="1">
+                    <mxGeometry height="22" width="321" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r21" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    display_order  INT" vertex="1">
+                    <mxGeometry height="22" width="321" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r22" parent="pg-nen-tb11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    is_active  BOOL" vertex="1">
+                    <mxGeometry height="22" width="321" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb23" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="course_plan" vertex="1">
+                    <mxGeometry height="294" width="288" x="451" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r24" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  plan_id  INT" vertex="1">
+                    <mxGeometry height="22" width="288" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r25" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  round_id  INT" vertex="1">
+                    <mxGeometry height="22" width="288" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r26" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    level  VARCHAR  -- ม.1 / ม.4" vertex="1">
+                    <mxGeometry height="22" width="288" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r27" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    name  VARCHAR  -- วิทย์-คณิต, Gifted" vertex="1">
+                    <mxGeometry height="22" width="288" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r28" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    capacity  INT" vertex="1">
+                    <mxGeometry height="22" width="288" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r29" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    regulations  TEXT" vertex="1">
+                    <mxGeometry height="22" width="288" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r30" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    apply_start  DATE" vertex="1">
+                    <mxGeometry height="22" width="288" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r31" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    apply_end  DATE" vertex="1">
+                    <mxGeometry height="22" width="288" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r32" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    exam_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="288" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r33" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    announce_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="288" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r34" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    report_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="288" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r35" parent="pg-nen-tb23" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    enroll_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="288" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb36" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="exam_room" vertex="1">
+                    <mxGeometry height="140" width="307" x="451" y="444" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r37" parent="pg-nen-tb36" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  exam_room_id  INT" vertex="1">
+                    <mxGeometry height="22" width="307" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r38" parent="pg-nen-tb36" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  plan_id  INT" vertex="1">
+                    <mxGeometry height="22" width="307" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r39" parent="pg-nen-tb36" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    name  VARCHAR  -- ห้องสอบที่ 1" vertex="1">
+                    <mxGeometry height="22" width="307" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r40" parent="pg-nen-tb36" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    room_name  VARCHAR  -- ห้อง 321 อาคาร 3" vertex="1">
+                    <mxGeometry height="22" width="307" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r41" parent="pg-nen-tb36" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    capacity  INT" vertex="1">
+                    <mxGeometry height="22" width="307" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb42" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="person" vertex="1">
+                    <mxGeometry height="294" width="250" x="848" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r43" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  person_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r44" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="UK  citizen_id  CHAR  -- 13 หลัก" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r45" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    prefix  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r46" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    first_name_th  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r47" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    last_name_th  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r48" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    full_name_en  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r49" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    dob  DATE" vertex="1">
+                    <mxGeometry height="22" width="250" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r50" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    gender  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r51" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    nationality  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r52" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    religion  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r53" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    created_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="250" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r54" parent="pg-nen-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    updated_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="250" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb55" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="application" vertex="1">
+                    <mxGeometry height="514" width="367" x="848" y="444" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r56" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  application_id  INT" vertex="1">
+                    <mxGeometry height="22" width="367" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r57" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="UK  applicant_code  VARCHAR  -- APP-2568-0001" vertex="1">
+                    <mxGeometry height="22" width="367" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r58" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  person_id  INT" vertex="1">
+                    <mxGeometry height="22" width="367" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r59" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  round_id  INT" vertex="1">
+                    <mxGeometry height="22" width="367" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r60" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  plan_choice_1  INT" vertex="1">
+                    <mxGeometry height="22" width="367" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r61" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  plan_choice_2  INT  -- NULL ได้" vertex="1">
+                    <mxGeometry height="22" width="367" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r62" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  exam_room_id  INT  -- NULL ได้" vertex="1">
+                    <mxGeometry height="22" width="367" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r63" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    grade_level  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r64" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    seat_number  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r65" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    prev_school_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r66" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    prev_school_province  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r67" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    prev_degree  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r68" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    gpax  DECIMAL" vertex="1">
+                    <mxGeometry height="22" width="367" y="294" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r69" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    status  ENUM  -- 9 ค่า" vertex="1">
+                    <mxGeometry height="22" width="367" y="316" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r70" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    fee_paid  BOOL" vertex="1">
+                    <mxGeometry height="22" width="367" y="338" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r71" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    fee_paid_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="367" y="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r72" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    score_raw  DECIMAL" vertex="1">
+                    <mxGeometry height="22" width="367" y="382" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r73" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    documents_complete  BOOL" vertex="1">
+                    <mxGeometry height="22" width="367" y="404" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r74" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    extra_fields  JSONB  -- ฟิลด์ที่โรงเรียนเพิ่มเอง" vertex="1">
+                    <mxGeometry height="22" width="367" y="426" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r75" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    applied_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="367" y="448" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r76" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    last_edited_by  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="470" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r77" parent="pg-nen-tb55" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    last_edited_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="367" y="492" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb78" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="student" vertex="1">
+                    <mxGeometry height="184" width="387" x="1305" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r79" parent="pg-nen-tb78" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  student_id  INT" vertex="1">
+                    <mxGeometry height="22" width="387" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r80" parent="pg-nen-tb78" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="UK  student_code  VARCHAR  -- STD-2568-0001" vertex="1">
+                    <mxGeometry height="22" width="387" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r81" parent="pg-nen-tb78" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  person_id  INT" vertex="1">
+                    <mxGeometry height="22" width="387" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r82" parent="pg-nen-tb78" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  from_application_id  INT  -- NULL ได้" vertex="1">
+                    <mxGeometry height="22" width="387" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r83" parent="pg-nen-tb78" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  classroom_id  INT" vertex="1">
+                    <mxGeometry height="22" width="387" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r84" parent="pg-nen-tb78" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    enrolled_at  DATE" vertex="1">
+                    <mxGeometry height="22" width="387" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r85" parent="pg-nen-tb78" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    status  ENUM  -- studying / transferred / graduated" vertex="1">
+                    <mxGeometry height="22" width="387" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb86" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="classroom" vertex="1">
+                    <mxGeometry height="140" width="420" x="1305" y="334" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r87" parent="pg-nen-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  classroom_id  INT" vertex="1">
+                    <mxGeometry height="22" width="420" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r88" parent="pg-nen-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    academic_year  INT" vertex="1">
+                    <mxGeometry height="22" width="420" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r89" parent="pg-nen-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    level  VARCHAR  -- ม.1" vertex="1">
+                    <mxGeometry height="22" width="420" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r90" parent="pg-nen-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    room_no  INT  -- 1..5" vertex="1">
+                    <mxGeometry height="22" width="420" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r91" parent="pg-nen-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    homeroom_teacher_id  INT  -- ชี้ระบบบุคลากร ไม่ระบุตาราง" vertex="1">
+                    <mxGeometry height="22" width="420" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb92" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="applicant_address" vertex="1">
+                    <mxGeometry height="272" width="334" x="1815" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r93" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  address_id  INT" vertex="1">
+                    <mxGeometry height="22" width="334" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r94" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  application_id  INT" vertex="1">
+                    <mxGeometry height="22" width="334" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r95" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    address_type  ENUM  -- registered / current" vertex="1">
+                    <mxGeometry height="22" width="334" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r96" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    house_no  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="334" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r97" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    moo  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="334" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r98" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    soi  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="334" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r99" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    road  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="334" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r100" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    sub_district  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="334" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r101" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    district  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="334" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r102" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    province  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="334" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r103" parent="pg-nen-tb92" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    zip_code  CHAR" vertex="1">
+                    <mxGeometry height="22" width="334" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb104" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="applicant_guardian" vertex="1">
+                    <mxGeometry height="250" width="321" x="1815" y="422" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r105" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  guardian_id  INT" vertex="1">
+                    <mxGeometry height="22" width="321" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r106" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  application_id  INT" vertex="1">
+                    <mxGeometry height="22" width="321" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r107" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    role  ENUM  -- father / mother / guardian" vertex="1">
+                    <mxGeometry height="22" width="321" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r108" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    relationship  VARCHAR  -- เฉพาะ guardian" vertex="1">
+                    <mxGeometry height="22" width="321" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r109" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    full_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r110" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    phone  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r111" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    email  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r112" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    occupation  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r113" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    address_same_as  ENUM  -- NULL ได้" vertex="1">
+                    <mxGeometry height="22" width="321" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r114" parent="pg-nen-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    is_primary_contact  BOOL" vertex="1">
+                    <mxGeometry height="22" width="321" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb115" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="applicant_health" vertex="1">
+                    <mxGeometry height="162" width="250" x="1815" y="722" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r116" parent="pg-nen-tb115" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  health_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r117" parent="pg-nen-tb115" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  application_id  INT  -- 1:1" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r118" parent="pg-nen-tb115" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    blood_type  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r119" parent="pg-nen-tb115" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    chronic_disease  TEXT" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r120" parent="pg-nen-tb115" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    drug_allergy  TEXT" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r121" parent="pg-nen-tb115" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    food_allergy  TEXT" vertex="1">
+                    <mxGeometry height="22" width="250" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb122" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="application_document" vertex="1">
+                    <mxGeometry height="294" width="347" x="2239" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r123" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  document_id  INT" vertex="1">
+                    <mxGeometry height="22" width="347" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r124" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  application_id  INT" vertex="1">
+                    <mxGeometry height="22" width="347" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r125" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    doc_type  VARCHAR  -- รูปถ่าย, ปพ.1" vertex="1">
+                    <mxGeometry height="22" width="347" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r126" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    file_path  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="347" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r127" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    file_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="347" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r128" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    mime_type  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="347" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r129" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    file_size  BIGINT" vertex="1">
+                    <mxGeometry height="22" width="347" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r130" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    uploaded_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="347" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r131" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    verify_status  ENUM  -- pending / ok / reject" vertex="1">
+                    <mxGeometry height="22" width="347" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r132" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    verified_by  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="347" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r133" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    verified_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="347" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r134" parent="pg-nen-tb122" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    reject_reason  TEXT" vertex="1">
+                    <mxGeometry height="22" width="347" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-tb135" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="application_status_history" vertex="1">
+                    <mxGeometry height="184" width="250" x="2239" y="444" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r136" parent="pg-nen-tb135" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  history_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r137" parent="pg-nen-tb135" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  application_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r138" parent="pg-nen-tb135" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    from_status  ENUM" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r139" parent="pg-nen-tb135" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    to_status  ENUM" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r140" parent="pg-nen-tb135" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    changed_by  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r141" parent="pg-nen-tb135" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    changed_at  TIMESTAMPTZ" vertex="1">
+                    <mxGeometry height="22" width="250" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-r142" parent="pg-nen-tb135" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    note  TEXT" vertex="1">
+                    <mxGeometry height="22" width="250" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e143" edge="1" parent="1" source="pg-nen-tb5" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb23" value="มีแผน">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e144" edge="1" parent="1" source="pg-nen-tb5" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb11" value="กำหนดฟอร์ม">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e145" edge="1" parent="1" source="pg-nen-tb5" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb55" value="รับสมัครใน">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e146" edge="1" parent="1" source="pg-nen-tb23" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb36" value="มีห้องสอบ">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e147" edge="1" parent="1" source="pg-nen-tb23" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb55" value="เลือกอันดับ 1 / 2">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e148" edge="1" parent="1" source="pg-nen-tb36" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb55" value="จัดที่นั่ง">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e149" edge="1" parent="1" source="pg-nen-tb42" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb55" value="ยื่นได้หลายใบ">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e150" edge="1" parent="1" source="pg-nen-tb42" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb78" value="เป็นนักเรียน">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e151" edge="1" parent="1" source="pg-nen-tb55" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERzeroToOne;startFill=0;endArrow=ERzeroToOne;endFill=0;strokeColor=#666666;" target="pg-nen-tb78" value="มอบตัวแล้วสร้างใหม่">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e152" edge="1" parent="1" source="pg-nen-tb86" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb78" value="สังกัด">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e153" edge="1" parent="1" source="pg-nen-tb55" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb92" value="มีที่อยู่">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e154" edge="1" parent="1" source="pg-nen-tb55" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb104" value="มีผู้ปกครอง">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e155" edge="1" parent="1" source="pg-nen-tb55" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToOne;endFill=0;strokeColor=#666666;" target="pg-nen-tb115" value="มีสุขภาพ">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e156" edge="1" parent="1" source="pg-nen-tb55" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb122" value="แนบเอกสาร">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-nen-e157" edge="1" parent="1" source="pg-nen-tb55" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-nen-tb135" value="บันทึกสถานะ">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram name="ER แคลร์ (บุคลากร+ลา/บัตร)" id="pg-claire">
+        <mxGraphModel dx="1821" dy="1334" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="pg-claire-t3" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#b91c1c;" value="ฉบับเร่งส่งอาจารย์ · เนยสดจะออกแบบทับใหม่ · เลขาเจน plan 90 · 2026-10-13 · ยังไม่ตรวจ · 🟡 = สมมติ/อนุมาน · ที่มา er-employee.drawio + Figma (ตารางลา/บัตรเป็นของ Figma)" vertex="1">
+                    <mxGeometry height="40" width="1500" x="40" y="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-t4" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#555555;" value="ตัวหนา = PK · UK = ห้ามซ้ำ · เส้นปลายตีนกา = ฝั่งหลาย · เส้นประแดง = อนุมาน · ชื่อตารางเป็น snake_case" vertex="1">
+                    <mxGeometry height="30" width="1500" x="40" y="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb5" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="education" vertex="1">
+                    <mxGeometry height="184" width="250" x="40" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r6" parent="pg-claire-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  education_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r7" parent="pg-claire-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r8" parent="pg-claire-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    degree  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r9" parent="pg-claire-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    major  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r10" parent="pg-claire-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    institution  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r11" parent="pg-claire-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    graduate_year  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r12" parent="pg-claire-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    gpa  DECIMAL" vertex="1">
+                    <mxGeometry height="22" width="250" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb13" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="royal_decorations" vertex="1">
+                    <mxGeometry height="162" width="367" x="40" y="334" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r14" parent="pg-claire-tb13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  license_no  VARCHAR  -- ต้นทางตั้งซ้ำกับ license" vertex="1">
+                    <mxGeometry height="22" width="367" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r15" parent="pg-claire-tb13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r16" parent="pg-claire-tb13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    decoration_class  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r17" parent="pg-claire-tb13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    date_received  DATE" vertex="1">
+                    <mxGeometry height="22" width="367" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r18" parent="pg-claire-tb13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    year_received  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r19" parent="pg-claire-tb13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    gazette_reference  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="367" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb20" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="license" vertex="1">
+                    <mxGeometry height="140" width="250" x="40" y="546" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r21" parent="pg-claire-tb20" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  license_no  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r22" parent="pg-claire-tb20" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r23" parent="pg-claire-tb20" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    license_type  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r24" parent="pg-claire-tb20" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    issue_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r25" parent="pg-claire-tb20" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    expiry_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb26" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="toeic_score" vertex="1">
+                    <mxGeometry height="140" width="250" x="40" y="736" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r27" parent="pg-claire-tb26" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  toeic_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r28" parent="pg-claire-tb26" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r29" parent="pg-claire-tb26" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    score  DECIMAL" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r30" parent="pg-claire-tb26" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    expiry_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r31" parent="pg-claire-tb26" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    document  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb32" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="training" vertex="1">
+                    <mxGeometry height="294" width="250" x="40" y="926" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r33" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  training_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r34" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r35" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    training_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r36" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    training_type  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r37" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    organizer  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r38" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    start_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="250" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r39" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    end_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="250" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r40" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    hour  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r41" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    location  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r42" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    country  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r43" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    province  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r44" parent="pg-claire-tb32" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    cost  DECIMAL" vertex="1">
+                    <mxGeometry height="22" width="250" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb45" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="employees" vertex="1">
+                    <mxGeometry height="382" width="321" x="497" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r46" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r47" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_title  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r48" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_title  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r49" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_first_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r50" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_last_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r51" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_first_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r52" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_last_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r53" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    id_number  VARCHAR  -- เลขบัตรประชาชน" vertex="1">
+                    <mxGeometry height="22" width="321" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r54" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    dob  DATE" vertex="1">
+                    <mxGeometry height="22" width="321" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r55" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    gender  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r56" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    blood_group  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r57" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    nationality  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r58" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    religious  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="294" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r59" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    phone_number  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="316" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r60" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    email  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="321" y="338" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r61" parent="pg-claire-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    role  VARCHAR  -- ข้อความ ไม่มีตารางบทบาท" vertex="1">
+                    <mxGeometry height="22" width="321" y="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb62" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="job_details" vertex="1">
+                    <mxGeometry height="184" width="347" x="908" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r63" parent="pg-claire-tb62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  job_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="347" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r64" parent="pg-claire-tb62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="347" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r65" parent="pg-claire-tb62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    job_title  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="347" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r66" parent="pg-claire-tb62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    department  VARCHAR  -- ต้นทางสะกด dapartment" vertex="1">
+                    <mxGeometry height="22" width="347" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r67" parent="pg-claire-tb62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    start_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="347" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r68" parent="pg-claire-tb62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    salary  DECIMAL" vertex="1">
+                    <mxGeometry height="22" width="347" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r69" parent="pg-claire-tb62" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    work_status  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="347" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb70" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="family_member" vertex="1">
+                    <mxGeometry height="360" width="250" x="908" y="334" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r71" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  family_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r72" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r73" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_title  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r74" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_title  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r75" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_first_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r76" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_last_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r77" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_first_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r78" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_last_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r79" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    phone_number  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r80" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    relationship  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r81" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    dob  DATE" vertex="1">
+                    <mxGeometry height="22" width="250" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r82" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    marital_status  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r83" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    life_status  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="294" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r84" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    career  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="316" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r85" parent="pg-claire-tb70" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    education_level  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="338" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb86" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="address" vertex="1">
+                    <mxGeometry height="272" width="250" x="908" y="744" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r87" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  address_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r88" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r89" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    house_no  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r90" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    moo  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r91" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    soi  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r92" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    street  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r93" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  sub_district_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r94" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  district_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r95" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  province_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r96" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  country_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r97" parent="pg-claire-tb86" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    address_type  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb98" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;rounded=1;arcSize=4;" value="sub_districts" vertex="1">
+                    <mxGeometry height="140" width="250" x="1345" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r99" parent="pg-claire-tb98" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  sub_district_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r100" parent="pg-claire-tb98" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  district_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r101" parent="pg-claire-tb98" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_sub_district_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r102" parent="pg-claire-tb98" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_sub_district_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r103" parent="pg-claire-tb98" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    zip_code  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb104" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;rounded=1;arcSize=4;" value="districts" vertex="1">
+                    <mxGeometry height="118" width="250" x="1345" y="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r105" parent="pg-claire-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  district_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r106" parent="pg-claire-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  province_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r107" parent="pg-claire-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_district_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r108" parent="pg-claire-tb104" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_district_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb109" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;rounded=1;arcSize=4;" value="provinces" vertex="1">
+                    <mxGeometry height="118" width="314" x="1345" y="458" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r110" parent="pg-claire-tb109" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  province_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="314" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r111" parent="pg-claire-tb109" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  country_id  VARCHAR  -- ต้นทางไม่ติด _FK" vertex="1">
+                    <mxGeometry height="22" width="314" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r112" parent="pg-claire-tb109" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_province_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="314" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r113" parent="pg-claire-tb109" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_province_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="314" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb114" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;rounded=1;arcSize=4;" value="countries" vertex="1">
+                    <mxGeometry height="96" width="250" x="1345" y="626" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r115" parent="pg-claire-tb114" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  country_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r116" parent="pg-claire-tb114" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    th_country_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r117" parent="pg-claire-tb114" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    en_country_name  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb118" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="student_leave_type" vertex="1">
+                    <mxGeometry height="162" width="250" x="1749" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r119" parent="pg-claire-tb118" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r120" parent="pg-claire-tb118" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    type  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r121" parent="pg-claire-tb118" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    description  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r122" parent="pg-claire-tb118" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    color  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r123" parent="pg-claire-tb118" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    max_days  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r124" parent="pg-claire-tb118" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    require_doc  BOOL" vertex="1">
+                    <mxGeometry height="22" width="250" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb125" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="student_leave_setting_type" vertex="1">
+                    <mxGeometry height="140" width="433" x="1749" y="312" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r126" parent="pg-claire-tb125" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="433" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r127" parent="pg-claire-tb125" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  academic_terms_id  VARCHAR  -- ชี้ academic_terms ของทีม A" vertex="1">
+                    <mxGeometry height="22" width="433" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r128" parent="pg-claire-tb125" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  student_leave_type_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="433" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r129" parent="pg-claire-tb125" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    max_days  INT" vertex="1">
+                    <mxGeometry height="22" width="433" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r130" parent="pg-claire-tb125" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    require_doc  BOOL" vertex="1">
+                    <mxGeometry height="22" width="433" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb131" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="student_leave_setting_approver" vertex="1">
+                    <mxGeometry height="140" width="460" x="1749" y="502" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r132" parent="pg-claire-tb131" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="460" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r133" parent="pg-claire-tb131" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    student_leave_setting_id  VARCHAR  -- คอลัมน์ตามต้นทาง ดูเหมือนก๊อปมา" vertex="1">
+                    <mxGeometry height="22" width="460" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r134" parent="pg-claire-tb131" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    student_leave_type_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="460" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r135" parent="pg-claire-tb131" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    max_days  INT" vertex="1">
+                    <mxGeometry height="22" width="460" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r136" parent="pg-claire-tb131" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    require_doc  BOOL" vertex="1">
+                    <mxGeometry height="22" width="460" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb137" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="student_leave_form" vertex="1">
+                    <mxGeometry height="206" width="327" x="2299" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r138" parent="pg-claire-tb137" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="327" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r139" parent="pg-claire-tb137" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  student_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="327" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r140" parent="pg-claire-tb137" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    type  ENUM  -- SICK_LEAVE / PERSONAL_LEAVE" vertex="1">
+                    <mxGeometry height="22" width="327" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r141" parent="pg-claire-tb137" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    start_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="327" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r142" parent="pg-claire-tb137" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    end_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="327" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r143" parent="pg-claire-tb137" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    is_half_day  BOOL" vertex="1">
+                    <mxGeometry height="22" width="327" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r144" parent="pg-claire-tb137" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    note  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="327" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r145" parent="pg-claire-tb137" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    attachment  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="327" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb146" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="student_leave_approval" vertex="1">
+                    <mxGeometry height="162" width="354" x="2299" y="356" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r147" parent="pg-claire-tb146" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="354" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r148" parent="pg-claire-tb146" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  student_leave_form_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="354" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r149" parent="pg-claire-tb146" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    approver_id  VARCHAR  -- id ของผู้อนุมัติ" vertex="1">
+                    <mxGeometry height="22" width="354" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r150" parent="pg-claire-tb146" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    status  ENUM  -- PENDING / APPROVED / REJECTED" vertex="1">
+                    <mxGeometry height="22" width="354" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r151" parent="pg-claire-tb146" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    note  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="354" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r152" parent="pg-claire-tb146" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    action_datetime  DATETIME" vertex="1">
+                    <mxGeometry height="22" width="354" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb153" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="tardy_slip" vertex="1">
+                    <mxGeometry height="228" width="460" x="2299" y="568" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r154" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="460" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r155" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  student_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="460" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r156" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    type  ENUM  -- ENTER_CLASSROOM / LEAVE_CLASSROOM / LEAVE_SCHOOL / EARLY_DISMISSAL / ASSIGNED_DUTY / OTHERS" vertex="1">
+                    <mxGeometry height="22" width="460" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r157" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    start_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="460" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r158" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    end_date  DATE" vertex="1">
+                    <mxGeometry height="22" width="460" y="118" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r159" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    start_time  TIME" vertex="1">
+                    <mxGeometry height="22" width="460" y="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r160" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    end_time  TIME" vertex="1">
+                    <mxGeometry height="22" width="460" y="162" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r161" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    note  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="460" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r162" parent="pg-claire-tb153" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    status  ENUM  -- PENDING / APPROVED / REJECTED" vertex="1">
+                    <mxGeometry height="22" width="460" y="206" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb163" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;rounded=1;arcSize=4;" value="student  (ตารางของเนยสด)" vertex="1">
+                    <mxGeometry height="52" width="387" x="2849" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r164" parent="pg-claire-tb163" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  student_id  INT  -- ตารางของเนยสด (ดูหน้า ER เนยสด)" vertex="1">
+                    <mxGeometry height="22" width="387" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-tb165" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;rounded=1;arcSize=4;" value="academic_terms  (ตารางทีม A)" vertex="1">
+                    <mxGeometry height="52" width="250" x="2849" y="202" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-r166" parent="pg-claire-tb165" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  INT  -- Figma ทีม A" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e167" edge="1" parent="1" source="pg-claire-tb45" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb5" value="มี">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e168" edge="1" parent="1" source="pg-claire-tb45" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb13" value="มี">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e169" edge="1" parent="1" source="pg-claire-tb45" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb20" value="มี">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e170" edge="1" parent="1" source="pg-claire-tb45" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb26" value="มี">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e171" edge="1" parent="1" source="pg-claire-tb45" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb62" value="มี">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e172" edge="1" parent="1" source="pg-claire-tb45" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb32" value="มี">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e173" edge="1" parent="1" source="pg-claire-tb45" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb70" value="มี">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e174" edge="1" parent="1" source="pg-claire-tb45" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb86" value="อยู่ที่">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e175" edge="1" parent="1" source="pg-claire-tb114" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb109" value="มีจังหวัด">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e176" edge="1" parent="1" source="pg-claire-tb109" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb104" value="มีอำเภอ">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e177" edge="1" parent="1" source="pg-claire-tb104" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb98" value="มีตำบล">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e178" edge="1" parent="1" source="pg-claire-tb98" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb86" value="ระบุตำบล">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e179" edge="1" parent="1" source="pg-claire-tb104" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb86" value="ระบุอำเภอ">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e180" edge="1" parent="1" source="pg-claire-tb109" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb86" value="ระบุจังหวัด">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e181" edge="1" parent="1" source="pg-claire-tb114" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb86" value="ระบุประเทศ">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e182" edge="1" parent="1" source="pg-claire-tb118" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb125" value="ถูกตั้งค่า">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e183" edge="1" parent="1" source="pg-claire-tb137" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb146" value="ถูกพิจารณา">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e184" edge="1" parent="1" source="pg-claire-tb163" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb137" value="ยื่นใบลา">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e185" edge="1" parent="1" source="pg-claire-tb163" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb153" value="ขอบัตร">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-e186" edge="1" parent="1" source="pg-claire-tb165" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-claire-tb125" value="กำหนดภาคเรียน">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-claire-t187" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#b91c1c;" value="student_leave_setting_approver ไม่ลากเส้น: Figma ไม่มีเส้นเชื่อม และคอลัมน์เหมือน setting_type ดูเหมือนก๊อปมา 🟡&#xa;address ชี้ 4 ตารางตามไฟล์ปัจจุบัน แต่แคลร์เขียนโน้ตใน Figma ว่าจะเหลือแค่ตำบล + postcode 🟡" vertex="1">
+                    <mxGeometry height="70" width="1500" x="40" y="1700" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram name="จุดเชื่อมสองฝั่ง" id="pg-join">
+        <mxGraphModel dx="2200" dy="1613" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="pg-join-t3" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=13;fontStyle=1;fontColor=#b91c1c;" value="ฉบับเร่งส่งอาจารย์ · เนยสดจะออกแบบทับใหม่ · เลขาเจน plan 90 · 2026-10-13 · ยังไม่ตรวจ · 🟡 = สมมติ/อนุมาน · เฉพาะตารางที่มีเส้นข้ามฝั่ง (คอลัมน์ตัวเต็มอยู่หน้า ER ของแต่ละฝั่ง)" vertex="1">
+                    <mxGeometry height="40" width="1500" x="40" y="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-t4" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#555555;" value="ตัวหนา = PK · UK = ห้ามซ้ำ · เส้นปลายตีนกา = ฝั่งหลาย · เส้นประแดง = อนุมาน · ชื่อตารางเป็น snake_case" vertex="1">
+                    <mxGeometry height="30" width="1500" x="40" y="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb5" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="student" vertex="1">
+                    <mxGeometry height="96" width="250" x="40" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r6" parent="pg-join-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  student_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r7" parent="pg-join-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  person_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r8" parent="pg-join-tb5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  classroom_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb9" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="classroom" vertex="1">
+                    <mxGeometry height="74" width="301" x="40" y="246" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r10" parent="pg-join-tb9" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  classroom_id  INT" vertex="1">
+                    <mxGeometry height="22" width="301" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r11" parent="pg-join-tb9" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  homeroom_teacher_id  INT  -- ตามข้อ J4" vertex="1">
+                    <mxGeometry height="22" width="301" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb12" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;rounded=1;arcSize=4;" value="applicant_guardian" vertex="1">
+                    <mxGeometry height="74" width="250" x="40" y="370" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r13" parent="pg-join-tb12" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  guardian_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r14" parent="pg-join-tb12" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  application_id  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb15" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;rounded=1;arcSize=4;" value="student_class_histories" vertex="1">
+                    <mxGeometry height="96" width="360" x="431" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r16" parent="pg-join-tb15" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  INT  -- Figma ส่วนกลาง" vertex="1">
+                    <mxGeometry height="22" width="360" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r17" parent="pg-join-tb15" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  student_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="360" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r18" parent="pg-join-tb15" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  class_id  INT  -- ตามข้อ J3 ถือว่าคือ classroom" vertex="1">
+                    <mxGeometry height="22" width="360" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb19" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;rounded=1;arcSize=4;" value="student_guardians" vertex="1">
+                    <mxGeometry height="118" width="250" x="431" y="246" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r20" parent="pg-join-tb19" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  INT  -- Figma ส่วนกลาง" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r21" parent="pg-join-tb19" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  student_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r22" parent="pg-join-tb19" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  guardian_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r23" parent="pg-join-tb19" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    is_emergency_contact  BOOL" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb24" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;rounded=1;arcSize=4;" value="guardians" vertex="1">
+                    <mxGeometry height="118" width="250" x="431" y="414" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r25" parent="pg-join-tb24" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR  -- Figma ส่วนกลาง" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r26" parent="pg-join-tb24" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    first_name_th  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r27" parent="pg-join-tb24" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    phone_number  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r28" parent="pg-join-tb24" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    relationship  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb29" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;rounded=1;arcSize=4;" value="teachers" vertex="1">
+                    <mxGeometry height="118" width="250" x="881" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r30" parent="pg-join-tb29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR  -- Figma ส่วนกลาง" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r31" parent="pg-join-tb29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    teacher_code  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r32" parent="pg-join-tb29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    first_name_th  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r33" parent="pg-join-tb29" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    position_th  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb34" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="employees" vertex="1">
+                    <mxGeometry height="52" width="250" x="881" y="268" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r35" parent="pg-join-tb34" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  employee_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb36" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="student_leave_approval" vertex="1">
+                    <mxGeometry height="74" width="274" x="881" y="370" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r37" parent="pg-join-tb36" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="274" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r38" parent="pg-join-tb36" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    approver_id  VARCHAR  -- ตามข้อ J7" vertex="1">
+                    <mxGeometry height="22" width="274" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb39" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="student_leave_form" vertex="1">
+                    <mxGeometry height="74" width="250" x="1245" y="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r40" parent="pg-join-tb39" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r41" parent="pg-join-tb39" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  student_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb42" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="tardy_slip" vertex="1">
+                    <mxGeometry height="74" width="250" x="1245" y="224" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r43" parent="pg-join-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r44" parent="pg-join-tb42" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  student_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb45" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="student_leave_setting_type" vertex="1">
+                    <mxGeometry height="74" width="250" x="1245" y="348" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r46" parent="pg-join-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r47" parent="pg-join-tb45" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="FK  academic_terms_id  VARCHAR" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-tb48" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;rounded=1;arcSize=4;" value="academic_terms" vertex="1">
+                    <mxGeometry height="74" width="250" x="1245" y="472" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r49" parent="pg-join-tb48" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" value="PK  id  INT  -- Figma ทีม A" vertex="1">
+                    <mxGeometry height="22" width="250" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-r50" parent="pg-join-tb48" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" value="    academic_year  INT" vertex="1">
+                    <mxGeometry height="22" width="250" y="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e51" edge="1" parent="1" source="pg-join-tb5" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-join-tb39" value="ยื่นใบลา">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e52" edge="1" parent="1" source="pg-join-tb5" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-join-tb42" value="ขอบัตร">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e53" edge="1" parent="1" source="pg-join-tb5" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-join-tb19" value="มีผู้ปกครอง">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e54" edge="1" parent="1" source="pg-join-tb24" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-join-tb19" value="ดูแล">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e55" edge="1" parent="1" source="pg-join-tb5" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-join-tb15" value="เคยอยู่ห้อง">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e56" edge="1" parent="1" source="pg-join-tb9" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;dashed=1;strokeColor=#dc2626;fontColor=#dc2626;" target="pg-join-tb15" value="ประวัติห้อง">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e57" edge="1" parent="1" source="pg-join-tb9" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-join-tb5" value="สังกัดปัจจุบัน">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e58" edge="1" parent="1" source="pg-join-tb29" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;dashed=1;strokeColor=#dc2626;fontColor=#dc2626;" target="pg-join-tb9" value="ครูประจำชั้น">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e59" edge="1" parent="1" source="pg-join-tb29" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERmandOne;endFill=0;dashed=1;strokeColor=#dc2626;fontColor=#dc2626;" target="pg-join-tb34" value="คนเดียวกัน">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e60" edge="1" parent="1" source="pg-join-tb34" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;dashed=1;strokeColor=#dc2626;fontColor=#dc2626;" target="pg-join-tb36" value="พิจารณา">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e61" edge="1" parent="1" source="pg-join-tb48" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERmandOne;startFill=0;endArrow=ERzeroToMany;endFill=0;strokeColor=#666666;" target="pg-join-tb45" value="กำหนดภาคเรียน">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-e62" edge="1" parent="1" source="pg-join-tb12" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;fontSize=10;startArrow=ERzeroToMany;startFill=0;endArrow=ERzeroToMany;endFill=0;dashed=1;strokeColor=#dc2626;fontColor=#dc2626;" target="pg-join-tb24" value="คนเดียวกันหลังมอบตัว">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pg-join-t63" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=11;fontColor=#b91c1c;" value="สีกรอบ: ฟ้า = ฝั่งเนยสด · เหลือง = ฝั่งแคลร์ · เทา = ตารางส่วนกลางใน Figma (ทีม A/ส่วนกลาง)&#xa;เส้นประแดง = อนุมาน (J3 classroom=classes · J4 teachers=employees · J7 ผู้อนุมัติ · A8 ผู้ปกครองหลังมอบตัว) รายละเอียดอยู่ใน erd-by-claude.md หัวข้อ 2.4 และ 6" vertex="1">
+                    <mxGeometry height="90" width="1700" x="40" y="1500" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
