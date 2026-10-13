@@ -1,0 +1,779 @@
+<mxfile host="65bd71144e" pages="3">
+    <diagram id="p0-auth" name="0 · การเข้าสู่ระบบ">
+        <mxGraphModel dx="823" dy="606" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="p0-auth-L-actor" parent="1" style="shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=40;outlineConnect=0;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" value="ผู้ใช้งาน" vertex="1">
+                    <mxGeometry height="1781" width="30" x="155" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-L-web" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#DDEBF7;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" value="หน้าเว็บ&lt;br&gt;(Next.js)" vertex="1">
+                    <mxGeometry height="1781" width="170" x="425" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-L-svc" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#E2F0D9;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" value="Service ทีม B&lt;br&gt;(FastAPI)" vertex="1">
+                    <mxGeometry height="1781" width="170" x="765" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-L-db" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#FCE4D6;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" value="ฐานข้อมูล&lt;br&gt;(PostgreSQL)" vertex="1">
+                    <mxGeometry height="1781" width="170" x="1105" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-title" parent="1" style="text;html=1;align=left;verticalAlign=top;fontStyle=1;fontFamily=Tahoma;fontSize=13;" value="การเข้าสู่ระบบ (ทุก Use Case ใช้ร่วมกัน) · หน้านี้ไม่ได้มาจาก Use Case ในเล่ม วาดตามกลุ่ม auth ใน api-list.md" vertex="1">
+                    <mxGeometry height="24" width="1200" x="10" y="6" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-F1" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" value="alt" vertex="1">
+                    <mxGeometry height="486" width="1092" x="134" y="517" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-FT2" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" value="[รหัสผ่านถูกต้อง]" vertex="1">
+                    <mxGeometry height="20" width="1032" x="184" y="518" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-FS3" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;strokeColor=#4F5D75;" value="">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="134" y="841" as="sourcePoint"/>
+                        <mxPoint x="1226" y="841" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-FST4" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" value="[รหัสผ่านไม่ถูกต้อง]" vertex="1">
+                    <mxGeometry height="20" width="1076" x="142" y="843" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-F5" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" value="opt" vertex="1">
+                    <mxGeometry height="294" width="752" x="474" y="1137" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-FT6" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" value="[Access Token หมดอายุ]" vertex="1">
+                    <mxGeometry height="20" width="692" x="524" y="1138" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-N7" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=10;fillColor=#FFF8DC;strokeColor=#B8A06A;align=left;spacing=4;fontFamily=Tahoma;fontSize=10;" value="Nginx (Load Balancer)&lt;br&gt;แค่ส่งต่อคำขอตามเส้นทาง&lt;br&gt;/api/admission&lt;br&gt;จึงไม่วาดเป็นเส้นชีวิต" vertex="1">
+                    <mxGeometry height="76" width="260" x="380" y="174" as="geometry"/>
+                </mxCell>
+                <mxCell id="p0-auth-M8" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="กรอกอีเมลและรหัสผ่าน&lt;br&gt;แล้วสั่งเข้าสู่ระบบ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="324" as="sourcePoint"/>
+                        <mxPoint x="510" y="324" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M9" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="POST /api/admission/auth/login">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="383" as="sourcePoint"/>
+                        <mxPoint x="850" y="383" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M10" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="ตรวจอีเมลและรหัสผ่าน">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="442" as="sourcePoint"/>
+                        <mxPoint x="1190" y="442" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M11" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="ผลการตรวจ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="501" as="sourcePoint"/>
+                        <mxPoint x="850" y="501" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M12" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="สร้าง Session และเก็บ Refresh&lt;br&gt;Token">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="625" as="sourcePoint"/>
+                        <mxPoint x="1190" y="625" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M13" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="บันทึกแล้ว">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="684" as="sourcePoint"/>
+                        <mxPoint x="850" y="684" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M14" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="Access Token ในคำตอบ + Refresh&lt;br&gt;Token ใน cookie">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="758" as="sourcePoint"/>
+                        <mxPoint x="510" y="758" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M15" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="เข้าสู่ระบบสำเร็จ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="817" as="sourcePoint"/>
+                        <mxPoint x="170" y="817" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M16" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="ปฏิเสธการเข้าสู่ระบบ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="920" as="sourcePoint"/>
+                        <mxPoint x="510" y="920" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M17" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="แจ้งเตือนว่าข้อมูลเข้าสู่ระบบไม่ถูกต้อง">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="979" as="sourcePoint"/>
+                        <mxPoint x="170" y="979" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M18" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="GET /api/admission/auth/me">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1062" as="sourcePoint"/>
+                        <mxPoint x="850" y="1062" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M19" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="ข้อมูลผู้ใช้และบทบาท">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1121" as="sourcePoint"/>
+                        <mxPoint x="510" y="1121" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M20" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="POST /api/admission/auth/refresh">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1230" as="sourcePoint"/>
+                        <mxPoint x="850" y="1230" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M21" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="ตรวจ Refresh Token ว่ายังใช้ได้">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1289" as="sourcePoint"/>
+                        <mxPoint x="1190" y="1289" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M22" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="ผลการตรวจ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="1348" as="sourcePoint"/>
+                        <mxPoint x="850" y="1348" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M23" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="Access Token ใหม่">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1407" as="sourcePoint"/>
+                        <mxPoint x="510" y="1407" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M24" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="สั่งออกจากระบบ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="1490" as="sourcePoint"/>
+                        <mxPoint x="510" y="1490" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M25" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="POST /api/admission/auth/logout">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1549" as="sourcePoint"/>
+                        <mxPoint x="850" y="1549" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M26" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" value="เพิกถอน Session ที่เกี่ยวข้อง">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1608" as="sourcePoint"/>
+                        <mxPoint x="1190" y="1608" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M27" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="เพิกถอนแล้ว">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="1667" as="sourcePoint"/>
+                        <mxPoint x="850" y="1667" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M28" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="ออกจากระบบสำเร็จ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1726" as="sourcePoint"/>
+                        <mxPoint x="510" y="1726" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="p0-auth-M29" edge="1" parent="1" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" value="กลับไปหน้าเข้าสู่ระบบ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1785" as="sourcePoint"/>
+                        <mxPoint x="170" y="1785" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="uc-adm-03" name="UC-ADM-03 จัดการสถานะผู้สมัคร">
+        <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1550" pageHeight="2983" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="uc-adm-03-L-actor" value="เจ้าหน้าที่ทะเบียน" style="shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=40;outlineConnect=0;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="155" y="40" width="30" height="2883" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-L-web" value="หน้าเว็บ&lt;br&gt;(Next.js)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#DDEBF7;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="425" y="40" width="170" height="2883" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-L-svc" value="Service ทีม B&lt;br&gt;(FastAPI)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#E2F0D9;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="765" y="40" width="170" height="2883" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-L-db" value="ฐานข้อมูล&lt;br&gt;(PostgreSQL)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#FCE4D6;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1105" y="40" width="170" height="2883" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-title" value="UC-ADM-03 จัดการสถานะผู้สมัคร (ตารางที่ 3.3)" style="text;html=1;align=left;verticalAlign=top;fontStyle=1;fontFamily=Tahoma;fontSize=13;" vertex="1" parent="1">
+                    <mxGeometry x="10" y="6" width="1200" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-F1" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="118" y="938" width="1124" height="782" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-FT2" value="[ยืนยันการเปลี่ยนสถานะ]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="168" y="939" width="1064" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-FS3" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#4F5D75;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="118" y="1543" as="sourcePoint"/>
+                        <mxPoint x="1242" y="1543" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-FST4" value="[Exception 6a ยกเลิกก่อนยืนยัน]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="126" y="1545" width="1108" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-F5" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="814" y="1195" width="412" height="132" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-FT6" value="[สถานะใหม่เป็น กำลังศึกษา หรือ มอบตัวเสร็จสิ้น]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="864" y="1196" width="352" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-F7" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="134" y="1736" width="1092" height="427" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-FT8" value="[Alt Flow 7a ย้อนกลับการเปลี่ยนสถานะ]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="184" y="1737" width="1032" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-F9" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="118" y="2179" width="1124" height="708" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-FT10" value="[Alt Flow B บันทึกคะแนนสอบ]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="168" y="2180" width="1064" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-F11" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="134" y="2362" width="1092" height="501" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-FT12" value="[กรอกคะแนนครบถ้วน]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="184" y="2363" width="1032" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-FS13" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#4F5D75;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="134" y="2671" as="sourcePoint"/>
+                        <mxPoint x="1226" y="2671" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-FST14" value="[Exception B1a กรอกคะแนนไม่ครบถ้วน]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="142" y="2673" width="1076" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-adm-03-M15" value="เลือกกลุ่มผู้สมัครตามขั้นตอนของการคัดเลือก" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="213" as="sourcePoint"/>
+                        <mxPoint x="510" y="213" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M16" value="GET /api/admission/applicants" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="272" as="sourcePoint"/>
+                        <mxPoint x="850" y="272" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M17" value="อ่านรายการผู้สมัครในเฟสที่เลือก" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="331" as="sourcePoint"/>
+                        <mxPoint x="1190" y="331" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M18" value="รายการผู้สมัคร" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="390" as="sourcePoint"/>
+                        <mxPoint x="850" y="390" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M19" value="รายการผู้สมัคร" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="449" as="sourcePoint"/>
+                        <mxPoint x="510" y="449" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M20" value="แสดงรายการผู้สมัครในขั้นตอนนั้น" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="508" as="sourcePoint"/>
+                        <mxPoint x="170" y="508" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M21" value="เลือกผู้สมัครหนึ่งรายหรือหลายราย&lt;br&gt;และระบุสถานะใหม่" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="582" as="sourcePoint"/>
+                        <mxPoint x="510" y="582" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M22" value="POST&lt;br&gt;/api/admission/applicants/status-changes/preview" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="656" as="sourcePoint"/>
+                        <mxPoint x="850" y="656" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M23" value="อ่านผู้สมัครที่เลือก&lt;br&gt;และตรวจว่ารายใดจะถูกย้ายไปเฟสอื่น" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="730" as="sourcePoint"/>
+                        <mxPoint x="1190" y="730" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M24" value="ข้อมูลผู้สมัครที่เลือก" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="789" as="sourcePoint"/>
+                        <mxPoint x="850" y="789" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M25" value="รายละเอียดการเปลี่ยนแปลง&lt;br&gt;รวมผู้ที่จะถูกย้ายเฟส" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="863" as="sourcePoint"/>
+                        <mxPoint x="510" y="863" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M26" value="แสดงรายละเอียดให้ตรวจก่อนยืนยัน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="922" as="sourcePoint"/>
+                        <mxPoint x="170" y="922" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M27" value="ยืนยันการเปลี่ยนสถานะ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="1031" as="sourcePoint"/>
+                        <mxPoint x="510" y="1031" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M28" value="POST&lt;br&gt;/api/admission/applicants/status-changes" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1105" as="sourcePoint"/>
+                        <mxPoint x="850" y="1105" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M29" value="บันทึกสถานะใหม่ ย้ายเฟสอัตโนมัติ&lt;br&gt;และเก็บชุดรายการไว้สำหรับย้อนกลับ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1179" as="sourcePoint"/>
+                        <mxPoint x="1190" y="1179" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M30" value="ออกรหัสนักเรียนตาม BR-02&lt;br&gt;และเพิ่มเข้าทะเบียนนักเรียน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1303" as="sourcePoint"/>
+                        <mxPoint x="1190" y="1303" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M31" value="บันทึกแล้ว" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="1386" as="sourcePoint"/>
+                        <mxPoint x="850" y="1386" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M32" value="ผลการดำเนินการ และรหัสของชุดรายการ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1445" as="sourcePoint"/>
+                        <mxPoint x="510" y="1445" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M33" value="แจ้งผล&lt;br&gt;และแสดงตัวเลือกย้อนกลับรายการ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1519" as="sourcePoint"/>
+                        <mxPoint x="170" y="1519" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M34" value="ยกเลิกรายการ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="1622" as="sourcePoint"/>
+                        <mxPoint x="510" y="1622" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M35" value="ไม่เปลี่ยนสถานะใด ๆ&lt;br&gt;(ทำในเบราว์เซอร์ ไม่เรียก API)" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1696" as="sourcePoint"/>
+                        <mxPoint x="170" y="1696" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M36" value="เลือกย้อนกลับรายการภายในระยะเวลาที่กำหนด" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="1829" as="sourcePoint"/>
+                        <mxPoint x="510" y="1829" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M37" value="POST&lt;br&gt;/api/admission/applicants/status-changes/:id/revert" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1903" as="sourcePoint"/>
+                        <mxPoint x="850" y="1903" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M38" value="คืนค่าสถานะเดิมให้ผู้สมัครทุกรายในชุดรายการนั้น" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1962" as="sourcePoint"/>
+                        <mxPoint x="1190" y="1962" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M39" value="คืนค่าแล้ว" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="2021" as="sourcePoint"/>
+                        <mxPoint x="850" y="2021" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M40" value="ผลการย้อนกลับ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2080" as="sourcePoint"/>
+                        <mxPoint x="510" y="2080" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M41" value="แจ้งผลการย้อนกลับ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="2139" as="sourcePoint"/>
+                        <mxPoint x="170" y="2139" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M42" value="กรอกคะแนนดิบและคะแนนเฉลี่ยสะสมของผู้สมัคร" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="2272" as="sourcePoint"/>
+                        <mxPoint x="510" y="2272" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M43" value="PUT&lt;br&gt;/api/admission/applicants/:id/exam-scores" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="2346" as="sourcePoint"/>
+                        <mxPoint x="850" y="2346" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M44" value="บันทึกคะแนน&lt;br&gt;โดยไม่เปลี่ยนสถานะผู้สมัคร" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2470" as="sourcePoint"/>
+                        <mxPoint x="1190" y="2470" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M45" value="บันทึกแล้ว" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="2529" as="sourcePoint"/>
+                        <mxPoint x="850" y="2529" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M46" value="บันทึกคะแนนสำเร็จ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2588" as="sourcePoint"/>
+                        <mxPoint x="510" y="2588" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M47" value="แสดงคะแนนในรายละเอียดผู้สมัคร" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="2647" as="sourcePoint"/>
+                        <mxPoint x="170" y="2647" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M48" value="ปฏิเสธการบันทึก&lt;br&gt;ระบุช่องที่ยังไม่กรอก" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2765" as="sourcePoint"/>
+                        <mxPoint x="510" y="2765" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-adm-03-M49" value="แจ้งเตือนว่ากรอกคะแนนไม่ครบ&lt;br&gt;ยังไม่บันทึก" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="2839" as="sourcePoint"/>
+                        <mxPoint x="170" y="2839" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="uc-reg-04" name="UC-REG-04 ย้ายห้อง เลื่อนชั้น">
+        <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1550" pageHeight="3442" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="uc-reg-04-L-actor" value="ฝ่ายทะเบียน" style="shape=umlLifeline;participant=umlActor;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;verticalAlign=top;spacingTop=40;outlineConnect=0;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="155" y="40" width="30" height="3342" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-L-web" value="หน้าเว็บ&lt;br&gt;(Next.js)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#DDEBF7;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="425" y="40" width="170" height="3342" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-L-svc" value="Service ทีม B&lt;br&gt;(FastAPI)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#E2F0D9;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="765" y="40" width="170" height="3342" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-L-db" value="ฐานข้อมูล&lt;br&gt;(PostgreSQL)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=60;fillColor=#FCE4D6;strokeColor=#4F5D75;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="1105" y="40" width="170" height="3342" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-title" value="UC-REG-04 ย้ายห้องเรียน เลื่อนชั้นนักเรียน (ตารางที่ 3.9)" style="text;html=1;align=left;verticalAlign=top;fontStyle=1;fontFamily=Tahoma;fontSize=13;" vertex="1" parent="1">
+                    <mxGeometry x="10" y="6" width="1200" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-F1" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="134" y="983" width="1092" height="590" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-FT2" value="[ยืนยันการเลื่อนชั้น]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="184" y="984" width="1032" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-FS3" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#4F5D75;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="134" y="1455" as="sourcePoint"/>
+                        <mxPoint x="1226" y="1455" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-FST4" value="[Exception 5a ยกเว้นนักเรียนทั้งหมด ไม่มีรายชื่อที่ต้องเลื่อนชั้น]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="142" y="1457" width="1076" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-F5" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="134" y="1589" width="752" height="457" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-FT6" value="[Alt Flow 1a เลื่อนชั้นเฉพาะนักเรียนที่เลือก]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="184" y="1590" width="692" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-F7" value="opt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="118" y="2062" width="1124" height="1284" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-FT8" value="[Alt Flow B ย้ายห้องเรียนภายในระดับชั้นเดียวกัน]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="168" y="2063" width="1064" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-F9" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=44;height=22;fillColor=none;strokeColor=#4F5D75;fontStyle=1;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="134" y="2585" width="1092" height="737" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-FT10" value="[ทุกคนอยู่ระดับชั้นเดียวกัน]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="184" y="2586" width="1032" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-FS11" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#4F5D75;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="134" y="3145" as="sourcePoint"/>
+                        <mxPoint x="1226" y="3145" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-FST12" value="[Exception B1a เลือกนักเรียนข้ามระดับชั้น]" style="text;html=1;align=left;verticalAlign=middle;fontStyle=2;fontFamily=Tahoma;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="142" y="3147" width="1076" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="uc-reg-04-M13" value="เลือกคำสั่งเลื่อนชั้นเรียนและบันทึกการสำเร็จการศึกษา" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="213" as="sourcePoint"/>
+                        <mxPoint x="510" y="213" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M14" value="GET /api/admission/students" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="272" as="sourcePoint"/>
+                        <mxPoint x="850" y="272" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M15" value="อ่านนักเรียนที่มีสถานะ กำลังศึกษา&lt;br&gt;ทั้งหมด" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="346" as="sourcePoint"/>
+                        <mxPoint x="1190" y="346" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M16" value="รายชื่อนักเรียน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="405" as="sourcePoint"/>
+                        <mxPoint x="850" y="405" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M17" value="รายชื่อนักเรียนที่กำลังศึกษา" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="464" as="sourcePoint"/>
+                        <mxPoint x="510" y="464" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M18" value="แสดงรายชื่อตั้งต้น&lt;br&gt;กำหนดให้เลื่อนชั้นโดยปริยายตาม&lt;br&gt;BR-06" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="553" as="sourcePoint"/>
+                        <mxPoint x="170" y="553" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M19" value="ตรวจรายชื่อ&lt;br&gt;และยกเว้นเฉพาะนักเรียนที่ไม่ผ่านเกณฑ์" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="627" as="sourcePoint"/>
+                        <mxPoint x="510" y="627" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M20" value="POST&lt;br&gt;/api/admission/students/promotions/preview" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="701" as="sourcePoint"/>
+                        <mxPoint x="850" y="701" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M21" value="อ่านนักเรียนที่เหลือ&lt;br&gt;และคำนวณชั้นใหม่กับผู้สำเร็จการศึกษา" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="775" as="sourcePoint"/>
+                        <mxPoint x="1190" y="775" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M22" value="ข้อมูลนักเรียน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="834" as="sourcePoint"/>
+                        <mxPoint x="850" y="834" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M23" value="สรุปจำนวนเลื่อนชั้น สำเร็จการศึกษา&lt;br&gt;และถูกยกเว้น" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="908" as="sourcePoint"/>
+                        <mxPoint x="510" y="908" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M24" value="แสดงสรุปให้ตรวจก่อนยืนยัน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="967" as="sourcePoint"/>
+                        <mxPoint x="170" y="967" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M25" value="ยืนยันการดำเนินการ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="1076" as="sourcePoint"/>
+                        <mxPoint x="510" y="1076" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M26" value="POST&lt;br&gt;/api/admission/students/promotions" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1150" as="sourcePoint"/>
+                        <mxPoint x="850" y="1150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M27" value="ปรับชั้น และห้อง ของผู้เลื่อนชั้น&lt;br&gt;บันทึก สำเร็จการศึกษา&lt;br&gt;ให้ชั้นปีสุดท้ายตาม BR-07&lt;br&gt;พร้อมประวัติ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1254" as="sourcePoint"/>
+                        <mxPoint x="1190" y="1254" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M28" value="บันทึกแล้ว" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="1313" as="sourcePoint"/>
+                        <mxPoint x="850" y="1313" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M29" value="ผลสำเร็จพร้อมจำนวนที่ดำเนินการ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1372" as="sourcePoint"/>
+                        <mxPoint x="510" y="1372" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M30" value="แจ้งผลสำเร็จ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1431" as="sourcePoint"/>
+                        <mxPoint x="170" y="1431" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M31" value="แจ้งเตือนว่าไม่มีรายชื่อที่ต้องเลื่อนชั้น&lt;br&gt;ไม่ดำเนินการต่อ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1549" as="sourcePoint"/>
+                        <mxPoint x="170" y="1549" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M32" value="เลือกนักเรียนบางส่วนจากรายการทะเบียน&lt;br&gt;แล้วสั่งเลื่อนชั้น" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="1697" as="sourcePoint"/>
+                        <mxPoint x="510" y="1697" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M33" value="POST&lt;br&gt;/api/admission/students/promotions/preview" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1771" as="sourcePoint"/>
+                        <mxPoint x="850" y="1771" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M34" value="สรุปของกลุ่มที่เลือก" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="1830" as="sourcePoint"/>
+                        <mxPoint x="510" y="1830" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M35" value="ยืนยัน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="1889" as="sourcePoint"/>
+                        <mxPoint x="510" y="1889" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M36" value="POST&lt;br&gt;/api/admission/students/promotions" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="1963" as="sourcePoint"/>
+                        <mxPoint x="850" y="1963" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M37" value="ผลสำเร็จ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2022" as="sourcePoint"/>
+                        <mxPoint x="510" y="2022" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M38" value="เลือกย้ายห้อง&lt;br&gt;แบบยกทั้งห้องหรือเฉพาะนักเรียนที่เลือก" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="2170" as="sourcePoint"/>
+                        <mxPoint x="510" y="2170" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M39" value="GET /api/admission/classrooms" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="2229" as="sourcePoint"/>
+                        <mxPoint x="850" y="2229" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M40" value="รายการห้องเรียนในระดับชั้นนั้น" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2288" as="sourcePoint"/>
+                        <mxPoint x="510" y="2288" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M41" value="ระบุห้องเรียนปลายทาง" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="2347" as="sourcePoint"/>
+                        <mxPoint x="510" y="2347" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M42" value="POST&lt;br&gt;/api/admission/students/room-transfers/preview" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="2421" as="sourcePoint"/>
+                        <mxPoint x="850" y="2421" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M43" value="อ่านนักเรียนที่เลือก&lt;br&gt;และตรวจว่าอยู่ระดับชั้นเดียวกันตาม&lt;br&gt;BR-05" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2510" as="sourcePoint"/>
+                        <mxPoint x="1190" y="2510" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M44" value="ข้อมูลนักเรียน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="2569" as="sourcePoint"/>
+                        <mxPoint x="850" y="2569" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M45" value="สรุปการเปลี่ยนแปลงห้อง" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2678" as="sourcePoint"/>
+                        <mxPoint x="510" y="2678" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M46" value="แสดงสรุปให้ตรวจก่อนยืนยัน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="2737" as="sourcePoint"/>
+                        <mxPoint x="170" y="2737" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M47" value="ยืนยันการย้ายห้อง" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="170" y="2796" as="sourcePoint"/>
+                        <mxPoint x="510" y="2796" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M48" value="POST&lt;br&gt;/api/admission/students/room-transfers" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="2870" as="sourcePoint"/>
+                        <mxPoint x="850" y="2870" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M49" value="บันทึกห้องใหม่ให้นักเรียน&lt;br&gt;และนับรวมยอดห้องปลายทาง" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="2944" as="sourcePoint"/>
+                        <mxPoint x="1190" y="2944" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M50" value="บันทึกแล้ว" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1190" y="3003" as="sourcePoint"/>
+                        <mxPoint x="850" y="3003" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M51" value="ผลสำเร็จ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="3062" as="sourcePoint"/>
+                        <mxPoint x="510" y="3062" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M52" value="แจ้งผลการย้ายห้อง" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="3121" as="sourcePoint"/>
+                        <mxPoint x="170" y="3121" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M53" value="ปฏิเสธการทำรายการ" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850" y="3224" as="sourcePoint"/>
+                        <mxPoint x="510" y="3224" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="uc-reg-04-M54" value="แจ้งว่าเมนูนี้ย้ายได้เฉพาะภายในระดับชั้นเดียวกัน&lt;br&gt;ให้ใช้เมนูเลื่อนชั้นแทน" style="html=1;verticalAlign=bottom;endArrow=block;endFill=1;curved=0;rounded=0;fontFamily=Tahoma;fontSize=11;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="510" y="3298" as="sourcePoint"/>
+                        <mxPoint x="170" y="3298" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
