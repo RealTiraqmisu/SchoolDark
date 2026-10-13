@@ -1,9 +1,15 @@
 <mxfile host="65bd71144e">
     <diagram name="System Architecture" id="sd-arch-lr">
-        <mxGraphModel dx="1272" dy="645" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
+        <mxGraphModel dx="967" dy="375" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
+                <mxCell id="be" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="620" width="1130" x="340" y="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="Ae2aHEi4SgtzmzrH2gXE-9" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=light-dark(#FF9933,#FF9933);fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="490" width="790" x="650" y="150" as="geometry"/>
+                </mxCell>
                 <mxCell id="cl_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=16;fontColor=#8DB4E2;fontStyle=1;fontFamily=Arial;" value="CLIENT APPS" vertex="1">
                     <mxGeometry height="30" width="190" x="70" y="102.5" as="geometry"/>
                 </mxCell>
@@ -21,7 +27,7 @@
                         <mxPoint x="165" y="572.5" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e_cl_id" edge="1" parent="1" source="cl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=-0.001;entryY=0.398;entryDx=0;entryDy=0;entryPerimeter=0;" target="gw" value="HTTPS /&lt;br&gt;REST API">
+                <mxCell id="e_cl_id" edge="1" parent="1" source="cl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.45;exitDx=0;exitDy=0;entryX=-0.001;entryY=0.398;entryDx=0;entryDy=0;entryPerimeter=0;" target="gw" value="HTTPS">
                     <mxGeometry relative="1" x="0.0088" as="geometry">
                         <mxPoint as="offset"/>
                         <mxPoint x="217.72" y="260" as="sourcePoint"/>
@@ -30,9 +36,6 @@
                 </mxCell>
                 <mxCell id="be_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=16;fontColor=#8DB4E2;fontStyle=1;fontFamily=Arial;" value="BACKEND" vertex="1">
                     <mxGeometry height="30" width="1090" x="380" y="40" as="geometry"/>
-                </mxCell>
-                <mxCell id="be" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;" value="" vertex="1">
-                    <mxGeometry height="600" width="1130" x="340" y="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="gw_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=13;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="API GATEWAY" vertex="1">
                     <mxGeometry height="45" width="190" x="380" y="100" as="geometry"/>
@@ -55,14 +58,14 @@
                 <mxCell id="ds_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DEPLOYMENT SERVER" vertex="1">
                     <mxGeometry height="30" width="260" x="960" y="105" as="geometry"/>
                 </mxCell>
-                <mxCell id="ds_f" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#F4A261;fontStyle=0;fontFamily=Arial;" value="HOST MACHINE&lt;br&gt;(VM หลัก)" vertex="1">
-                    <mxGeometry height="40" width="200" x="940" y="620" as="geometry"/>
+                <mxCell id="ds_f" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#F4A261;fontStyle=0;fontFamily=Arial;" value="HOST MACHINE" vertex="1">
+                    <mxGeometry height="40" width="200" x="940" y="650" as="geometry"/>
                 </mxCell>
                 <mxCell id="dk_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DOCKER CONTAINER" vertex="1">
                     <mxGeometry height="40" width="330" x="640" y="162" as="geometry"/>
                 </mxCell>
                 <mxCell id="dk" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#8FA8F5;fontFamily=Arial;" value="" vertex="1">
-                    <mxGeometry height="370" width="240" x="679" y="210" as="geometry"/>
+                    <mxGeometry height="410" width="260" x="679" y="210" as="geometry"/>
                 </mxCell>
                 <mxCell id="sa" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="" vertex="1">
                     <mxGeometry height="90" width="220" x="689" y="225" as="geometry"/>
@@ -74,24 +77,24 @@
                     <mxGeometry height="40" width="118" x="771" y="263" as="geometry"/>
                 </mxCell>
                 <mxCell id="sb" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="" vertex="1">
-                    <mxGeometry height="90" width="220" x="689" y="350" as="geometry"/>
+                    <mxGeometry height="90" width="220" x="689" y="370" as="geometry"/>
                 </mxCell>
                 <mxCell id="sb_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="SERVICE B · TEAM B" vertex="1">
-                    <mxGeometry height="22" width="130" x="771" y="362" as="geometry"/>
+                    <mxGeometry height="22" width="130" x="771" y="382" as="geometry"/>
                 </mxCell>
                 <mxCell id="sb_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="ระบบงานทะเบียน &amp; IAM&lt;br&gt;FASTAPI (PYTHON)" vertex="1">
-                    <mxGeometry height="40" width="105" x="771" y="388" as="geometry"/>
+                    <mxGeometry height="40" width="105" x="771" y="408" as="geometry"/>
                 </mxCell>
                 <mxCell id="sc" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="" vertex="1">
-                    <mxGeometry height="90" width="220" x="689" y="475" as="geometry"/>
+                    <mxGeometry height="90" width="220" x="689" y="520" as="geometry"/>
                 </mxCell>
                 <mxCell id="sc_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="SERVICE C · TEAM C" vertex="1">
-                    <mxGeometry height="22" width="140" x="771" y="487" as="geometry"/>
+                    <mxGeometry height="22" width="140" x="771" y="532" as="geometry"/>
                 </mxCell>
                 <mxCell id="sc_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="ระบบงานแนะแนว&lt;br&gt;FASTAPI (PYTHON)" vertex="1">
-                    <mxGeometry height="40" width="130" x="771" y="513" as="geometry"/>
+                    <mxGeometry height="40" width="130" x="771" y="558" as="geometry"/>
                 </mxCell>
-                <mxCell id="e_rt_sa" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.09999999999999998;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="sa" value="JSON&lt;br&gt;/api/academic">
+                <mxCell id="e_rt_sa" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.09999999999999998;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="sa" value="/api/academic">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="610" y="409"/>
@@ -99,26 +102,43 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e_rt_sb" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;entryX=0;entryY=0.5;exitDx=0;exitDy=0;" target="sb" value="JSON&lt;br&gt;/api/admission">
-                    <mxGeometry relative="1" x="0.0132" as="geometry">
+                <mxCell id="e_rt_sb" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" value="/api/admission">
+                    <mxGeometry relative="1" x="0.1737" as="geometry">
                         <mxPoint as="offset"/>
                         <Array as="points">
                             <mxPoint x="550" y="480"/>
                             <mxPoint x="620" y="480"/>
-                            <mxPoint x="620" y="395"/>
+                            <mxPoint x="620" y="410"/>
+                            <mxPoint x="670" y="409.4"/>
                         </Array>
+                        <mxPoint x="690" y="410" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e_rt_sc" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.75;entryX=0;entryY=0.5;exitDx=0;exitDy=0;" target="sc" value="JSON&lt;br&gt;/api/support">
+                <mxCell id="e_rt_sc" edge="1" parent="1" source="gw_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.75;entryX=0;entryY=0.5;exitDx=0;exitDy=0;" target="sc" value="/api/support">
                     <mxGeometry relative="1" x="-0.0997" y="-5" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="e_ab" edge="1" parent="1" source="sa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=0.85;exitY=1;entryX=0.85;entryY=0;" target="sb" value="JSON (ยืนยันสิทธิ์)">
+                <mxCell id="e_ab" edge="1" parent="1" source="sa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=0.85;exitY=1;entryX=0.85;entryY=0;" target="sb" value="ยืนยันสิทธิ์">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="e_cb" edge="1" parent="1" source="sc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=0.85;exitY=0;entryX=0.85;entryY=1;" target="sb" value="JSON (ยืนยันสิทธิ์)">
+                <mxCell id="e_cb" edge="1" parent="1" source="sc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=0.85;exitY=0;entryX=0.85;entryY=1;" target="sb" value="ยืนยันสิทธิ์">
                     <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_data_ab" edge="1" parent="1" source="sa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeColor=#2B8A3E;strokeWidth=1.5;dashed=1;dashPattern=6 3;fontSize=10;fontStyle=1;fontColor=#2B8A3E;labelBackgroundColor=#FFFFFF;fontFamily=Arial;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" target="sb" value="ขอข้อมูล">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_data_bc" edge="1" parent="1" source="sb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeColor=#2B8A3E;strokeWidth=1.5;dashed=1;dashPattern=6 3;fontSize=10;fontStyle=1;fontColor=#2B8A3E;labelBackgroundColor=#FFFFFF;fontFamily=Arial;exitX=0.3;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" target="sc" value="&lt;span style=&quot;color: rgb(43, 138, 62);&quot;&gt;ขอข้อมูล&lt;/span&gt;">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_data_ac" edge="1" parent="1" source="sa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeColor=#2B8A3E;strokeWidth=1.5;dashed=1;dashPattern=6 3;fontSize=10;fontStyle=1;fontColor=#2B8A3E;labelBackgroundColor=#FFFFFF;fontFamily=Arial;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="sc" value="&lt;span style=&quot;color: rgb(43, 138, 62);&quot;&gt;ขอข้อมูล&lt;/span&gt;">
+                    <mxGeometry relative="1" x="0.3172" y="3" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="927" y="270.26"/>
+                            <mxPoint x="927" y="564.7"/>
+                        </Array>
+                    </mxGeometry>
                 </mxCell>
                 <mxCell id="db_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DATABASE" vertex="1">
                     <mxGeometry height="30" width="390" x="1036" y="167" as="geometry"/>
@@ -129,59 +149,61 @@
                 <mxCell id="db_n" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="POSTGRESQL" vertex="1">
                     <mxGeometry height="25" width="105" x="1041" y="325" as="geometry"/>
                 </mxCell>
-                <mxCell id="s_a" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: academic&lt;br&gt;(สิทธิ์เฉพาะ Team A)" vertex="1">
+                <mxCell id="s_a" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: academic&lt;br&gt;(Owner: Team A)" vertex="1">
                     <mxGeometry height="48" width="240" x="1166" y="228" as="geometry"/>
                 </mxCell>
-                <mxCell id="s_b" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: admission&lt;br&gt;(สิทธิ์เฉพาะ Team B)" vertex="1">
+                <mxCell id="s_b" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: admission&lt;br&gt;(&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Owner:&amp;nbsp;&lt;/span&gt;Team B)" vertex="1">
                     <mxGeometry height="48" width="240" x="1166" y="285" as="geometry"/>
                 </mxCell>
-                <mxCell id="s_c" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: support&lt;br&gt;(สิทธิ์เฉพาะ Team C)" vertex="1">
+                <mxCell id="s_c" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;fontSize=10;" value="SCHEMA: support&lt;br&gt;(&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Owner:&amp;nbsp;&lt;/span&gt;Team C)" vertex="1">
                     <mxGeometry height="48" width="240" x="1166" y="342" as="geometry"/>
                 </mxCell>
-                <mxCell id="e_db" edge="1" parent="1" source="dk" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.25;entryX=-0.007;entryY=0.466;exitDx=0;exitDy=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="db" value="SQL&lt;br&gt;(READ / WRITE)">
+                <mxCell id="e_db" edge="1" parent="1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;entryX=-0.007;entryY=0.466;entryDx=0;entryDy=0;entryPerimeter=0;" target="db" value="SQL&lt;br&gt;(READ / WRITE)">
                     <mxGeometry relative="1" x="0.0306" y="-17" as="geometry">
                         <mxPoint as="offset"/>
+                        <mxPoint x="939" y="303.2" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="sh_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="SHARED RESOURCES" vertex="1">
-                    <mxGeometry height="30" width="390" x="1036" y="425" as="geometry"/>
+                    <mxGeometry height="30" width="390" x="1036" y="440" as="geometry"/>
                 </mxCell>
                 <mxCell id="sh" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;strokeWidth=1.5;" value="" vertex="1">
-                    <mxGeometry height="120" width="390" x="1031" y="455" as="geometry"/>
+                    <mxGeometry height="120" width="390" x="1031" y="490" as="geometry"/>
                 </mxCell>
                 <mxCell id="mi_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="MINIO" vertex="1">
-                    <mxGeometry height="22" width="100" x="1116" y="489" as="geometry"/>
+                    <mxGeometry height="22" width="100" x="1116" y="524" as="geometry"/>
                 </mxCell>
                 <mxCell id="mi_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="เก็บไฟล์แนบ/รูปภาพ" vertex="1">
-                    <mxGeometry height="30" width="100" x="1116" y="513" as="geometry"/>
+                    <mxGeometry height="30" width="100" x="1116" y="548" as="geometry"/>
                 </mxCell>
                 <mxCell id="rd_n" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=12;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="REDIS &amp; CELERY" vertex="1">
-                    <mxGeometry height="22" width="130" x="1291" y="489" as="geometry"/>
+                    <mxGeometry height="22" width="130" x="1291" y="524" as="geometry"/>
                 </mxCell>
                 <mxCell id="rd_d" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontStyle=0;fontFamily=Arial;" value="ประมวลผลพื้นหลัง" vertex="1">
-                    <mxGeometry height="30" width="130" x="1291" y="513" as="geometry"/>
+                    <mxGeometry height="30" width="130" x="1291" y="548" as="geometry"/>
                 </mxCell>
-                <mxCell id="e_sh" edge="1" parent="1" source="dk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1.002;exitY=0.824;entryX=0;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="sh" value="FILE / TASK QUEUE">
-                    <mxGeometry relative="1" x="-0.0044" y="-15" as="geometry">
-                        <mxPoint as="offset"/>
+                <mxCell id="e_sh" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Sarabun;fontSize=12;fontSize=11;labelBackgroundColor=#FFFFFF;entryX=0;entryY=0.5;" target="sh" value="FILE /&lt;div&gt;TASK QUEUE&lt;/div&gt;">
+                    <mxGeometry relative="1" x="-0.1148" y="-20" as="geometry">
+                        <mxPoint x="1" as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="939.5" y="550"/>
+                        </Array>
+                        <mxPoint x="939.5" y="550" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
                 <UserObject label="&#xa;&lt;img src=&quot;https://cdn.prod.website-files.com/681c8426519d8db8f867c1e8/68821329161290c2dce9073b_MINIO_wordmark.svg&quot; alt=&quot;Understand the guidelines for using MinIO&#39;s marks - MinIO&quot;&gt;&#xa;&#xa;" link="&#xa;&lt;img src=&quot;https://cdn.prod.website-files.com/681c8426519d8db8f867c1e8/68821329161290c2dce9073b_MINIO_wordmark.svg&quot; alt=&quot;Understand the guidelines for using MinIO&#39;s marks - MinIO&quot;&gt;&#xa;&#xa;" id="ds">
                     <mxCell parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=4 4;strokeWidth=1.5;strokeColor=none;fontFamily=Arial;fontSize=11;" vertex="1">
-                        <mxGeometry height="40" width="51.66" x="1055.1699999999998" y="500" as="geometry"/>
+                        <mxGeometry height="40" width="51.66" x="1055.1699999999998" y="535" as="geometry"/>
                     </mxCell>
                 </UserObject>
-                <mxCell id="Ae2aHEi4SgtzmzrH2gXE-9" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=light-dark(#FF9933,#FF9933);fontFamily=Arial;" value="" vertex="1">
-                    <mxGeometry height="455" width="790" x="650" y="150" as="geometry"/>
-                </mxCell>
                 <UserObject label="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/redis.webp&quot; alt=&quot;Redis Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" link="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/redis.webp&quot; alt=&quot;Redis Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-2">
                     <mxCell parent="1" style="text;whiteSpace=wrap;html=1;imageWidth=29;imageHeight=29;" vertex="1">
-                        <mxGeometry height="40" width="34.79" x="1238.71" y="480.5" as="geometry"/>
+                        <mxGeometry height="40" width="34.79" x="1238.71" y="515.5" as="geometry"/>
                     </mxCell>
                 </UserObject>
                 <UserObject label="&lt;img src=&quot;https://products.containerize.com/message-queue-software/celery/menu_image.png&quot; alt=&quot;Celery | Most Widely Deployed Open Source Message Broker&quot;&gt;" link="&lt;img src=&quot;https://products.containerize.com/message-queue-software/celery/menu_image.png&quot; alt=&quot;Celery | Most Widely Deployed Open Source Message Broker&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-3">
                     <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
-                        <mxGeometry height="46" width="51.53" x="1230.23" y="500" as="geometry"/>
+                        <mxGeometry height="46" width="51.53" x="1230.23" y="535" as="geometry"/>
                     </mxCell>
                 </UserObject>
                 <UserObject label="&lt;img src=&quot;https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/960px-Postgresql_elephant.svg.png?utm_source=commons.wikimedia.org&amp;amp;utm_campaign=index&amp;amp;utm_content=thumbnail&amp;amp;_=20080116191800&quot; alt=&quot;File:Postgresql elephant.svg - Wikimedia Commons&quot;&gt;" link="&lt;img src=&quot;https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/960px-Postgresql_elephant.svg.png?utm_source=commons.wikimedia.org&amp;amp;utm_campaign=index&amp;amp;utm_content=thumbnail&amp;amp;_=20080116191800&quot; alt=&quot;File:Postgresql elephant.svg - Wikimedia Commons&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-4">
@@ -191,12 +213,12 @@
                 </UserObject>
                 <UserObject label="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" link="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-5">
                     <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
-                        <mxGeometry height="60" width="50.91" x="704.55" y="488" as="geometry"/>
+                        <mxGeometry height="60" width="50.91" x="704.55" y="533" as="geometry"/>
                     </mxCell>
                 </UserObject>
                 <UserObject label="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" link="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-6">
                     <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
-                        <mxGeometry height="60" width="50.91" x="704.54" y="363" as="geometry"/>
+                        <mxGeometry height="60" width="50.91" x="704.54" y="383" as="geometry"/>
                     </mxCell>
                 </UserObject>
                 <UserObject label="&lt;img src=&quot;https://static.cdnlogo.com/logos/f/49/fastapi.svg&quot; alt=&quot;FastAPI Logo PNG Vector SVG (236 bytes) Free Download&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-7">
@@ -223,7 +245,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Page-1" id="gQUkADZH2U-bxWxf6_56">
-        <mxGraphModel dx="1105" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1707" dy="983" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
