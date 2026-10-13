@@ -557,6 +557,11 @@
                                             <button class="view-mode-btn active" data-mode="table" onclick="setStaffListMode('table', this)">ตาราง</button>
                                             <button class="view-mode-btn" data-mode="calendar" onclick="setStaffListMode('calendar', this)">ปฏิทิน</button>
                                         </div>
+                                        <!-- Export ตามตัวกรองสถานะที่เลือกอยู่ (exportStaffLeaveExcel ใน index.js) — แบบเดียวกับปุ่ม Export ของตารางนักเรียน -->
+                                        <button class="btn btn-secondary btn-sm" onclick="exportStaffLeaveExcel()" title="ดาวน์โหลดรายการคำขอลาเป็นไฟล์ Excel">
+                                            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                                            Export
+                                        </button>
                                     </div>
                                 </div>
 
