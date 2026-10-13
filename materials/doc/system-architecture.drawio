@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="System Architecture" id="sd-arch-lr">
-        <mxGraphModel dx="1081" dy="419" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
+        <mxGraphModel dx="967" dy="375" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -58,7 +58,7 @@
                 <mxCell id="ds_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DEPLOYMENT SERVER" vertex="1">
                     <mxGeometry height="30" width="260" x="960" y="105" as="geometry"/>
                 </mxCell>
-                <mxCell id="ds_f" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#F4A261;fontStyle=0;fontFamily=Arial;" value="HOST MACHINE&lt;br&gt;(VM หลัก)" vertex="1">
+                <mxCell id="ds_f" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#F4A261;fontStyle=0;fontFamily=Arial;" value="HOST MACHINE" vertex="1">
                     <mxGeometry height="40" width="200" x="940" y="650" as="geometry"/>
                 </mxCell>
                 <mxCell id="dk_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DOCKER CONTAINER" vertex="1">
