@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="System Architecture" id="sd-arch-lr">
-        <mxGraphModel dx="1849" dy="559" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
+        <mxGraphModel dx="1272" dy="645" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -54,9 +54,6 @@
                 </mxCell>
                 <mxCell id="ds_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=14;fontColor=#000000;fontStyle=1;fontFamily=Arial;" value="DEPLOYMENT SERVER" vertex="1">
                     <mxGeometry height="30" width="260" x="960" y="105" as="geometry"/>
-                </mxCell>
-                <mxCell id="ds_i" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#BDBDBD;dashed=1;fontSize=9;fontColor=#9E9E9E;fontFamily=Arial;" value="ICON&lt;br&gt;Server" vertex="1">
-                    <mxGeometry height="45" width="50" x="1225" y="96" as="geometry"/>
                 </mxCell>
                 <mxCell id="ds_f" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=12;fontColor=#F4A261;fontStyle=0;fontFamily=Arial;" value="HOST MACHINE&lt;br&gt;(VM หลัก)" vertex="1">
                     <mxGeometry height="40" width="200" x="940" y="620" as="geometry"/>
@@ -226,7 +223,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Page-1" id="gQUkADZH2U-bxWxf6_56">
-        <mxGraphModel dx="1418" dy="679" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1105" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
