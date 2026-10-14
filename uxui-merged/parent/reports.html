@@ -98,13 +98,314 @@
         '</tbody></table></div>';
     }
 
+    /* ---- Chart.js (lazy-load เหมือน html2pdf ใน parent-export.js) ---- */
+
+    var CHARTJS_URL = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+    var chartJsPromise = null;
+    var charts = [];
+    var gradeCmp = 'room';
+    var drawToken = 0;
+
+    function loadChartJs() {
+      if (window.Chart) return Promise.resolve();
+      if (chartJsPromise) return chartJsPromise;
+      chartJsPromise = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = CHARTJS_URL;
+        script.onload = function () { resolve(); };
+        script.onerror = function () { chartJsPromise = null; reject(new Error('โหลด Chart.js ไม่สำเร็จ')); };
+        document.head.appendChild(script);
+      });
+      return chartJsPromise;
+    }
+
+    function destroyCharts() {
+      charts.forEach(function (c) { try { c.destroy(); } catch (e) {} });
+      charts = [];
+    }
+
+    // สีกราฟอ่านจาก tailwind-config.js (ถ้าอ่านไม่ได้ใช้ค่าเดียวกันแบบ fallback)
+    function chartColors() {
+      var primary = '#3e63dd';
+      try { primary = window.tailwind.config.theme.extend.colors.primary.DEFAULT || primary; } catch (e) {}
+      return { child: primary, avg: '#94a3b8' };
+    }
+
+    function getCmp() {
+      var m = /cmp=(room|plan|level|school)/.exec(location.hash);
+      return m ? m[1] : 'room';
+    }
+
+    var CMP_KEYS = ['room', 'plan', 'level', 'school'];
+    var HIST_BINS = ['1.0–1.5', '1.5–2.0', '2.0–2.5', '2.5–3.0', '3.0–3.5', '3.5–4.0'];
+
+    function histBinIndex(gpa) {
+      return Math.min(5, Math.max(0, Math.floor((gpa - 1) / 0.5)));
+    }
+
+    function topSubjects(record, n) {
+      return record.subjects.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, n);
+    }
+
+    function buildGradeSide(record, stats, gpax) {
+      var g = stats.groups[gradeCmp];
+      var child = Number(stats.childGpa), avg = Number(g.gpaAvg);
+      function barRow(name, val, barCls) {
+        var w = Math.max(0, Math.min(100, val / 4 * 100));
+        return '<div class="mt-2">' +
+          '<div class="flex items-center justify-between text-sm"><span>' + name + '</span>' +
+          '<span class="font-semibold">' + val.toFixed(2) + '</span></div>' +
+          '<div class="h-2 rounded-full bg-muted mt-1"><div class="h-2 rounded-full ' + barCls + '" style="width:' + w + '%"></div></div></div>';
+      }
+      var diff = Math.round((child - avg) * 100) / 100;
+      var diffHtml = diff > 0
+        ? '<div class="text-sm text-success mt-2">สูงกว่าค่าเฉลี่ย ' + diff.toFixed(2) + '</div>'
+        : diff < 0
+          ? '<div class="text-sm text-muted-foreground mt-2">ต่ำกว่าค่าเฉลี่ย ' + Math.abs(diff).toFixed(2) + '</div>'
+          : '<div class="text-sm text-muted-foreground mt-2">เท่ากับค่าเฉลี่ย</div>';
+      return '<div class="text-sm text-muted-foreground mb-1">GPAX สะสม</div>' +
+        '<div class="text-4xl font-bold text-primary">' + gpax + '</div>' +
+        '<hr class="border-border my-3">' +
+        '<div class="text-sm text-muted-foreground">GPA เทอมนี้</div>' +
+        '<div class="text-2xl font-bold text-card-foreground">' + stats.childGpa + '</div>' +
+        '<div class="text-sm text-muted-foreground mt-1">เทียบกับค่าเฉลี่ย' + ParentUI.escapeHtml(g.label) + '</div>' +
+        barRow('ของลูก', child, 'bg-primary') +
+        barRow('ค่าเฉลี่ย', avg, 'bg-slate-400') +
+        diffHtml;
+    }
+
+    function drawCharts(child, records, idx, mount) {
+      destroyCharts();
+      var token = ++drawToken;
+      var record = records[idx];
+      var stats = ParentStore.gradeStats(child.id, record.year, record.term);
+      if (!stats) { mount.innerHTML = ''; return; }
+      var g = stats.groups[gradeCmp];
+      var col = chartColors();
+      var binIdx = histBinIndex(stats.childGpa);
+      var showSubj = gradeCmp !== 'school';
+
+      mount.innerHTML =
+        '<div class="mb-4">' +
+        '<h4 class="text-sm font-semibold text-card-foreground mb-2">คะแนนรายวิชาเทียบค่าเฉลี่ย</h4>' +
+        (showSubj
+          ? '<div class="h-64"><canvas id="chart-subjects" aria-label="กราฟคะแนนรายวิชาเทียบค่าเฉลี่ย" role="img"></canvas></div>'
+          : '<div class="text-sm text-muted-foreground bg-muted rounded-lg p-4">เทียบรายวิชากับทั้งโรงเรียนไม่ได้ เพราะแต่ละระดับชั้นเรียนคนละวิชา — เลือกเทียบในห้อง/ในแผน/ทั้งระดับชั้น</div>') +
+        '</div>' +
+        '<div class="grid md:grid-cols-2 gap-4">' +
+        '<div><h4 class="text-sm font-semibold text-card-foreground mb-2">GPA แต่ละภาคเรียน</h4>' +
+        '<div class="h-64"><canvas id="chart-terms" aria-label="กราฟ GPA แต่ละภาคเรียน" role="img"></canvas></div></div>' +
+        '<div><h4 class="text-sm font-semibold text-card-foreground mb-2">ตำแหน่งในกลุ่ม</h4>' +
+        '<div class="h-56"><canvas id="chart-hist" aria-label="กราฟตำแหน่งในกลุ่ม" role="img"></canvas></div>' +
+        '<div class="text-sm text-muted-foreground mt-2">ลูกอยู่ช่อง ' + HIST_BINS[binIdx] + ' (GPA ' + stats.childGpa + ')</div></div>' +
+        '</div>';
+
+      loadChartJs().then(function () {
+        if (token !== drawToken || !document.body.contains(mount)) return;
+        var base = { animation: false, responsive: true, maintainAspectRatio: false };
+
+        if (showSubj) {
+          var avgMap = g.subjectAvg || {};
+          charts.push(new Chart(document.getElementById('chart-subjects'), {
+            type: 'bar',
+            data: {
+              labels: record.subjects.map(function (s) { return s.name; }),
+              datasets: [
+                { label: 'คะแนนของลูก', data: record.subjects.map(function (s) { return s.score; }), backgroundColor: col.child },
+                { label: 'ค่าเฉลี่ย' + g.label, data: record.subjects.map(function (s) { return avgMap[s.code]; }), backgroundColor: col.avg }
+              ]
+            },
+            options: Object.assign({}, base, {
+              scales: { y: { min: 0, max: 100 }, x: { ticks: { maxRotation: 60, minRotation: 0 } } },
+              plugins: {
+                legend: { position: 'bottom' },
+                tooltip: { callbacks: { footer: function (items) {
+                  if (!items.length) return '';
+                  var s = record.subjects[items[0].dataIndex];
+                  var diff = s.score - avgMap[s.code];
+                  return diff === 0 ? 'เท่าค่าเฉลี่ย' : (diff > 0 ? '+' : '') + diff + ' จากค่าเฉลี่ย';
+                } } }
+              }
+            })
+          }));
+        }
+
+        var labels = [], childData = [], avgData = [];
+        records.forEach(function (r) {
+          var st = ParentStore.gradeStats(child.id, r.year, r.term);
+          labels.push(r.year + '/' + r.term);
+          childData.push(st.childGpa);
+          avgData.push(st.groups[gradeCmp].gpaAvg);
+        });
+        charts.push(new Chart(document.getElementById('chart-terms'), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              { label: 'GPA ของลูก', data: childData, borderColor: col.child, backgroundColor: col.child, pointRadius: 5, tension: 0.2 },
+              { label: 'ค่าเฉลี่ย' + g.label, data: avgData, borderColor: col.avg, backgroundColor: col.avg, pointRadius: 5, tension: 0.2 }
+            ]
+          },
+          options: Object.assign({}, base, {
+            scales: { y: { min: 0, max: 4 } },
+            plugins: { legend: { position: 'bottom' } }
+          })
+        }));
+
+        var counts = [0, 0, 0, 0, 0, 0];
+        g.gpaList.forEach(function (v) { counts[histBinIndex(v)]++; });
+        charts.push(new Chart(document.getElementById('chart-hist'), {
+          type: 'bar',
+          data: {
+            labels: HIST_BINS,
+            datasets: [{
+              label: 'จำนวนนักเรียน',
+              data: counts,
+              backgroundColor: counts.map(function (_, i) { return i === binIdx ? col.child : col.avg; })
+            }]
+          },
+          options: Object.assign({}, base, {
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+            plugins: { legend: { display: false } }
+          })
+        }));
+      }).catch(function () {
+        if (token !== drawToken) return;
+        mount.innerHTML = '<div class="text-sm text-muted-foreground bg-muted rounded-lg p-4">โหลดกราฟไม่สำเร็จ (ต้องต่อเน็ตเพื่อโหลดไลบรารีกราฟ) — ตารางผลการเรียนยังใช้งานได้ตามปกติ</div>';
+      });
+    }
+
+    /* ---- การ์ดแชร์ผลการเรียน ---- */
+
+    function buildShareCardHtml(child, record, stats, showFullName) {
+      var esc = ParentUI.escapeHtml;
+      var name = showFullName
+        ? (child.prefix || '') + (child.firstName || '') + ' ' + (child.lastName || '')
+        : 'น้อง' + (child.nickname || child.firstName || '');
+      var roomPct = stats.groups.room.percentile;
+      var badges = [];
+      if (roomPct >= 50) badges.push('ท็อป ' + Math.max(1, 100 - roomPct) + '% ของห้อง');
+      var fours = record.subjects.filter(function (s) { return ParentStore.gradePoint(s.score) === 4; }).length;
+      if (fours >= 1) badges.push('ได้เกรด 4 จำนวน ' + fours + ' วิชา');
+      if (record.subjects.every(function (s) { return ParentStore.gradePoint(s.score) > 0; })) badges.push('ผ่านทุกวิชา');
+      badges = badges.slice(0, 3);
+
+      var bars = topSubjects(record, 6).map(function (s) {
+        var short = s.name.length > 14 ? s.name.slice(0, 14) + '…' : s.name;
+        return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
+          '<div style="width:112px;font-size:12px;color:#334155;white-space:nowrap;overflow:hidden;">' + esc(short) + '</div>' +
+          '<div style="flex:1;height:12px;background:#f1f3f9;border-radius:6px;overflow:hidden;">' +
+          '<div style="width:' + Math.min(100, s.score) + '%;height:100%;background:#3e63dd;border-radius:6px;"></div></div>' +
+          '<div style="width:28px;text-align:right;font-size:12px;font-weight:600;color:#0f172a;">' + s.score + '</div></div>';
+      }).join('');
+
+      return '<div style="padding:24px 28px 20px;background:linear-gradient(135deg,rgba(62,99,221,0.18),rgba(62,99,221,0.04));">' +
+        '<div style="font-size:12px;color:#64748b;">' + esc(ParentUI.schoolName()) + '</div>' +
+        '<div style="font-size:24px;font-weight:700;color:#0f172a;margin-top:4px;">' + esc(name) + '</div>' +
+        '<div style="font-size:13px;color:#475569;margin-top:2px;">' + esc(child.classroom) + ' · ปีการศึกษา ' + esc(record.year) + ' เทอม ' + record.term + '</div>' +
+        '<div style="font-size:48px;font-weight:700;color:#3e63dd;margin-top:10px;line-height:1.1;">GPA ' + stats.childGpa + '</div>' +
+        '</div>' +
+        '<div style="padding:16px 28px 0;">' +
+        (badges.length
+          ? '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">' + badges.map(function (b) {
+              return '<span style="background:#e8edfb;color:#2f51c7;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;">' + esc(b) + '</span>';
+            }).join('') + '</div>'
+          : '') +
+        '<div style="font-size:12px;color:#64748b;margin-bottom:8px;">วิชาที่ได้คะแนนสูงสุด</div>' +
+        bars +
+        '</div>' +
+        '<div style="position:absolute;left:28px;right:28px;bottom:16px;font-size:11px;color:#94a3b8;">สร้างจากพอร์ทัลผู้ปกครอง · ' + esc(ParentUI.fmtDate(ParentStore.today())) + '</div>';
+    }
+
+    function openShareDialog(child, record) {
+      var stats = ParentStore.gradeStats(child.id, record.year, record.term);
+      if (!stats) { ParentUI.toast('ไม่พบข้อมูลสำหรับสร้างการ์ด', 'error'); return; }
+
+      var html =
+        '<div class="flex flex-col min-h-0 max-h-[90vh]">' +
+        '<div class="flex items-center justify-between px-5 py-3 border-b border-border">' +
+        '<span id="share-title" class="font-semibold text-card-foreground">แชร์ผลการเรียน</span>' +
+        '<button type="button" data-dialog-close aria-label="ปิด" class="text-muted-foreground hover:text-card-foreground"><i data-lucide="x" class="w-5 h-5"></i></button>' +
+        '</div>' +
+        '<div id="share-body" class="overflow-auto p-5 flex flex-col gap-4">' +
+        '<div id="share-preview" class="mx-auto"><div id="share-card-wrap" style="overflow:hidden;">' +
+        '<div id="share-card" style="width:432px;height:540px;position:relative;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 1px 6px rgba(15,23,42,0.15);transform-origin:top left;"></div>' +
+        '</div></div>' +
+        '<label class="flex items-center gap-2 text-sm text-card-foreground"><input type="checkbox" id="share-fullname" class="w-4 h-4"> แสดงชื่อ-นามสกุลจริง</label>' +
+        '<div class="flex flex-wrap gap-2">' +
+        '<button type="button" data-save="png" class="bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium flex items-center gap-2"><i data-lucide="download" class="w-4 h-4"></i><span>บันทึกเป็นรูป PNG</span></button>' +
+        '<button type="button" data-save="jpg" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-4 py-2 text-sm font-medium flex items-center gap-2"><i data-lucide="image" class="w-4 h-4"></i><span>บันทึกเป็นรูป JPG</span></button>' +
+        '</div></div></div>';
+
+      var dialog = ParentUI.createDialog({
+        id: 'share-grades-modal',
+        labelledBy: 'share-title',
+        className: 'max-w-lg w-[calc(100%-2rem)] max-h-[90vh] flex flex-col',
+        html: html
+      });
+      var cardEl = dialog.querySelector('#share-card');
+      var wrap = dialog.querySelector('#share-card-wrap');
+      var preview = dialog.querySelector('#share-preview');
+      var body = dialog.querySelector('#share-body');
+      var chk = dialog.querySelector('#share-fullname');
+
+      function renderCard() { cardEl.innerHTML = buildShareCardHtml(child, record, stats, chk.checked); }
+
+      // ย่อเฉพาะ preview บนจอแคบ (การ์ดจริงยังเป็น 432x540 เสมอตอนบันทึก)
+      function fitScale() {
+        var avail = body.clientWidth - 40;
+        var sc = Math.max(0.3, Math.min(1, avail / 432));
+        cardEl.style.transform = sc < 1 ? 'scale(' + sc + ')' : 'none';
+        wrap.style.width = Math.round(432 * sc) + 'px';
+        wrap.style.height = Math.round(540 * sc) + 'px';
+        preview.style.width = wrap.style.width;
+      }
+      renderCard();
+      fitScale();
+      window.addEventListener('resize', fitScale);
+      dialog.addEventListener('close', function () { window.removeEventListener('resize', fitScale); });
+      chk.addEventListener('change', renderCard);
+
+      var busy = false;
+      dialog.querySelectorAll('[data-save]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (busy) return;
+          busy = true;
+          var type = btn.getAttribute('data-save');
+          var labelEl = btn.querySelector('span');
+          var origLabel = labelEl.textContent;
+          dialog.querySelectorAll('[data-save]').forEach(function (b) { b.disabled = true; });
+          labelEl.textContent = 'กำลังสร้างรูป…';
+          var prevTransform = cardEl.style.transform;
+          cardEl.style.transform = 'none';
+          var fname = 'ผลการเรียน-' + (child.nickname || child.firstName || child.id) + '-' + record.year + '-' + record.term;
+          var p;
+          try { p = window.ParentExport.saveImage(cardEl, fname, type); } catch (e) { p = Promise.reject(e); }
+          p.catch(function () {
+            ParentUI.toast('บันทึกรูปไม่สำเร็จ ลองใหม่อีกครั้ง', 'error');
+          }).then(function () {
+            cardEl.style.transform = prevTransform;
+            labelEl.textContent = origLabel;
+            dialog.querySelectorAll('[data-save]').forEach(function (b) { b.disabled = false; });
+            busy = false;
+          });
+        });
+      });
+
+      if (window.lucide) lucide.createIcons();
+    }
+
     function renderGradesTab(container, child) {
+      destroyCharts();
+      drawToken++;
       var records = (ParentStore.get('parent_grades') || {})[child.id] || [];
 
       if (!records.length) {
         container.innerHTML = '<div class="bg-card rounded-xl border border-border shadow-sm p-8 text-center text-muted-foreground">ยังไม่มีข้อมูลผลการเรียน</div>';
         return;
       }
+
+      gradeCmp = getCmp();
 
       var allSubjects = [];
       records.forEach(function (r) { allSubjects = allSubjects.concat(r.subjects); });
@@ -115,32 +416,79 @@
       }).join('');
 
       container.innerHTML =
-        '<div data-export-source="grades" class="flex flex-col md:flex-row gap-4">' +
+        '<div data-export-source="grades" class="flex flex-col gap-4">' +
+        '<div class="flex flex-col md:flex-row gap-4">' +
         '<div class="flex-1 bg-card rounded-xl border border-border shadow-sm p-5">' +
-        '<div class="flex items-center justify-between mb-4 gap-3 no-export">' +
+        '<div class="flex items-center justify-between mb-4 gap-3 flex-wrap no-export">' +
         '<select id="grade-select" aria-label="ปีการศึกษาและภาคเรียน" class="border border-border rounded-lg px-3 py-1.5 text-sm bg-card">' + options + '</select>' +
+        '<div class="flex items-center gap-2 flex-wrap">' +
+        '<button type="button" id="btn-share" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">' +
+        '<i data-lucide="share-2" class="w-4 h-4"></i><span>แชร์ผลการเรียน</span></button>' +
         '<button type="button" id="btn-print" class="border border-border text-card-foreground hover:bg-secondary rounded-lg px-3 py-1.5 text-sm flex items-center gap-2">' +
         '<i data-lucide="printer" class="w-4 h-4"></i><span>พิมพ์ / ดาวน์โหลด</span></button>' +
-        '</div>' +
+        '</div></div>' +
         '<div id="grade-table"></div>' +
         '</div>' +
-        '<div class="md:w-56 shrink-0 bg-card rounded-xl border border-border shadow-sm p-5 text-center">' +
-        '<div class="text-sm text-muted-foreground mb-1">GPAX สะสม</div>' +
-        '<div class="text-4xl font-bold text-primary">' + gpax + '</div>' +
+        '<div id="grade-side" class="md:w-56 shrink-0 bg-card rounded-xl border border-border shadow-sm p-5 text-left"></div>' +
+        '</div>' +
+        '<div class="bg-card rounded-xl border border-border shadow-sm p-5">' +
+        '<div class="flex items-center justify-between gap-3 flex-wrap mb-2">' +
+        '<h3 class="font-semibold text-card-foreground">เทียบกับเพื่อน</h3>' +
+        '<div id="cmp-chips" class="flex flex-wrap gap-2 no-export"></div>' +
+        '</div>' +
+        '<div id="cmp-caption" class="text-sm text-muted-foreground mb-3"></div>' +
+        '<div id="charts-mount"></div>' +
         '</div>' +
         '</div>';
 
       var select = document.getElementById('grade-select');
       var tableMount = document.getElementById('grade-table');
+      var sideMount = document.getElementById('grade-side');
+      var chipsMount = document.getElementById('cmp-chips');
+      var captionMount = document.getElementById('cmp-caption');
+      var chartsMount = document.getElementById('charts-mount');
+
+      function renderChips(stats) {
+        chipsMount.innerHTML = CMP_KEYS.map(function (k) {
+          var active = k === gradeCmp;
+          return '<button type="button" data-cmp="' + k + '" aria-pressed="' + (active ? 'true' : 'false') + '" class="px-3 py-1 rounded-full text-xs font-medium ' +
+            (active ? 'bg-primary text-primary-foreground' : 'border border-border hover:bg-secondary') + '">' +
+            ParentUI.escapeHtml(stats.groups[k].label) + '</button>';
+        }).join('');
+      }
 
       function renderSelected() {
         var idx = parseInt(select.value, 10);
-        tableMount.innerHTML = buildGradesTable(records[idx]);
+        var record = records[idx];
+        tableMount.innerHTML = buildGradesTable(record);
+        var stats = ParentStore.gradeStats(child.id, record.year, record.term);
+        if (!stats) { sideMount.innerHTML = ''; chartsMount.innerHTML = ''; return; }
+        sideMount.innerHTML = buildGradeSide(record, stats, gpax);
+        renderChips(stats);
+        captionMount.textContent = 'เทียบกับ: ' + stats.groups[gradeCmp].label + ' · ปีการศึกษา ' + record.year + ' เทอม ' + record.term;
+        drawCharts(child, records, idx, chartsMount);
       }
+
+      // เปลี่ยนกลุ่มเทียบ: อัปเดต URL ด้วย replaceState (ไม่ยิง hashchange) แล้ววาดเฉพาะส่วนเทียบใหม่
+      chipsMount.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-cmp]');
+        if (!btn) return;
+        var key = btn.getAttribute('data-cmp');
+        if (key === gradeCmp) return;
+        gradeCmp = key;
+        history.replaceState(null, '', '#tab=grades&cmp=' + key);
+        renderSelected();
+        var again = chipsMount.querySelector('[data-cmp="' + key + '"]');
+        if (again) again.focus();
+      });
 
       select.value = String(records.length - 1);
       renderSelected();
       select.addEventListener('change', renderSelected);
+
+      document.getElementById('btn-share').addEventListener('click', function () {
+        openShareDialog(child, records[parseInt(select.value, 10)]);
+      });
 
       // ปุ่มพิมพ์/ดาวน์โหลด ใช้โมดูลกลาง ParentExport (มี preview ก่อนเสมอ) แทน
       // window.print() ธรรมดา — ให้ตรงมาตรฐานเดียวกับ timetable.html/calendar.html
@@ -171,7 +519,23 @@
       return counts;
     }
 
-    function buildSummaryCards(records) {
+    function leaveQuotaTotal() {
+      return ParentStore.LEAVE_TYPES.reduce(function (sum, t) { return sum + t.quota; }, 0);
+    }
+
+    // อัตรามาเรียน = (มา + สาย) / วันทั้งหมด — สูตรเดียวกับ okCount ใน index.html
+    function buildBasisLine(records) {
+      var counts = summarize(records);
+      var total = records.length;
+      var dates = records.map(function (r) { return r.date; }).sort();
+      var rate = Math.round(((counts.present + counts.late) / total) * 100);
+      var rateCls = rate >= 90 ? 'text-success' : (rate >= 80 ? 'text-warning' : 'text-destructive');
+      return '<div class="text-sm text-muted-foreground mb-3">นับจากวันเรียนทั้งหมด <b>' + total + ' วัน</b> · ' +
+        ParentUI.escapeHtml(ParentUI.fmtDate(dates[0])) + ' – ' + ParentUI.escapeHtml(ParentUI.fmtDate(dates[dates.length - 1])) +
+        ' · อัตรามาเรียน <b class="' + rateCls + '">' + rate + '%</b> (รวมมาสาย)</div>';
+    }
+
+    function buildSummaryCards(records, child) {
       var counts = summarize(records);
       var total = records.length || 1;
       return '<div class="grid grid-cols-2 md:grid-cols-4 gap-3">' +
@@ -179,10 +543,17 @@
           var c = counts[st];
           var pct = ((c / total) * 100).toFixed(1);
           var color = ATT_COLOR[st];
+          var leaveExtra = st === 'leave'
+            ? '<div class="text-xs text-muted-foreground mt-2">ใช้สิทธิ์ลาไป ' + ParentStore.leaveUsed(child.id) + ' / ' + leaveQuotaTotal() + ' วัน (ต่อปี)</div>' +
+              '<a href="#tab=leave" class="text-xs text-primary hover:underline">ดูแยกประเภท →</a>'
+            : '';
           return '<div class="bg-card rounded-xl border border-border shadow-sm p-4">' +
-            '<div class="text-xs text-muted-foreground mb-1">' + ParentUI.escapeHtml(ParentStore.STATUS_LABEL[st]) + '</div>' +
-            '<div class="text-2xl font-bold text-' + color + '">' + c + '</div>' +
-            '<div class="text-xs text-muted-foreground">' + pct + '%</div>' +
+            '<div class="text-sm font-semibold text-card-foreground mb-1">' + ParentUI.escapeHtml(ParentStore.STATUS_LABEL[st]) + '</div>' +
+            '<div class="text-xs text-muted-foreground mb-2">' + c + ' / ' + records.length + ' วัน · ' + pct + '%</div>' +
+            '<div class="w-full h-2 rounded-full bg-muted overflow-hidden">' +
+            '<div class="h-full bg-' + color + '" style="width:' + pct + '%"></div>' +
+            '</div>' +
+            leaveExtra +
             '</div>';
         }).join('') + '</div>';
     }
@@ -218,36 +589,53 @@
     function buildMonthlyTable(records) {
       var map = groupByMonth(records);
       var months = Object.keys(map).sort();
+      var TD = 'p-2 border border-border text-sm text-center';
+      function okPct(counts, total) {
+        return (((counts.present + counts.late) / (total || 1)) * 100).toFixed(1);
+      }
       var rows = months.map(function (ym) {
         var recs = map[ym];
         var counts = summarize(recs);
-        var total = recs.length || 1;
-        var pct = ((counts.present / total) * 100).toFixed(1);
         return '<tr>' +
           '<td class="p-2 border border-border text-sm">' + ParentUI.escapeHtml(ParentUI.fmtMonth(ym)) + '</td>' +
-          '<td class="p-2 border border-border text-sm text-center">' + counts.present + '</td>' +
-          '<td class="p-2 border border-border text-sm text-center">' + counts.late + '</td>' +
-          '<td class="p-2 border border-border text-sm text-center">' + counts.absent + '</td>' +
-          '<td class="p-2 border border-border text-sm text-center">' + counts.leave + '</td>' +
-          '<td class="p-2 border border-border text-sm text-center">' + pct + '%</td>' +
+          '<td class="' + TD + '">' + recs.length + '</td>' +
+          '<td class="' + TD + '">' + counts.present + '</td>' +
+          '<td class="' + TD + '">' + counts.late + '</td>' +
+          '<td class="' + TD + '">' + counts.absent + '</td>' +
+          '<td class="' + TD + '">' + counts.leave + '</td>' +
+          '<td class="' + TD + '">' + okPct(counts, recs.length) + '%</td>' +
           '</tr>';
       }).join('');
+
+      var all = summarize(records);
+      var totalRow = '<tr class="bg-secondary font-bold">' +
+        '<td class="p-2 border border-border text-sm">รวม</td>' +
+        '<td class="' + TD + '">' + records.length + '</td>' +
+        '<td class="' + TD + '">' + all.present + '</td>' +
+        '<td class="' + TD + '">' + all.late + '</td>' +
+        '<td class="' + TD + '">' + all.absent + '</td>' +
+        '<td class="' + TD + '">' + all.leave + '</td>' +
+        '<td class="' + TD + '">' + okPct(all, records.length) + '%</td>' +
+        '</tr>';
 
       return '<div class="overflow-x-auto bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +
         '<h3 class="font-semibold text-card-foreground mb-3">สรุปรายเดือน</h3>' +
         '<table class="min-w-full border-collapse text-left">' +
         '<thead><tr>' +
         '<th class="p-2 border border-border bg-secondary text-xs font-medium">เดือน</th>' +
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">วันเรียน</th>' +
         '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">มาเรียน</th>' +
         '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">มาสาย</th>' +
         '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">ขาดเรียน</th>' +
         '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">ลา</th>' +
-        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">% มาเรียน</th>' +
-        '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+        '<th class="p-2 border border-border bg-secondary text-xs font-medium text-center">% มาเรียน (รวมมาสาย)</th>' +
+        '</tr></thead><tbody>' + rows + totalRow + '</tbody></table></div>';
     }
 
     function renderAttendanceTab(container, child) {
       var records = (ParentStore.get('parent_attendance') || {})[child.id] || [];
+      var todayStr = ParentStore.today();
+      records = records.filter(function (r) { return r.date <= todayStr; });
 
       if (!records.length) {
         container.innerHTML = '<div class="bg-card rounded-xl border border-border shadow-sm p-8 text-center text-muted-foreground">ยังไม่มีข้อมูลการมาเรียน</div>';
@@ -263,7 +651,8 @@
       }).join('');
 
       container.innerHTML =
-        buildSummaryCards(records) +
+        buildBasisLine(records) +
+        buildSummaryCards(records, child) +
         buildStackedBar(records) +
         buildMonthlyTable(records) +
         '<div class="bg-card rounded-xl border border-border shadow-sm p-4 mt-3">' +

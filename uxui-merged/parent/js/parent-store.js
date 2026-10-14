@@ -54,6 +54,32 @@ window.ParentStore = (function () {
   }
 
   /* ---------------------------------------------------------------------
+   * helpers สำหรับ gradeStats (mock สถิติเปรียบเทียบ — deterministic, ไม่เก็บลง localStorage)
+   * ------------------------------------------------------------------- */
+
+  function fnv1a(str) {
+    var h = 0x811c9dc5;
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return h >>> 0;
+  }
+
+  function mulberry32(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function round2(x) { return Math.round(x * 100) / 100; }
+
+  /* ---------------------------------------------------------------------
    * seed functions — เรียกทุกครั้งที่ get() ไม่เจอคีย์ใน localStorage
    * ------------------------------------------------------------------- */
 
@@ -560,6 +586,53 @@ window.ParentStore = (function () {
       if (sumCredit === 0) return 0;
       return parseFloat((sumPoint / sumCredit).toFixed(2));
     },
+    // สถิติเปรียบเทียบผลการเรียน (mock แบบ deterministic — รวมเป็นภาพรวมเท่านั้น ไม่มีชื่อ/รหัสนักเรียนคนอื่น)
+    gradeStats: function (childId, year, term) {
+      var child = (this.get('parent_children') || []).filter(function (c) { return c.id === childId; })[0];
+      var rec = ((this.get('parent_grades') || {})[childId] || []).filter(function (r) {
+        return String(r.year) === String(year) && Number(r.term) === Number(term);
+      })[0];
+      if (!child || !rec) return null;
+      var childGpa = this.gpa(rec.subjects);
+
+      var defs = [
+        { key: 'room', label: 'ในห้อง (' + child.classroom + ')', n: 40, base: 2.95, subj: true },
+        { key: 'plan', label: 'ในแผน (' + child.studyPlan + ')', n: 120, base: 2.90, subj: true },
+        { key: 'level', label: 'ทั้งระดับชั้น (' + child.level + ')', n: 220, base: 2.85, subj: true },
+        { key: 'school', label: 'ทั้งโรงเรียน', n: 1300, base: 2.80, subj: false }
+      ];
+      var groups = {};
+      defs.forEach(function (g) {
+        var seedBase = child.classroom + '|' + child.studyPlan + '|' + year + '|' + term + '|' + g.key;
+        var rnd = mulberry32(fnv1a(seedBase));
+        var mean = g.base + (rnd() * 2 - 1) * 0.15;
+        var list = [], sum = 0, below = 0;
+        for (var i = 0; i < g.n; i++) {
+          var u1 = rnd() || 1e-9, u2 = rnd();
+          var z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+          var v = round2(Math.min(4, Math.max(1, mean + 0.55 * z)));
+          list.push(v);
+          sum += v;
+          if (v < childGpa) below++;
+        }
+        var subjectAvg = null;
+        if (g.subj) {
+          subjectAvg = {};
+          rec.subjects.forEach(function (sub) {
+            var r2 = mulberry32(fnv1a(seedBase + '|' + sub.code));
+            subjectAvg[sub.code] = 60 + Math.floor(r2() * 23);
+          });
+        }
+        groups[g.key] = {
+          key: g.key, label: g.label, n: g.n, gpaList: list,
+          gpaAvg: round2(sum / g.n),
+          percentile: Math.round(100 * below / g.n),
+          subjectAvg: subjectAvg
+        };
+      });
+      return { childGpa: childGpa, groups: groups };
+    },
+
     countSchoolDays: function (start, end) { return countSchoolDaysImpl(start, end); },
 
     addLeave: function (req) {

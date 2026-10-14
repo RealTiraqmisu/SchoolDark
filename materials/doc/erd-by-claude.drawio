@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Chen ภาพรวม" id="pg-chen">
-        <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
+        <mxGraphModel dx="4985" dy="2200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -290,7 +290,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="ER เนยสด (รับสมัคร+ทะเบียน)" id="pg-nen">
-        <mxGraphModel dx="2013" dy="1080" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2810" math="0" shadow="0">
+        <mxGraphModel dx="2321" dy="1024" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2810" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -2030,7 +2030,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="ER แคลร์ (บุคลากร+ลา/บัตร)" id="pg-claire">
-        <mxGraphModel dx="3075" dy="1650" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="3180" math="0" shadow="0">
+        <mxGraphModel dx="1346" dy="594" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="3180" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -2744,7 +2744,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="จุดเชื่อมสองฝั่ง" id="pg-join">
-        <mxGraphModel dx="1628" dy="874" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
+        <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>

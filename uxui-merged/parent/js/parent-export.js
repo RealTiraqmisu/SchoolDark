@@ -61,6 +61,20 @@ window.ParentExport = (function () {
   // + ถอดคลาสที่ระบุใน data-export-strip ออก (ใช้ลบไฮไลต์/ตกแต่งที่ไม่ต้องการในไฟล์ที่พิมพ์ออกมา)
   function prepareNode(node) {
     var clone = node.cloneNode(true);
+    // canvas ไม่ถูกคัดลอกพิกเซลตอน cloneNode — แปลงเป็น <img> จาก canvas ต้นฉบับก่อน (ทำก่อนลบ .no-export
+    // เพื่อให้ index ของ canvas ใน node กับ clone ยังตรงกัน)
+    var srcCanvases = node.querySelectorAll('canvas');
+    var cloneCanvases = clone.querySelectorAll('canvas');
+    for (var ci = 0; ci < cloneCanvases.length; ci++) {
+      try {
+        var img = document.createElement('img');
+        img.src = srcCanvases[ci].toDataURL('image/png');
+        img.alt = '';
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        cloneCanvases[ci].parentNode.replaceChild(img, cloneCanvases[ci]);
+      } catch (e) {}
+    }
     clone.querySelectorAll('.no-export').forEach(function (el) {
       if (el.parentNode) el.parentNode.removeChild(el);
     });
@@ -213,18 +227,25 @@ window.ParentExport = (function () {
     dialog.querySelector('[data-export-download="jpg"]').addEventListener('click', function () {
       var btn = dialog.querySelector('[data-export-download="jpg"]');
       withDownloadBusyState(btn, function () {
-        return loadHtml2Pdf().then(function () {
-          return window.html2pdf().set({
-            html2canvas: { scale: 2, windowWidth: 1200, useCORS: true }
-          }).from(paperEl).toCanvas().get('canvas').then(function (canvas) {
-            var a = document.createElement('a');
-            a.href = canvas.toDataURL('image/jpeg', 0.95);
-            a.download = filename + '.jpg';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-          });
-        });
+        return saveImage(paperEl, filename, 'jpg', { windowWidth: 1200, scale: 2 });
+      });
+    });
+  }
+
+  // บันทึก node เป็นรูป PNG/JPG (ใช้ร่วมกับปุ่ม JPG ใน preview และปุ่มแชร์ใน reports.html)
+  function saveImage(node, filename, type, extra) {
+    extra = extra || {};
+    var isPng = type === 'png';
+    var h2c = { scale: extra.scale || 2.5, useCORS: true };
+    if (extra.windowWidth) h2c.windowWidth = extra.windowWidth;
+    return loadHtml2Pdf().then(function () {
+      return window.html2pdf().set({ html2canvas: h2c }).from(node).toCanvas().get('canvas').then(function (canvas) {
+        var a = document.createElement('a');
+        a.href = isPng ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.95);
+        a.download = filename + (isPng ? '.png' : '.jpg');
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
       });
     });
   }
@@ -234,5 +255,5 @@ window.ParentExport = (function () {
     if (existing) existing.close();
   }
 
-  return { open: open };
+  return { open: open, saveImage: saveImage };
 })();

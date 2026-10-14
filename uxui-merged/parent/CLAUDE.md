@@ -31,6 +31,13 @@
 - `calendar.html` — ปฏิทินโรงเรียน (อ่านข้อมูลปีการศึกษา/วันหยุดจาก `settings/` แบบอ่านอย่างเดียว)
 - `reports.html` — ผลการเรียนและสถิติการมาเรียน/ขาด-ลา-มาสาย/ความประพฤติ เรียงแท็บ การมาเรียน →
   การลา → ผลการเรียน → ความประพฤติ (`#tab=attendance|leave|grades|behavior`, default `attendance`)
+  แท็บการมาเรียนนับเฉพาะ record ที่ `date <= ParentStore.today()` มีบรรทัดฐานการนับ (วันเรียนทั้งหมด, ช่วงวันที่,
+  % มาเรียน = มาเรียน+มาสาย สูตรเดียวกับ `index.html`) การ์ด 4 ใบหน้าตาเดียวกับการ์ดโควตาในแท็บการลา (`buildQuotaCards`): ชื่อ + "x / N วัน · %" + หลอด progress การ์ดลาแสดงโควตาที่ใช้ไป
+  (`leaveUsed` / ผลรวมโควตาของ `LEAVE_TYPES`) + ลิงก์ไป `#tab=leave` ตารางรายเดือนมีคอลัมน์ "วันเรียน" และแถว "รวม"
+  (% นับมาสายด้วย) / แท็บผลการเรียนมีกราฟเปรียบเทียบ (Chart.js 4.4.1 lazy-load จาก jsdelivr ผ่าน `loadChartJs`)
+  ชิปกลุ่มเทียบ ห้อง/แผน/ระดับ/โรงเรียน เก็บใน hash `cmp=` ด้วย `history.replaceState` (ไม่ยิง hashchange) กราฟ 3 อัน
+  การ์ดขวาแสดง GPA เทอมนั้น + แถบเทียบ GPA ของลูกกับค่าเฉลี่ยกลุ่ม (สูงกว่า/ต่ำกว่าค่าเฉลี่ย X — เนยสดไม่เอาเปอร์เซ็นไทล์และรายชื่อวิชาเด่นในการ์ดนี้, 2026-10-14) และปุ่ม "แชร์ผลการเรียน" สร้างการ์ดสัดส่วน 4:5
+  (ใช้ชื่อเล่นเป็นค่าเริ่มต้น ห้ามใส่ studentId โชว์เฉพาะป้ายเชิงบวก) บันทึกรูปผ่าน `ParentExport.saveImage`
 - `announcements.html` — ประกาศจากโรงเรียนทั้งหมด กรองตามแท็กได้ (ทั้งหมด/สำคัญ/กิจกรรม/ทั่วไป)
 - `sdq.html` — แบบประเมิน SDQ หน้าเดียว (ไม่มีแท็บแยกฉบับผู้ปกครอง/นักเรียน — รวมเป็นคำอธิบายเดียว) —
   **placeholder เท่านั้น ยังไม่มี logic จริง — Team C รับผิดชอบพัฒนาต่อ** (ดูคอมเมนต์
@@ -90,6 +97,9 @@ grades, student_profiles, leave_requests, tickets, announcements, attendance (�
 behavior มีฟังก์ชัน `today()` คืนวันสาธิต (ถ้าไม่มี `SchoolStore` ให้อ้างอิงจะ fallback เป็นวันที่
 mock ของตัวเอง) — เช็ค override `parent_demo_today` ก่อนเสมอ (ดู "Demo panel" ด้านล่าง)
 
+`ParentStore.gradeStats(childId, year, term)` — สถิติเปรียบเทียบผลการเรียนแบบ mock deterministic (seed จากห้อง+แผน+ปี+เทอม) คืนค่ารวมของกลุ่ม ห้อง/แผน/ระดับ/โรงเรียน
+(ไม่มีชื่อ/รหัสนักเรียนคนอื่น) คำนวณสดทุกครั้ง **ไม่เก็บลง localStorage และไม่อยู่ใน `ALL_KEYS`**
+
 **Demo panel เลือกวันที่จำลอง**: ปุ่มลอยมุมซ้ายล่างทุกหน้า (ยกเว้น `login.html`) เรนเดอร์โดย
 `renderDemoPanel()` ใน `js/parent-nav.js` — เลือกวันเองได้ผ่าน `<input type="date">` + ปุ่มลัด
 วันสำคัญ + ปุ่มล้างค่า เก็บ override ที่ `parent_demo_today` **ไม่อยู่ใน `ALL_KEYS`** (ปุ่ม
@@ -101,6 +111,7 @@ mock ของตัวเอง) — เช็ค override `parent_demo_today` 
 `timetable.html`, `calendar.html` (เฉพาะโหมด "ตารางกิจกรรม") และ `reports.html` (แท็บ
 "ผลการเรียน" — พิมพ์ผ่าน `ParentExport.open()` เช่นกัน ลบ `@media print` เดิมออกแล้ว) —
 หน้าใหม่ที่จะพิมพ์/ดาวน์โหลด ให้เรียกโมดูลนี้ซ้ำ ไม่ต้องสร้าง modal เองหรือเขียน `@media print` เอง
+`prepareNode` แปลง `<canvas>` เป็น `<img>` ก่อนพิมพ์/ดาวน์โหลด กราฟจึงติดไปในไฟล์ และมี `ParentExport.saveImage(node, filename, type, extra)` บันทึก node เป็น PNG/JPG (ใช้ร่วมกับปุ่ม JPG ใน preview และปุ่มแชร์ใน `reports.html`)
 
 **โมดัล/confirm มาตรฐาน**: `js/parent-nav.js` export `ParentUI.createDialog()` (สร้าง `<dialog>`
 จริง) และ `ParentUI.confirm()` (แทน `window.confirm()`) — ทุกหน้าต้องใช้ 2 ตัวนี้ ห้ามเขียน

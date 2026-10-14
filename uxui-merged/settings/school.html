@@ -110,6 +110,9 @@
       </select>
     </div>
 
+    <!-- ตัวกรองปฏิทินโรงเรียน (เฉพาะแท็บ calendar) — เรนเดอร์ด้วย renderCalendarToolbar() -->
+    <div id="calendar-toolbar" class="mb-4 hidden"></div>
+
     <!-- Table Card -->
     <div id="table-card" class="custom-card border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
       <div class="p-5 border-b border-slate-200 bg-slate-50 flex justify-between items-center flex-wrap gap-2">
@@ -163,6 +166,33 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal คัดลอกปฏิทินจากปีการศึกษาก่อน (เฉพาะแท็บ calendar) -->
+  <div id="modal-copy-cal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden animate-in fade-in duration-200 p-4">
+    <div class="custom-card border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col">
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 id="modal-copy-cal-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="copy" class="h-5 w-5 text-primary"></i> คัดลอกจากปีการศึกษาก่อน
+        </h3>
+        <button type="button" onclick="SchoolSettings.closeCopyCal()" class="p-1 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <p id="copy-cal-desc" class="text-xs text-slate-500"></p>
+        <div id="copy-cal-list" class="space-y-2"></div>
+        <div class="border-t border-slate-200 pt-6 flex items-center justify-end gap-3">
+          <span id="copy-cal-count" class="mr-auto text-xs font-semibold text-slate-500"></span>
+          <button type="button" onclick="SchoolSettings.closeCopyCal()" class="px-5 py-2.5 rounded-xl border border-slate-200 bg-transparent text-slate-700 hover:bg-slate-100 transition-colors text-xs font-bold cursor-pointer">
+            ยกเลิก
+          </button>
+          <button type="button" id="copy-cal-submit" onclick="SchoolSettings.submitCopyCal()" class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white transition-colors text-xs font-bold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+            เพิ่มรายการ
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -270,7 +300,7 @@
             { name: 'type', label: 'ประเภท', type: 'select', options: function () { return Object.keys(CAL_TYPE_LABELS); }, optionLabels: CAL_TYPE_LABELS, required: true }
           ],
           columns: [
-            { label: 'วันที่', render: function (r) { return escapeHtml(thDate(r.date) + (r.endDate ? ' – ' + thDate(r.endDate) : '')); } },
+            { label: 'วันที่', render: function (r) { return calDateLabel(r); } },
             { label: 'ชื่อกิจกรรม', render: function (r) { return escapeHtml(r.title); } },
             { label: 'ประเภท', render: function (r) { return '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold border ' + (CAL_TYPE_COLOR[r.type] || '') + '">' + escapeHtml(CAL_TYPE_LABELS[r.type] || r.type) + '</span>'; } }
           ],
@@ -742,6 +772,249 @@
         }
       }
 
+      /* ---------- ปฏิทินโรงเรียน: ตัวกรองปี/ประเภท จัดกลุ่มตามภาคเรียน ---------- */
+      var calYearFilter = '';
+      var calTypeFilter = '';
+      var calCollapsed = {};
+      var calCopyState = null;
+
+      function parseD(iso) { return new Date(iso + 'T00:00:00'); }
+      function pad2(n) { return (n < 10 ? '0' : '') + n; }
+      function fmtD(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+      function addDays(iso, n) { var d = parseD(iso); d.setDate(d.getDate() + n); return fmtD(d); }
+      function diffDays(a, b) { return Math.round((parseD(b) - parseD(a)) / 86400000); }
+      function shiftYear(iso, k) { var d = parseD(iso); return fmtD(new Date(d.getFullYear() + k, d.getMonth(), d.getDate())); }
+
+      function thDay(iso) { // เช่น "16 พ.ค." (ไม่มีปี)
+        return thDate(iso).replace(/\s*\d{4}$/, '');
+      }
+      function thRange(a, b) {
+        if (!b || b === a) return thDate(a);
+        var sameYear = a.slice(0, 4) === b.slice(0, 4);
+        if (sameYear && a.slice(5, 7) === b.slice(5, 7)) return parseD(a).getDate() + '–' + thDate(b);
+        if (sameYear) return thDay(a) + ' – ' + thDate(b);
+        return thDate(a) + ' – ' + thDate(b);
+      }
+      function calDateLabel(r) {
+        if (!r.date) return '';
+        if (!r.endDate || r.endDate === r.date) {
+          var w;
+          try { w = parseD(r.date).toLocaleDateString('th-TH', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).replace(',', ''); }
+          catch (e) { w = r.date; }
+          return escapeHtml(w);
+        }
+        var n = diffDays(r.date, r.endDate) + 1;
+        return escapeHtml(thRange(r.date, r.endDate)) + ' <span class="text-slate-400 text-xs font-normal">· ' + n + ' วัน</span>';
+      }
+
+      function calYears() {
+        return SchoolStore.get('school_academic_years').slice().sort(function (a, b) { return String(a.year).localeCompare(String(b.year)); });
+      }
+      function rowInYear(r, y) { return !!r.date && r.date >= y.term1Start && r.date <= y.term2End; }
+      function calContext() {
+        var years = calYears();
+        var all = SchoolStore.get('school_calendar');
+        var noneRows = all.filter(function (r) { return !years.some(function (y) { return rowInYear(r, y); }); });
+        var noneAvail = noneRows.length > 0;
+        var valid = (calYearFilter === '__none' && noneAvail) || years.some(function (y) { return y.id === calYearFilter; });
+        if (!valid) {
+          var cur = years.filter(function (y) { return y.isCurrent; })[0] || years[years.length - 1];
+          calYearFilter = cur ? cur.id : (noneAvail ? '__none' : '');
+        }
+        var year = years.filter(function (y) { return y.id === calYearFilter; })[0] || null;
+        var inScope = year ? all.filter(function (r) { return rowInYear(r, year); }) : (calYearFilter === '__none' ? noneRows : all);
+        var prev = null;
+        if (year) {
+          years.forEach(function (y) { if (Number(y.year) < Number(year.year) && (!prev || Number(y.year) > Number(prev.year))) prev = y; });
+        }
+        return { years: years, all: all, noneAvail: noneAvail, year: year, inScope: inScope, prev: prev };
+      }
+
+      function renderCalendarToolbar() {
+        var el = document.getElementById('calendar-toolbar');
+        var ctx = calContext();
+        var opts = ctx.years.map(function (y) {
+          return '<option value="' + escapeHtml(y.id) + '"' + (y.id === calYearFilter ? ' selected' : '') + '>ปีการศึกษา ' + escapeHtml(y.year) + '</option>';
+        });
+        if (ctx.noneAvail) opts.push('<option value="__none"' + (calYearFilter === '__none' ? ' selected' : '') + '>อื่น ๆ (ไม่อยู่ในปีการศึกษาใด)</option>');
+        var html = '<div class="flex flex-wrap items-center justify-between gap-3">' +
+          '<div class="flex flex-wrap items-center gap-2">' +
+          '<select id="cal-year-filter" class="custom-input rounded-lg border p-2 text-xs">' + opts.join('') + '</select>';
+        if (ctx.prev && ctx.year && ctx.inScope.length < 3) {
+          html += '<button type="button" onclick="SchoolSettings.openCopyCal()" class="px-3 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><i data-lucide="copy" class="h-3.5 w-3.5"></i> คัดลอกจากปีการศึกษาก่อน</button>';
+        }
+        html += '</div><div class="flex flex-wrap items-center gap-1.5">';
+        var base = 'px-3 py-1 rounded-full text-xs font-semibold border cursor-pointer ';
+        html += '<button type="button" data-cal-type="" class="' + base + (calTypeFilter === '' ? 'bg-[#3e63dd] text-white border-[#3e63dd]' : 'border-slate-200 text-slate-500 hover:bg-slate-50') + '">ทั้งหมด (' + ctx.inScope.length + ')</button>';
+        Object.keys(CAL_TYPE_LABELS).forEach(function (t) {
+          var n = ctx.inScope.filter(function (r) { return r.type === t; }).length;
+          var active = calTypeFilter === t;
+          html += '<button type="button" data-cal-type="' + t + '" class="' + base + (active ? CAL_TYPE_COLOR[t] + ' ring-2 ring-offset-1 ring-current' : 'border-slate-200 text-slate-500 hover:bg-slate-50') + '">' + escapeHtml(CAL_TYPE_LABELS[t]) + ' (' + n + ')</button>';
+        });
+        html += '</div></div>';
+        el.innerHTML = html;
+      }
+
+      function calGroupWarnings(ctx, y, term) {
+        var s = term === 1 ? y.term1Start : y.term2Start;
+        var e = term === 1 ? y.term1End : y.term2End;
+        var out = '';
+        function has(d) { return ctx.all.some(function (r) { return r.type === 'term' && r.date === d; }); }
+        var pill = 'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200';
+        if (!has(s)) out += '<span class="' + pill + '"><i data-lucide="alert-triangle" class="h-3 w-3"></i> ยังไม่มีวันเปิดภาคเรียน (' + escapeHtml(thDate(s)) + ') <button type="button" onclick="SchoolSettings.calFixBoundary(\'' + y.id + '\',' + term + ',\'start\')" class="underline hover:text-amber-900 cursor-pointer">เพิ่มให้</button></span>';
+        if (!has(e)) out += '<span class="' + pill + '"><i data-lucide="alert-triangle" class="h-3 w-3"></i> ยังไม่มีวันปิดภาคเรียน (' + escapeHtml(thDate(e)) + ') <button type="button" onclick="SchoolSettings.calFixBoundary(\'' + y.id + '\',' + term + ',\'end\')" class="underline hover:text-amber-900 cursor-pointer">เพิ่มให้</button></span>';
+        return out;
+      }
+
+      function calBodyHtml(def, ctx) {
+        var y = ctx.year;
+        var cols = def.columns.length + 1;
+        var groups = [];
+        if (y) {
+          var rs = currentRows;
+          groups.push({ key: y.id + ':t1', title: 'ภาคเรียนที่ 1', range: thRange(y.term1Start, y.term1End), term: 1, rows: rs.filter(function (r) { return r.date >= y.term1Start && r.date <= y.term1End; }) });
+          groups.push({ key: y.id + ':break', title: 'ช่วงปิดภาคเรียน', range: '', term: 0, rows: rs.filter(function (r) { return r.date > y.term1End && r.date < y.term2Start; }) });
+          groups.push({ key: y.id + ':t2', title: 'ภาคเรียนที่ 2', range: thRange(y.term2Start, y.term2End), term: 2, rows: rs.filter(function (r) { return r.date >= y.term2Start && r.date <= y.term2End; }) });
+        } else {
+          groups.push({ key: (calYearFilter || 'all') + ':other', title: 'อื่น ๆ', range: '', term: 0, rows: currentRows });
+        }
+        return groups.map(function (g) {
+          if (y && !g.term && !g.rows.length) return '';
+          var collapsed = !!calCollapsed[g.key];
+          var h = '<tr class="bg-slate-50/80"><td colspan="' + cols + '" class="px-4 py-2.5"><div class="flex flex-wrap items-center gap-2">' +
+            '<button type="button" onclick="SchoolSettings.calToggle(\'' + g.key + '\')" class="flex items-center gap-1.5 text-left cursor-pointer">' +
+            '<i data-lucide="' + (collapsed ? 'chevron-right' : 'chevron-down') + '" class="h-4 w-4 text-slate-500"></i>' +
+            '<span class="font-bold text-slate-700 text-sm">' + escapeHtml(g.title) + '</span></button>' +
+            (g.range ? '<span class="text-xs text-slate-500">' + escapeHtml(g.range) + '</span>' : '') +
+            '<span class="px-2 py-0.5 rounded-full text-[11px] bg-white border border-slate-200 text-slate-500 font-mono">' + g.rows.length + ' รายการ</span>' +
+            (g.term ? '<button type="button" onclick="SchoolSettings.calAddInTerm(\'' + y.id + '\',' + g.term + ')" class="px-2 py-0.5 rounded-full text-[11px] font-semibold border border-slate-200 text-sky-600 hover:bg-sky-50 cursor-pointer">+ เพิ่มในภาคเรียนนี้</button>' : '') +
+            (g.term ? calGroupWarnings(ctx, y, g.term) : '') +
+            '</div></td></tr>';
+          if (collapsed) return h;
+          if (!g.rows.length) return h + '<tr><td colspan="' + cols + '" class="p-4 text-center text-xs text-slate-400">ยังไม่มีรายการ</td></tr>';
+          return h + g.rows.map(function (r) { return rowHtml(def, r); }).join('');
+        }).join('');
+      }
+
+      function calToggle(key) { calCollapsed[key] = !calCollapsed[key]; render(); }
+
+      function calAddInTerm(yearId, term) {
+        var y = calYears().filter(function (x) { return x.id === yearId; })[0];
+        if (!y) return;
+        var s = term === 1 ? y.term1Start : y.term2Start;
+        var e = term === 1 ? y.term1End : y.term2End;
+        openModal('', { date: s, min: s, max: e });
+      }
+
+      function calFixBoundary(yearId, term, edge) {
+        var y = calYears().filter(function (x) { return x.id === yearId; })[0];
+        if (!y) return;
+        var d = edge === 'start' ? (term === 1 ? y.term1Start : y.term2Start) : (term === 1 ? y.term1End : y.term2End);
+        var list = SchoolStore.get('school_calendar');
+        list.push({ id: SchoolStore.uid('calendar-'), date: d, endDate: '', title: (edge === 'start' ? 'เปิดภาคเรียนที่ ' : 'ปิดภาคเรียนที่ ') + term, type: 'term' });
+        SchoolStore.save('school_calendar', list);
+        render();
+        showToast('เพิ่มรายการเรียบร้อย');
+      }
+
+      /* ---------- คัดลอกปฏิทินจากปีก่อน ---------- */
+      function calMapRow(r, P, T) {
+        var k = Number(T.year) - Number(P.year);
+        var bounds = [[P.term1Start, T.term1Start], [P.term1End, T.term1End], [P.term2Start, T.term2Start], [P.term2End, T.term2End]];
+        var nd, ne = '';
+        var span = r.endDate && r.endDate !== r.date ? diffDays(r.date, r.endDate) : 0;
+        var hit = bounds.filter(function (b) { return b[0] === r.date; })[0];
+        if (r.type === 'term' && hit) {
+          nd = hit[1];
+          if (span) ne = addDays(nd, span);
+        } else if (r.type === 'holiday') {
+          nd = shiftYear(r.date, k);
+          if (span) ne = shiftYear(r.endDate, k);
+        } else {
+          var from, to;
+          if (r.date <= P.term1End) { from = P.term1Start; to = T.term1Start; }
+          else if (r.date < P.term2Start) { from = P.term1End; to = T.term1End; }
+          else { from = P.term2Start; to = T.term2Start; }
+          nd = addDays(to, diffDays(from, r.date));
+          if (span) ne = addDays(nd, span);
+        }
+        return { date: nd, endDate: ne };
+      }
+
+      function openCopyCal() {
+        var ctx = calContext();
+        if (!ctx.year || !ctx.prev) return;
+        var P = ctx.prev, T = ctx.year;
+        var existing = ctx.all;
+        var items = ctx.all.filter(function (r) { return rowInYear(r, P); })
+          .sort(function (a, b) { return (a.date || '').localeCompare(b.date || ''); })
+          .map(function (r) {
+            var m = calMapRow(r, P, T);
+            var dup = existing.some(function (x) { return x.title === r.title && x.date === m.date; });
+            return { title: r.title, type: r.type, date: m.date, endDate: m.endDate, checked: !dup, dup: dup };
+          });
+        calCopyState = { P: P, T: T, items: items };
+        document.getElementById('copy-cal-desc').textContent = 'คัดลอกรายการจากปีการศึกษา ' + P.year + ' ไปยังปีการศึกษา ' + T.year + ' — วันที่ถูกเลื่อนให้อัตโนมัติ แก้ไขได้ก่อนเพิ่ม';
+        renderCopyCal();
+        document.getElementById('modal-copy-cal').classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function renderCopyCal() {
+        var st = calCopyState;
+        var box = document.getElementById('copy-cal-list');
+        if (!st.items.length) {
+          box.innerHTML = '<p class="p-6 text-center text-xs text-slate-400">ปีการศึกษา ' + escapeHtml(st.P.year) + ' ไม่มีรายการให้คัดลอก</p>';
+        } else {
+          box.innerHTML = st.items.map(function (it, i) {
+            return '<div class="flex flex-wrap items-center gap-x-3 gap-y-2 p-3 rounded-xl border border-slate-200' + (it.checked ? '' : ' bg-slate-50') + '">' +
+              '<input type="checkbox" data-copy-i="' + i + '" data-copy-f="checked"' + (it.checked ? ' checked' : '') + ' class="rounded border-slate-300">' +
+              '<div class="min-w-0 flex-1 basis-40"><div class="text-sm font-semibold text-slate-700">' + escapeHtml(it.title) + '</div>' +
+              (it.dup ? '<div class="text-[11px] text-amber-600">มีรายการนี้ในวันที่เดียวกันแล้ว</div>' : '') + '</div>' +
+              '<span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold border ' + (CAL_TYPE_COLOR[it.type] || '') + '">' + escapeHtml(CAL_TYPE_LABELS[it.type] || it.type) + '</span>' +
+              '<div class="flex items-center gap-1.5"><input type="date" data-copy-i="' + i + '" data-copy-f="date" value="' + escapeHtml(it.date) + '" class="rounded-lg custom-input p-2 text-xs border">' +
+              (it.endDate ? '<span class="text-xs text-slate-400">ถึง</span><input type="date" data-copy-i="' + i + '" data-copy-f="endDate" value="' + escapeHtml(it.endDate) + '" class="rounded-lg custom-input p-2 text-xs border">' : '') +
+              '</div></div>';
+          }).join('');
+        }
+        updateCopyCount();
+      }
+
+      function updateCopyCount() {
+        var n = calCopyState.items.filter(function (it) { return it.checked && it.date; }).length;
+        document.getElementById('copy-cal-count').textContent = 'จะเพิ่ม ' + n + ' รายการ';
+        document.getElementById('copy-cal-submit').disabled = n === 0;
+      }
+
+      function closeCopyCal() {
+        document.getElementById('modal-copy-cal').classList.add('hidden');
+        calCopyState = null;
+      }
+
+      function submitCopyCal() {
+        if (!calCopyState) return;
+        var picked = calCopyState.items.filter(function (it) { return it.checked && it.date; });
+        if (!picked.length) return;
+        var list = SchoolStore.get('school_calendar');
+        picked.forEach(function (it) {
+          var end = it.endDate && it.endDate > it.date ? it.endDate : '';
+          list.push({ id: SchoolStore.uid('calendar-'), date: it.date, endDate: end, title: it.title, type: it.type });
+        });
+        SchoolStore.save('school_calendar', list);
+        closeCopyCal();
+        render();
+        showToast('เพิ่ม ' + picked.length + ' รายการเรียบร้อย');
+      }
+
+      function rowHtml(def, r) {
+        return '<tr class="hover:bg-slate-50">' +
+          def.columns.map(function (c) { return '<td class="p-4">' + c.render(r) + '</td>'; }).join('') +
+          '<td class="p-4 text-center"><div class="flex items-center justify-center gap-1">' +
+          '<button onclick="SchoolSettings.openModal(\'' + r.id + '\')" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-sky-600 hover:bg-sky-50" title="แก้ไข"><i data-lucide="edit-3" class="h-3.5 w-3.5"></i></button>' +
+          '<button onclick="SchoolSettings.removeRow(\'' + r.id + '\')" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-rose-600 hover:bg-rose-50" title="ลบ"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>' +
+          '</div></td></tr>';
+      }
+
       function render() {
         var custom = CUSTOM_TABS[currentTab];
         var panel = document.getElementById('custom-panel');
@@ -763,6 +1036,7 @@
             tile.innerHTML = custom.iconSvg;
           }
           document.getElementById('classrooms-filter').classList.add('hidden');
+          document.getElementById('calendar-toolbar').classList.add('hidden');
           custom.render(panel);
           return;
         }
@@ -789,9 +1063,19 @@
           sel.innerHTML = opts.join('');
         }
 
+        var calCtx = null;
+        document.getElementById('calendar-toolbar').classList.toggle('hidden', currentTab !== 'calendar');
+        if (currentTab === 'calendar') renderCalendarToolbar();
+
         currentRows = SchoolStore.get(def.key).slice().sort(def.sort || function () { return 0; });
         if (currentTab === 'classrooms' && classroomLevelFilter) {
           currentRows = currentRows.filter(function (r) { return r.level === classroomLevelFilter; });
+        }
+        if (currentTab === 'calendar') {
+          calCtx = calContext();
+          var inScopeIds = {};
+          calCtx.inScope.forEach(function (r) { inScopeIds[r.id] = true; });
+          currentRows = currentRows.filter(function (r) { return inScopeIds[r.id] && (!calTypeFilter || r.type === calTypeFilter); });
         }
 
         var headRow = document.getElementById('table-head-row');
@@ -799,17 +1083,12 @@
           '<th class="p-4 w-28 text-center">การจัดการ</th>';
 
         var body = document.getElementById('table-body');
-        if (!currentRows.length) {
+        if (currentTab === 'calendar') {
+          body.innerHTML = calBodyHtml(def, calCtx);
+        } else if (!currentRows.length) {
           body.innerHTML = '<tr><td colspan="' + (def.columns.length + 1) + '" class="p-8 text-center text-xs text-slate-400">ยังไม่มีข้อมูล</td></tr>';
         } else {
-          body.innerHTML = currentRows.map(function (r) {
-            return '<tr class="hover:bg-slate-50">' +
-              def.columns.map(function (c) { return '<td class="p-4">' + c.render(r) + '</td>'; }).join('') +
-              '<td class="p-4 text-center"><div class="flex items-center justify-center gap-1">' +
-              '<button onclick="SchoolSettings.openModal(\'' + r.id + '\')" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-sky-600 hover:bg-sky-50" title="แก้ไข"><i data-lucide="edit-3" class="h-3.5 w-3.5"></i></button>' +
-              '<button onclick="SchoolSettings.removeRow(\'' + r.id + '\')" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-rose-600 hover:bg-rose-50" title="ลบ"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>' +
-              '</div></td></tr>';
-          }).join('');
+          body.innerHTML = currentRows.map(function (r) { return rowHtml(def, r); }).join('');
         }
         document.getElementById('row-count-badge').textContent = currentRows.length + ' รายการ';
         if (window.lucide) lucide.createIcons();
@@ -831,7 +1110,7 @@
         return '<input type="' + f.type + '" id="' + id + '"' + (f.required ? ' required' : '') + ' value="' + escapeHtml(value == null ? '' : value) + '" class="w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary">';
       }
 
-      function openModal(id) {
+      function openModal(id, prefill) {
         var def = TABS[currentTab];
         var row = id ? currentRows.filter(function (r) { return r.id === id; })[0] : null;
         document.getElementById('form-edit-id').value = id || '';
@@ -844,8 +1123,62 @@
           }
           return '<div><label class="block text-xs font-bold text-slate-500 mb-1.5">' + escapeHtml(f.label) + (f.required ? ' *' : '') + '</label>' + fieldInputHtml(f, row ? row[f.name] : '') + '</div>';
         }).join('');
+        if (currentTab === 'calendar') enhanceCalendarForm(row, prefill);
         document.getElementById('modal-form').classList.remove('hidden');
         if (window.lucide) lucide.createIcons();
+      }
+
+      // ฟอร์มปฏิทิน: ประเภท → ชื่อ → วันที่ → ถึงวันที่ (ใช้ id field-* เดิมเพื่อให้ saveForm อ่านได้)
+      function enhanceCalendarForm(row, prefill) {
+        prefill = prefill || {};
+        var wrap = document.getElementById('form-fields');
+        var curType = row ? row.type : 'event';
+        var inputCls = 'w-full rounded-xl custom-input p-3 text-sm border focus:ring-1 focus:ring-primary';
+        var lbl = 'block text-xs font-bold text-slate-500 mb-1.5';
+        var chips = Object.keys(CAL_TYPE_LABELS).map(function (t) {
+          return '<button type="button" data-cal-form-type="' + t + '" class="px-3 py-1.5 rounded-full text-xs font-semibold border cursor-pointer ' + CAL_TYPE_COLOR[t] + '">' + escapeHtml(CAL_TYPE_LABELS[t]) + '</button>';
+        }).join('');
+        var multi = !!(row && row.endDate);
+        wrap.innerHTML =
+          '<div class="md:col-span-2"><label class="' + lbl + '">ประเภท *</label>' +
+          '<input type="hidden" id="field-type" value="' + escapeHtml(curType) + '">' +
+          '<div id="cal-type-chips" class="flex flex-wrap gap-2">' + chips + '</div></div>' +
+          '<div class="md:col-span-2"><label class="' + lbl + '">ชื่อกิจกรรม/วันสำคัญ *</label>' +
+          '<input type="text" id="field-title" required value="' + escapeHtml(row ? row.title : '') + '" class="' + inputCls + '"></div>' +
+          '<div><label class="' + lbl + '">วันที่ *</label>' +
+          '<input type="date" id="field-date" required value="' + escapeHtml(row ? row.date : (prefill.date || '')) + '" class="' + inputCls + '">' +
+          '<label class="mt-2 flex items-center gap-2 text-xs text-slate-600 cursor-pointer"><input type="checkbox" id="cal-multi-day"' + (multi ? ' checked' : '') + ' class="rounded border-slate-300"> หลายวัน</label></div>' +
+          '<div id="cal-end-wrap"' + (multi ? '' : ' class="hidden"') + '><label class="' + lbl + '">ถึงวันที่</label>' +
+          '<input type="date" id="field-endDate" value="' + escapeHtml(row ? (row.endDate || '') : '') + '" class="' + inputCls + '"></div>' +
+          '<p id="cal-form-error" class="md:col-span-2 text-rose-600 text-xs hidden"></p>';
+        var typeEl = document.getElementById('field-type');
+        var multiEl = document.getElementById('cal-multi-day');
+        var endEl = document.getElementById('field-endDate');
+        function setMulti(on) {
+          multiEl.checked = on;
+          document.getElementById('cal-end-wrap').classList.toggle('hidden', !on);
+          if (!on) endEl.value = '';
+        }
+        function paintChips() {
+          wrap.querySelectorAll('[data-cal-form-type]').forEach(function (b) {
+            var on = b.getAttribute('data-cal-form-type') === typeEl.value;
+            b.classList.toggle('ring-2', on);
+            b.classList.toggle('ring-offset-1', on);
+            b.classList.toggle('ring-current', on);
+            b.classList.toggle('opacity-60', !on);
+          });
+        }
+        wrap.querySelectorAll('[data-cal-form-type]').forEach(function (b) {
+          b.addEventListener('click', function () {
+            typeEl.value = b.getAttribute('data-cal-form-type');
+            if (typeEl.value === 'exam' && !multiEl.checked) setMulti(true);
+            paintChips();
+          });
+        });
+        multiEl.addEventListener('change', function () { setMulti(multiEl.checked); });
+        if (prefill.min) { document.getElementById('field-date').min = prefill.min; endEl.min = prefill.min; }
+        if (prefill.max) { document.getElementById('field-date').max = prefill.max; endEl.max = prefill.max; }
+        paintChips();
       }
 
       function closeModal() {
@@ -945,6 +1278,15 @@
           else if (f.type === 'number') row[f.name] = el.value === '' ? '' : Number(el.value);
           else row[f.name] = el.value;
         });
+        if (tab === 'calendar') {
+          var errEl = document.getElementById('cal-form-error');
+          if (row.endDate && row.endDate < row.date) {
+            if (errEl) { errEl.textContent = 'วันสิ้นสุดต้องไม่ก่อนวันเริ่ม'; errEl.classList.remove('hidden'); }
+            return;
+          }
+          if (errEl) errEl.classList.add('hidden');
+          if (row.endDate === row.date) row.endDate = '';
+        }
 
         function commit() {
           if (isNew) list.push(row);
@@ -1028,7 +1370,9 @@
 
       window.SchoolSettings = {
         openModal: openModal, closeModal: closeModal, saveForm: saveForm,
-        removeRow: removeRow, resetTab: resetTab, switchTab: switchTab
+        removeRow: removeRow, resetTab: resetTab, switchTab: switchTab,
+        calToggle: calToggle, calAddInTerm: calAddInTerm, calFixBoundary: calFixBoundary,
+        openCopyCal: openCopyCal, closeCopyCal: closeCopyCal, submitCopyCal: submitCopyCal
       };
 
       document.addEventListener('DOMContentLoaded', function () {
@@ -1042,6 +1386,22 @@
         document.getElementById('classroom-level-filter').addEventListener('change', function (e) {
           classroomLevelFilter = e.target.value;
           render();
+        });
+        var calTb = document.getElementById('calendar-toolbar');
+        calTb.addEventListener('change', function (e) {
+          if (e.target.id === 'cal-year-filter') { calYearFilter = e.target.value; render(); }
+        });
+        calTb.addEventListener('click', function (e) {
+          var b = e.target.closest('[data-cal-type]');
+          if (b) { calTypeFilter = b.getAttribute('data-cal-type'); render(); }
+        });
+        var copyList = document.getElementById('copy-cal-list');
+        copyList.addEventListener('change', function (e) {
+          var t = e.target, i = t.getAttribute('data-copy-i');
+          if (i == null || !calCopyState) return;
+          var it = calCopyState.items[Number(i)], f = t.getAttribute('data-copy-f');
+          if (f === 'checked') it.checked = t.checked; else it[f] = t.value;
+          updateCopyCount();
         });
         window.addEventListener('hashchange', function () {
           var t = getTabFromHash();

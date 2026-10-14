@@ -200,6 +200,7 @@ module?, view?, hash?, desc?}` — ถ้า child มี `view` และ `page
   `sd_student_attendance_settings` เดิมของ care ผ่าน `SdSettings`
 - 5 แท็บ master data ของ noeysod: ข้อมูลห้องเรียน, ปฏิทินโรงเรียน, ข้อมูลปีการศึกษา, ข้อมูลระดับการศึกษา, ข้อมูลสาขางาน-สาขาวิชา
   เก็บผ่าน `SchoolStore` (`settings/js/school-store.js`, คีย์ `school_*`)
+  - แท็บปฏิทิน (`#tab=calendar`, 2026-10-14) มีมุมมองเฉพาะ: select ปีการศึกษา + ชิปกรองประเภท (`#calendar-toolbar`), จัดกลุ่มตามภาคเรียน/ช่วงปิดภาคเรียนพับ-กางได้, ปุ่ม "+ เพิ่ม" ต่อภาคเรียน (prefill วัน), ฟอร์มเลือกประเภทแบบชิป + สวิตช์ "หลายวัน" + เตือนเมื่อวันสิ้นสุด < วันเริ่ม, modal คัดลอกจากปีก่อน (`#modal-copy-cal`, เลื่อนวันตามกฎ: วันหยุดวันตายตัวคงวัน/รายการผูกเทอมเลื่อนตามระยะห่างจากวันเปิดภาค), ป้ายเตือนเมื่อยังไม่มีรายการเปิด/ปิดภาคเรียน + ปุ่ม "เพิ่มให้" — รูปแบบข้อมูล `school_calendar` ไม่เปลี่ยน (`parent/` อ่านต่อได้) แท็บอื่นใช้ตัวเรนเดอร์กลางร่วมกัน (แยก `rowHtml`)
 - ความกว้างเนื้อหา (2026-09-30): หน้า `settings/*` (index/school/personnel/leave) ใช้ `.xpage xpage--wide` (จาก `shared/page-layout.css`) ที่ `<header>` ด้านใน และ `<main>` เหมือน `admission/index`/`students` และกล่องเนื้อหาไม่มี `max-w` ซ้อน (เหลือแค่แถบแท็บที่จำกัดความกว้าง)
 
 `settings/personnel.html` (+ `js/personnel-settings.js`) เป็นหน้าตั้งค่า "บุคลากร" 6 แท็บ ย้ายมาจาก `schooldark/app.html`: `schedule`
