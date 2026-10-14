@@ -10,10 +10,15 @@
 > เลขาเจนให้เมื่อ 2026-10-13 ตาม `plan/90` ในโปรเจกต์เลขา · **ทุกจุดที่เลขาสมมติเองติดป้าย 🟡 สมมติ** และรวมไว้ที่หัวข้อ 6
 > ยังไม่มีใครตรวจ · ห้ามเอาลงเล่ม §3.4 จนกว่าทีมจะตัดสินคำถามที่ค้าง
 
+<!-- er-md:head -->
+> ⚠️ **แก้ไข 2026-10-14 (plan 102):** ฝั่งเนยสดสร้างใหม่จากโค้ด prototype และผลตัดสิน 8 ข้อของเนยสด ส่วนที่เปลี่ยนคือ §3.2 · §4.1 และหน้า "ER เนยสด" ใน `erd-by-claude.drawio` (18 ตาราง 170 คอลัมน์ กล่อง 3 คอลัมน์) · ส่วนฝั่งแคลร์ (§3.3 §4.2 §5) **ไม่เปลี่ยน**
+> ที่ยังเป็นฉบับก่อนเขียนใหม่และรอรอบถัดไป: §3.1 · §2.4 · §6 (ด้านล่างมีป้ายแก้ไขกำกับ) · หน้า "Chen ภาพรวม" และ "จุดเชื่อมสองฝั่ง" ใน drawio · สำเนาของฉบับก่อนเขียนใหม่อยู่ที่ `(delete this)/erd-by-claude.before-prototype-2026-10-14.*` ในโปรเจกต์เลขา
+
 ## 0. อ่านก่อน
 
 ไฟล์นี้รวม ER ของสองคนเป็นภาพเดียว ต้นทางมี 3 ไฟล์
 - **ฝั่งเนยสด (รับสมัคร + ทะเบียน):** `SchoolDark/erd.drawio` 13 ตาราง ซึ่งเป็นร่างที่เพื่อนเจนด้วย AI ยังไม่ตรวจ
+	- > ⚠️ แก้ไข 2026-10-14 (plan 102): ฉบับปัจจุบันของฝั่งเนยสดคือ 18 ตาราง สร้างใหม่จากโค้ด prototype (ดูหัวข้อ 4.1) ข้อความ "13 ตาราง" ข้างบนบอกต้นทางเดิม
 - **ฝั่งแคลร์ (บุคลากร):** `materials/doc/er-employee.drawio` 13 ตาราง
 - **รูป Figma:** `report-drafts/school-dark/figma-erd-draft.png` (ในโปรเจกต์เลขา) ภาพใหญ่ 26,960 × 12,475 px ใช้เป็นตัวเทียบ และเป็นต้นทางของตารางลา/บัตรขออนุญาตของฝั่งแคลร์
 
@@ -109,6 +114,9 @@ Figma มีตารางสีชมพูเข้มของฝั่ง�
 | J9 | **ปีการศึกษา** | `admission_round.academic_year` และ `classroom.academic_year` เป็นตัวเลข | Figma `academic_terms` (ทีม A) เก็บปีการศึกษา/ภาคเรียน · `student_leave_setting_type` ชี้มาที่ตารางนี้ | ไม่ผูก 3 ที่ (ปีเป็นตัวเลขสองที่ กับ academic_terms) | ทุกฝ่าย |
 | J10 | **แผนการเรียน/ห้องสอบ** | `course_plan` (แผนที่เปิดรับต่อรอบ) · `exam_room` (ชื่อห้องเป็นข้อความ) | Figma `curriculums` (แผนการเรียนหลักของโรงเรียน) · `rooms` (ห้องกายภาพ ความจุ) | ไม่ผูก คงตามต้นทาง | เนยสด + ทีม A |
 | J11 | **ผู้ใช้/บทบาท (login)** | ไม่มีตาราง | `employees.role` เป็นข้อความ ไม่มีตาราง user/role | ไม่เติม ตรงกับข้อ "ใครถือ login/token" ใน `team-b-todo.md` | ทั้งคู่ |
+
+<!-- er-md:s24 -->
+> ⚠️ แก้ไข 2026-10-14: คอลัมน์ "ฝั่งเนยสด (`erd.drawio`)" ของตารางด้านบนอ้างฉบับเดิม ผลตัดสินใหม่ที่กระทบแถวในตาราง · J1 คง `person`→`application`→`student` 3 ตาราง · J2 ผู้ปกครองที่ฟอร์มตั้งค่าได้ไปอยู่ `application.extra_fields` · J10 `exam_room` ผูก FK ไป `school_room` (ห้องกายภาพ ไม่เก็บชื่อห้องเป็นข้อความแล้ว) · J9 ปีการศึกษาหนึ่งมีได้หลายรอบ คงตาราง `admission_round` · รายละเอียดดู `er-nuesod-new-vs-old.md` หัวข้อ 7
 
 ## 3. Chen: ภาพรวมก่อน แล้วค่อยลงรายละเอียด
 
@@ -233,88 +241,54 @@ flowchart LR
 
 ### 3.2 รายละเอียดฝั่งเนยสด (รับสมัคร + ทะเบียน)
 
-แยกตารางประกอบใบสมัครให้เห็นครบ 13 ตาราง ใส่ตัวระบุหลักของตารางสำคัญ
+สร้างใหม่ 2026-10-14 (plan 102) จากสเปกเดียวกับหัวข้อ 4.1 (18 ตาราง) แสดงเป็นตารางความสัมพันธ์ ไม่ใช้แผนภาพ mermaid
 
-```mermaid
-flowchart LR
-    classDef ent fill:#dbeafe,stroke:#1d4ed8,color:#111
-    classDef weak fill:#eff6ff,stroke:#1d4ed8,stroke-dasharray:3 3,color:#111
-    classDef rel fill:#fff,stroke:#111,color:#111
-    classDef attr fill:#fff,stroke:#6b7280,color:#111
+**ความสัมพันธ์ระหว่างตาราง**
 
-    round["รอบรับสมัคร<br/>admission_round"]:::ent
-    plan["แผนการเรียนที่เปิดรับ<br/>course_plan"]:::ent
-    exam["ห้องสอบ<br/>exam_room"]:::ent
-    field["ฟอร์มที่ตั้งค่าได้<br/>field_definition"]:::ent
-    person["คน<br/>person"]:::ent
-    app["ใบสมัคร<br/>application"]:::ent
-    stu["นักเรียน<br/>student"]:::ent
-    room["ห้องเรียน<br/>classroom"]:::ent
-    addr["ที่อยู่ผู้สมัคร<br/>applicant_address"]:::weak
-    guard["ผู้ปกครองผู้สมัคร<br/>applicant_guardian"]:::weak
-    health["สุขภาพ ข้อมูลอ่อนไหว<br/>applicant_health"]:::weak
-    doc["เอกสารแนบ<br/>application_document"]:::weak
-    hist["ประวัติสถานะ<br/>application_status_history"]:::weak
+| ตารางแม่ | ความสัมพันธ์ | ตารางลูก | ความถี่ |
+|---|---|---|---|
+| `admission_round` | มีแผน | `course_plan` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `admission_round` | รับสมัครใน | `application` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `course_plan` | มีห้องสอบ | `exam_room` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `school_room` | ใช้เป็นห้องสอบ | `exam_room` | 1 ต่อ หลาย (ลูกอาจไม่มีแม่) |
+| `course_plan` | เลือกอันดับ 1 / 2 | `application` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `exam_room` | จัดที่นั่ง | `application` | 1 ต่อ หลาย (ลูกอาจไม่มีแม่) |
+| `person` | ยื่นได้หลายใบ | `application` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `person` | เป็นนักเรียน | `student` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `application` | มอบตัวแล้วสร้างใหม่ | `student` | 0 หรือ 1 ต่อ 0 หรือ 1 |
+| `classroom` | สังกัด | `student` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `application` | มีที่อยู่ | `applicant_address` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `application` | มีผู้ปกครอง | `applicant_guardian` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `application` | มีสุขภาพ | `applicant_health` | 1 ต่อ 0 หรือ 1 |
+| `application` | แนบเอกสาร | `application_document` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
+| `application` | บันทึกสถานะ | `application_status_history` | 1 ต่อ หลาย (ลูกต้องมีแม่) |
 
-    a1(["round_id"]):::attr
-    a2(["person_id<br/>citizen_id ห้ามซ้ำ"]):::attr
-    a3(["application_id<br/>applicant_code"]):::attr
-    a4(["student_id<br/>student_code"]):::attr
+ตารางที่ไม่มีเส้นเชื่อม (ตั้งค่า/อ้างอิง): `field_definition` · `student_column_setting` · `email_template` · `system_setting` · `activity_log`
 
-    r1{"มีแผน"}:::rel
-    r2{"มีห้องสอบ"}:::rel
-    r3{"กำหนดฟอร์ม"}:::rel
-    r4{"รับสมัครใน"}:::rel
-    r5{"ยื่น"}:::rel
-    r6{"เลือกอันดับ 1/2"}:::rel
-    r7{"จัดที่นั่ง"}:::rel
-    r8{"มีที่อยู่ 2 ชุด"}:::rel
-    r9{"มีผู้ปกครอง"}:::rel
-    r10{"มีสุขภาพ"}:::rel
-    r11{"แนบเอกสาร"}:::rel
-    r12{"บันทึกสถานะ"}:::rel
-    r13{"มอบตัวแล้วสร้าง"}:::rel
-    r14{"เป็น"}:::rel
-    r15{"สังกัด"}:::rel
+**แต่ละตารางคืออะไร**
 
-    round --- a1
-    person --- a2
-    app --- a3
-    stu --- a4
-    round ---|1| r1 ---|N| plan
-    plan ---|1| r2 ---|N| exam
-    round ---|1| r3 ---|N| field
-    round ---|1| r4 ---|N| app
-    person ---|1| r5 ---|N| app
-    plan ---|1| r6 ---|N| app
-    exam ---|0..1| r7 ---|N| app
-    app ---|1| r8 ---|N| addr
-    app ---|1| r9 ---|N| guard
-    app ---|1| r10 ---|1| health
-    app ---|1| r11 ---|N| doc
-    app ---|1| r12 ---|N| hist
-    app ---|0..1| r13 ---|0..1| stu
-    person ---|1| r14 ---|N| stu
-    room ---|1| r15 ---|N| stu
-```
+| ตาราง | สรุปสั้น (ตรงกับแถบในกล่อง drawio) | เก็บอะไร | ที่มาของหลักฐาน |
+|---|---|---|---|
+| `admission_round` | รอบรับสมัครของแต่ละปีการศึกษา ปีหนึ่งมีได้หลายรอบ | เก็บรอบการรับสมัครนักเรียน ปีการศึกษาหนึ่งมีได้หลายรอบ ใช้เป็นตัวยึดให้แผนการเรียนและใบสมัครอยู่ในรอบเดียวกัน | E |
+| `course_plan` | แผนการเรียนที่เปิดรับต่อรอบ พร้อมกำหนดการ 6 วัน | เก็บแผนการเรียนที่เปิดรับสมัครในแต่ละรอบ พร้อมกำหนดการสำคัญ 6 วันของแผนนั้น (เปิด-ปิดรับสมัคร วันสอบ วันประกาศผล วันรายงานตัว วันมอบตัว) ซึ่ง UC-SET-ADM-03 กำหนดว่าต้องระบุครบทุกช่วงและเรียงลำดับก่อนหลังถูกต้องจึงจะบันทึกได้ | P |
+| `exam_room` | ห้องสอบของแต่ละแผน ชี้ไปห้องกายภาพที่ใช้สอบ | เก็บห้องสอบคัดเลือกของแต่ละแผนการเรียน โดยชี้ไปห้องกายภาพ (school_room) ที่ใช้สอบ ผู้สมัครแต่ละคนถูกจัดที่นั่งเข้าห้องสอบห้องใดห้องหนึ่ง ผังโต๊ะรายรอบยังไม่อยู่ในขอบเขต | P |
+| `school_room` | ห้องกายภาพของโรงเรียน ชื่อ อาคาร ชั้น ความจุ | เก็บห้องกายภาพของโรงเรียน ได้แก่ ชื่อห้อง อาคาร ชั้น และความจุที่นั่ง ตารางห้องสอบอ้างถึงเพื่อรู้ว่าสอบได้ห้องละกี่คน ฝ่ายวิชาการนำไปใช้ต่อกับตารางสอบ | P+U |
+| `field_definition` | ช่องในฟอร์มสมัคร/นักเรียนที่โรงเรียนตั้งค่าได้ | เก็บนิยามช่องข้อมูลของแบบฟอร์มรับสมัครและแบบฟอร์มนักเรียน ว่ามีช่องอะไร อยู่หมวดไหน ชื่อที่แสดงคืออะไร และบังคับกรอกหรือไม่ ตั้งค่าได้ชุดเดียวใช้ทุกรอบ โรงเรียนจึงปรับแบบฟอร์มได้โดยไม่ต้องแก้โปรแกรม | P |
+| `student_column_setting` | คอลัมน์ที่แสดงในตารางรายชื่อนักเรียน | เก็บการตั้งค่าคอลัมน์ของตารางรายชื่อนักเรียน ว่าแสดงคอลัมน์ไหน เรียงอย่างไร และคอลัมน์ไหนเป็นคอลัมน์หลัก | P+U |
+| `email_template` | แบบร่างอีเมลสำเร็จรูปสำหรับแจ้งผลผู้ปกครอง | เก็บแบบร่างอีเมลสำเร็จรูปที่เจ้าหน้าที่เลือกใช้ตอนส่งอีเมลแจ้งผลหรือแจ้งเตือนไปยังผู้ปกครองของผู้สมัคร | P+U |
+| `system_setting` | ค่าตั้งค่าระบบ เช่น รูปแบบรหัสนักเรียน | เก็บค่าตั้งค่าระบบเป็นคู่ชื่อกับค่า ตอนนี้ใช้กำหนดรูปแบบรหัสนักเรียน เพื่อให้โรงเรียนปลายทางเลือกได้เองว่าจะใช้แบบ 68001 หรือ STD-2568-0001 | นายตัดสิน |
+| `activity_log` | ประวัติการทำรายการของเจ้าหน้าที่ | เก็บประวัติการทำรายการของเจ้าหน้าที่ เช่น เปลี่ยนสถานะ แก้ไขข้อมูล ส่งอีเมล ส่งออกเอกสาร ใช้แทนตารางประวัติแยกของแต่ละ Use Case | P |
+| `person` | ตัวบุคคลจริง 1 คนต่อ 1 แถว ค้นซ้ำด้วยเลขบัตร | เก็บข้อมูลตัวบุคคลจริง 1 คนต่อ 1 แถว ค้นซ้ำได้ด้วยเลขประจำตัวประชาชน คนเดียวกันยื่นใบสมัครได้หลายใบ และเมื่อมอบตัวแล้วถูกอ้างถึงจากตารางนักเรียน | P+E |
+| `application` | ใบสมัครแต่ละใบ ติดตามสถานะจากสมัครถึงมอบตัว | เก็บใบสมัครแต่ละใบ เป็นหลักฐานของการยื่นสมัคร ณ วันที่ยื่น คนเดียวกันยื่นได้หลายใบ (หลายรอบหรือหลายปี) จึงแยกจากตารางบุคคล ใบสมัครเป็นข้อมูลที่ใช้ติดตามสถานะตลอดการคัดเลือกจนถึงมอบตัว | P |
+| `applicant_address` | ที่อยู่ผู้สมัคร ตามทะเบียนบ้านและปัจจุบัน | เก็บที่อยู่ของผู้สมัครในใบสมัครแต่ละใบ แยกเป็นที่อยู่ตามทะเบียนบ้านกับที่อยู่ปัจจุบัน เก็บเป็นข้อความ ไม่ผูกกับตารางจังหวัด อำเภอ ตำบล | P |
+| `applicant_guardian` | บิดา มารดา ผู้ปกครองของผู้สมัคร ช่องทางติดต่อ | เก็บข้อมูลบิดา มารดา และผู้ปกครองของผู้สมัครในใบสมัครแต่ละใบ ใบสมัครหนึ่งใบมีได้หลายแถว ใช้เป็นช่องทางติดต่อและเป็นปลายทางของอีเมลแจ้งผล | P |
+| `applicant_health` | ข้อมูลสุขภาพของผู้สมัคร 1 แถวต่อใบสมัคร | เก็บข้อมูลสุขภาพของผู้สมัคร 1 แถวต่อใบสมัคร 1 ใบ | P |
+| `application_document` | เอกสารแนบใบสมัคร และผลตรวจของเจ้าหน้าที่ | เก็บเอกสารหลักฐานที่ผู้สมัครอัปโหลดแนบใบสมัคร และผลการตรวจเอกสารแต่ละฉบับของเจ้าหน้าที่ | U+E |
+| `application_status_history` | ประวัติการเปลี่ยนสถานะ ใช้ย้อนกลับรายการ | เก็บประวัติการเปลี่ยนสถานะของใบสมัครทุกครั้ง ว่าเปลี่ยนจากสถานะใด เป็นสถานะใด โดยใคร เมื่อใด ใช้รองรับการย้อนกลับรายการ | U+E |
+| `classroom` | ห้องเรียนต่อปีการศึกษา ระดับชั้น เลขห้อง | เก็บห้องเรียนของแต่ละปีการศึกษา ระบุระดับชั้นและเลขห้อง เช่น ม.1 ห้อง 1 นักเรียนแต่ละคนอยู่ในห้องเรียนหนึ่งห้อง (ห้องเรียนในที่นี้ไม่ใช่ห้องกายภาพ ดูภาค C) | P+E |
+| `student` | นักเรียนที่มอบตัวแล้ว สถานะ ห้อง การจำหน่ายออก | เก็บนักเรียนที่มอบตัวแล้วหรือบันทึกเข้าทะเบียนโดยตรง ถูกสร้างเป็นแถวใหม่ตอนมอบตัวเสร็จ (ไม่ได้ย้ายแถวจากใบสมัคร) จึงมีช่องชี้กลับไปยังใบสมัครต้นทาง นักเรียนอยู่ในห้องเรียนหนึ่งห้องและมีสถานะของตนเอง | P |
 
-**แต่ละกล่องคืออะไร (ที่มา: `erd.drawio` ฝั่งเนยสด)**
-
-| ตาราง | คืออะไร | ตัวอย่าง |
-|---|---|---|
-| admission_round | รอบรับสมัครแต่ละปี | รับสมัครปี 2569 เปิด/ปิดรับ |
-| course_plan | แผนการเรียนที่เปิดในรอบนั้น พร้อมรับกี่คน วันสมัคร/สอบ/ประกาศ/มอบตัว | ม.1 วิทย์-คณิต รับ 120 คน |
-| exam_room | ห้องสอบของแผนนั้น | ห้องสอบที่ 1 ห้อง 321 อาคาร 3 ความจุ 30 |
-| field_definition | ฟิลด์ฟอร์มสมัครที่โรงเรียนตั้งเองได้ ผูกกับรอบ ใบสมัครปีเก่าอ่านด้วยฟอร์มของปีนั้น | ช่อง "ความสามารถพิเศษ" |
-| person | ตัวคนจริง ค้นซ้ำด้วยเลขบัตรประชาชน | สมชาย เลขบัตร 13 หลัก |
-| application | ใบสมัคร 1 ใบ ต่อ 1 คน ต่อ 1 รอบ เก็บสถานะ (9 ค่า) ค่าธรรมเนียม คะแนน ข้อมูลเสริมแบบ JSONB | APP-2569-0001 |
-| student | นักเรียนที่มอบตัวแล้ว (สร้างใหม่ ไม่ได้ย้ายแถวจากใบสมัคร) | STD-2569-0001 สถานะ 3 ค่า (กำลังศึกษา/ย้าย/จบ) |
-| classroom | ห้องเรียนต่อปีการศึกษา | ม.1 ห้อง 1 ปี 2569 |
-| applicant_address | ที่อยู่ 2 ชุดในตารางเดียว แยกด้วยประเภท (ทะเบียนบ้าน/ปัจจุบัน) | — |
-| applicant_guardian | บิดา/มารดา/ผู้ปกครอง รวมตารางเดียว แยกด้วย role | — |
-| applicant_health | ข้อมูลสุขภาพ แยกตารางเพราะอ่อนไหว คุมสิทธิ์ตาม PDPA | แพ้ยา โรคประจำตัว |
-| application_document | เอกสารแนบ 1 แถวต่อ 1 ไฟล์ พร้อมสถานะตรวจ | รูปถ่าย ปพ.1 |
-| application_status_history | ประวัติเปลี่ยนสถานะ เพื่อให้กดย้อนกลับรายการได้ | จากรอตรวจ → ผ่าน |
+ที่มาของหลักฐาน: P = โค้ด prototype · U = Use Case ในเล่ม §3.3.5 · E = ER เดิมอย่างเดียว · นายตัดสิน = ผลตัดสินของเนยสด 2026-10-14
 
 ### 3.3 รายละเอียดฝั่งแคลร์ (บุคลากร + ลา/บัตรขออนุญาต)
 
@@ -423,16 +397,17 @@ flowchart LR
 
 ### 4.1 ฝั่งเนยสด (รับสมัคร + ทะเบียน)
 
-ที่มา `erd.drawio` เปลี่ยนแค่รูปแบบการเขียน
-- คอลัมน์ที่ต้นทางเขียนรวมกันบรรทัดเดียว (เช่น `apply_start / apply_end`) เลขาแยกเป็นคนละคอลัมน์
-- **ชนิดข้อมูลบางตัวเลขาเดา 🟡** เพราะต้นทางไม่ระบุ ได้แก่ คอลัมน์ `..._id` ที่เป็น PK/FK (ใช้ INT) และคอลัมน์ที่ต้นทางเขียนติดกันโดยบอกชนิดไว้แค่ตัวแรก (เช่น `created_at / updated_at` ใช้ TIMESTAMPTZ ตามตัวแรก) ชนิดจริงต้องรอ Data Dictionary
-- `prev_school_province` ต้นทางเขียน `prev_school_name / province` เลขาตั้งชื่อคอลัมน์หลังเอง
+**สร้างใหม่ 2026-10-14 (plan 102)** จากสเปก `report-drafts/school-dark/er-tools/er_nuesod_spec.py` ในโปรเจกต์เลขา ด้วยสคริปต์ `er_md.py` ห้ามแก้บล็อกนี้ด้วยมือ ให้แก้ที่สเปกแล้วรันสคริปต์ใหม่
+สเปกอ่านโค้ด prototype (`uxui-merged/`) แล้วเทียบกับ Use Case ในเล่ม §3.3.5 และ `erd.drawio` เดิม **18 ตาราง 170 คอลัมน์** · ที่มาของแต่ละคอลัมน์ ผลตัดสินของเนยสด 8 ข้อ และรายการที่เปลี่ยนจากฉบับเดิม อยู่ใน `report-drafts/school-dark/er-nuesod-new-vs-old.md`
+- ชนิดข้อมูลของ `..._id` ที่เป็น INT และ `created_at` `updated_at` เป็นการเดา 🟡 เพราะ prototype เก็บใน localStorage ไม่มีชนิดข้อมูลให้ยืนยัน
+- ฟอร์มรับสมัครมี 166 ช่อง ช่องที่ไม่มีคอลัมน์ของตัวเองเก็บใน `application.extra_fields` (JSONB)
+- กล่องใน drawio หน้า "ER เนยสด" แสดง 3 คอลัมน์ (คีย์ | ชื่อคอลัมน์ | คำอธิบายสั้น) ความหมายเต็มดู `data-dictionary.md`
 
 ```mermaid
 erDiagram
     admission_round {
         INT round_id PK
-        INT academic_year "เช่น 2569"
+        INT academic_year "เช่น 2568"
         VARCHAR name
         BOOL is_open
         TIMESTAMPTZ created_at
@@ -441,8 +416,8 @@ erDiagram
         INT plan_id PK
         INT round_id FK
         VARCHAR level "ม.1 / ม.4"
-        VARCHAR name "วิทย์-คณิต, Gifted"
-        INT capacity
+        VARCHAR name "Gifted / ทั่วไป / วิทย์-คณิต / ศิลป์-คำนวณ / ศิลป์-ภาษา / คอมพิวเตอร์และเทคโนโลยี"
+        INT capacity "จำนวนรับ"
         TEXT regulations
         DATE apply_start
         DATE apply_end
@@ -454,32 +429,69 @@ erDiagram
     exam_room {
         INT exam_room_id PK
         INT plan_id FK
+        INT school_room_id FK "ห้องกายภาพที่ใช้สอบ ชื่อห้องอ่านจาก school_room.name"
         VARCHAR name "ห้องสอบที่ 1"
-        VARCHAR room_name "ห้อง 321 อาคาร 3"
         INT capacity
+    }
+    school_room {
+        INT room_id PK
+        VARCHAR name "ห้อง 321 ห้ามซ้ำในอาคารเดียวกัน"
+        VARCHAR building "อาคาร 3"
+        INT floor "ชั้น"
+        INT capacity "ความจุตอนสอบ ฝ่ายวิชาการใช้ต่อ"
     }
     field_definition {
         INT field_id PK
-        INT round_id FK
-        VARCHAR section_key "personal, health"
-        VARCHAR group_name
-        VARCHAR field_key
+        ENUM form_type "admission / student"
+        VARCHAR section_key "personal / registered_address / current_address / father / mother / guardian / education / health / documents (9 หมวด)"
+        VARCHAR group_name "ข้อมูลทั่วไป / ชื่อและคำนำหน้า ฯลฯ"
+        VARCHAR field_key "เช่น citizen_id first_name_th"
         VARCHAR label_th
         VARCHAR label_en
-        VARCHAR data_type
+        VARCHAR field_no "เลขกำกับในฟอร์ม เช่น 12."
         BOOL is_required
+        BOOL is_header "หัวข้อกลุ่มเอกสาร ไม่ใช่ช่องกรอก"
         INT display_order
         BOOL is_active
+    }
+    student_column_setting {
+        VARCHAR column_id PK "seq studentId firstName ฯลฯ"
+        VARCHAR label_th
+        VARCHAR field_key "ชื่อฟิลด์ในระเบียนนักเรียน รองรับ path เช่น examScore.gpa"
+        BOOL is_visible
+        BOOL is_primary "คอลัมน์หลัก มีได้ 1 คอลัมน์ ซ่อนไม่ได้"
+        BOOL is_locked "คอลัมน์ระบบ ลบไม่ได้ แก้ได้เฉพาะชื่อแสดง"
+        VARCHAR align "left / center"
+        INT display_order
+    }
+    email_template {
+        VARCHAR template_key PK "passed / failed / missing_docs / fee_reminder"
+        VARCHAR label
+        VARCHAR subject "มีตัวแปรเช่น [ชื่อนักเรียน]"
+        TEXT body
+    }
+    system_setting {
+        VARCHAR setting_key PK "เช่น student_code_format"
+        VARCHAR value "เช่น {YY}{SEQ3} (68001) หรือ STD-{YYYY}-{SEQ4}"
+        VARCHAR description
+        TIMESTAMPTZ updated_at
+    }
+    activity_log {
+        INT log_id PK
+        TIMESTAMPTZ occurred_at
+        TEXT action "ข้อความอธิบายรายการ"
+        VARCHAR status "info / success"
+        VARCHAR user_name
     }
     person {
         INT person_id PK
         CHAR citizen_id UK "13 หลัก"
-        VARCHAR prefix
+        VARCHAR prefix "เด็กชาย / เด็กหญิง / นาย / นางสาว"
         VARCHAR first_name_th
         VARCHAR last_name_th
         VARCHAR full_name_en
         DATE dob
-        VARCHAR gender
+        ENUM gender "male / female"
         VARCHAR nationality
         VARCHAR religion
         TIMESTAMPTZ created_at
@@ -493,42 +505,30 @@ erDiagram
         INT plan_choice_1 FK
         INT plan_choice_2 FK "NULL ได้"
         INT exam_room_id FK "NULL ได้"
-        VARCHAR grade_level
-        VARCHAR seat_number
+        VARCHAR grade_level "ม.1 ถึง ม.6"
+        VARCHAR seat_number "เลขที่นั่งสอบ"
         VARCHAR prev_school_name
         VARCHAR prev_school_province
         VARCHAR prev_degree
-        DECIMAL gpax
-        ENUM status "9 ค่า"
+        DECIMAL gpax "คะแนนเฉลี่ยสะสม"
+        DECIMAL score_raw "คะแนนสอบดิบ"
+        ENUM status "unpaid_exam_fee / paid_exam_fee / awaiting_results / passed / reserve / failed / not_reported / reported / enrolled"
         BOOL fee_paid
-        TIMESTAMPTZ fee_paid_at
-        DECIMAL score_raw
+        TIMESTAMPTZ fee_paid_at "NULL ได้"
+        VARCHAR payment_slip_url "NULL ได้"
+        INT reserve_rank "NULL ได้ ลำดับตัวสำรอง"
         BOOL documents_complete
-        JSONB extra_fields "ฟิลด์ที่โรงเรียนเพิ่มเอง"
+        JSONB extra_fields "ช่องจากฟอร์มตั้งค่าที่ไม่มีคอลัมน์ เช่น father.company mother.monthly_income"
         TIMESTAMPTZ applied_at
+        TIMESTAMPTZ status_changed_at
         VARCHAR last_edited_by
         TIMESTAMPTZ last_edited_at
-    }
-    student {
-        INT student_id PK
-        VARCHAR student_code UK "STD-2568-0001"
-        INT person_id FK
-        INT from_application_id FK "NULL ได้"
-        INT classroom_id FK
-        DATE enrolled_at
-        ENUM status "studying / transferred / graduated"
-    }
-    classroom {
-        INT classroom_id PK
-        INT academic_year
-        VARCHAR level "ม.1"
-        INT room_no "1..5"
-        INT homeroom_teacher_id "ชี้ระบบบุคลากร ไม่ระบุตาราง"
     }
     applicant_address {
         INT address_id PK
         INT application_id FK
         ENUM address_type "registered / current"
+        VARCHAR house_code "NULL ได้ รหัสประจำบ้าน"
         VARCHAR house_no
         VARCHAR moo
         VARCHAR soi
@@ -545,7 +545,7 @@ erDiagram
         VARCHAR relationship "เฉพาะ guardian"
         VARCHAR full_name
         VARCHAR phone
-        VARCHAR email
+        VARCHAR email "NULL ได้"
         VARCHAR occupation
         ENUM address_same_as "NULL ได้"
         BOOL is_primary_contact
@@ -554,6 +554,8 @@ erDiagram
         INT health_id PK
         INT application_id FK "1:1"
         VARCHAR blood_type
+        DECIMAL weight "กก."
+        DECIMAL height "ซม."
         TEXT chronic_disease
         TEXT drug_allergy
         TEXT food_allergy
@@ -561,7 +563,7 @@ erDiagram
     application_document {
         INT document_id PK
         INT application_id FK
-        VARCHAR doc_type "รูปถ่าย, ปพ.1"
+        VARCHAR doc_type "เช่น birth_cert student_house_reg transcript_front payment_slip"
         VARCHAR file_path
         VARCHAR file_name
         VARCHAR mime_type
@@ -575,17 +577,45 @@ erDiagram
     application_status_history {
         INT history_id PK
         INT application_id FK
-        ENUM from_status
-        ENUM to_status
+        ENUM from_status "ค่าชุดเดียวกับ application.status"
+        ENUM to_status "ค่าชุดเดียวกับ application.status"
         VARCHAR changed_by
         TIMESTAMPTZ changed_at
         TEXT note
     }
+    classroom {
+        INT classroom_id PK
+        INT academic_year
+        VARCHAR level "ม.1 ถึง ม.6"
+        INT room_no "1 ถึง 5"
+        VARCHAR major "แผนการเรียนของห้อง เช่น วิทย์-คณิต"
+        INT capacity
+        INT homeroom_teacher_id "ชี้ระบบบุคลากร ไม่ระบุตาราง"
+    }
+    student {
+        INT student_id PK
+        VARCHAR student_code UK "VARCHAR(20) รูปแบบตาม system_setting เช่น 68001 หรือ STD-2568-0001"
+        INT person_id FK
+        INT from_application_id FK "NULL ได้ ว่างเมื่อเพิ่มนักเรียนตรง ๆ"
+        INT classroom_id FK
+        INT class_no "เลขที่ในห้อง จัดใหม่อัตโนมัติ ชายก่อนหญิง"
+        INT entry_year "ปี พ.ศ. ที่เข้าเรียน"
+        DATE enrolled_at
+        ENUM status "enrolled / graduated / resigned / transferred / dismissed / on_leave"
+        TIMESTAMPTZ status_changed_at
+        DATE status_effective_date "NULL ได้"
+        VARCHAR destination_school "NULL ได้ สถานศึกษาปลายทาง"
+        TEXT status_note "NULL ได้ เหตุผลการจำหน่ายออก"
+        VARCHAR former_school "NULL ได้ รับย้ายเข้า"
+        TEXT transfer_in_note "NULL ได้"
+        VARCHAR last_edited_by
+        TIMESTAMPTZ last_edited_at
+    }
 
     admission_round ||--o{ course_plan : "มีแผน"
-    admission_round ||--o{ field_definition : "กำหนดฟอร์ม"
     admission_round ||--o{ application : "รับสมัครใน"
     course_plan ||--o{ exam_room : "มีห้องสอบ"
+    school_room |o--o{ exam_room : "ใช้เป็นห้องสอบ"
     course_plan ||--o{ application : "เลือกอันดับ 1 / 2"
     exam_room |o--o{ application : "จัดที่นั่ง"
     person ||--o{ application : "ยื่นได้หลายใบ"
@@ -938,6 +968,9 @@ erDiagram
 | A11 | สไตล์ชื่อ snake_case | นายเลือก แต่แคลร์ยังไม่ได้ตกลง เล่มตอนนี้แสดง ER บุคลากรเป็น camelCase (§3.4.1) | "สไตล์ตั้งชื่อตารางและคอลัมน์" |
 | A12 | ไม่มีตารางผู้ใช้/บทบาท | ไม่เติม | "ใครถือ login/token" |
 | A13 | ไม่มีตารางลาของครู และตั้งค่าระบบ | ไม่เติม ไม่ได้ออกแบบแทนแคลร์ | "ER ของแคลร์ยังไม่ครบ" |
+
+<!-- er-md:s6 -->
+> ⚠️ แก้ไข 2026-10-14: ข้อที่โค้ด prototype และเนยสดตอบแล้ว · A9 สถานะนักเรียนเป็น 6 ค่า (`enrolled` `graduated` `resigned` `transferred` `dismissed` `on_leave`) ตามโค้ดและ UC-REG-05 · A10 คงแยก 3 ตาราง ตามที่เนยสดเลือก · `application.status` มี 9 ค่า (ลิสต์ครบใน `data-dictionary.md`) · ข้อค้างใน `team-b-todo.md` ยังไม่ติ๊ก รอเนยสดยืนยัน
 
 ## 7. ขั้นต่อไป
 
