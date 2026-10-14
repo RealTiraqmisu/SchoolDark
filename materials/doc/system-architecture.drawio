@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="System Architecture" id="sd-arch-lr">
-        <mxGraphModel dx="967" dy="375" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
+        <mxGraphModel dx="1267" dy="716" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -46,11 +46,8 @@
                 <mxCell id="gw_n" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=15;fontColor=#3B5BDB;fontStyle=5;fontFamily=Arial;" value="NGINX" vertex="1">
                     <mxGeometry height="25" width="170" x="390" y="162" as="geometry"/>
                 </mxCell>
-                <mxCell id="gw_lb" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="LOAD BALANCER" vertex="1">
-                    <mxGeometry height="50" width="150" x="400" y="262" as="geometry"/>
-                </mxCell>
                 <mxCell id="gw_rp" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="REVERSE PROXY" vertex="1">
-                    <mxGeometry height="50" width="150" x="400" y="327" as="geometry"/>
+                    <mxGeometry height="50" width="150" x="400" y="310" as="geometry"/>
                 </mxCell>
                 <mxCell id="gw_rt" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontSize=11;fontFamily=Arial;" value="ROUTING&lt;br&gt;/api/academic&lt;br&gt;/api/admission&lt;br&gt;/api/support" vertex="1">
                     <mxGeometry height="170" width="150" x="400" y="392" as="geometry"/>
@@ -228,7 +225,7 @@
                 </UserObject>
                 <UserObject label="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/nginx.webp&quot; alt=&quot;Nginx Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" link="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/nginx.webp&quot; alt=&quot;Nginx Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" id="Ae2aHEi4SgtzmzrH2gXE-10">
                     <mxCell parent="1" style="text;whiteSpace=wrap;html=1;" vertex="1">
-                        <mxGeometry height="60" width="40" x="455" y="190.5" as="geometry"/>
+                        <mxGeometry height="90" width="70" x="440" y="202" as="geometry"/>
                     </mxCell>
                 </UserObject>
                 <UserObject label="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/nextjs.png&quot; alt=&quot;Nextjs Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" link="&lt;img src=&quot;https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/nextjs.png&quot; alt=&quot;Nextjs Icon &amp;amp; Logo | Dashboard Icons &amp;amp; Logos&quot;&gt;" id="zU_l7xKUVwcY_HQePlKB-1">
