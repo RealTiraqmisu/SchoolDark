@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e" pages="3">
     <diagram id="2GiG-2USWJN6bCQwZDBz" name="Page-1">
-        <mxGraphModel dx="3200" dy="1615" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1978" dy="775" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -497,10 +497,10 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="KuX_XRmJswBCCZbQ4_-T-58" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#0050ef;strokeColor=#001DBC;fontColor=#ffffff;" value="จัดการบัตรขออนุญาต" vertex="1">
+                <mxCell id="KuX_XRmJswBCCZbQ4_-T-58" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="จัดการบัตรขออนุญาต" vertex="1">
                     <mxGeometry height="69.20454545454545" width="140" x="1185" y="2435.9954545454543" as="geometry"/>
                 </mxCell>
-                <mxCell id="KuX_XRmJswBCCZbQ4_-T-59" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#0050ef;strokeColor=#001DBC;fontColor=#ffffff;" value="ดูบัตรขออนุญาต" vertex="1">
+                <mxCell id="KuX_XRmJswBCCZbQ4_-T-59" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="ดูบัตรขออนุญาต" vertex="1">
                     <mxGeometry height="69.20454545454545" width="140" x="1185" y="2519.9954545454543" as="geometry"/>
                 </mxCell>
                 <mxCell id="KuX_XRmJswBCCZbQ4_-T-60" edge="1" parent="1" source="KuX_XRmJswBCCZbQ4_-T-59" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;dashed=1;" target="IWZWGF7JnsLCTGTGX0jP-50">
