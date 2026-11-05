@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Chen ภาพรวม" id="pg-chen">
-        <mxGraphModel dx="3011" dy="2214" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
+        <mxGraphModel dx="3075" dy="2080" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -290,7 +290,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="ER เนยสด (รับสมัคร+ทะเบียน)" id="pg-nen">
-        <mxGraphModel dx="3634" dy="2672" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2810" math="0" shadow="0">
+        <mxGraphModel dx="4681" dy="2600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2810" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -2030,7 +2030,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="ER แคลร์ (บุคลากร+ลา/บัตร)" id="pg-claire">
-        <mxGraphModel dx="2533" dy="1336" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="3180" math="0" shadow="0">
+        <mxGraphModel dx="5762" dy="3200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="3180" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -2744,7 +2744,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="จุดเชื่อมสองฝั่ง" id="pg-join">
-        <mxGraphModel dx="1911" dy="2095" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
+        <mxGraphModel dx="1922" dy="1300" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2400" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -3060,7 +3060,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="ER เนยสด v2 (หลัง grill 2026-11-05)" id="pg-nen-v2">
-        <mxGraphModel dx="3764" dy="2768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="2930" math="0" shadow="0">
+        <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="3300" pageHeight="2930" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
