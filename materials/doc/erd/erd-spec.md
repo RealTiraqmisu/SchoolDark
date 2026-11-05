@@ -37,7 +37,7 @@
 | `course_plan` | `level` และ `name` (ข้อความ) ถ้าย้ายไปอยู่ `study_program` ดู ❓ ข้อ 4.6 | FK `study_program_id` · คงวันทั้ง 6 วัน (เปิด-ปิดรับสมัคร, สอบ, ประกาศผล, รายงานตัว, มอบตัว) แต่ละแผนตั้งเองได้ · คง `capacity` `regulations` |
 | `exam_room` | FK `plan_id` | FK `round_id` ชี้ `admission_round` · UK(`round_id`, `school_room_id`) · คง `name` `capacity` (ที่นั่งที่เปิดใช้ในรอบนี้) |
 | `school_room` | — | `exam_capacity` (ที่นั่งสอบ แยกจากความจุปกติ) · `is_exam_room` (ใช้เป็นห้องสอบได้ไหม) · `exam_rows` · `exam_cols` (สองตัวหลังไม่บังคับกรอก) |
-| `application` | FK `person_id` | เก็บเลขบัตร ชื่อ ฯลฯ ครบในใบ · เลขบัตรต้องมี index แต่**ห้าม UK** · FK `exam_room_id` เดิมชี้ exam_room ใหม่ · FK `plan_choice_1/2` ชี้ `course_plan` เหมือนเดิม |
+| `application` | FK `person_id` · `grade_level` · `plan_choice_1/2` (รวมเหลือ `plan_id`) | เก็บเลขบัตร ชื่อ ฯลฯ ครบในใบ · เลขบัตร**ห้าม UK เดี่ยว** แต่ UK คู่กับ `round_id` (1 คน 1 ใบต่อรอบ) · FK `plan_id` ชี้ `course_plan` (1 ใบ 1 แผน) · FK `exam_room_id` ชี้ exam_room ใหม่ · คง `round_id` (ดู 2.6) |
 | `student` | `classroom_id` · FK `person_id` | ย้ายข้อมูลตัวบุคคลจากตาราง person เข้ามา: เลขบัตร (UK) · คำนำหน้า · ชื่อ · นามสกุล · ชื่อ-สกุลอังกฤษ · วันเกิด · เพศ · สัญชาติ · ศาสนา · `created_at` · `updated_at` · คง `from_application_id` |
 | `classroom` | `major` (ข้อความ) · `homeroom_teacher_id` | FK `study_program_id` · FK `school_room_id` (ไม่บังคับกรอก ซ้ำห้องจริงได้) |
 | ตารางลูกของนักเรียน (ถ้ามีในอนาคต: ที่อยู่ สุขภาพ ประวัติการศึกษาจริง) | — | ชี้ `student_id` ไม่ใช่ person |
@@ -61,6 +61,22 @@
 
 `applicant_address` · `applicant_guardian` · `applicant_health` · `application_document` · `application_status_history` (ชี้ `application_id` เหมือนเดิม) · `guardians` + `student_guardians` (M:N ตาม Figma ใช้กับ Portal ผู้ปกครอง) · ตารางตั้งค่า 5 ตาราง · ฝั่งแคลร์ทั้งหมด (`employees` ไม่รวมกับ student)
 
+### 2.6 ตัดสินเพิ่ม รอบ 2 (2026-11-05 · plan 202)
+
+ที่มา: นายทักว่า `plan_choice` ทำไมมี 2 คอลัมน์ ทั้งที่ไม่ได้ grill (มาจากฟอร์ม prototype ไม่ใช่การตัดสินของทีม) แล้วให้ไล่หาจุดที่ไม่ make sense
+
+| เรื่อง | ตัดสินว่า | เพราะ |
+|---|---|---|
+| เลือกแผน | **1 ใบสมัครเลือก 1 แผน** · `application.plan_id` คอลัมน์เดียว | นายตอบ · ปัญหาเลือก 2 แผนวันสอบคนละวันแต่ใบมีห้องสอบ/ที่นั่งได้ชุดเดียวหายไปเอง |
+| ใบต่อรอบ | 1 คน 1 ใบต่อรอบ · UK(`citizen_id`, `round_id`) | นายตอบ |
+| `application.round_id` | **คงไว้** ให้ฐานข้อมูลเช็กกฎข้างบน · ต้องตรงกับ `course_plan.round_id` ของแผนที่เลือก และ `exam_room.round_id` ของห้องสอบ | นายตอบ (เลือกคง หลังรู้ว่าเอาออกแล้วเช็กใบซ้ำในรอบเดียวกันไม่ได้) |
+| `application.grade_level` | เอาออก ซ้ำกับ `course_plan.level` (รู้ชั้นจากแผนที่สมัคร) | เลขาเสนอใน plan 202 · นายอนุมัติ plan |
+| ชั้นของห้องเรียน | `classroom.level` ต้องเข้ากับ `study_program.level_band` (ม.1–ม.3 กับ ม.ต้น · ม.4–ม.6 กับ ม.ปลาย) | เขียนเป็นกฎ ไม่ใช่ FK |
+| ที่นั่งสอบ | `exam_room.capacity` ห้ามเกิน `school_room.exam_capacity` | เขียนเป็นกฎ |
+| ห้องปัจจุบัน | `student_class_history` นักเรียน 1 คนมีแถวที่ `end_date` ว่างได้แถวเดียว | เขียนเป็นกฎ |
+| `student.from_application_id` | คงชี้ใบล่าสุดที่มอบตัว ใบเก่าหาด้วยเลขบัตร | ไม่ทำอะไรเพิ่ม |
+| หน้า "จุดเชื่อมสองฝั่ง" และ "Chen ภาพรวม" | **ยังเป็นแบบเก่า** (มี `homeroom_teacher_id` · `student.classroom_id` · `teachers` · person) | งานใหญ่ ทำทีหลัง จดไว้ใน `tasks.md` ฝั่งเลขา |
+
 ## 3. เช็กลิสต์ไล่แก้ drawio
 
 - [ ] เพิ่ม `study_program`
@@ -70,7 +86,7 @@
 - [ ] `exam_room`: เปลี่ยน FK จาก `plan_id` เป็น `round_id` · เส้น course_plan→exam_room เปลี่ยนเป็น admission_round→exam_room
 - [ ] `course_plan`: เพิ่ม FK `study_program_id`
 - [ ] `classroom`: เอา `major` ออก ใส่ FK `study_program_id` กับ `school_room_id`
-- [ ] `application`: เอา `person_id` ออก ตัดเส้น person→application
+- [ ] `application`: เอา `person_id` `grade_level` ออก · `plan_choice_1/2` รวมเป็น `plan_id` · ตัดเส้น person→application
 - [ ] `student`: ย้ายคอลัมน์ person เข้ามา เอา `classroom_id` กับ `person_id` ออก
 - [ ] ลบ `person`
 - [ ] หน้า "จุดเชื่อมสองฝั่ง": ตัดเส้น teachers→classroom, teachers↔employees เพิ่มเส้น employees→classroom_homeroom_teacher→classroom, ปรับเส้น classroom→student เป็นผ่าน `student_class_history`
@@ -85,7 +101,7 @@
 | 4.1 | ชื่อตารางใหม่ 3 ตัว (`study_program` `student_class_history` `classroom_homeroom_teacher`) เป็นชื่อชั่วคราว | นายตั้งเองหรือคงไว้ |
 | 4.2 | กฎครู 1 คน 1 ห้องต่อปี ต้องมีปีการศึกษาในการเช็ก `classroom` มี `academic_year` อยู่แล้ว | ใช้ constraint ผ่านการ join / เก็บ `academic_year` ซ้ำในตารางคั่น · ✅ ตัดสินแล้ว 2026-11-05: เก็บ `academic_year` ซ้ำในตารางคั่น + UK(`employee_id`, `academic_year`) (นายตอบ · plan 201) |
 | 4.3 | ตอนมอบตัว หาผู้ปกครองคนเดิมใน `guardians` ด้วยอะไรก่อนสร้างใหม่ | เบอร์โทร / อีเมล / เลขบัตรผู้ปกครอง (ตอนนี้ใบสมัครยังไม่เก็บเลขบัตรผู้ปกครอง) |
-| 4.4 | `application.exam_room_id` กับ `seat_number` ที่นั่งนับแยกตามวันสอบได้จริงไหม เพราะ application ชี้แค่ห้อง ไม่ชี้วัน (วันอยู่ที่ course_plan ของใบนั้น) | น่าจะพอ เพราะวันสอบรู้จาก `plan_choice_1` · ต้องเช็กตอนออกแบบการจัดที่นั่ง |
+| 4.4 | `application.exam_room_id` กับ `seat_number` ที่นั่งนับแยกตามวันสอบได้จริงไหม เพราะ application ชี้แค่ห้อง ไม่ชี้วัน (วันอยู่ที่ course_plan ของใบนั้น) | น่าจะพอ เพราะวันสอบรู้จาก `plan_choice_1` · ต้องเช็กตอนออกแบบการจัดที่นั่ง · ✅ หมดปัญหา 2026-11-05 (plan 202): 1 ใบสมัครเลือก 1 แผน จึงมีวันสอบวันเดียว |
 | 4.5 | ทีม A ใช้ `student_class_histories` ของ Figma อยู่ไหม ถ้าใช้ต้องคุยก่อนทิ้ง | ถามทีม A |
 | 4.6 | `level` กับ `name` ของแผน อยู่ `study_program` หรือ `course_plan` (แผนเดียวเปิดหลายระดับไหม เช่น วิทย์-คณิต ม.4 กับ ม.5) | ถ้าแผนผูกระดับ → `study_program` มี `level` · ถ้าไม่ผูก → `level` อยู่ `course_plan` · ✅ ตัดสินแล้ว 2026-11-05: `study_program` เก็บช่วงชั้น (`level_band` ม.ต้น/ม.ปลาย) · `course_plan` เก็บชั้นที่เปิดรับ (`level` ม.1/ม.4) · `classroom` เก็บชั้นจริงของห้อง (นายตอบ · plan 201) |
 | 4.7 | ที่สร้าง drawio หน้านี้มาจากสเปก `report-drafts/school-dark/er-tools/er_nuesod_spec.py` (ห้ามแก้ drawio ด้วยมือตามโน้ตในไฟล์) นายจะแก้ drawio เอง จึงต้องรู้ว่าสเปกสคริปต์จะเลิกใช้ หรือจะแก้ตาม | ตัดสินทีหลัง |
