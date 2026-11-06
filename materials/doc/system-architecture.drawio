@@ -1,13 +1,13 @@
 <mxfile host="65bd71144e">
     <diagram name="System Architecture" id="sd-arch-lr">
-        <mxGraphModel dx="1446" dy="994" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="1132" dy="1123" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="be" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=#1F2A5C;fontFamily=Arial;" value="" vertex="1">
                     <mxGeometry height="620" width="1130" x="340" y="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="Ae2aHEi4SgtzmzrH2gXE-9" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=light-dark(#FF9933,#FF9933);fontFamily=Arial;" value="" vertex="1">
+                <mxCell id="Ae2aHEi4SgtzmzrH2gXE-9" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;dashed=1;dashPattern=8 6;strokeWidth=2;strokeColor=light-dark(#FF9933,#FF9933);fontFamily=Arial;" value="ป" vertex="1">
                     <mxGeometry height="490" width="790" x="650" y="150" as="geometry"/>
                 </mxCell>
                 <mxCell id="cl_t" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontSize=16;fontColor=#8DB4E2;fontStyle=1;fontFamily=Arial;" value="CLIENT APPS" vertex="1">
@@ -221,8 +221,232 @@
             </root>
         </mxGraphModel>
     </diagram>
-    <diagram name="Page-1" id="gQUkADZH2U-bxWxf6_56">
-        <mxGraphModel dx="601" dy="981" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
+    <diagram name="Service B (ฉบับเอกสาร)" id="sd-arch-svc-b-doc">
+        <mxGraphModel dx="941" dy="934" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1120" pageHeight="792" background="#f5f5f5" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="bl_band1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;strokeColor=#bfc0c0;fillColor=#f5f5f5;" value="" vertex="1">
+                    <mxGeometry height="64" width="840" x="240" y="112" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_band2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;strokeColor=#bfc0c0;fillColor=#ececec;" value="" vertex="1">
+                    <mxGeometry height="140" width="840" x="240" y="224" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_band3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;strokeColor=#bfc0c0;fillColor=#f5f5f5;" value="" vertex="1">
+                    <mxGeometry height="72" width="840" x="240" y="364" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_band4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;strokeColor=#bfc0c0;fillColor=#ececec;" value="" vertex="1">
+                    <mxGeometry height="92" width="840" x="240" y="436" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_band5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;strokeColor=#bfc0c0;fillColor=#f5f5f5;" value="" vertex="1">
+                    <mxGeometry height="140" width="840" x="240" y="544" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_frame" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;fillColor=none;strokeColor=#2d3142;strokeOpacity=30;dashed=1;dashPattern=4 4;" value="" vertex="1">
+                    <mxGeometry height="336" width="848" x="236" y="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_frame_t" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#4f5d75;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="SERVICE B · FASTAPI" vertex="1">
+                    <mxGeometry height="16" width="300" x="244" y="204" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_tag1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#7a8399;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="L1 ENTRY" vertex="1">
+                    <mxGeometry height="16" width="80" x="248" y="116" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_tag2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#7a8399;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="L2 API" vertex="1">
+                    <mxGeometry height="16" width="80" x="248" y="228" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_tag3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#7a8399;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="L3 SERVICE" vertex="1">
+                    <mxGeometry height="16" width="80" x="248" y="368" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_tag4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#7a8399;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="L4 DATA" vertex="1">
+                    <mxGeometry height="16" width="80" x="248" y="440" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_tag5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#7a8399;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="L5 INFRA" vertex="1">
+                    <mxGeometry height="16" width="80" x="248" y="548" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_eyebrow" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#7a8399;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="SDD · COMPONENT DESIGN" vertex="1">
+                    <mxGeometry height="16" width="600" x="40" y="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_title" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Instrument Serif;fontSize=32;fontColor=#2d3142;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInstrument%2BSerif;" value="Service B · ระบบงานทะเบียน &amp;amp; IAM" vertex="1">
+                    <mxGeometry height="44" width="1040" x="40" y="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_req" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=right;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#7a8399;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="REQUEST ↓" vertex="1">
+                    <mxGeometry height="16" width="124" x="108" y="136" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_ext_t" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Geist Mono;fontSize=9;fontColor=#7a8399;spacing=0;spacingLeft=0;spacingRight=0;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;" value="EXTERNAL SERVICES" vertex="1">
+                    <mxGeometry height="16" width="160" x="40" y="204" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_svc_a" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#f0f0f1;strokeColor=#b9bbc2;fontColor=#2d3142;" value="&lt;b&gt;Service A&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;ระบบวิชาการ&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="56" width="160" x="40" y="236" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_svc_c" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#f0f0f1;strokeColor=#b9bbc2;fontColor=#2d3142;" value="&lt;b&gt;Service C&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;ระบบงานแนะแนว&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="48" width="160" x="40" y="304" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_portal" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#f0f0f1;strokeColor=#b9bbc2;fontColor=#2d3142;" value="&lt;b&gt;Web Portal&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;NEXT.JS&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="200" x="332" y="124" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_nginx" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#f0f0f1;strokeColor=#b9bbc2;fontColor=#2d3142;" value="&lt;b&gt;Nginx&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;REVERSE PROXY · /API/ADMISSION&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="240" x="640" y="124" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_int" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#ffffff;strokeColor=#2d3142;fontColor=#2d3142;" value="&lt;b&gt;Internal API&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;FOR A / C&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="52" width="128" x="332" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_iam" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#fcefe8;strokeColor=#eb6c36;fontColor=#2d3142;" value="&lt;b&gt;IAM&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;AUTH · JWT / OTP&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="52" width="128" x="484" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_adm" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#ffffff;strokeColor=#2d3142;fontColor=#2d3142;" value="&lt;b&gt;รับสมัคร&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;ADMISSION&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="52" width="128" x="636" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_enr" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#ffffff;strokeColor=#2d3142;fontColor=#2d3142;" value="&lt;b&gt;มอบตัว&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;ENROLLMENT&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="52" width="128" x="788" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_reg" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#ffffff;strokeColor=#2d3142;fontColor=#2d3142;" value="&lt;b&gt;ทะเบียนนักเรียน&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;REGISTRY&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="52" width="128" x="940" y="272" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_biz" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#ffffff;strokeColor=#2d3142;fontColor=#2d3142;" value="&lt;b&gt;Business logic&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Sarabun&quot; style=&quot;font-size:11px;color:#4f5d75&quot;&gt;กฎธุรกิจ เช่น มอบตัว · สมัครซ้ำ&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="736" x="332" y="376" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_repo" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#ffffff;strokeColor=#2d3142;fontColor=#2d3142;" value="&lt;b&gt;Repository&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;SQLALCHEMY&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="352" x="332" y="468" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_wrk" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#fafafa;strokeColor=#c4c6cc;fontColor=#2d3142;dashed=1;dashPattern=4 3;" value="&lt;b&gt;Task Worker&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;CELERY · ASYNC&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="44" width="160" x="908" y="468" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_pg" parent="1" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=8;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;fillColor=#eaebed;strokeColor=#4f5d75;fontColor=#2d3142;" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;SCHEMA ADMISSION&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="56" width="160" x="332" y="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_minio" parent="1" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=8;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;fillColor=#eaebed;strokeColor=#4f5d75;fontColor=#2d3142;" value="&lt;b&gt;MinIO&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;FILES&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="56" width="160" x="524" y="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_redis" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#eaebed;strokeColor=#4f5d75;fontColor=#2d3142;" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;BROKER&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="56" width="160" x="716" y="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_email" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#f0f0f1;strokeColor=#b9bbc2;fontColor=#2d3142;" value="&lt;b&gt;Email&lt;/b&gt;&lt;br&gt;&lt;font face=&quot;Geist Mono&quot; style=&quot;font-size:9px;color:#4f5d75&quot;&gt;SMTP&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="56" width="160" x="908" y="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg" parent="1" style="shape=partialRectangle;top=1;left=0;right=0;bottom=0;fillColor=none;strokeColor=#bfc0c0;shadow=0;" value="" vertex="1">
+                    <mxGeometry height="60" width="1040" x="40" y="732" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_s0" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#ffffff;strokeColor=#2d3142;fontColor=#2d3142;" value="" vertex="1">
+                    <mxGeometry height="12" width="24" x="48" y="756" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_t0" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Sarabun;fontSize=10;fontColor=#4f5d75;spacing=0;spacingLeft=0;spacingRight=0;" value="Component ของ B" vertex="1">
+                    <mxGeometry height="28" width="108" x="80" y="748" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_s1" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#f0f0f1;strokeColor=#b9bbc2;fontColor=#2d3142;" value="" vertex="1">
+                    <mxGeometry height="12" width="24" x="196" y="756" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_t1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Sarabun;fontSize=10;fontColor=#4f5d75;spacing=0;spacingLeft=0;spacingRight=0;" value="ระบบภายนอก" vertex="1">
+                    <mxGeometry height="28" width="108" x="228" y="748" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_s2" parent="1" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=8;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;fillColor=#eaebed;strokeColor=#4f5d75;fontColor=#2d3142;" value="" vertex="1">
+                    <mxGeometry height="12" width="24" x="344" y="756" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_t2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Sarabun;fontSize=10;fontColor=#4f5d75;spacing=0;spacingLeft=0;spacingRight=0;" value="ที่เก็บข้อมูล" vertex="1">
+                    <mxGeometry height="28" width="108" x="376" y="748" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_s3" parent="1" style="rounded=1;absoluteArcSize=1;arcSize=6;whiteSpace=wrap;html=1;shadow=0;strokeWidth=1;fontFamily=Sarabun;fontSize=12;align=center;verticalAlign=middle;fillColor=#fcefe8;strokeColor=#eb6c36;fontColor=#2d3142;" value="" vertex="1">
+                    <mxGeometry height="12" width="24" x="492" y="756" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_t3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Sarabun;fontSize=10;fontColor=#4f5d75;spacing=0;spacingLeft=0;spacingRight=0;" value="IAM (จุดสำคัญ)" vertex="1">
+                    <mxGeometry height="28" width="108" x="524" y="748" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_s4" parent="1" style="shape=line;strokeColor=#2e5aa8;strokeWidth=1.5;shadow=0;" value="" vertex="1">
+                    <mxGeometry height="4" width="24" x="640" y="760" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_t4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Sarabun;fontSize=10;fontColor=#4f5d75;spacing=0;spacingLeft=0;spacingRight=0;" value="HTTPS / REST" vertex="1">
+                    <mxGeometry height="28" width="108" x="672" y="748" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_s5" parent="1" style="shape=line;strokeColor=#4f5d75;strokeWidth=1.5;shadow=0;" value="" vertex="1">
+                    <mxGeometry height="4" width="24" x="788" y="760" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_t5" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Sarabun;fontSize=10;fontColor=#4f5d75;spacing=0;spacingLeft=0;spacingRight=0;" value="เรียกภายใน" vertex="1">
+                    <mxGeometry height="28" width="108" x="820" y="748" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_s6" parent="1" style="shape=line;strokeColor=#4f5d75;strokeWidth=1.5;shadow=0;dashed=1;dashPattern=4 3;" value="" vertex="1">
+                    <mxGeometry height="4" width="24" x="936" y="760" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_leg_t6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;shadow=0;align=left;verticalAlign=middle;fontFamily=Sarabun;fontSize=10;fontColor=#4f5d75;spacing=0;spacingLeft=0;spacingRight=0;" value="ผ่านคิว" vertex="1">
+                    <mxGeometry height="28" width="108" x="968" y="748" as="geometry"/>
+                </mxCell>
+                <mxCell id="bl_e1" edge="1" parent="1" source="bl_portal" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#2e5aa8;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Sarabun;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="bl_nginx" value="ส่งคำขอ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e2" edge="1" parent="1" source="bl_nginx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#2e5aa8;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Sarabun;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.617925;entryY=0;entryDx=0;entryDy=0;" target="bl_frame" value="ส่งต่อ">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="24" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e3" edge="1" parent="1" source="bl_svc_a" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#2e5aa8;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Sarabun;fontSize=10;exitX=1;exitY=0.285714;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="bl_iam" value="ยืนยันสิทธิ์">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-14" as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="548" y="252"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e4" edge="1" parent="1" source="bl_svc_c" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#2e5aa8;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Sarabun;fontSize=10;exitX=1;exitY=0.666667;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="bl_iam" value="ยืนยันสิทธิ์">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="14" as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="548" y="336"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e5" edge="1" parent="1" source="bl_svc_a" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#2e5aa8;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Sarabun;fontSize=10;exitX=1;exitY=0.785714;exitDx=0;exitDy=0;entryX=0;entryY=0.153846;entryDx=0;entryDy=0;" target="bl_int" value="ขอข้อมูล">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e6" edge="1" parent="1" source="bl_svc_c" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#2e5aa8;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Sarabun;fontSize=10;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.846154;entryDx=0;entryDy=0;" target="bl_int" value="ขอข้อมูล">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e7" edge="1" parent="1" source="bl_enr" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#4f5d75;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Sarabun;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.706522;entryY=0;entryDx=0;entryDy=0;" target="bl_biz" value="เรียกใช้">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="28" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e8" edge="1" parent="1" source="bl_biz" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#4f5d75;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Sarabun;fontSize=10;exitX=0.23913;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="bl_repo" value="อ่าน/เขียน">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="32" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e9" edge="1" parent="1" source="bl_biz" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#4f5d75;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Geist Mono;fontSize=9;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;dashed=1;dashPattern=4 3;exitX=0.608696;exitY=1;exitDx=0;exitDy=0;entryX=0.4;entryY=0;entryDx=0;entryDy=0;" target="bl_redis" value="ENQUEUE">
+                    <mxGeometry relative="1" x="-0.4898" as="geometry">
+                        <mxPoint x="28" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e10" edge="1" parent="1" source="bl_repo" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#4f5d75;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Geist Mono;fontSize=9;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;exitX=0.227273;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="bl_pg" value="SQL">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="20" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e11" edge="1" parent="1" source="bl_repo" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#4f5d75;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Geist Mono;fontSize=9;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;exitX=0.772727;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="bl_minio" value="S3 API">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="28" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e12" edge="1" parent="1" source="bl_redis" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#4f5d75;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Geist Mono;fontSize=9;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;dashed=1;dashPattern=4 3;exitX=0.85;exitY=0;exitDx=0;exitDy=0;entryX=0.2;entryY=1;entryDx=0;entryDy=0;" target="bl_wrk" value="CONSUME">
+                    <mxGeometry relative="1" x="-0.0833" as="geometry">
+                        <mxPoint y="-14" as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="852" y="572"/>
+                            <mxPoint x="940" y="572"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="bl_e13" edge="1" parent="1" source="bl_wrk" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;shadow=0;endArrow=block;endFill=1;endSize=6;strokeWidth=1.5;strokeColor=#4f5d75;fontColor=#4f5d75;labelBackgroundColor=#f5f5f5;fontFamily=Geist Mono;fontSize=9;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DGeist%2BMono;dashed=1;dashPattern=4 3;exitX=0.7;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" target="bl_email" value="SMTP">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="20" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram name="(old) Page-1" id="gQUkADZH2U-bxWxf6_56">
+        <mxGraphModel dx="305" dy="1123" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -387,6 +611,222 @@
                 </mxCell>
                 <mxCell id="erSVtwGf3Det8ZdVcIj9-126" edge="1" parent="t9j-IwHOy3SKqKrkhznE-83" source="erSVtwGf3Det8ZdVcIj9-8" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0;entryDx=0;entryDy=0;strokeColor=#EA6B66;" target="t9j-IwHOy3SKqKrkhznE-98">
                     <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram name="(draft) Service B (เจาะลึก) แบบ C4 Model" id="sd-arch-svc-b">
+        <mxGraphModel dx="1347" dy="1336" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1100" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="b_portal" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F1F3F5;strokeColor=#ADB5BD;fontColor=#495057;fontFamily=Arial;fontSize=11;" value="&lt;b&gt;Web Portal&lt;/b&gt;&lt;br&gt;(Next.js)" vertex="1">
+                    <mxGeometry height="60" width="160" x="220" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_nginx" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F1F3F5;strokeColor=#ADB5BD;fontColor=#495057;fontFamily=Arial;fontSize=11;" value="&lt;b&gt;Nginx&lt;/b&gt;&lt;br&gt;reverse proxy" vertex="1">
+                    <mxGeometry height="60" width="160" x="500" y="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_svc_a" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F1F3F5;strokeColor=#ADB5BD;fontColor=#495057;fontFamily=Arial;fontSize=11;" value="&lt;b&gt;Service A&lt;/b&gt;&lt;br&gt;ทีม A" vertex="1">
+                    <mxGeometry height="90" width="170" x="20" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_svc_c" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F1F3F5;strokeColor=#ADB5BD;fontColor=#495057;fontFamily=Arial;fontSize=11;" value="&lt;b&gt;Service C&lt;/b&gt;&lt;br&gt;ทีม C" vertex="1">
+                    <mxGeometry height="90" width="170" x="20" y="480" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_smtp" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F1F3F5;strokeColor=#ADB5BD;fontColor=#495057;fontFamily=Arial;fontSize=11;" value="&lt;b&gt;Email / SMTP&lt;/b&gt;&lt;br&gt;ส่ง OTP ให้ผู้สมัคร" vertex="1">
+                    <mxGeometry height="70" width="180" x="745" y="820" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_cont" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#8FA8F5;fontFamily=Arial;fontSize=12;fontColor=#3B5BDB;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" value="SERVICE B · TEAM B (FastAPI)" vertex="1">
+                    <mxGeometry height="560" width="950" x="230" y="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_api" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#8FA8F5;fontFamily=Arial;fontSize=11;fontColor=#3B5BDB;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" value="API / Routers" vertex="1">
+                    <mxGeometry height="150" width="920" x="245" y="215" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_r_int" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;Internal API&lt;/b&gt;&lt;br&gt;ให้ A / C เรียกใช้" vertex="1">
+                    <mxGeometry height="100" width="120" x="255" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_r_iam" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;strokeWidth=2;" value="&lt;b&gt;IAM /auth&lt;/b&gt;&lt;br&gt;login · OTP · token" vertex="1">
+                    <mxGeometry height="100" width="120" x="385" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_r_adm" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;รับสมัคร&lt;/b&gt;&lt;br&gt;รอบรับสมัคร · แผนที่เปิดรับ · ใบสมัคร · ห้องสอบ" vertex="1">
+                    <mxGeometry height="100" width="120" x="515" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_r_enr" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;มอบตัว&lt;/b&gt;&lt;br&gt;คัดลอกใบสมัครเป็นข้อมูลนักเรียน" vertex="1">
+                    <mxGeometry height="100" width="120" x="645" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_r_stu" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;ทะเบียนนักเรียน &amp; ห้องเรียน&lt;/b&gt;&lt;br&gt;ประวัติห้อง · ครูประจำชั้น · ผู้ปกครอง" vertex="1">
+                    <mxGeometry height="100" width="120" x="775" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_r_set" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#E5DBFF;strokeColor=#7048E8;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;ตั้งค่าโรงเรียน&lt;/b&gt;&lt;br&gt;(ของแคร์ · ต้องถามก่อน)" vertex="1">
+                    <mxGeometry height="100" width="120" x="905" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_r_stf" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#E5DBFF;strokeColor=#7048E8;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;บุคลากร / ลา / บัตร&lt;/b&gt;&lt;br&gt;(ของแคร์ · ต้องถามก่อน)" vertex="1">
+                    <mxGeometry height="100" width="120" x="1035" y="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_iam" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#DBE4FF;strokeColor=#1F2A5C;strokeWidth=3;fontFamily=Arial;fontSize=12;fontColor=#1F2A5C;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" value="IAM · ยืนยันตัวตน &amp; สิทธิ์ (หัวใจของ B)" vertex="1">
+                    <mxGeometry height="160" width="560" x="245" y="385" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_iam1" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;บุคลากร&lt;/b&gt;&lt;br&gt;เข้าด้วย JWT + role" vertex="1">
+                    <mxGeometry height="100" width="170" x="260" y="430" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_iam2" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;ผู้สมัคร / ผู้ปกครอง&lt;/b&gt;&lt;br&gt;เข้าด้วย OTP&lt;br&gt;ไม่มีรหัสผ่าน" vertex="1">
+                    <mxGeometry height="100" width="170" x="440" y="430" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_iam3" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;ตรวจ token ให้ A / C&lt;/b&gt;&lt;br&gt;ตอบว่าใครทำอะไรได้บ้าง" vertex="1">
+                    <mxGeometry height="100" width="170" x="620" y="430" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_svc_cont" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#8FA8F5;fontFamily=Arial;fontSize=11;fontColor=#3B5BDB;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" value="Service layer (กฎธุรกิจ)" vertex="1">
+                    <mxGeometry height="160" width="340" x="825" y="385" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_svc" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;align=left;spacingLeft=8;" value="&lt;b&gt;ตัวอย่างงาน&lt;/b&gt;&lt;br&gt;• มอบตัว = คัดลอกใบสมัคร → ชุดข้อมูลนักเรียน&lt;br&gt;• สมัครซ้ำ = ตรวจ OTP → ดึงใบล่าสุดมาเติม" vertex="1">
+                    <mxGeometry height="105" width="310" x="840" y="425" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_data_cont" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#8FA8F5;fontFamily=Arial;fontSize=11;fontColor=#3B5BDB;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" value="Data access (SQLAlchemy)" vertex="1">
+                    <mxGeometry height="160" width="560" x="245" y="565" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_data" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;Repository · ORM models · storage client&lt;/b&gt;&lt;br&gt;ชั้นเดียวที่คุยกับ DB และไฟล์" vertex="1">
+                    <mxGeometry height="100" width="530" x="260" y="605" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_wrk_cont" parent="1" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#EEF2FF;strokeColor=#8FA8F5;fontFamily=Arial;fontSize=11;fontColor=#3B5BDB;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;" value="Background worker (Celery)" vertex="1">
+                    <mxGeometry height="160" width="340" x="825" y="565" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_wrk" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;align=left;spacingLeft=8;" value="&lt;b&gt;งานที่ช้า ทำเบื้องหลัง&lt;/b&gt;&lt;br&gt;• ส่ง OTP ทางอีเมล&lt;br&gt;• จัดห้องสอบ / เลขที่นั่ง&lt;br&gt;• ออกบัตรสอบ PDF" vertex="1">
+                    <mxGeometry height="105" width="310" x="840" y="605" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_pg" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;strokeWidth=2;" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br&gt;schema &lt;b&gt;admission&lt;/b&gt;&lt;br&gt;Owner: Team B" vertex="1">
+                    <mxGeometry height="80" width="240" x="245" y="820" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_minio" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;MinIO&lt;/b&gt;&lt;br&gt;ไฟล์แนบใบสมัคร · รูปนักเรียน" vertex="1">
+                    <mxGeometry height="80" width="200" x="520" y="820" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_redis" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F2A5C;fontFamily=Arial;fontSize=10;" value="&lt;b&gt;Redis&lt;/b&gt;&lt;br&gt;คิวงาน (broker)" vertex="1">
+                    <mxGeometry height="70" width="180" x="1000" y="820" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_leg1" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#F1F3F5;strokeColor=#ADB5BD;fontColor=#495057;fontFamily=Arial;fontSize=11;" value="สีเทา = ของนอก B" vertex="1">
+                    <mxGeometry height="36" width="200" x="245" y="960" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_leg2" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#E5DBFF;strokeColor=#7048E8;fontFamily=Arial;fontSize=11;" value="สีม่วง = ยังต้องถามก่อน" vertex="1">
+                    <mxGeometry height="36" width="220" x="470" y="960" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_leg3" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#ADB5BD;fontFamily=Arial;fontSize=11;" value="เส้นเขียวประ = ขอข้อมูล · เส้นดำประ = ยืนยันสิทธิ์" vertex="1">
+                    <mxGeometry height="36" width="360" x="715" y="960" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_badge①" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFD43B;strokeColor=#E67700;fontColor=#000000;fontStyle=1;fontSize=13;fontFamily=Arial;aspect=fixed;" value="①" vertex="1">
+                    <mxGeometry height="26" width="26" x="22" y="218" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_badge②" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFD43B;strokeColor=#E67700;fontColor=#000000;fontStyle=1;fontSize=13;fontFamily=Arial;aspect=fixed;" value="②" vertex="1">
+                    <mxGeometry height="26" width="26" x="238" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_badge③" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFD43B;strokeColor=#E67700;fontColor=#000000;fontStyle=1;fontSize=13;fontFamily=Arial;aspect=fixed;" value="③" vertex="1">
+                    <mxGeometry height="26" width="26" x="1135" y="184" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_badge④" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFD43B;strokeColor=#E67700;fontColor=#000000;fontStyle=1;fontSize=13;fontFamily=Arial;aspect=fixed;" value="④" vertex="1">
+                    <mxGeometry height="26" width="26" x="1135" y="389" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_badge⑤" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFD43B;strokeColor=#E67700;fontColor=#000000;fontStyle=1;fontSize=13;fontFamily=Arial;aspect=fixed;" value="⑤" vertex="1">
+                    <mxGeometry height="26" width="26" x="775" y="389" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_badge⑥" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFD43B;strokeColor=#E67700;fontColor=#000000;fontStyle=1;fontSize=13;fontFamily=Arial;aspect=fixed;" value="⑥" vertex="1">
+                    <mxGeometry height="26" width="26" x="1135" y="569" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_badge⑦" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFD43B;strokeColor=#E67700;fontColor=#000000;fontStyle=1;fontSize=13;fontFamily=Arial;aspect=fixed;" value="⑦" vertex="1">
+                    <mxGeometry height="26" width="26" x="300" y="760" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_e_portal" edge="1" parent="1" source="b_portal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;" target="b_nginx" value="HTTPS / REST">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_e_nginx" edge="1" parent="1" source="b_nginx" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.348;entryY=0;entryDx=0;entryDy=0;" target="b_api" value="HTTPS · /api/admission">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_e_a_iam" edge="1" parent="1" source="b_svc_a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=1;exitY=0.85;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="b_iam" value="ยืนยันสิทธิ์">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="205" y="425"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="b_e_c_iam" edge="1" parent="1" source="b_svc_c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#8DB4E2;labelBackgroundColor=#FFFFFF;fontFamily=Arial;dashed=1;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="b_iam" value="ยืนยันสิทธิ์">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="205" y="505"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="b_e_a_int" edge="1" parent="1" source="b_svc_a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeColor=#2B8A3E;strokeWidth=1.5;dashed=1;dashPattern=6 3;fontSize=10;fontStyle=1;fontColor=#2B8A3E;labelBackgroundColor=#FFFFFF;fontFamily=Arial;exitX=1;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="b_r_int" value="ขอข้อมูล">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="215" y="275"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="b_e_c_int" edge="1" parent="1" source="b_svc_c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=classic;startFill=1;endArrow=classic;endFill=1;strokeColor=#2B8A3E;strokeWidth=1.5;dashed=1;dashPattern=6 3;fontSize=10;fontStyle=1;fontColor=#2B8A3E;labelBackgroundColor=#FFFFFF;fontFamily=Arial;exitX=1;exitY=0.6;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="b_r_int" value="ขอข้อมูล">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="222" y="325"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="b_e_iam_r" edge="1" parent="1" source="b_r_iam" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.357;entryY=0;entryDx=0;entryDy=0;" target="b_iam" value="login · ตรวจ token">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_e_api_svc" edge="1" parent="1" source="b_api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.875;exitY=1;exitDx=0;exitDy=0;entryX=0.677;entryY=0;entryDx=0;entryDy=0;" target="b_svc" value="เรียกใช้">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_e_svc_data" edge="1" parent="1" source="b_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0;exitY=0.9;exitDx=0;exitDy=0;entryX=1;entryY=0.3;entryDx=0;entryDy=0;" target="b_data" value="เรียก repository">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="815" y="635"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="b_e_sql" edge="1" parent="1" source="b_data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b_pg" value="SQL">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_e_s3" edge="1" parent="1" source="b_data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.65;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="b_minio" value="S3 API">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_e_enq" edge="1" parent="1" source="b_svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="b_redis" value="enqueue">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1195" y="478"/>
+                            <mxPoint x="1195" y="855"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="b_e_consume" edge="1" parent="1" source="b_redis" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.85;entryY=1;entryDx=0;entryDy=0;" target="b_wrk" value="consume">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_e_smtp" edge="1" parent="1" source="b_wrk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#5F6368;fontFamily=Arial;fontSize=11;labelBackgroundColor=#FFFFFF;exitX=0.05;exitY=1;exitDx=0;exitDy=0;entryX=0.9;entryY=0;entryDx=0;entryDy=0;" target="b_smtp" value="SMTP">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note_panel" parent="1" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#CED4DA;fontFamily=Arial;" value="" vertex="1">
+                    <mxGeometry height="1080" width="550" x="1230" y="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note_head" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#3B5BDB;strokeColor=#3B5BDB;fontColor=#FFFFFF;fontSize=15;fontFamily=Arial;" value="&lt;b&gt;ภาพนี้คิดยังไง · อ่านตามเลขบนภาพ&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="50" width="520" x="1245" y="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note1" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8FA8F5;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;① เริ่มจากภาพรวมก่อน&lt;/b&gt;&lt;br&gt;ไปดูแท็บ System Architecture ว่ามีเส้นไหนเข้า/ออก B บ้าง (/api/admission, ยืนยันสิทธิ์ ×2, ขอข้อมูล ×2, SQL) เส้นพวกนี้ต้องโผล่ในภาพเจาะทุกเส้น ห้ามหาย" vertex="1">
+                    <mxGeometry height="100" width="520" x="1245" y="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note2" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8FA8F5;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;② ซูมทีละชั้น&lt;/b&gt;&lt;br&gt;ภาพรวมคือระดับ container ภาพนี้คือระดับ component (C4 level 3) ของนอกเลยวาดเป็นกล่องเทาเฉย ๆ ไม่ต้องลงรายละเอียด" vertex="1">
+                    <mxGeometry height="90" width="520" x="1245" y="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note3" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8FA8F5;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;③ แบ่งโมดูลตาม use case / ER&lt;/b&gt;&lt;br&gt;ใช้กลุ่มเดียวกับแท็บย่อยของ ER (รับสมัคร ทะเบียนนักเรียน ตั้งค่าโรงเรียน บุคลากร ลา/บัตร) ภาพสองชุดจะได้พูดภาษาเดียวกัน" vertex="1">
+                    <mxGeometry height="90" width="520" x="1245" y="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note4" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8FA8F5;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;④ แบ่งชั้น Router → Service → Data&lt;/b&gt;&lt;br&gt;router รับ request, service เก็บกฎธุรกิจ, data คุยกับ DB เวลาอ่านภาพจะรู้ว่า logic อยู่ชั้นไหน" vertex="1">
+                    <mxGeometry height="80" width="520" x="1245" y="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note5" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8FA8F5;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;⑤ IAM คือหัวใจของ B&lt;/b&gt;&lt;br&gt;A กับ C ต้องมาถามสิทธิ์ที่นี่ ถ้า B ล่ม ทุกทีมล่มด้วย เลยต้องทำให้เด่น และแยก 2 ประตู (staff ใช้ JWT / ผู้สมัครใช้ OTP) ตามคำว่า OTP ใน CONTEXT.md" vertex="1">
+                    <mxGeometry height="100" width="520" x="1245" y="490" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note6" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8FA8F5;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;⑥ งานที่ช้าให้ไปทำเบื้องหลัง&lt;/b&gt;&lt;br&gt;ส่งอีเมล จัดห้องสอบ ออก PDF ใช้เวลานาน ถ้าทำใน request ผู้ใช้ต้องรอ เลยโยนเข้า Celery ผ่าน Redis" vertex="1">
+                    <mxGeometry height="80" width="520" x="1245" y="600" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note7" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8FA8F5;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;⑦ ลูกศรต้องบอกว่าคุยกันยังไง&lt;/b&gt;&lt;br&gt;ทุกเส้นติดป้าย protocol คนอ่านจะรู้ทันทีว่าเป็น REST, SQL หรือคิว" vertex="1">
+                    <mxGeometry height="70" width="520" x="1245" y="690" as="geometry"/>
+                </mxCell>
+                <mxCell id="b_note_q" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#E5DBFF;strokeColor=#7048E8;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;กล่องสีม่วง = ยังต้องถาม (3 ข้อ)&lt;/b&gt;&lt;br&gt;(ก) โมดูลของแคร์อยู่ใน B ด้วยไหม&lt;br&gt;(ข) A/C ยืนยันสิทธิ์ด้วยการเรียก B ทุกครั้ง หรือ verify JWT เองด้วย public key&lt;br&gt;(ค) &quot;ขอข้อมูล&quot; ใช้ Internal API หรืออ่าน schema admission ตรง ๆ ตอนนี้วาดแบบ Internal API ไว้ก่อน เพราะทำให้ schema ยังเป็นของทีม B คนเดียว" vertex="1">
+                    <mxGeometry height="305" width="520" x="1245" y="770" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
