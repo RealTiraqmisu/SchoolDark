@@ -72,6 +72,9 @@
 | `application.round_id` | **คงไว้** ให้ฐานข้อมูลเช็กกฎข้างบน · ต้องตรงกับ `course_plan.round_id` ของแผนที่เลือก และ `exam_room.round_id` ของห้องสอบ | นายตอบ (เลือกคง หลังรู้ว่าเอาออกแล้วเช็กใบซ้ำในรอบเดียวกันไม่ได้) |
 | `application.grade_level` | เอาออก ซ้ำกับ `course_plan.level` (รู้ชั้นจากแผนที่สมัคร) | เลขาเสนอใน plan 202 · นายอนุมัติ plan |
 | ชั้นของห้องเรียน | `classroom.level` ต้องเข้ากับ `study_program.level_band` (ม.1–ม.3 กับ ม.ต้น · ม.4–ม.6 กับ ม.ปลาย) | เขียนเป็นกฎ ไม่ใช่ FK |
+
+> ⚠️ แก้ไข 2026-11-06 (plan 210): กฎเดิมยังใช้ แต่เทียบ `EducationLevels.educationStage` ของระดับชั้นห้อง กับ `study_program.education_stage` (ดูหัว 8.2)
+
 | ที่นั่งสอบ | `exam_room.capacity` ห้ามเกิน `school_room.exam_capacity` | เขียนเป็นกฎ |
 | ห้องปัจจุบัน | `student_class_history` นักเรียน 1 คนมีแถวที่ `end_date` ว่างได้แถวเดียว | เขียนเป็นกฎ |
 | `student.from_application_id` | คงชี้ใบล่าสุดที่มอบตัว ใบเก่าหาด้วยเลขบัตร | ไม่ทำอะไรเพิ่ม |
@@ -109,7 +112,7 @@
 | 4.7 | ที่สร้าง drawio หน้านี้มาจากสเปก `report-drafts/school-dark/er-tools/er_nuesod_spec.py` (ห้ามแก้ drawio ด้วยมือตามโน้ตในไฟล์) นายจะแก้ drawio เอง จึงต้องรู้ว่าสเปกสคริปต์จะเลิกใช้ หรือจะแก้ตาม | ตัดสินทีหลัง |
 | 4.8 | `data-dictionary.md` `api-list.md` `er-*.md` ใน `report-drafts/school-dark` สร้างจาก ER เดิม จะล้าสมัยหลังแก้ | รอ ER ใหม่นิ่งแล้วสร้างใหม่หรือเลิก (ตามที่ตัดสินไว้ใน handoff) |
 | 4.9 | ประกาศโรงเรียน และการแจ้งเตือน/ค่ากำหนดการแจ้งเตือนผู้ปกครอง (พอร์ทัลแสดง แต่ไม่มีตาราง) | พักไว้ (นายตอบ 2026-11-05) · หน้าบ้านปิดกล่องแจ้งเตือนอยู่แล้ว · ประกาศอาจเป็นของทีมอื่น |
-| 4.10 | ข้อมูลโรงเรียน (ชื่อไทย/อังกฤษ รหัส สพฐ. โทร ที่อยู่) ไม่มีตาราง ใช้หัวเอกสารและหน้า login | ให้แคร์ดูแล (นายตอบ 2026-11-05) · ทางเลือก: ตาราง `school_profile` 1 แถว หรือคีย์ใน `system_setting` |
+| 4.10 | ข้อมูลโรงเรียน (ชื่อไทย/อังกฤษ รหัส สพฐ. โทร ที่อยู่) ไม่มีตาราง ใช้หัวเอกสารและหน้า login | ให้แคร์ดูแล (นายตอบ 2026-11-05) · ทางเลือก: ตาราง `school_profile` 1 แถว หรือคีย์ใน `system_setting` · ✅ 2026-11-05 (plan 209): คีย์ใน `system_setting` ดูหัว 8.1 |
 | 4.11 | หน้าบ้านมี GPAX 2 ตัว: ผู้สมัครแจ้งตอนสมัคร (`schoolGpax` profile.html:581) กับเจ้าหน้าที่กรอกตอนบันทึกคะแนน (`examScore.gpa` store.js:1304) แต่ database มี `application.gpax` ตัวเดียว | ยังไม่ได้ถาม · ใช้ตัวเดียว (ยึดหลักฐาน ปพ.1) หรือแยก 2 คอลัมน์ |
 
 ## 5. ที่มาของข้อตัดสิน (สำหรับตอบอาจารย์)
@@ -130,6 +133,9 @@
 |---|---|---|
 | `academic_terms (ทีม A)` **กล่องผี** | วางไว้ให้รู้ว่าต้องเชื่อมทีม A (ทีม A ยังไม่ส่งอะไรมา) · `admission_round` `classroom` `classroom_homeroom_teacher` จะชี้ไปหาแทนเลขปีลอย | นายตอบ รอบ 1 |
 | `education_level` **ใหม่** | ระดับการศึกษา (ม.ต้น · ม.ปลาย · ปวช. · ปวส.) + จำนวนปี · `study_program` ชี้มาแทน `level_band` และเพิ่ม `code` (ไม่เก็บ type note) · `classroom` และ `course_plan` เก็บ (ระดับ, ชั้นปีที่) แทนข้อความ "ม.4" · เลื่อนชั้น = ชั้นปีที่ +1 ในระดับเดิม · กฎ "ชั้นห้องต้องเข้ากับแผน" (2.6) ฐานข้อมูลเช็กได้เอง | นายชี้ว่าระดับชั้นควรเป็น ม.ต้น/ม.ปลาย/ปวช./ปวส. · เลขาเสนอโครง นายรับ รอบ 4 |
+
+> ⚠️ แก้ไข 2026-11-06 (plan 210): `education_level` เลิกใช้แล้ว ใช้ `EducationLevels` ของแคร์ แถวละระดับชั้น · `grade_year` ออก · `study_program.education_stage` ENUM · FK ชี้ตารางแคร์ใช้ชื่อ camelCase (`educationLevelID_FK` `academicYearID_FK` นายตอบ) · ไม่มี ปวช./ปวส. (ดูหัว 8.2)
+
 | `student_address` · `student_health` **ใหม่** | คัดลอกจาก `applicant_address` `applicant_health` ตอนมอบตัว แก้ได้โดยไม่กระทบใบสมัคร | รอบ 1 · นายบอก "อยากได้รายละเอียดที่ใช้สมัครไปไว้ในนักเรียน" |
 | `guardians` + `student_guardians` | ตอนมอบตัวคัดลอก `applicant_guardian` มาเป็นผู้ปกครองของนักเรียน (หาคนเดิมด้วยเลขบัตรก่อนสร้างใหม่ พี่น้องใช้คนเดียวกัน) · `guardians` เติม นามสกุล อีเมล อาชีพ เลขบัตร · เข้าพอร์ทัลด้วย OTP ไม่มีรหัสผ่าน | รอบ 1 · รอบ 3 |
 | `student` | เพิ่มการศึกษาเดิม (โรงเรียน จังหวัด วุฒิ GPAX) คัดลอกตอนมอบตัว · เพิ่ม `graduation_year` (ศิษย์เก่า) | รอบ 3 · รอบ 4 |
@@ -165,7 +171,9 @@
 - [ ] ตรวจเอกสารรายชนิด แทน "เอกสารครบไหม" ตัวเดียว · มีประวัติสถานะถาวร (ไม่ใช่แค่ toast ย้อนกลับ)
 - [ ] เพิ่มหน้าจัดการ: รอบรับสมัคร · ระดับการศึกษา · แผนการเรียน · ห้องเรียน · ห้องจริง (สเปกห้องสอบ) · ครูประจำชั้น
 - [ ] ปีการศึกษาเหลือแหล่งเดียว (ตอนนี้ 4 ที่: `school_academic_years` · `sd_acad_year` · ตั้งค่าลาเรียน · วันตัดรอบ) · ห้องเรียนเหลือชุดเดียว (ตอนนี้ 3 ชุด: settings · admission · parent)
-- [ ] ตั้งค่าโรงเรียน: แท็บ "ระดับชั้น" เปลี่ยนเป็นระดับการศึกษา · แท็บห้องเรียนเก็บห้องจริงแยก (ตอนนี้เก็บ `building` ในห้องเรียน) และครูประจำชั้นเป็นตารางแยก
+- [ ] ข้อมูลโรงเรียน (⚠️ plan 213: เก็บในตาราง `SchoolData` แถวเดียว ไม่ใช่คีย์ใน system_setting): ย้ายจาก localStorage (`sd_school_name_th` `sd_school_name_en` `sd_school_code` `sd_school_address` ใน `uxui-merged/schooldark/settings.js:150`) ไปเก็บเป็นแถวใน `system_setting` ตาม 8 คีย์ในหัว 8.1.1 · ที่อยู่แยกเป็น 5 คีย์ (เดิมเป็นข้อความเดียว) · `sd_school_phone` ยังไม่มีคีย์ (ดูหัว 8.1.1) (plan 212)
+- [ ] เลื่อนชั้น: `admission/students.html:3486` `nextGradeFor()` เลิก map ระดับชั้นตายตัว อ่าน `EducationLevels.nextEducationLevelID_FK` (ว่าง = จบช่วงชั้น) · ตัวเลือกระดับชั้นทุกหน้าอ่านจาก `EducationLevels` ที่ `isActive` (plan 210)
+- [ ] ตั้งค่าโรงเรียน: แท็บ "ระดับชั้น" ~~เปลี่ยนเป็นระดับการศึกษา~~ (⚠️ 2026-11-06: คงเป็นระดับชั้นแถวละชั้นตาม EducationLevels ของแคร์) · แท็บห้องเรียนเก็บห้องจริงแยก (ตอนนี้เก็บ `building` ในห้องเรียน) และครูประจำชั้นเป็นตารางแยก
 - [ ] พอร์ทัลผู้ปกครอง: เข้าด้วย OTP แทนรหัสผ่าน · ข้อมูลนักเรียน (ที่อยู่ สุขภาพ) อ่าน/แก้จากชุดของนักเรียน
 
 ## 7. สิ่งที่พบฝั่งแคร์ (ยังไม่ grill · ให้แคร์อ่าน)
@@ -208,6 +216,7 @@
 - ใบลา/บัตรชี้ `student.student_id` · ห้องปัจจุบันต้องหาผ่าน `student_class_history` · ครูประจำชั้นผ่าน `classroom_homeroom_teacher` → `employees` (ไม่แยก advisor ดู 6.2)
 - ผู้ปกครองที่ยื่นใบลา = `guardians` (เข้าพอร์ทัลด้วย OTP ดู 6.1)
 - ปีการศึกษา/ภาคเรียนชี้กล่องผี `academic_terms (ทีม A)` เหมือนกัน
+  > ⚠️ แก้ไข 2026-11-05: แคร์เป็นเจ้าของ `AcademicYears` + `Semesters` แล้ว ไม่ใช่ทีม A (ดูหัว 8.1)
 
 ### 7.4 คำถามที่แคร์ต้องตัดสิน
 
@@ -216,3 +225,90 @@
 3. โควตาและเวอร์ชันตั้งค่า ผูกปีหรือภาคเรียน
 4. ผู้ยื่นและรหัสที่ใช้ (ผู้ปกครอง/ครู · รวมรหัสครูและนักเรียนเป็นชุดเดียว)
 5. เช็คชื่อ ลาบุคลากร ผู้ใช้/สิทธิ์ อยู่ในขอบเขต database รอบนี้ไหม · ครึ่งวันเก็บแบบไหน
+
+## 8. grill ER แคร์ หน้า "ตั้งค่าโรงเรียน" (2026-11-05 · plan 209 · นายกับแคร์ตอบด้วยกัน)
+
+> ที่มา: `erd-care.drawio` (แก้ล่าสุด 2026-11-05 18:15) หน้า `employee` 13 ตาราง + หน้า `ตั้งค่าโรงเรียน` · ถามด้วย choice UI 7 รอบ · ข้อในหัวนี้ **ตัดสินแล้ว** ยังไม่ได้แก้ใน ER เนยสด v2 / data dictionary (ดู 8.4)
+
+### 8.1 ขอบเขตระบบ
+
+| เรื่อง | ตัดสินว่า |
+|---|---|
+| จำนวนโรงเรียน | **โรงเรียนเดียว** · เอา `schoolID_FK` ออกจากทุกตาราง (AcademicYears, SchoolEducationLevels, SchoolSchedule, SchoolAddress) |
+| `SchoolData` + `SchoolAddress` | **ตัดทั้งสองตาราง** ข้อมูลโรงเรียน (ชื่อไทย/อังกฤษ รหัส สพฐ. ที่อยู่) เก็บเป็นคีย์ใน `system_setting` (นายเลือก · เลขาเสนอตาราง 1 แถวแต่นายไม่เอา) · ตอบ ❓ 4.10 |
+| ปีการศึกษา / ภาคเรียน | **แคร์เป็นเจ้าของ** `AcademicYears` + `Semesters` แทนกล่องผี `academic_year` (ER เนยสด) และ `academic_terms (ทีม A)` · ตารางเนยสดที่เก็บปีการศึกษาต้องชี้ `AcademicYears` · ต้องแจ้งทีม A |
+
+#### 8.1.1 คีย์ข้อมูลโรงเรียนใน `system_setting` (เติม 2026-11-06 · plan 212)
+
+> ⚠️ แก้ไข 2026-11-06 (plan 213): **เลิกใช้คีย์แล้ว** นายสั่งให้เป็นคอลัมน์จริง → ตารางใหม่ **`SchoolData`** (ของแคร์ · แถวเดียว) คอลัมน์ `schoolID_PK` `thSchoolName` `enSchoolName` `houseNo` `moo` `soi` `street` `subDistrictID_FK` → SubDistricts · **ตัดรหัส สพฐ.** · เหตุผล: ทั้งระบบเป็นโรงเรียนเดียว (ตัด schoolID ทุกตารางแล้ว) แบบคีย์จึงไม่ได้ช่วย scale จริง แต่ซ่อนคอลัมน์จาก ER · ตารางด้านล่างเก็บไว้เป็นประวัติ
+
+> นายถาม 2026-11-06 ว่า "เลขาลืมเอา SchoolData ไปใส่ system_setting หรือเปล่า" → ตรวจแล้ว **มติจดไว้แต่ไม่เคยทำให้มองเห็น** (กล่อง `system_setting` ใน drawio ยังเหมือนเดิม) จึงเติมรายการนี้ + ข้อความในกล่อง · **ไม่เพิ่มคอลัมน์** ตารางนี้เป็นคีย์–ค่า (`setting_key` · `value` · `description` · `updated_at`) การ "ใส่" คือการกำหนดคีย์ที่ต้องมีแถวอยู่เสมอ
+
+| คีย์ (`setting_key`) | มาจากคอลัมน์เดิมของแคร์ (`erd-care.drawio`) | ค่า (`value`) |
+|---|---|---|
+| `school_name_th` | `SchoolData.thSchoolName` | ชื่อโรงเรียนภาษาไทย |
+| `school_name_en` | `SchoolData.enSchoolName` | ชื่อโรงเรียนภาษาอังกฤษ |
+| `school_obec_code` | `SchoolData.OBECSchoolCode` | รหัส สพฐ. |
+| `school_house_no` | `SchoolAddress.houseNo` | บ้านเลขที่ |
+| `school_moo` | `SchoolAddress.moo` | หมู่ที่ |
+| `school_soi` | `SchoolAddress.soi` | ซอย |
+| `school_street` | `SchoolAddress.street` | ถนน |
+| `school_sub_district_id` | `SchoolAddress.subDistrictID_FK` | รหัสตำบล (`SubDistricts.subDistrictID_PK`) เก็บเป็นข้อความ |
+
+- **ข้อจำกัด:** ตารางคีย์–ค่าใส่ FK ไม่ได้ → `school_sub_district_id` แอปต้องตรวจเองว่าตรงกับ `SubDistricts` · อำเภอ/จังหวัด/รหัสไปรษณีย์หาได้จากตำบลผ่านตาราง SubDistricts → Districts → Provinces เหมือนเดิม
+- **ไม่รวม** เบอร์โทรโรงเรียน (หน้าบ้านมี `sd_school_phone` แต่ `erd-care.drawio` ไม่มี) → ถามแคร์/นายทีหลังว่าจะเพิ่มคีย์ `school_phone` ไหม
+- ผู้ใช้ข้อมูลนี้: UC-SET-01 (ตั้งค่าข้อมูลโรงเรียน) · หัวเอกสาร · หน้า login
+
+### 8.2 ระดับชั้น (ใช้ร่วมสองฝั่ง)
+
+| เรื่อง | ตัดสินว่า |
+|---|---|
+| โครง | ใช้ `EducationLevels` ของแคร์ **แถวละระดับชั้น** (ม.1 … ม.6) ใช้ร่วมทั้งสองฝั่ง แทน `education_level` (ช่วงชั้น + ชั้นปีที่) ของเนยสด |
+| ที่สอนจริง | ตอนนี้ ม.1–ม.6 · อนาคตมีประถมแน่ · อนุบาลยังไม่แน่ (ENUM `educationStage` มี KINDERGARTEN, PRIMARY รออยู่แล้ว) · ไม่มี ปวช./ปวส. |
+| คำเรียก | ม.1 = **ระดับชั้น** · ม.ต้น = **ช่วงชั้น** (`educationStage`) |
+| เปิด/ปิดระดับชั้น | ตัด `SchoolEducationLevels` · เพิ่ม `isActive` ใน `EducationLevels` (ประวัติรายปีดูจาก `classroom` · ชั้นที่เปิดรับดูจาก `course_plan`) |
+| เลื่อนชั้น | เพิ่ม `nextEducationLevelID_FK` ชี้ `EducationLevels` ตัวเอง · ว่าง = จบช่วงชั้น (ม.3, ม.6) · ตรงกับหน้าบ้าน `uxui-merged/admission/students.html:3486` `nextGradeFor()` ที่ map ตายตัวอยู่ → หน้าบ้านต้องอ่านจากคอลัมน์นี้แทน |
+| `study_program` | เก็บ `educationStage` (ENUM ชุดเดียวกับแคร์) แทน FK `education_level_id` · กฎ: ห้อง/แผนที่เปิดรับต้องอยู่ระดับชั้นที่ช่วงชั้นตรงกับแผน |
+| `course_plan` / `classroom` | FK ระดับชั้น (`EducationLevels`) แทนคู่ (`education_level_id`, `grade_year`) |
+
+### 8.3 ตารางอื่นในหน้าตั้งค่าโรงเรียน
+
+| ตาราง | ตัดสินว่า |
+|---|---|
+| `Semesters` | เพิ่ม `semesterNo` + UK(`academicYearID_FK`, `semesterNo`) |
+| `SchoolSchedule` | ผูกภาคเรียน: `semesterID_FK` แทน `schoolID_FK` (เก็บประวัติ เช็กสายย้อนหลังได้) |
+| `HomeroomTeacher` | **ถือ `classroom_homeroom_teacher` ของเนยสดเป็นหลัก** · ในแท็บแคร์วาดเป็นกล่องผีชี้ของเนยสด · เสนอแคร์ตัด HomeroomTeacher |
+| `classroom` ที่แคร์ก๊อปไปวาง | วาดเป็นกล่องผี "classroom (ตารางของเนยสด)" |
+| เส้นลอยชี้ `SchoolData` | (เดิมตั้งใจวาด SchoolData 1:1 SchoolAddress) หมดเรื่องเพราะตัดทั้งสองตาราง |
+| `SchoolCalendar` | คงตามแคร์ (ชี้ `AcademicYears`) |
+
+### 8.4 ผลกระทบที่ยังไม่ได้แก้ (ต้องมี plan แยก)
+
+- [x] ER เนยสด v2 + `er_nuesod_spec_v2.py` ✅ 2026-11-06 plan 210: ตัด `education_level` · `study_program.educationStage` · `course_plan` / `classroom` ชี้ `EducationLevels` · กล่องผี `academic_year` → `AcademicYears` ของแคร์
+- [x] Data Dictionary เนยสด ✅ 2026-11-06 plan 210: `report-drafts/school-dark/data-dictionary-nuesod-v2-1.docx` 23 ตาราง (ตัด education_level ตารางแคร์ไม่รวม)
+- [ ] Data Dictionary **ในเล่ม** (plan 208 ที่พักอยู่) ยังเป็นฉบับเก่า 24 ตาราง ตาราง x.1 `education_level` ล้าสมัย ต้องตัดสินตอนกลับไปทำ 208
+- [x] หน้าบ้าน `students.html` เลิก map ระดับชั้นตายตัว → เติมใน 6.4 แล้ว (plan 210)
+- [ ] แจ้งทีม A: ปีการศึกษา/ภาคเรียนเป็นของแคร์แล้ว
+
+## 9. โครงไฟล์ ER ใน erd-by-claude.drawio (2026-11-06 · plan 211)
+
+> รายละเอียดสคริปต์/วิธีรัน: `report-drafts/school-dark/er-tools/README.md` · ที่มาของการตัดสิน: `consult/2026-11-06-er-master-and-split-tabs.md`
+
+| แท็บ (ลำดับในไฟล์) | คืออะไร | แก้ที่ไหน |
+|---|---|---|
+| 1 ภาพรวม (Chen) | เอนทิตี 14 + ความสัมพันธ์ 21 ไม่มีแอตทริบิวต์ ใช้เป็นภาพรวมในเล่ม | แก้ที่แท็บนี้ได้เลย (สคริปต์ไม่ทับ) |
+| 2 ER ทั้งระบบ (ต้นฉบับ) | **47 ตาราง ครบคอลัมน์** · กล่องเนยสด 26 กล่องคงตำแหน่งเดิม | **ที่เดียวที่ทีมแก้ตาราง/คอลัมน์/เส้น** |
+| 3–7 ER · รับสมัคร / ทะเบียนนักเรียน / ตั้งค่าโรงเรียนและตารางอ้างอิงกลาง / บุคลากร / ลา-บัตรขออนุญาต | มุมมองตัดสั้น (คีย์ + ชื่อคอลัมน์) สร้างจากแท็บ 2 ด้วย `er_split.py` | **ห้ามแก้เนื้อ** (ตำแหน่งกล่องแก้ได้ จำไว้) |
+| 8–12 "(เก่า) …" | แท็บเดิม 5 แท็บ ไม่แก้ ไม่ลบ ไม่อัปเดตแล้ว | — (ใช้ดูประวัติ) |
+
+- 1 ตาราง = 1 แท็บบ้าน (`er_home.json`) · ตารางของแท็บอื่นที่มีเส้นเชื่อมแสดงเป็นกล่องผีเทาประ (คีย์ที่เชื่อม)
+- กฎสี: ฟ้า = เนยสด · เหลือง = แคร์ · เขียว = เพิ่ม/เปลี่ยนจาก grill · เทา = กล่องผี · **ชมพู = ตารางอ้างอิงที่อยู่** (Countries Provinces Districts SubDistricts) · **ม่วง = ต้องถามก่อน** (ตารางลา/บัตร 6 ตัว ยังไม่มีไฟล์ final ของแคร์)
+- กฎถาวร: แท็บที่ถูกแทนที่ ใส่ "(เก่า) " ไว้หน้าสุดของชื่อ ไม่ลบ (นายสั่ง 2026-11-06)
+- ค้าง: ตารางลา/บัตร ลาของบุคลากร เช็คชื่อ → ถามแคร์ (หัว 7.4) · `student_leave_setting_type.academic_terms_id` ชี้ Semesters ของแคร์เป็นข้อสมมติ 🟡
+
+> ⚠️ แก้ไข 2026-11-07 (plan 214 · เลขา): ใน ER ต้นฉบับ (แท็บ `pg-master-tb`)
+> - `application` ใช้ฉบับใหม่ของนาย (มี email · ethnicity) แทนฉบับเก่า เส้นโยง 9 เส้นเหมือนเดิม · ลบ `application (old)` และ `applicant_address (old)` แล้ว
+> - ที่อยู่ (`applicant_address` · `student_address`) ไม่เก็บตำบล/อำเภอ/จังหวัด/รหัสไปรษณีย์เป็นข้อความแล้ว ใช้ `subDistrictID_FK` → SubDistricts (อำเภอ จังหวัด รหัสไปรษณีย์ ไล่จาก SubDistricts → Districts → Provinces) · ตัด `isCurrentAddress` เพราะซ้อนกับ `address_type` · ข้อแลก: เก็บที่อยู่ต่างประเทศไม่ได้
+> - ผู้ปกครอง (`applicant_guardian` · `student_guardian`) มีประวัติส่วนตัวครบแบบผู้สมัคร: citizenID · prefix · ชื่อ-นามสกุล ไทย/อังกฤษ · dob · gender · email · phoneNumber · ethnicity · nationality · religion · occupation · workplace · monthlyIncome · ชื่อคอลัมน์ camelCase (คีย์ guardian_id / application_id / student_id คงแบบเดิม)
+
+> ⚠️ แก้ไข 2026-11-07 (plan 215 · เลขา): แท็บ ER ต้นฉบับ (pg-master-tb) ใช้ชื่อ camelCase ทั้งแท็บ: ตาราง PascalCase (ApplicantGuardian) · คอลัมน์ camelCase (guardianID) · PK/FK ตัดท้าย _PK/_FK (ยังมีป้าย PK/FK ในช่องแรก) · phone → phoneNumber · road → street · ตารางลา/บัตรใช้ชื่อคีย์แบบ studentLeaveFormID · ตารางเทียบชื่อเก่า→ใหม่อยู่ `report-drafts/school-dark/audit-213/rename-215.md` · **แท็บมุมมอง/Chen/เอกสารอื่นยังใช้ชื่อเก่า**
