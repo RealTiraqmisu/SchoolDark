@@ -796,7 +796,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="ER ทั้งระบบ (ต้นฉบับ · แก้ที่นี่ที่เดียว) v3" id="pg-master-v3">
-    <mxGraphModel dx="3342" dy="2034" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2779" dy="1888" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -819,7 +819,7 @@
           <mxGeometry height="40" width="320" as="geometry" />
         </mxCell>
         <mxCell id="v3-tb-pg-master-employees" parent="v3-tb-pg-master-employees-grp" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;rounded=1;arcSize=4;" value="Employees" vertex="1">
-          <mxGeometry height="370" width="320" y="40" as="geometry" />
+          <mxGeometry height="390" width="320" y="40" as="geometry" />
         </mxCell>
         <mxCell id="v3-tb-pg-master-employees-r0" parent="v3-tb-pg-master-employees" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
           <mxGeometry height="20" width="320" y="30" as="geometry" />
@@ -1127,6 +1127,24 @@
             <mxRectangle height="20" width="140" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-2" parent="v3-tb-pg-master-employees" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
+          <mxGeometry height="20" width="320" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-3" parent="7gFzwCFUlw7aMavJnOFe-2" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=1;fillColor=none;strokeColor=#e6d9a8;connectable=0;" value="" vertex="1">
+          <mxGeometry height="20" width="50" as="geometry">
+            <mxRectangle height="20" width="50" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-4" parent="7gFzwCFUlw7aMavJnOFe-2" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=1;fillColor=none;strokeColor=#e6d9a8;connectable=0;" value="isCompleted" vertex="1">
+          <mxGeometry height="20" width="130" x="50" as="geometry">
+            <mxRectangle height="20" width="130" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-5" parent="7gFzwCFUlw7aMavJnOFe-2" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=0;fontColor=#444444;fillColor=none;strokeColor=#e6d9a8;connectable=0;" value="ข้อมุลที่กรอกมาครบไหม" vertex="1">
+          <mxGeometry height="20" width="140" x="180" as="geometry">
+            <mxRectangle height="20" width="140" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="v3-tb-pg-master-education_level-grp" connectable="0" parent="1" style="group" value="" vertex="1">
           <mxGeometry height="210" width="320" x="-680" y="155" as="geometry" />
         </mxCell>
@@ -1229,17 +1247,17 @@
         <mxCell id="v3-tb-pg-master-education_level-r5" parent="v3-tb-pg-master-education_level" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
           <mxGeometry height="20" width="320" y="130" as="geometry" />
         </mxCell>
-        <mxCell id="v3-tb-pg-master-education_level-r5c0" parent="v3-tb-pg-master-education_level-r5" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=1;fillColor=#d5e8d4;strokeColor=#e6d9a8;connectable=0;" value="" vertex="1">
+        <mxCell id="v3-tb-pg-master-education_level-r5c0" parent="v3-tb-pg-master-education_level-r5" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=1;fillColor=#e1d5e7;strokeColor=#9673a6;connectable=0;" value="" vertex="1">
           <mxGeometry height="20" width="50" as="geometry">
             <mxRectangle height="20" width="50" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="v3-tb-pg-master-education_level-r5c1" parent="v3-tb-pg-master-education_level-r5" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=1;fillColor=#d5e8d4;strokeColor=#e6d9a8;connectable=0;" value="isActive" vertex="1">
+        <mxCell id="v3-tb-pg-master-education_level-r5c1" parent="v3-tb-pg-master-education_level-r5" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=1;fillColor=#e1d5e7;strokeColor=#9673a6;connectable=0;" value="isActive" vertex="1">
           <mxGeometry height="20" width="160" x="50" as="geometry">
             <mxRectangle height="20" width="160" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="v3-tb-pg-master-education_level-r5c2" parent="v3-tb-pg-master-education_level-r5" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=0;fontColor=#444444;fillColor=#d5e8d4;strokeColor=#e6d9a8;connectable=0;" value="เปิดสอนอยู่" vertex="1">
+        <mxCell id="v3-tb-pg-master-education_level-r5c2" parent="v3-tb-pg-master-education_level-r5" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=0;fillColor=#e1d5e7;strokeColor=#9673a6;connectable=0;" value="เปิดสอนอยู่" vertex="1">
           <mxGeometry height="20" width="110" x="210" as="geometry">
             <mxRectangle height="20" width="110" as="alternateBounds" />
           </mxGeometry>
@@ -3232,7 +3250,7 @@
             <mxRectangle height="20" width="130" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="v3-tb-pg-master-SchoolCalendar-r1" parent="v3-tb-pg-master-SchoolCalendar" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
+        <mxCell id="v3-tb-pg-master-SchoolCalendar-r1" parent="v3-tb-pg-master-SchoolCalendar" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=#e1d5e7;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;strokeColor=#9673a6;" value="" vertex="1">
           <mxGeometry height="20" width="320" y="50" as="geometry" />
         </mxCell>
         <mxCell id="v3-tb-pg-master-SchoolCalendar-r1c0" parent="v3-tb-pg-master-SchoolCalendar-r1" style="shape=partialRectangle;top=0;left=0;bottom=1;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;right=1;fontColor=#1d4ed8;fillColor=none;strokeColor=#e6d9a8;connectable=0;" value="FK" vertex="1">
@@ -4286,13 +4304,13 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="v3-tb-pg-master-study_program-grp" connectable="0" parent="1" style="group" value="" vertex="1">
-          <mxGeometry height="170" width="290" x="40" y="860" as="geometry" />
+          <mxGeometry height="170" width="290" x="40" y="830" as="geometry" />
         </mxCell>
         <mxCell id="v3-tb-pg-master-study_program-desc" parent="v3-tb-pg-master-study_program-grp" style="text;strokeColor=none;fillColor=#eef4fd;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;fontColor=#555555;" value="แผนการเรียนในระดับการศึกษาหนึ่ง แถวเดียวถาวร" vertex="1">
           <mxGeometry height="40" width="290" as="geometry" />
         </mxCell>
         <mxCell id="v3-tb-pg-master-study_program" parent="v3-tb-pg-master-study_program-grp" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;whiteSpace=wrap;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;rounded=1;arcSize=4;" value="StudyProgram" vertex="1">
-          <mxGeometry height="130" width="290" y="40" as="geometry" />
+          <mxGeometry height="150" width="290" y="40" as="geometry" />
         </mxCell>
         <mxCell id="v3-tb-pg-master-study_program-r0" parent="v3-tb-pg-master-study_program" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
           <mxGeometry height="20" width="290" y="30" as="geometry" />
@@ -4374,12 +4392,30 @@
             <mxRectangle height="20" width="50" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="v3-tb-pg-master-study_program-r4c1" parent="v3-tb-pg-master-study_program-r4" style="shape=partialRectangle;top=0;left=0;right=1;bottom=1;fillColor=none;strokeColor=#b6c9e8;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;connectable=0;" value="code" vertex="1">
+        <mxCell id="v3-tb-pg-master-study_program-r4c1" parent="v3-tb-pg-master-study_program-r4" style="shape=partialRectangle;top=0;left=0;right=1;bottom=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;connectable=0;" value="code" vertex="1">
           <mxGeometry height="20" width="130" x="50" as="geometry">
             <mxRectangle height="20" width="130" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="v3-tb-pg-master-study_program-r4c2" parent="v3-tb-pg-master-study_program-r4" style="shape=partialRectangle;top=0;left=0;right=0;bottom=1;fillColor=none;strokeColor=#b6c9e8;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontColor=#444444;connectable=0;" value="รหัสแผน" vertex="1">
+        <mxCell id="v3-tb-pg-master-study_program-r4c2" parent="v3-tb-pg-master-study_program-r4" style="shape=partialRectangle;top=0;left=0;right=0;bottom=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;connectable=0;" value="รหัสแผน" vertex="1">
+          <mxGeometry height="20" width="110" x="180" as="geometry">
+            <mxRectangle height="20" width="110" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-7" parent="v3-tb-pg-master-study_program" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
+          <mxGeometry height="20" width="290" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-8" parent="7gFzwCFUlw7aMavJnOFe-7" style="shape=partialRectangle;top=0;left=0;right=1;bottom=1;fillColor=none;strokeColor=#b6c9e8;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;connectable=0;" value="" vertex="1">
+          <mxGeometry height="20" width="50" as="geometry">
+            <mxRectangle height="20" width="50" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-9" parent="7gFzwCFUlw7aMavJnOFe-7" style="shape=partialRectangle;top=0;left=0;right=1;bottom=1;fillColor=none;strokeColor=#b6c9e8;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;connectable=0;" value="note" vertex="1">
+          <mxGeometry height="20" width="130" x="50" as="geometry">
+            <mxRectangle height="20" width="130" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-10" parent="7gFzwCFUlw7aMavJnOFe-7" style="shape=partialRectangle;top=0;left=0;right=0;bottom=1;fillColor=none;strokeColor=#b6c9e8;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontColor=#444444;connectable=0;" value="" vertex="1">
           <mxGeometry height="20" width="110" x="180" as="geometry">
             <mxRectangle height="20" width="110" as="alternateBounds" />
           </mxGeometry>
@@ -7316,24 +7352,24 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="v3-tb-pg-master-e4" edge="1" parent="1" source="v3-tb-pg-master-admission_round-r0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;startArrow=ERmandOne;endArrow=ERzeroToMany;startFill=0;endFill=0;strokeColor=#666666;exitX=1;exitY=0.5001;exitDx=0;exitDy=0;entryX=0;entryY=0.5015;entryDx=0;entryDy=0;jumpStyle=arc;" target="v3-75MKJLEGYGBd3_8vAGot-64" value="รับสมัครใน">
-          <mxGeometry relative="1" x="0.3182" as="geometry">
+          <mxGeometry relative="1" x="0.7209" as="geometry">
             <mxPoint as="offset" />
-            <Array as="points">
-              <mxPoint x="960" y="230" />
-              <mxPoint x="960" y="440" />
-            </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="v3-tb-pg-master-e5" edge="1" parent="1" source="v3-tb-pg-master-course_plan-r0" style="rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;startArrow=ERmandOne;endArrow=ERzeroToMany;startFill=0;endFill=0;strokeColor=#666666;exitX=1;exitY=0.50125;exitDx=0;exitDy=0;entryX=0;entryY=0.5016;entryDx=0;entryDy=0;jumpStyle=arc;" target="v3-75MKJLEGYGBd3_8vAGot-68" value="สมัครแผน">
-          <mxGeometry relative="1" x="0.4737" as="geometry">
+        <mxCell id="v3-tb-pg-master-e5" edge="1" parent="1" source="v3-tb-pg-master-course_plan-r0" style="rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;startArrow=ERmandOne;endArrow=ERzeroToMany;startFill=0;endFill=0;strokeColor=#666666;exitX=1;exitY=0.50125;exitDx=0;exitDy=0;entryX=0;entryY=0.5016;entryDx=0;entryDy=0;jumpStyle=arc;edgeStyle=orthogonalEdgeStyle;" target="v3-75MKJLEGYGBd3_8vAGot-68" value="สมัครแผน">
+          <mxGeometry relative="1" x="-0.2727" as="geometry">
             <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="880" y="580" />
+              <mxPoint x="880" y="440" />
+            </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="v3-tb-pg-master-e6" edge="1" parent="1" source="v3-tb-pg-master-exam_room-r0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;startArrow=ERzeroToOne;endArrow=ERzeroToMany;startFill=0;endFill=0;strokeColor=#666666;exitX=0;exitY=0.5001;exitDx=0;exitDy=0;entryX=0;entryY=0.5017;entryDx=0;entryDy=0;jumpStyle=arc;" target="v3-75MKJLEGYGBd3_8vAGot-72" value="">
           <mxGeometry relative="1" x="-1" as="geometry">
             <Array as="points">
               <mxPoint x="1000" y="1000" />
-              <mxPoint x="1000" y="480" />
+              <mxPoint x="1000" y="460" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -10040,8 +10076,8 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="7gFzwCFUlw7aMavJnOFe-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="แตกตารางออกมา เพราะต้อง set ว่า required ไหม" vertex="1">
-          <mxGeometry height="110" width="60" x="1900" y="1290" as="geometry" />
+        <mxCell id="7gFzwCFUlw7aMavJnOFe-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="คิดว่าควรต้องมีตารางนึงที่เป็นตารางที่บอกว่าทั้งโรงเรียนมีห้องอะไรบ้างไหมนะ เพราะตามในการตั้งค่าโรงเรียนหน้า uxui-merged/settings/school.html#tab=classrooms มันเพิ่มได้ ฟีลเหมือนเป็น template แล้วค่อยโยง fk มาที่ classroom ควรต้องเป็นงั้นไหม ลองดูให้หน่อย หรือเราใช้การ filter ตามปีการศึกษาเอาอีกที" vertex="1">
+          <mxGeometry height="100" width="310" x="-680" y="1850" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
