@@ -1,0 +1,103 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="หน้า-1" id="btwzmXZXP1kagBk2qsEk">
+    <mxGraphModel dx="587" dy="777" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="yqDtv8ubMby_PI38klWn-79" parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=20;html=1;" value="Pool" vertex="1">
+          <mxGeometry height="1220" width="400" x="880" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-80" parent="yqDtv8ubMby_PI38klWn-79" style="swimlane;startSize=20;html=1;" value="Analysis Phase" vertex="1">
+          <mxGeometry height="1200" width="200" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-40" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="แบ่ง feature ตามระบบเก่าของแต่ละกลุ่ม" vertex="1">
+          <mxGeometry height="60" width="120" x="39.999999999999545" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-18" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="กลั่นฟีเจอร์ออกมาจากระบบบริหารโรงเรียนเดิมตามหน้าจอ" vertex="1">
+          <mxGeometry height="60" width="120" x="39.999999999999545" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-41" edge="1" parent="yqDtv8ubMby_PI38klWn-80" source="yqDtv8ubMby_PI38klWn-18" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;startArrow=classic;startFill=1;endArrow=none;endFill=0;" target="yqDtv8ubMby_PI38klWn-40" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-19" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="วาด User flow จากหน้าเว็บเดิม" vertex="1">
+          <mxGeometry height="60" width="120" x="39.999999999999545" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-20" edge="1" parent="yqDtv8ubMby_PI38klWn-80" source="yqDtv8ubMby_PI38klWn-18" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-19" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-106" edge="1" parent="yqDtv8ubMby_PI38klWn-80" source="yqDtv8ubMby_PI38klWn-76" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-105" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-76" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="ใช้ Claude skill /grill-with-docs" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-108" edge="1" parent="yqDtv8ubMby_PI38klWn-80" source="yqDtv8ubMby_PI38klWn-105" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-107" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-105" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="สร้าง functional requirement ใหม่" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-110" edge="1" parent="yqDtv8ubMby_PI38klWn-80" source="yqDtv8ubMby_PI38klWn-107" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-109" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-107" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="สร้าง non-functional requirement ใหม่" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-109" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="สร้าง use case diagram ร่วมกับ Claude ด้วย /diagram-design" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-81" parent="yqDtv8ubMby_PI38klWn-79" style="swimlane;startSize=20;html=1;" value="Design Phase" vertex="1">
+          <mxGeometry height="1200" width="200" x="200" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-72" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ออกแบบ UX/UI" vertex="1">
+          <mxGeometry height="60" width="120" x="40.999999999999545" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-34" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ใช้ claude skill ชื่อ /diagram-design สร้าง use case diagram" vertex="1">
+          <mxGeometry height="60" width="120" x="40.999999999999545" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-74" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-72" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-36" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ใช้ claude ช่วยสร้าง use case description" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-59" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-34" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-36" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-64" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ใช้ claude ช่วยสร้าง use case description" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-65" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-36" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-64" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-103" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-66" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;entryX=0.814;entryY=0.008;entryDx=0;entryDy=0;entryPerimeter=0;" target="yqDtv8ubMby_PI38klWn-68" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-66" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ใช้ claude ช่วยสร้าง database" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-67" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-64" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-66" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-68" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="เกิดปัญหาเรื่อง requirement ที่ไม่ชัดเจนของทั้ง 3 กลุ่ม" vertex="1">
+          <mxGeometry height="40" width="321" x="-160" y="655" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-70" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="เปลี่ยนวิธีการทำงาน" vertex="1">
+          <mxGeometry height="40" width="321" x="-160" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-104" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-68" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;entryX=0.75;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="yqDtv8ubMby_PI38klWn-70" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="111" y="620" as="sourcePoint" />
+            <mxPoint x="111" y="665" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-73" edge="1" parent="yqDtv8ubMby_PI38klWn-79" source="yqDtv8ubMby_PI38klWn-19" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-72" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-77" edge="1" parent="yqDtv8ubMby_PI38klWn-79" source="yqDtv8ubMby_PI38klWn-70" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-76" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
