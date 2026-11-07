@@ -796,7 +796,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="ER ทั้งระบบ (ต้นฉบับ · แก้ที่นี่ที่เดียว) v3" id="pg-master-v3">
-        <mxGraphModel dx="2530" dy="1707" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2706" dy="1815" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -10899,16 +10899,16 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-grp" connectable="0" parent="1" style="group" value="" vertex="1">
-                    <mxGeometry height="130" width="320" x="2780" y="2700" as="geometry"/>
+                    <mxGeometry height="130" width="340" x="2780" y="2700" as="geometry"/>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-desc" parent="v3-tb-pg-master-permission-grp" style="text;strokeColor=none;fillColor=#eef7ec;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=6;overflow=hidden;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;fontColor=#555555;" value="สิทธิ์การใช้งานแต่ละอย่าง (6 รายการ) · ตารางสิทธิ์ตามบทบาทเขียนอยู่ในโค้ด ไม่ได้อยู่ในฐานข้อมูล" vertex="1">
-                    <mxGeometry height="40" width="320" as="geometry"/>
+                    <mxGeometry height="40" width="340" as="geometry"/>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission" parent="v3-tb-pg-master-permission-grp" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;rounded=1;arcSize=4;" value="Permission" vertex="1">
-                    <mxGeometry height="90" width="320" y="40" as="geometry"/>
+                    <mxGeometry height="90" width="340" y="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r0" parent="v3-tb-pg-master-permission" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
-                    <mxGeometry height="20" width="320" y="30" as="geometry"/>
+                    <mxGeometry height="20" width="340" y="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r0c0" parent="v3-tb-pg-master-permission-r0" style="shape=partialRectangle;top=0;left=0;right=1;bottom=1;fillColor=none;strokeColor=#b9d9b3;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;connectable=0;" value="PK" vertex="1">
                     <mxGeometry height="20" width="50" as="geometry">
@@ -10921,12 +10921,12 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r0c2" parent="v3-tb-pg-master-permission-r0" style="shape=partialRectangle;top=0;left=0;right=0;bottom=1;fillColor=none;strokeColor=#b9d9b3;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontColor=#444444;connectable=0;" value="รหัสสิทธิ์" vertex="1">
-                    <mxGeometry height="20" width="130" x="190" as="geometry">
-                        <mxRectangle height="20" width="130" as="alternateBounds"/>
+                    <mxGeometry height="20" width="150" x="190" as="geometry">
+                        <mxRectangle height="20" width="150" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r1" parent="v3-tb-pg-master-permission" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
-                    <mxGeometry height="20" width="320" y="50" as="geometry"/>
+                    <mxGeometry height="20" width="340" y="50" as="geometry"/>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r1c0" parent="v3-tb-pg-master-permission-r1" style="shape=partialRectangle;top=0;left=0;right=1;bottom=1;fillColor=none;strokeColor=#b9d9b3;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;connectable=0;" value="UK" vertex="1">
                     <mxGeometry height="20" width="50" as="geometry">
@@ -10939,12 +10939,12 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r1c2" parent="v3-tb-pg-master-permission-r1" style="shape=partialRectangle;top=0;left=0;right=0;bottom=1;fillColor=none;strokeColor=#b9d9b3;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontColor=#444444;connectable=0;" value="view_dashboard / edit_settings ฯลฯ" vertex="1">
-                    <mxGeometry height="20" width="130" x="190" as="geometry">
-                        <mxRectangle height="20" width="130" as="alternateBounds"/>
+                    <mxGeometry height="20" width="150" x="190" as="geometry">
+                        <mxRectangle height="20" width="150" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r2" parent="v3-tb-pg-master-permission" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" value="" vertex="1">
-                    <mxGeometry height="20" width="320" y="70" as="geometry"/>
+                    <mxGeometry height="20" width="340" y="70" as="geometry"/>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r2c0" parent="v3-tb-pg-master-permission-r2" style="shape=partialRectangle;top=0;left=0;right=1;bottom=1;fillColor=none;strokeColor=#b9d9b3;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;connectable=0;" value="" vertex="1">
                     <mxGeometry height="20" width="50" as="geometry">
@@ -10957,8 +10957,8 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-permission-r2c2" parent="v3-tb-pg-master-permission-r2" style="shape=partialRectangle;top=0;left=0;right=0;bottom=1;fillColor=none;strokeColor=#b9d9b3;align=left;verticalAlign=middle;spacingLeft=6;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;fontColor=#444444;connectable=0;" value="ชื่อสิทธิ์ที่แสดง" vertex="1">
-                    <mxGeometry height="20" width="130" x="190" as="geometry">
-                        <mxRectangle height="20" width="130" as="alternateBounds"/>
+                    <mxGeometry height="20" width="150" x="190" as="geometry">
+                        <mxRectangle height="20" width="150" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-user_permission-grp" connectable="0" parent="1" style="group" value="" vertex="1">
@@ -11262,12 +11262,7 @@
                     <mxGeometry height="30" width="900" x="1980" y="2440" as="geometry"/>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-p1" edge="1" parent="1" source="v3-tb-pg-master-staff_type-r0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;startArrow=ERmandOne;endArrow=ERzeroToMany;startFill=0;endFill=0;strokeColor=#666666;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;jumpStyle=arc;" target="v3-tb-pg-master-position_staff_type-r2" value="">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="2320" y="2580"/>
-                            <mxPoint x="2320" y="2750"/>
-                        </Array>
-                    </mxGeometry>
+                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="v3-tb-pg-master-p2" edge="1" parent="1" source="v3-tb-pg-master-position-r0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=10;labelBackgroundColor=#ffffff;startArrow=ERmandOne;endArrow=ERzeroToMany;startFill=0;endFill=0;strokeColor=#666666;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;jumpStyle=arc;" target="v3-tb-pg-master-position_staff_type-r1" value="">
                     <mxGeometry relative="1" as="geometry">
