@@ -1,14 +1,14 @@
 <mxfile host="app.diagrams.net">
   <diagram name="หน้า-1" id="btwzmXZXP1kagBk2qsEk">
-    <mxGraphModel dx="587" dy="777" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2708" dy="1943" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="yqDtv8ubMby_PI38klWn-79" parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=20;html=1;" value="Pool" vertex="1">
-          <mxGeometry height="1220" width="400" x="880" y="40" as="geometry" />
+          <mxGeometry height="1910" width="400" x="880" y="40" as="geometry" />
         </mxCell>
         <mxCell id="yqDtv8ubMby_PI38klWn-80" parent="yqDtv8ubMby_PI38klWn-79" style="swimlane;startSize=20;html=1;" value="Analysis Phase" vertex="1">
-          <mxGeometry height="1200" width="200" y="20" as="geometry" />
+          <mxGeometry height="1890" width="200" y="20" as="geometry" />
         </mxCell>
         <mxCell id="yqDtv8ubMby_PI38klWn-40" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="แบ่ง feature ตามระบบเก่าของแต่ละกลุ่ม" vertex="1">
           <mxGeometry height="60" width="120" x="39.999999999999545" y="60" as="geometry" />
@@ -43,13 +43,31 @@
         <mxCell id="yqDtv8ubMby_PI38klWn-107" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="สร้าง non-functional requirement ใหม่" vertex="1">
           <mxGeometry height="60" width="120" x="40" y="1000" as="geometry" />
         </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-112" edge="1" parent="yqDtv8ubMby_PI38klWn-80" source="yqDtv8ubMby_PI38klWn-109" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-111" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="yqDtv8ubMby_PI38klWn-109" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="สร้าง use case diagram ร่วมกับ Claude ด้วย /diagram-design" vertex="1">
           <mxGeometry height="60" width="120" x="40" y="1090" as="geometry" />
         </mxCell>
-        <mxCell id="yqDtv8ubMby_PI38klWn-81" parent="yqDtv8ubMby_PI38klWn-79" style="swimlane;startSize=20;html=1;" value="Design Phase" vertex="1">
-          <mxGeometry height="1200" width="200" x="200" y="20" as="geometry" />
+        <mxCell id="yqDtv8ubMby_PI38klWn-114" edge="1" parent="yqDtv8ubMby_PI38klWn-80" source="yqDtv8ubMby_PI38klWn-111" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-113" value="">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="yqDtv8ubMby_PI38klWn-72" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ออกแบบ UX/UI" vertex="1">
+        <mxCell id="yqDtv8ubMby_PI38klWn-111" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="สร้าง use case description ร่วมกับ Claude" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-142" edge="1" parent="yqDtv8ubMby_PI38klWn-80" source="yqDtv8ubMby_PI38klWn-113" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-141" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-113" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="สร้าง swim lane diagram ร่วมกับ Claude ด้วย /diagram-design" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="1270" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-141" parent="yqDtv8ubMby_PI38klWn-80" style="rounded=0;whiteSpace=wrap;html=1;" value="สร้าง swim lane diagram ร่วมกับ Claude ด้วย /diagram-design" vertex="1">
+          <mxGeometry height="60" width="120" x="40" y="1410" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-81" parent="yqDtv8ubMby_PI38klWn-79" style="swimlane;startSize=20;html=1;" value="Design Phase" vertex="1">
+          <mxGeometry height="1890" width="200" x="200" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-72" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ออกแบบ UX/UI ด้วย HTML/CSS" vertex="1">
           <mxGeometry height="60" width="120" x="40.999999999999545" y="220" as="geometry" />
         </mxCell>
         <mxCell id="yqDtv8ubMby_PI38klWn-34" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ใช้ claude skill ชื่อ /diagram-design สร้าง use case diagram" vertex="1">
@@ -91,10 +109,34 @@
             <mxPoint x="111" y="665" as="targetPoint" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-146" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-143" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-145" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-143" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ออกแบบ database" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="1410" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-148" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-145" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-147" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-145" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ปรับแก้การออกแบบ UX/UI เดิม" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="1550" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-150" edge="1" parent="yqDtv8ubMby_PI38klWn-81" source="yqDtv8ubMby_PI38klWn-147" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-149" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-147" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ออกแบบ UX/UI ด้วย Figma ร่วมกันทั้ง 3 กลุ่ม" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="1690" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-149" parent="yqDtv8ubMby_PI38klWn-81" style="rounded=0;whiteSpace=wrap;html=1;" value="ออกแบบ AI Specification" vertex="1">
+          <mxGeometry height="60" width="120" x="41" y="1830" as="geometry" />
+        </mxCell>
         <mxCell id="yqDtv8ubMby_PI38klWn-73" edge="1" parent="yqDtv8ubMby_PI38klWn-79" source="yqDtv8ubMby_PI38klWn-19" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-72" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="yqDtv8ubMby_PI38klWn-77" edge="1" parent="yqDtv8ubMby_PI38klWn-79" source="yqDtv8ubMby_PI38klWn-70" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-76" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yqDtv8ubMby_PI38klWn-144" edge="1" parent="yqDtv8ubMby_PI38klWn-79" source="yqDtv8ubMby_PI38klWn-141" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;" target="yqDtv8ubMby_PI38klWn-143" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
