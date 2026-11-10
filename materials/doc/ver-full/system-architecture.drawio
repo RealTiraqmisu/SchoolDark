@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e" pages="5">
     <diagram name="System Architecture" id="sd-arch-lr">
-        <mxGraphModel dx="2089" dy="667" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="1451" dy="1020" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -221,8 +221,166 @@
             </root>
         </mxGraphModel>
     </diagram>
+    <diagram name="Service B (Component Diagram · ฉบับทางการ)" id="sd-arch-svc-b-formal">
+        <mxGraphModel dx="1599" dy="1123" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="984" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="f_b" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Service B API (FastAPI)" vertex="1">
+                    <mxGeometry height="430" width="660" x="20" y="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_portal" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Web Portal&lt;br&gt;(Next.js)" vertex="1">
+                    <mxGeometry height="40" width="160" x="350" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_nginx" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Nginx&lt;br&gt;(Reverse Proxy)" vertex="1">
+                    <mxGeometry height="40" width="160" x="350" y="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_ac" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Service A / Service C" vertex="1">
+                    <mxGeometry height="40" width="300" x="20" y="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_api" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="API Layer (Routers)" vertex="1">
+                    <mxGeometry height="175" width="630" x="35" y="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_r0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ยืนยันตัวตนและสิทธิ์&lt;/b&gt;&lt;div&gt;(endpoint สำหรับ login และขอ token)&lt;b&gt;&lt;/b&gt;&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="60" width="196" x="45" y="325" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_r1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;Internal API&lt;br&gt;(สำหรับ Service A, C)&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="60" width="196" x="251" y="325" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_r2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบรับสมัคร&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="60" width="196" x="457" y="325" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_r3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบทะเบียนนักเรียน&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="60" width="196" x="45" y="395" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_r4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบตั้งค่าโรงเรียน&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="60" width="196" x="251" y="395" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_r5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบบุคลากร&lt;/b&gt;" vertex="1">
+                    <mxGeometry height="60" width="196" x="457" y="395" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_svc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Service Layer" vertex="1">
+                    <mxGeometry height="120" width="235" x="280" y="530" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_s1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;Business Logic&lt;/b&gt;&lt;br&gt;รับสมัคร มอบตัว ทะเบียนนักเรียน&lt;br&gt;บุคลากร และตั้งค่าโรงเรียน" vertex="1">
+                    <mxGeometry height="67" width="205" x="295" y="563" as="geometry"/>
+                </mxCell>
+                <mxCell id="K3fUhNWkJ9TguRzFT2Us-3" edge="1" parent="1" source="f_iam" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;rounded=0;" target="f_d1">
+                    <mxGeometry relative="1" x="0.0448" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="602.5" y="660"/>
+                            <mxPoint x="152.5" y="660"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="K3fUhNWkJ9TguRzFT2Us-8" connectable="0" parent="K3fUhNWkJ9TguRzFT2Us-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;" value="&lt;font face=&quot;TH SarabunPSK&quot;&gt;&lt;span style=&quot;font-size: 17px;&quot;&gt;อ่านข้อมูลผู้ใช้&amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 17px; font-family: &amp;quot;TH SarabunPSK&amp;quot;; background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;บทบาท และสิทธิ์&lt;/span&gt;" vertex="1">
+                    <mxGeometry relative="1" x="-0.6022" as="geometry">
+                        <mxPoint x="55" y="-29" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_iam" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontColor=#000000;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="IAM&lt;div&gt;ตรวจ JWT และ ตรวจสิทธิ์ตามบทบาท&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="80" width="125" x="540" y="530" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_data" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Data Access" vertex="1">
+                    <mxGeometry height="120" width="235" x="35" y="531" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_d1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;strong&gt;Repository : ORM Models (SQLAlchemy)&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;Storage Client (MinIO SDK)&lt;/strong&gt;" vertex="1">
+                    <mxGeometry height="67" width="196" x="54.5" y="564" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_wrk" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontColor=#000000;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Background Worker (Celery)" vertex="1">
+                    <mxGeometry height="115" width="255" x="410" y="690" as="geometry"/>
+                </mxCell>
+                <mxCell id="K3fUhNWkJ9TguRzFT2Us-5" edge="1" parent="1" source="f_w1" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;entryPerimeter=0;" target="f_pg">
+                    <mxGeometry relative="1" x="0.0022" as="geometry"/>
+                </mxCell>
+                <mxCell id="K3fUhNWkJ9TguRzFT2Us-6" connectable="0" parent="K3fUhNWkJ9TguRzFT2Us-5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: &amp;quot;TH SarabunPSK&amp;quot;; font-size: 17px;&quot;&gt;⑫&amp;nbsp;&lt;/span&gt;&lt;font face=&quot;TH SarabunPSK&quot; style=&quot;font-size: 16px;&quot;&gt;อ่านข้อมูลนักเรียน/ผู้สมัคร&lt;/font&gt;" vertex="1">
+                    <mxGeometry relative="1" x="-0.1902" as="geometry">
+                        <mxPoint x="31" y="17" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_w1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;Tasks&lt;/b&gt;&lt;br&gt;ส่งอีเมล OTP, สร้างเอกสาร PDF" vertex="1">
+                    <mxGeometry height="60" width="220" x="430" y="723" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_pg" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="PostgreSQL&lt;br&gt;Schema: admission" vertex="1">
+                    <mxGeometry height="80" width="140" x="20" y="860" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_minio" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="MinIO&lt;br&gt;(Object Storage)" vertex="1">
+                    <mxGeometry height="70" width="130" x="175" y="865" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_redis" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="Redis&lt;br&gt;(Message Broker/OTP Store)" vertex="1">
+                    <mxGeometry height="70" width="150" x="315" y="865" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_smtp" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="SMTP Server&lt;div&gt;ส่งอีเมล&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="70" width="196" x="484" y="865" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_e1" edge="1" parent="1" source="f_portal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="f_nginx" value="① HTTPS">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="f_e2" edge="1" parent="1" source="f_nginx" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.5;exitY=1;entryX=0.626984126984127;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="f_api" value="② HTTPS · /api/admission">
+                    <mxGeometry relative="1" x="-0.3846" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e3" edge="1" parent="1" source="f_ac" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.4;exitY=1;entryX=0.4846938775510204;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;dashed=1;dashPattern=6 3;" target="f_r0" value="③ ยืนยันสิทธิ์">
+                    <mxGeometry relative="1" x="-0.5152" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e4" edge="1" parent="1" source="f_ac" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.9333333333333333;exitY=1;entryX=0.25;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;startArrow=block;startFill=1;" target="f_r1" value="④ ขอข้อมูล">
+                    <mxGeometry relative="1" x="-0.5152" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e5" edge="1" parent="1" source="f_api" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.576;exitY=1.001;exitDx=0;exitDy=0;exitPerimeter=0;" target="f_svc" value="⑥ เรียกใช้">
+                    <mxGeometry relative="1" x="-0.0214" y="-3" as="geometry">
+                        <mxPoint y="1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e6" edge="1" parent="1" source="f_api" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.901;exitY=1.002;exitDx=0;exitDy=0;exitPerimeter=0;" target="f_iam" value="⑤ เรียกใช้">
+                    <mxGeometry relative="1" x="-0.0812" y="-1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e7" edge="1" parent="1" source="f_s1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" target="f_d1" value="⑦ เรียก Repository">
+                    <mxGeometry relative="1" x="-0.0065" as="geometry">
+                        <mxPoint as="offset"/>
+                        <Array as="points">
+                            <mxPoint x="346.3" y="490"/>
+                            <mxPoint x="152.5" y="490"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e8" edge="1" parent="1" source="f_d1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.181;exitY=1.003;exitDx=0;exitDy=0;jumpStyle=arc;exitPerimeter=0;" target="f_pg" value="⑧ SQL">
+                    <mxGeometry relative="1" x="-0.3112" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e9" edge="1" parent="1" source="f_d1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.7592592592592593;exitY=1;exitDx=0;exitDy=0;jumpStyle=arc;entryX=0.221;entryY=0.006;entryDx=0;entryDy=0;entryPerimeter=0;" target="f_minio" value="⑨ S3 API">
+                    <mxGeometry relative="1" x="-0.326" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e10" edge="1" parent="1" source="f_s1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;elbow=vertical;entryX=0.25;entryY=0;entryDx=0;entryDy=0;jumpStyle=arc;exitX=0.283;exitY=1.029;exitDx=0;exitDy=0;exitPerimeter=0;" target="f_redis" value="⑩&amp;nbsp;enqueue&lt;div&gt;เก็บ-ตรวจ OTP&lt;/div&gt;">
+                    <mxGeometry relative="1" x="-0.3301" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e11" edge="1" parent="1" source="f_redis" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;entryX=0.112;entryY=0.987;entryDx=0;entryDy=0;exitX=0.927;exitY=-0.022;exitDx=0;exitDy=0;entryPerimeter=0;exitPerimeter=0;startArrow=classic;startFill=1;" target="f_w1" value="⑪ consume/result">
+                    <mxGeometry relative="1" x="-0.1762" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="f_e12" edge="1" parent="1" source="f_w1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.574;entryY=0.038;entryDx=0;entryDy=0;entryPerimeter=0;" target="f_smtp" value="⑬ SMTP">
+                    <mxGeometry relative="1" x="0.2881" as="geometry">
+                        <mxPoint as="offset"/>
+                        <mxPoint x="595" y="860" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
     <diagram name="Service B (ฉบับเอกสาร)" id="sd-arch-svc-b-doc">
-        <mxGraphModel dx="1074" dy="1186" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1120" pageHeight="792" background="#f5f5f5" math="0" shadow="0">
+        <mxGraphModel dx="1137" dy="799" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1120" pageHeight="792" background="#f5f5f5" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -446,7 +604,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="(old) Page-1" id="gQUkADZH2U-bxWxf6_56">
-        <mxGraphModel dx="185" dy="1062" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="569" dy="981" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -616,7 +774,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="(draft) Service B (เจาะลึก) แบบ C4 Model" id="sd-arch-svc-b">
-        <mxGraphModel dx="1187" dy="775" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1100" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="1808" dy="1270" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1100" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -827,164 +985,6 @@
                 </mxCell>
                 <mxCell id="b_note_q" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;fillColor=#E5DBFF;strokeColor=#7048E8;align=left;verticalAlign=top;spacing=8;fontSize=11;fontFamily=Arial;" value="&lt;b&gt;กล่องสีม่วง = ยังต้องถาม (3 ข้อ)&lt;/b&gt;&lt;br&gt;(ก) โมดูลของแคร์อยู่ใน B ด้วยไหม&lt;br&gt;(ข) A/C ยืนยันสิทธิ์ด้วยการเรียก B ทุกครั้ง หรือ verify JWT เองด้วย public key&lt;br&gt;(ค) &quot;ขอข้อมูล&quot; ใช้ Internal API หรืออ่าน schema admission ตรง ๆ ตอนนี้วาดแบบ Internal API ไว้ก่อน เพราะทำให้ schema ยังเป็นของทีม B คนเดียว" vertex="1">
                     <mxGeometry height="305" width="520" x="1245" y="770" as="geometry"/>
-                </mxCell>
-            </root>
-        </mxGraphModel>
-    </diagram>
-    <diagram name="Service B (Component Diagram · ฉบับทางการ)" id="sd-arch-svc-b-formal">
-        <mxGraphModel dx="370" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="984" background="#ffffff" math="0" shadow="0">
-            <root>
-                <mxCell id="0"/>
-                <mxCell id="1" parent="0"/>
-                <mxCell id="f_b" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Service B API (FastAPI)" vertex="1">
-                    <mxGeometry height="430" width="660" x="20" y="240" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_portal" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Web Portal&lt;br&gt;(Next.js)" vertex="1">
-                    <mxGeometry height="40" width="160" x="350" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_nginx" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Nginx&lt;br&gt;(Reverse Proxy)" vertex="1">
-                    <mxGeometry height="40" width="160" x="350" y="120" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_ac" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Service A / Service C" vertex="1">
-                    <mxGeometry height="40" width="300" x="20" y="120" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_api" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="API Layer (Routers)" vertex="1">
-                    <mxGeometry height="175" width="630" x="35" y="290" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_r0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ยืนยันตัวตนและสิทธิ์&lt;/b&gt;&lt;div&gt;(endpoint สำหรับ login และขอ token)&lt;b&gt;&lt;/b&gt;&lt;/div&gt;" vertex="1">
-                    <mxGeometry height="60" width="196" x="45" y="325" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_r1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;Internal API&lt;br&gt;(สำหรับ Service A, C)&lt;/b&gt;" vertex="1">
-                    <mxGeometry height="60" width="196" x="251" y="325" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_r2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบรับสมัคร&lt;/b&gt;" vertex="1">
-                    <mxGeometry height="60" width="196" x="457" y="325" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_r3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบทะเบียนนักเรียน&lt;/b&gt;" vertex="1">
-                    <mxGeometry height="60" width="196" x="45" y="395" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_r4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบตั้งค่าโรงเรียน&lt;/b&gt;" vertex="1">
-                    <mxGeometry height="60" width="196" x="251" y="395" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_r5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบบุคลากร&lt;/b&gt;" vertex="1">
-                    <mxGeometry height="60" width="196" x="457" y="395" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_svc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Service Layer" vertex="1">
-                    <mxGeometry height="120" width="235" x="280" y="530" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_s1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;Business Logic&lt;/b&gt;&lt;br&gt;รับสมัคร มอบตัว ทะเบียนนักเรียน&lt;br&gt;บุคลากร และตั้งค่าโรงเรียน" vertex="1">
-                    <mxGeometry height="67" width="205" x="295" y="563" as="geometry"/>
-                </mxCell>
-                <mxCell id="K3fUhNWkJ9TguRzFT2Us-3" edge="1" parent="1" source="f_iam" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;rounded=0;" target="f_d1">
-                    <mxGeometry relative="1" x="0.0448" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="602.5" y="660"/>
-                            <mxPoint x="152.5" y="660"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="K3fUhNWkJ9TguRzFT2Us-8" connectable="0" parent="K3fUhNWkJ9TguRzFT2Us-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;" value="&lt;font face=&quot;TH SarabunPSK&quot;&gt;&lt;span style=&quot;font-size: 17px;&quot;&gt;อ่านข้อมูลผู้ใช้&amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 17px; font-family: &amp;quot;TH SarabunPSK&amp;quot;; background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;บทบาท และสิทธิ์&lt;/span&gt;" vertex="1">
-                    <mxGeometry relative="1" x="-0.6022" as="geometry">
-                        <mxPoint x="55" y="-29" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_iam" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontColor=#000000;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="IAM&lt;div&gt;ตรวจ JWT และ ตรวจสิทธิ์ตามบทบาท&lt;/div&gt;" vertex="1">
-                    <mxGeometry height="80" width="125" x="540" y="530" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_data" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Data Access" vertex="1">
-                    <mxGeometry height="120" width="235" x="35" y="531" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_d1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;strong&gt;Repository : ORM Models (SQLAlchemy)&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;Storage Client (MinIO SDK)&lt;/strong&gt;" vertex="1">
-                    <mxGeometry height="67" width="196" x="54.5" y="564" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_wrk" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontColor=#000000;fontStyle=1;align=left;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Background Worker (Celery)" vertex="1">
-                    <mxGeometry height="115" width="255" x="410" y="690" as="geometry"/>
-                </mxCell>
-                <mxCell id="K3fUhNWkJ9TguRzFT2Us-5" edge="1" parent="1" source="f_w1" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;entryPerimeter=0;" target="f_pg">
-                    <mxGeometry relative="1" x="0.0022" as="geometry"/>
-                </mxCell>
-                <mxCell id="K3fUhNWkJ9TguRzFT2Us-6" connectable="0" parent="K3fUhNWkJ9TguRzFT2Us-5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: &amp;quot;TH SarabunPSK&amp;quot;; font-size: 17px;&quot;&gt;⑫&amp;nbsp;&lt;/span&gt;&lt;font face=&quot;TH SarabunPSK&quot; style=&quot;font-size: 16px;&quot;&gt;อ่านข้อมูลนักเรียน/ผู้สมัคร&lt;/font&gt;" vertex="1">
-                    <mxGeometry relative="1" x="-0.1902" as="geometry">
-                        <mxPoint x="31" y="17" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_w1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;Tasks&lt;/b&gt;&lt;br&gt;ส่งอีเมล OTP, สร้างเอกสาร PDF" vertex="1">
-                    <mxGeometry height="60" width="220" x="430" y="723" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_pg" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="PostgreSQL&lt;br&gt;Schema: admission" vertex="1">
-                    <mxGeometry height="80" width="140" x="20" y="860" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_minio" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="MinIO&lt;br&gt;(Object Storage)" vertex="1">
-                    <mxGeometry height="70" width="130" x="175" y="865" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_redis" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="Redis&lt;br&gt;(Message Broker/OTP Store)" vertex="1">
-                    <mxGeometry height="70" width="150" x="315" y="865" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_smtp" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="SMTP Server&lt;div&gt;ส่งอีเมล&lt;/div&gt;" vertex="1">
-                    <mxGeometry height="70" width="196" x="484" y="865" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_e1" edge="1" parent="1" source="f_portal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.5;exitY=1;entryX=0.5;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="f_nginx" value="① HTTPS">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="f_e2" edge="1" parent="1" source="f_nginx" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.5;exitY=1;entryX=0.626984126984127;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="f_api" value="② HTTPS · /api/admission">
-                    <mxGeometry relative="1" x="-0.3846" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e3" edge="1" parent="1" source="f_ac" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.4;exitY=1;entryX=0.4846938775510204;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;dashed=1;dashPattern=6 3;" target="f_r0" value="③ ยืนยันสิทธิ์">
-                    <mxGeometry relative="1" x="-0.5152" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e4" edge="1" parent="1" source="f_ac" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.9333333333333333;exitY=1;entryX=0.25;entryY=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;startArrow=block;startFill=1;" target="f_r1" value="④ ขอข้อมูล">
-                    <mxGeometry relative="1" x="-0.5152" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e5" edge="1" parent="1" source="f_api" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.576;exitY=1.001;exitDx=0;exitDy=0;exitPerimeter=0;" target="f_svc" value="⑥ เรียกใช้">
-                    <mxGeometry relative="1" x="-0.0214" y="-3" as="geometry">
-                        <mxPoint y="1" as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e6" edge="1" parent="1" source="f_api" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.901;exitY=1.002;exitDx=0;exitDy=0;exitPerimeter=0;" target="f_iam" value="⑤ เรียกใช้">
-                    <mxGeometry relative="1" x="-0.0812" y="-1" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e7" edge="1" parent="1" source="f_s1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" target="f_d1" value="⑦ เรียก Repository">
-                    <mxGeometry relative="1" x="-0.0065" as="geometry">
-                        <mxPoint as="offset"/>
-                        <Array as="points">
-                            <mxPoint x="346.3" y="490"/>
-                            <mxPoint x="152.5" y="490"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e8" edge="1" parent="1" source="f_d1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.181;exitY=1.003;exitDx=0;exitDy=0;jumpStyle=arc;exitPerimeter=0;" target="f_pg" value="⑧ SQL">
-                    <mxGeometry relative="1" x="-0.3112" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e9" edge="1" parent="1" source="f_d1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.7592592592592593;exitY=1;exitDx=0;exitDy=0;jumpStyle=arc;entryX=0.221;entryY=0.006;entryDx=0;entryDy=0;entryPerimeter=0;" target="f_minio" value="⑨ S3 API">
-                    <mxGeometry relative="1" x="-0.326" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e10" edge="1" parent="1" source="f_s1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;elbow=vertical;entryX=0.25;entryY=0;entryDx=0;entryDy=0;jumpStyle=arc;exitX=0.283;exitY=1.029;exitDx=0;exitDy=0;exitPerimeter=0;" target="f_redis" value="⑩&amp;nbsp;enqueue&lt;div&gt;เก็บ-ตรวจ OTP&lt;/div&gt;">
-                    <mxGeometry relative="1" x="-0.3301" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e11" edge="1" parent="1" source="f_redis" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;entryX=0.112;entryY=0.987;entryDx=0;entryDy=0;exitX=0.927;exitY=-0.022;exitDx=0;exitDy=0;entryPerimeter=0;exitPerimeter=0;startArrow=classic;startFill=1;" target="f_w1" value="⑪ consume/result">
-                    <mxGeometry relative="1" x="-0.1762" as="geometry">
-                        <mxPoint as="offset"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="f_e12" edge="1" parent="1" source="f_w1" style="rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontColor=#000000;fontSize=17;labelBackgroundColor=#FFFFFF;fontFamily=TH SarabunPSK;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.574;entryY=0.038;entryDx=0;entryDy=0;entryPerimeter=0;" target="f_smtp" value="⑬ SMTP">
-                    <mxGeometry relative="1" x="0.2881" as="geometry">
-                        <mxPoint as="offset"/>
-                        <mxPoint x="595" y="860" as="targetPoint"/>
-                    </mxGeometry>
                 </mxCell>
             </root>
         </mxGraphModel>

@@ -31,7 +31,7 @@ materials/
 - ห้าม commit/push ถ้านายไม่สั่ง · การย้ายไฟล์รอบนี้ยังไม่ได้ commit
 - artifact "School Dark · SRS ทีม B" บน claude.ai เป็นของเก่า ไม่ใช้อ้างอิง
 
-## ยังค้าง
+## งานค้าง
 
-- `AGENTS.md` ที่ราก repo ยังไม่ได้สร้าง (ถามนายก่อน)
-- Word 12 MB ใน `ai-bro/doc/` ถ้า commit ทุกฉบับ repo จะโตเร็ว → นายตัดสินเรื่อง commit
+- **ทุกงานอยู่ `materials/ai-bro/TODO.md` ที่เดียว** (เพิ่ม 2026-11-10) · handoff ไม่ถือ todo อีกต่อไป เขียนแค่ "ทำอะไรไป / รู้อะไรมา" แล้วชี้ TODO.md
+- หัว "Pending / ยังค้าง" ใน handoff เก่าของ opencode ย้ายเข้า TODO.md แล้ว (AGENTS.md · commit docx) ดูสถานะที่ TODO.md ไม่ใช่ใน handoff
