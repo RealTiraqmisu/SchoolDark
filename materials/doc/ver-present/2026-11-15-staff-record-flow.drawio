@@ -1,0 +1,143 @@
+<mxfile host="Electron">
+  <diagram id="stf" name="งานบุคลากร · แฟ้มประวัติ">
+    <mxGraphModel dx="4360" dy="1752" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1414" pageHeight="988" math="0" shadow="0" adaptiveColors="auto">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="F1" parent="1" style="swimlane;rounded=1;arcSize=4;startSize=50;html=1;whiteSpace=wrap;align=left;spacingLeft=16;fillColor=#1f3a5f;strokeColor=#1f3a5f;strokeWidth=2;swimlaneFillColor=#ffffff;fontColor=#ffffff;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=30;" value="ตั้งค่าก่อนเริ่ม · หัวหน้างานบุคคล" vertex="1">
+          <mxGeometry height="146" width="1374" x="-1394" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="set" parent="F1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="ตั้งค่า ประเภทบุคลากร · ตำแหน่ง · แผนก/กลุ่มสาระ" vertex="1">
+          <mxGeometry height="56" width="640" x="20" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="set-n" parent="F1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=TH SarabunPSK;fontSize=30;fontColor=#555555;" value="ต้องตั้งค่าก่อน จึงเพิ่มบุคลากรได้" vertex="1">
+          <mxGeometry height="46" width="600" x="690" y="75" as="geometry" />
+        </mxCell>
+        <mxCell id="F" parent="1" style="swimlane;rounded=1;arcSize=4;startSize=50;html=1;whiteSpace=wrap;align=left;spacingLeft=16;fillColor=#1f3a5f;strokeColor=#1f3a5f;strokeWidth=2;swimlaneFillColor=#ffffff;fontColor=#ffffff;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=30;" value="บันทึกข้อมูลบุคลากร · เจ้าหน้าที่งานบุคคล" vertex="1">
+          <mxGeometry height="440" width="1374" x="20" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="start" parent="F" style="shape=mxgraph.flowchart.terminator;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="มีบุคลากรใหม่" vertex="1">
+          <mxGeometry height="56" width="220" x="20" y="252" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" parent="F" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="เพิ่มแบบไหน?" vertex="1">
+          <mxGeometry height="90" width="170" x="290" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="form" parent="F" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="กรอก 3 ขั้น" vertex="1">
+          <mxGeometry height="56" width="170" x="612" y="252" as="geometry" />
+        </mxCell>
+        <mxCell id="xls" parent="F" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" value="อัปโหลดไฟล์ Excel&lt;br&gt;แล้วยืนยันตัวอย่าง" vertex="1">
+          <mxGeometry height="76" width="212" x="570" y="342" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" parent="F" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="ข้อมูลครบ&lt;br&gt;ไม่ซ้ำ?" vertex="1">
+          <mxGeometry height="100" width="200" x="832" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="save" parent="F" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="บันทึกลงระบบ" vertex="1">
+          <mxGeometry height="56" width="200" x="1154" y="252" as="geometry" />
+        </mxCell>
+        <mxCell id="err" parent="F" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" value="แจ้งช่องที่ผิด" vertex="1">
+          <mxGeometry height="56" width="200" x="832" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="F" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="d1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="F" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="form" value="รายคน">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="F" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="xls" value="Excel">
+          <mxGeometry relative="1" x="0.2632" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="F" source="form" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="d2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="F" source="xls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="d2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="F" source="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="save" value="ใช่">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="F" source="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="err" value="ไม่">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="F" source="err" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="form" value="แก้แล้วส่งใหม่">
+          <mxGeometry relative="1" x="0.4403" y="-7" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="F3" parent="1" style="swimlane;rounded=1;arcSize=4;startSize=50;html=1;whiteSpace=wrap;align=left;spacingLeft=16;fillColor=#1f3a5f;strokeColor=#1f3a5f;strokeWidth=2;swimlaneFillColor=#ffffff;fontColor=#ffffff;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=30;" value="ใช้ข้อมูล · เจ้าหน้าที่งานบุคคล" vertex="1">
+          <mxGeometry height="370" width="1374" x="20" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="list" parent="F3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="รายชื่อบุคลากร&lt;br&gt;(ครบถ้วน / รอตรวจสอบ)" vertex="1">
+          <mxGeometry height="76" width="250" x="20" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" parent="F3" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="เลือกทำอะไร?" vertex="1">
+          <mxGeometry height="90" width="170" x="330" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="prev" parent="F3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="ดูตัวอย่างแฟ้ม A4" vertex="1">
+          <mxGeometry height="56" width="170" x="640" y="97" as="geometry" />
+        </mxCell>
+        <mxCell id="print" parent="F3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="พิมพ์รายคน / ทั้งหมด&lt;br&gt;/ ส่งออก PNG" vertex="1">
+          <mxGeometry height="76" width="212" x="880" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="doc" parent="F3" style="shape=mxgraph.flowchart.document;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="แฟ้มประวัติประจำตัว" vertex="1">
+          <mxGeometry height="76" width="200" x="1154" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="edit" parent="F3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" value="แก้ไขข้อมูล" vertex="1">
+          <mxGeometry height="56" width="170" x="60" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="del" parent="F3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" value="ยืนยันแล้วลบ" vertex="1">
+          <mxGeometry height="56" width="170" x="640" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="gone" parent="F3" style="shape=mxgraph.flowchart.terminator;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" value="ลบออกจากระบบ" vertex="1">
+          <mxGeometry height="56" width="250" x="880" y="265" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" edge="1" parent="F3" source="list" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="d3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" edge="1" parent="F3" source="d3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="prev" value="พิมพ์แฟ้ม">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" edge="1" parent="F3" source="prev" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="print" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" edge="1" parent="F3" source="print" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="doc" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f5" edge="1" parent="F3" source="d3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="edit" value="แก้ไข">
+          <mxGeometry relative="1" x="0.3548" y="-2" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="415" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f6" edge="1" parent="F3" source="d3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="del" value="ลบ">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f7" edge="1" parent="F3" source="del" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" target="gone" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f8" edge="1" parent="F3" source="edit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="list" value="บันทึก">
+          <mxGeometry relative="1" x="-0.2157" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="x1" edge="1" parent="1" source="save" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="list" value="">
+          <mxGeometry relative="1" x="-0.159" as="geometry">
+            <Array as="points">
+              <mxPoint x="1270" y="690" />
+              <mxPoint x="-10" y="690" />
+              <mxPoint x="-10" y="845" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lg" parent="1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=TH SarabunPSK;fontSize=30;fontColor=#555555;" value="เส้นทึบ = ทางหลัก · เส้นประ = ทางรอง · ทุกขั้นเป็นงานของทีม B · ที่มา: เล่ม 4.4 · 4.5.2 · UC-SET-02 · UC-STF-01–03" vertex="1">
+          <mxGeometry height="46" width="1374" x="30" y="1170" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

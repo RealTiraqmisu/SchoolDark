@@ -1,0 +1,207 @@
+<mxfile host="Electron" pages="2">
+  <diagram id="p4j" name="4 เส้นทางนักเรียนหนึ่งคน">
+    <mxGraphModel dx="1746" dy="1038" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1680" pageHeight="640" math="0" shadow="0" adaptiveColors="auto">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="fA" parent="1" style="swimlane;rounded=1;arcSize=4;startSize=50;html=1;whiteSpace=wrap;align=left;spacingLeft=16;fillColor=#1f3a5f;strokeColor=#1f3a5f;strokeWidth=2;swimlaneFillColor=#ffffff;fontColor=#ffffff;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=30;" value="ช่วงผู้สมัคร · งานรับสมัคร" vertex="1">
+          <mxGeometry height="200" width="1288" x="20" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="n-res" parent="fA" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=TH SarabunPSK;fontSize=30;fontColor=#555555;" value="ผ่าน · สำรอง · ไม่ผ่าน" vertex="1">
+          <mxGeometry height="46" width="272" x="494" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="a0" parent="fA" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="สมัครออนไลน์ 6 ขั้น" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="20" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="fA" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="ชำระเงินค่าสอบ" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="273.15" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="fA" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="ประกาศผลสอบ" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="526.3" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="fA" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="รายงานตัว" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="779.4499999999999" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="fA" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="มอบตัว" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="1032.6" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ea1" edge="1" parent="fA" source="a0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea2" edge="1" parent="fA" source="a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea3" edge="1" parent="fA" source="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="a3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea4" edge="1" parent="fA" source="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fB" parent="1" style="swimlane;rounded=1;arcSize=4;startSize=50;html=1;whiteSpace=wrap;align=left;spacingLeft=16;fillColor=#1f3a5f;strokeColor=#1f3a5f;strokeWidth=2;swimlaneFillColor=#ffffff;fontColor=#ffffff;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=30;" value="ช่วงนักเรียน · งานทะเบียน" vertex="1">
+          <mxGeometry height="250" width="1288" x="20" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="n-up" parent="fB" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=TH SarabunPSK;fontSize=30;fontColor=#555555;" value="↻ ทุกปีการศึกษา&lt;br&gt;ยกเว้นติด 0 ร มผ" vertex="1">
+          <mxGeometry height="86" width="180" x="570" y="126" as="geometry" />
+        </mxCell>
+        <mxCell id="room" parent="fB" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="จัดห้อง / ย้ายห้อง" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="774.0694006309147" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="in" parent="fB" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="ย้ายเข้าจากโรงเรียนอื่น" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="774.0694006309147" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="up" parent="fB" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="เลื่อนชั้น" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="522.7129337539432" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="grad" parent="fB" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;fontStyle=1;" value="สำเร็จการศึกษา" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="271.3564668769716" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="out" parent="fB" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;dashed=1;" value="ย้ายออก / ลาออก" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="271.3564668769716" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="pp" parent="fB" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="ออก ปพ.1 · ปพ.2" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="20" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e-in" edge="1" parent="fB" source="in" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" target="room" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-up" edge="1" parent="fB" source="room" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="up" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-grad" edge="1" parent="fB" source="up" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="grad" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-out" edge="1" parent="fB" source="up" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="out" value="">
+          <mxGeometry relative="1" x="0.2012" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pp" edge="1" parent="fB" source="grad" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="pp" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-enroll" edge="1" parent="1" source="a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="room" value="ได้รหัสนักเรียน/กำลังศึกษา">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1156.3" y="260" />
+              <mxPoint x="897.1" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="src" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=TH SarabunPSK;fontSize=30;fontColor=#555555;align=left;" value="ทุกขั้นเป็นงานของทีม B · ที่มา: เล่มโครงงาน หัวข้อ 4.2 (งานรับสมัคร) · 4.3 (งานทะเบียน)" vertex="1">
+          <mxGeometry height="46" width="1640" x="77.03" y="700" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="p4jd" name="4 เส้นทางนักเรียนหนึ่งคน · ข้าวหลามตัด">
+    <mxGraphModel dx="2438" dy="1450" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1680" pageHeight="770" math="0" shadow="0" adaptiveColors="auto">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="k-fA" parent="1" style="swimlane;rounded=1;arcSize=4;startSize=50;html=1;whiteSpace=wrap;align=left;spacingLeft=16;fillColor=#1f3a5f;strokeColor=#1f3a5f;strokeWidth=2;swimlaneFillColor=#ffffff;fontColor=#ffffff;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=30;" value="ช่วงผู้สมัคร · งานรับสมัคร" vertex="1">
+          <mxGeometry height="320" width="1580" x="20" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="k-a0" parent="k-fA" style="shape=mxgraph.flowchart.terminator;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="สมัครออนไลน์ 6 ขั้น" vertex="1">
+          <mxGeometry height="56" width="207.4" x="20" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="k-a1" parent="k-fA" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="ชำระเงินค่าสอบ" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="273.15" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="k-a2" parent="k-fA" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="ประกาศผลสอบ" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="526.3" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="k-a3" parent="k-fA" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="รายงานตัว" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="1080" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="k-a4" parent="k-fA" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="มอบตัว" vertex="1">
+          <mxGeometry height="56" width="207.39999999999998" x="1333.15" y="87" as="geometry" />
+        </mxCell>
+        <mxCell id="k-ea1" edge="1" parent="k-fA" source="k-a0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="k-a1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="k-ea2" edge="1" parent="k-fA" source="k-a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="k-a2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="k-ea3" edge="1" parent="k-fA" source="k-a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="d1" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="779.4499999999998" y="98" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="k-ea4" edge="1" parent="k-fA" source="k-a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="k-a4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" parent="k-fA" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="ผลสอบ?" vertex="1">
+          <mxGeometry height="90" width="170" x="780" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="d1-r" parent="k-fA" style="shape=mxgraph.flowchart.terminator;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;dashed=1;fontFamily=TH SarabunPSK;fontSize=30;" value="สำรอง (มีลำดับที่) / ไม่ผ่าน" vertex="1">
+          <mxGeometry height="56" width="305" x="712.5" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="d1-e1" edge="1" parent="k-fA" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="k-a3" value="ผ่าน">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d1-e2" edge="1" parent="k-fA" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" target="d1-r" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="k-fB" parent="1" style="swimlane;rounded=1;arcSize=4;startSize=50;html=1;whiteSpace=wrap;align=left;spacingLeft=16;fillColor=#1f3a5f;strokeColor=#1f3a5f;strokeWidth=2;swimlaneFillColor=#ffffff;fontColor=#ffffff;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=30;" value="ช่วงนักเรียน · งานทะเบียน" vertex="1">
+          <mxGeometry height="370" width="1580" x="20" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="k-n-up" parent="k-fB" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=TH SarabunPSK;fontSize=30;fontColor=#555555;" value="↻ ทุกปีการศึกษา" vertex="1">
+          <mxGeometry height="46" width="180" x="614.3199999999999" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="k-room" parent="k-fB" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="จัดห้อง / ย้ายห้อง" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="1333.15" y="106" as="geometry" />
+        </mxCell>
+        <mxCell id="k-in" parent="k-fB" style="shape=mxgraph.flowchart.terminator;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="ย้ายเข้าจากโรงเรียนอื่น" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="1333.15" y="286" as="geometry" />
+        </mxCell>
+        <mxCell id="k-up" parent="k-fB" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="เลื่อนชั้น" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="601.3529337539431" y="106" as="geometry" />
+        </mxCell>
+        <mxCell id="k-grad" parent="k-fB" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;fontStyle=1;" value="สำเร็จการศึกษา" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="309.99646687697157" y="106" as="geometry" />
+        </mxCell>
+        <mxCell id="k-out" parent="k-fB" style="shape=mxgraph.flowchart.terminator;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;dashed=1;" value="ย้ายออก / ลาออก" vertex="1">
+          <mxGeometry height="56" width="205.93059936908517" x="309.99646687697157" y="206" as="geometry" />
+        </mxCell>
+        <mxCell id="k-pp" parent="k-fB" style="shape=mxgraph.flowchart.document;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=30;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;" value="ออก ปพ.1-7" vertex="1">
+          <mxGeometry height="84" width="205.93" x="20" y="92" as="geometry" />
+        </mxCell>
+        <mxCell id="k-e-in" edge="1" parent="k-fB" source="k-in" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" target="k-room" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="k-e-up" edge="1" parent="k-fB" source="k-room" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="d2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="k-e-grad" edge="1" parent="k-fB" source="k-up" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="k-grad" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="k-e-out" edge="1" parent="k-fB" source="k-up" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="k-out" value="">
+          <mxGeometry relative="1" x="0.3838" as="geometry" />
+        </mxCell>
+        <mxCell id="k-e-pp" edge="1" parent="k-fB" source="k-grad" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="k-pp" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" parent="k-fB" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="ผ่านเกณฑ์?" vertex="1">
+          <mxGeometry height="90" width="170" x="995" y="89" as="geometry" />
+        </mxCell>
+        <mxCell id="d2-r" parent="k-fB" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;strokeWidth=2;dashed=1;fontFamily=TH SarabunPSK;fontSize=30;" value="ไม่เลื่อนชั้น" vertex="1">
+          <mxGeometry height="56" width="200" x="980" y="286" as="geometry" />
+        </mxCell>
+        <mxCell id="d2-e1" edge="1" parent="k-fB" source="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="k-up" value="ผ่าน">
+          <mxGeometry relative="1" x="-0.0556" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d2-e2" edge="1" parent="k-fB" source="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;dashed=1;" target="d2-r" value="ไม่ผ่าน (ติด 0 ร มผ)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="k-e-enroll" edge="1" parent="1" source="k-a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=1;strokeColor=#666666;strokeWidth=2;labelBackgroundColor=#ffffff;fontFamily=TH SarabunPSK;fontSize=30;" target="k-room" value="ได้รหัสนักเรียน/กำลังศึกษา">
+          <mxGeometry relative="1" x="-0.4271" y="7" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1396.3" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="k-src" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontFamily=TH SarabunPSK;fontSize=30;fontColor=#555555;align=left;" value="ทุกขั้นเป็นงานของทีม B · ที่มา: เล่มโครงงาน หัวข้อ 4.2 (งานรับสมัคร) · 4.3 (งานทะเบียน)" vertex="1">
+          <mxGeometry height="46" width="1640" x="30" y="890" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
