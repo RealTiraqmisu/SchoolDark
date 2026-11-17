@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e" pages="5" scale="10" border="0">
     <diagram name="System Architecture" id="sd-arch-lr">
-        <mxGraphModel dx="1442" dy="1092" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="2111" dy="2306" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="880" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -241,11 +241,11 @@
         </mxGraphModel>
     </diagram>
     <diagram name="Service B (Component Diagram · ฉบับทางการ)" id="sd-arch-svc-b-formal">
-        <mxGraphModel dx="1599" dy="1123" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="984" background="#ffffff" math="0" shadow="0">
+        <mxGraphModel dx="380" dy="415" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="984" background="#ffffff" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="f_b" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Service B API (FastAPI)" vertex="1">
+                <mxCell id="f_b" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="Service&amp;nbsp;&lt;span class=&quot;a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none&quot; style=&quot;caret-color: rgb(0, 0, 0); --Ys-XuQ: none; font-kerning: normal;&quot;&gt;Registry &amp;amp; IAM&lt;/span&gt;&amp;nbsp;API (FastAPI)" vertex="1">
                     <mxGeometry height="430" width="660" x="20" y="240" as="geometry"/>
                 </mxCell>
                 <mxCell id="f_portal" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Web Portal&lt;br&gt;(Next.js)" vertex="1">
@@ -254,7 +254,7 @@
                 <mxCell id="f_nginx" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Nginx&lt;br&gt;(Reverse Proxy)" vertex="1">
                     <mxGeometry height="40" width="160" x="350" y="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="f_ac" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="Service A / Service C" vertex="1">
+                <mxCell id="f_ac" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;dashed=1;" value="&lt;span class=&quot;a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none&quot; style=&quot;caret-color: rgb(0, 0, 0); --Ys-XuQ: none; font-kerning: normal;&quot;&gt;Service Academic&lt;/span&gt;&amp;nbsp;/&amp;nbsp;&lt;span class=&quot;a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none&quot; style=&quot;caret-color: rgb(0, 0, 0); --Ys-XuQ: none; font-kerning: normal;&quot;&gt;Student Support&lt;/span&gt;" vertex="1">
                     <mxGeometry height="40" width="300" x="20" y="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="f_api" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontStyle=1;align=right;verticalAlign=top;spacingLeft=10;spacingRight=10;spacingTop=3;fontFamily=TH SarabunPSK;fontSize=17;" value="API Layer (Routers)" vertex="1">
@@ -263,7 +263,7 @@
                 <mxCell id="f_r0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ยืนยันตัวตนและสิทธิ์&lt;/b&gt;&lt;div&gt;(endpoint สำหรับ login และขอ token)&lt;b&gt;&lt;/b&gt;&lt;/div&gt;" vertex="1">
                     <mxGeometry height="60" width="196" x="45" y="325" as="geometry"/>
                 </mxCell>
-                <mxCell id="f_r1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;Internal API&lt;br&gt;(สำหรับ Service A, C)&lt;/b&gt;" vertex="1">
+                <mxCell id="f_r1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;Internal API&lt;br&gt;(สำหรับ Service&amp;nbsp;&lt;span class=&quot;a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none&quot; style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgba(168, 169, 170, 0.52) rgb(18, 19, 20); caret-color: rgb(0, 0, 0); --Ys-XuQ: none; font-kerning: normal;&quot;&gt;Academic&lt;/span&gt;&lt;span class=&quot;a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none&quot; style=&quot;scrollbar-color: rgba(168, 169, 170, 0.52) rgb(18, 19, 20); caret-color: rgb(0, 0, 0); --Ys-XuQ: none; font-kerning: normal; color: rgb(63, 63, 63);&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;,&lt;/font&gt;&lt;/span&gt;&lt;/b&gt;&lt;div&gt;&lt;b&gt;&lt;span class=&quot;a_GcMg font-feature-liga-off font-feature-clig-off font-feature-calt-off text-decoration-none text-strikethrough-none&quot; style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgba(168, 169, 170, 0.52) rgb(18, 19, 20); caret-color: rgb(0, 0, 0); --Ys-XuQ: none; font-kerning: normal;&quot;&gt;Student Support&lt;/span&gt;)&lt;/b&gt;&lt;/div&gt;" vertex="1">
                     <mxGeometry height="60" width="196" x="251" y="325" as="geometry"/>
                 </mxCell>
                 <mxCell id="f_r2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ระบบรับสมัคร&lt;/b&gt;" vertex="1">
