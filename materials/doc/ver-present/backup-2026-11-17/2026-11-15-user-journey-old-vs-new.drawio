@@ -1,0 +1,116 @@
+<mxfile host="Electron">
+  <diagram id="uj2" name="เดิม vs ใหม่ · มี loop (ลอง 2)">
+    <mxGraphModel dx="2438" dy="2370" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2220" pageHeight="920" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="o" parent="1" style="swimlane;startSize=50;fillColor=#f8cecc;strokeColor=#b85450;swimlaneFillColor=#FFFFFF;fontStyle=1;container=1;collapsible=0;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ระบบเดิม (ทะเบียน)" vertex="1">
+          <mxGeometry height="380" width="2180" x="20" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="o0" parent="o" style="shape=mxgraph.flowchart.terminator;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ต้องทำรายการทะเบียน&lt;br&gt;กับนักเรียนหลายคน" vertex="1">
+          <mxGeometry height="110" width="260" x="30" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="o1" parent="o" style="rounded=0;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="เปิดหน้าจอรายการ&lt;br&gt;ทีละประเภท" vertex="1">
+          <mxGeometry height="110" width="260" x="340" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="o2" parent="o" style="rounded=0;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ค้นหานักเรียน&lt;br&gt;ทีละคน ⚠️" vertex="1">
+          <mxGeometry height="110" width="260" x="650" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="o3" parent="o" style="rounded=0;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="บันทึกรายการ&lt;br&gt;ของคนนั้น" vertex="1">
+          <mxGeometry height="110" width="260" x="960" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="o4" parent="o" style="rhombus;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ครบ&lt;br&gt;ทุกคน?" vertex="1">
+          <mxGeometry height="110" width="200" x="1270" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="o5" parent="o" style="rhombus;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ครบ&lt;br&gt;ทุกประเภท?" vertex="1">
+          <mxGeometry height="110" width="200" x="1580" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="o6" parent="o" style="shape=mxgraph.flowchart.terminator;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ทำครบ" vertex="1">
+          <mxGeometry height="110" width="260" x="1890" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e-o0-o1" edge="1" parent="o" source="o0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="o1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-o1-o2" edge="1" parent="o" source="o1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="o2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-o2-o3" edge="1" parent="o" source="o2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="o3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-o3-o4" edge="1" parent="o" source="o3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="o4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-o4-o5" edge="1" parent="o" source="o4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="o5" value="ใช่">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-o5-o6" edge="1" parent="o" source="o5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="o6" value="ใช่">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-o4-o2" edge="1" parent="o" source="o4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;dashed=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="o2" value="ไม่ · คนถัดไป">
+          <mxGeometry relative="1" x="-0.0831" as="geometry">
+            <Array as="points">
+              <mxPoint x="1370" y="250" />
+              <mxPoint x="780" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-o5-o1" edge="1" parent="o" source="o5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;dashed=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="o1" value="ไม่ · สลับไปหน้าจอประเภทถัดไป">
+          <mxGeometry relative="1" x="-0.0404" as="geometry">
+            <Array as="points">
+              <mxPoint x="1680" y="340" />
+              <mxPoint x="470" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n" parent="1" style="swimlane;startSize=50;fillColor=#d5e8d4;strokeColor=#82b366;swimlaneFillColor=#FFFFFF;fontStyle=1;container=1;collapsible=0;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ระบบใหม่ (ทะเบียน)" vertex="1">
+          <mxGeometry height="220" width="2180" x="20" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="n0" parent="n" style="shape=mxgraph.flowchart.terminator;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ต้องทำรายการทะเบียน&lt;br&gt;กับนักเรียนหลายคน" vertex="1">
+          <mxGeometry height="110" width="260" x="30" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" parent="n" style="rounded=0;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="หน้าข้อมูลนักเรียน&lt;br&gt;ทั้งโรงเรียน (ค้นหา/กรอง)" vertex="1">
+          <mxGeometry height="110" width="260" x="340" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" parent="n" style="rounded=0;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="เลือกนักเรียน&lt;br&gt;หลายคนพร้อมกัน" vertex="1">
+          <mxGeometry height="110" width="260" x="650" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" parent="n" style="rounded=0;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="แถบคำสั่งด้านล่าง&lt;br&gt;เลือกประเภทรายการ" vertex="1">
+          <mxGeometry height="110" width="260" x="960" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" parent="n" style="rounded=0;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ตรวจผล&lt;br&gt;ก่อนยืนยัน" vertex="1">
+          <mxGeometry height="110" width="260" x="1270" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" parent="n" style="shape=mxgraph.flowchart.terminator;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ทำครบ&lt;br&gt;(อยู่หน้าเดียว)" vertex="1">
+          <mxGeometry height="110" width="260" x="1580" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e-n0-n1" edge="1" parent="n" source="n0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="n1" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-n1-n2" edge="1" parent="n" source="n1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="n2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-n2-n3" edge="1" parent="n" source="n2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="n3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-n3-n4" edge="1" parent="n" source="n3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="n4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-n4-n5" edge="1" parent="n" source="n4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;endArrow=block;endFill=1;fontFamily=TH SarabunPSK;fontSize=30;labelBackgroundColor=#FFFFFF;" target="n5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o-note" parent="1" style="text;align=left;verticalAlign=top;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="จำนวนรอบ = นักเรียน N คน × รายการ 3 ประเภท (เลื่อนชั้น · ย้ายห้อง · ย้ายออก/ลาออก)&lt;br&gt;ที่มา: เล่ม B 3.1 (หน้าจอกระจายตามหัวข้อข้อมูล ต้องสลับหน้าจอบ่อย) · 4.3.3 (ระบบเดิมเปิดหน้าจอแยกตามประเภทรายการ)&lt;br&gt;⚠️ การทำทีละคนอนุมานจากเล่มที่บอกว่าระบบใหม่ทำหลายคนพร้อมกันได้ (3.2.2) เล่มไม่ได้เขียนตรง ๆ ว่าระบบเดิมทำทีละคน" vertex="1">
+          <mxGeometry height="150" width="1030" x="40" y="-180" as="geometry" />
+        </mxCell>
+        <mxCell id="n-note" parent="1" style="text;align=left;verticalAlign=top;fontFamily=TH SarabunPSK;fontSize=30;html=1;whiteSpace=wrap;" value="ที่มา: เล่ม B 4.3.1 (หน้าข้อมูลนักเรียนหน้าเดียว) · 4.3.3 (แถบคำสั่งเมื่อเลือกนักเรียน) · 3.2.2 (ทำหลายคนพร้อมกัน · ตรวจก่อนยืนยันทุกครั้ง)" vertex="1">
+          <mxGeometry height="80" width="1140" x="20" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="q58yuGUQqGuqbCjWutFr-2" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: &amp;quot;TH SarabunPSK&amp;quot;; font-size: 30px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 700; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;· แบ่งหน้าจอตามหัวข้อข้อมูล (ต้องวนหลายรอบ)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="440" x="1190" y="-140" as="geometry" />
+        </mxCell>
+        <mxCell id="q58yuGUQqGuqbCjWutFr-3" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: &amp;quot;TH SarabunPSK&amp;quot;; font-size: 30px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 700; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;&quot;&gt;&lt;span&gt;&amp;nbsp;&lt;/span&gt;· แบ่งหน้าจอตามงาน (ทำครั้งเดียว)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="330" x="1255" y="950" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

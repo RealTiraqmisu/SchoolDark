@@ -1,0 +1,578 @@
+<mxfile host="Electron" pages="5">
+  <diagram id="report-a4-v3" name="เล่มรายงาน (A4) รวม actor">
+    <mxGraphModel dx="2571" dy="2978" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="853" pageHeight="1449" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys-boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;verticalAlign=top;align=center;spacingTop=8;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=21;" value="SakooSite" vertex="1">
+          <mxGeometry height="1374.86" width="615" x="132" y="-50" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-28" parent="1" style="shape=folder;tabPosition=left;tabHeight=30;tabWidth=230;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=2;fontStyle=1;fillColor=none;strokeColor=#666666;fontFamily=TH SarabunPSK;fontSize=17;" value="งานรับสมัครนักเรียน" vertex="1">
+          <mxGeometry height="480" width="360" x="162.5" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-1" parent="1" style="shape=folder;tabPosition=left;tabHeight=30;tabWidth=220;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=2;fontStyle=1;fillColor=none;strokeColor=#666666;fontFamily=TH SarabunPSK;fontSize=17;" value="งานทะเบียนนักเรียน" vertex="1">
+          <mxGeometry height="540" width="555" x="162" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-59" parent="1" style="shape=folder;tabPosition=left;tabHeight=30;tabWidth=160;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=2;fontStyle=1;fillColor=none;strokeColor=#666666;fontFamily=TH SarabunPSK;fontSize=17;" value="งานฝ่ายบุคคล" vertex="1">
+          <mxGeometry height="380" width="174.5" x="542.5" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ดูข้อมูลนักเรียนและศิษย์เก่า" vertex="1">
+          <mxGeometry height="70" width="140" x="557.75" y="91" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งออกรายชื่อนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="559.75" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งออกรายงานและสถิติ" vertex="1">
+          <mxGeometry height="70" width="140" x="559.75" y="183" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="จัดการข้อมูลนักเรียนและศิษย์เก่า" vertex="1">
+          <mxGeometry height="70" width="140" x="297" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ย้ายห้องเรียน เลื่อนชั้นนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="297" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="จัดการนักเรียนลาออก" vertex="1">
+          <mxGeometry height="70" width="140" x="297" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งออก ปพ.1 และ 2" vertex="1">
+          <mxGeometry height="70" width="140" x="297" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="แก้ไขข้อมูลนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="562.75" y="467" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-10" parent="1" style="shape=note;size=15;spacingLeft=5;align=left;whiteSpace=wrap;fontFamily=TH SarabunPSK;fontSize=17;" value="«constraint»&#xa; ครูประจำชั้น: เฉพาะห้องตนเอง" vertex="1">
+          <mxGeometry height="60" width="130" x="567.75" y="375" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-11" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;เจ้าหน้าที่งานทะเบียน&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="58" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-12" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-13" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-14" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-16" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;" target="v3-v2-2">
+          <mxGeometry relative="1" x="-0.0013" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-17" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;" target="v3-v2-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-18" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;" target="v3-v2-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-20" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ครูประจำชั้น&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="783" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-21" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ครู&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="783" y="188" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-22" edge="1" parent="1" source="v3-v2-20" style="html=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;" target="v3-v2-9">
+          <mxGeometry relative="1" x="-0.0271" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-23" edge="1" parent="1" source="v3-v2-21" style="edgeStyle=none;html=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;" target="v3-v2-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-24" edge="1" parent="1" source="v3-v2-21" style="edgeStyle=none;html=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;" target="v3-v2-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-25" edge="1" parent="1" source="v3-v2-21" style="edgeStyle=none;html=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;" target="v3-v2-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-26" edge="1" parent="1" source="v3-v2-20" style="edgeStyle=none;html=1;endArrow=block;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;" target="v3-v2-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-27" edge="1" parent="1" source="v3-v2-10" style="edgeStyle=none;html=1;dashed=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;" target="v3-v2-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-29" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="จัดการข้อมูลผู้สมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="362.5" y="817.5" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-30" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="พิจารณาเอกสารผู้สมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="182.5" y="637.5" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-31" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="จัดการสถานะผู้สมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="362.5" y="637.5" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-32" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งอีเมลถึงผู้สมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="182.5" y="790" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-33" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งออกใบสมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="362.5" y="727.5" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-35" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;" target="v3-v2-29">
+          <mxGeometry relative="1" x="-0.0593" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="770" />
+              <mxPoint x="320" y="780" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-36" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-38" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-39" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;" target="v3-v2-31">
+          <mxGeometry relative="1" x="-0.0465" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="727" />
+              <mxPoint x="330" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-40" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=0;" target="v3-v2-33">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="200" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-41" parent="1" style="shape=folder;tabPosition=left;tabHeight=30;tabWidth=140;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=2;fontStyle=1;fillColor=none;strokeColor=#666666;fontFamily=TH SarabunPSK;fontSize=17;" value="การตั้งค่า" vertex="1">
+          <mxGeometry height="224.86" width="362.5" x="162.5" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-42" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ตั้งค่าข้อมูลระบบโรงเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="351" y="1214.86" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-43" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ตั้งค่างานบุคลากร" vertex="1">
+          <mxGeometry height="70" width="140" x="351" y="1134.86" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-46" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ตั้งค่างานทะเบียนนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="191" y="1214.86" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-47" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ตั้งค่างานรับสมัครนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="191" y="1134.86" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-48" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ผู้ดูแลระบบ&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="600" y="1350" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-49" edge="1" parent="1" source="v3-v2-42" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-48">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-54" edge="1" parent="1" source="v3-v2-43" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;exitPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;curved=0;" target="v3-dDfqINMt6-CSADoH_1uA-46">
+          <mxGeometry relative="1" x="0.0902" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-57" edge="1" parent="1" source="v3-avkGR2KAVnRDBUsB1lYO-1" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-58" edge="1" parent="1" source="v3-avkGR2KAVnRDBUsB1lYO-1" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-47">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-60" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ดูข้อมูลบุคลากร" vertex="1">
+          <mxGeometry height="70" width="140" x="559.75" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-61" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="เพิ่ม แก้ไข ลบข้อมูลบุคลากร" vertex="1">
+          <mxGeometry height="70" width="140" x="559.75" y="637.5" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-62" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="พิมพ์แฟ้มประวัติประจำตัวบุคลากร" vertex="1">
+          <mxGeometry height="70" width="140" x="558" y="747.5" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-63" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="เจ้าหน้าที่งานบุคคล" vertex="1">
+          <mxGeometry height="60" width="30" x="783" y="752.5" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-64" edge="1" parent="1" source="v3-v2-60" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="v3-v2-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-65" edge="1" parent="1" source="v3-v2-61" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="v3-v2-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-66" edge="1" parent="1" source="v3-v2-62" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="v3-v2-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-kZKcSAy1wAj2ijqETdWk-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="เพิ่มข้อมูลนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="297" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-1u3sQ3A9QkBxlgse1APZ-2" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-kZKcSAy1wAj2ijqETdWk-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-1u3sQ3A9QkBxlgse1APZ-3" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-avkGR2KAVnRDBUsB1lYO-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="หัวหน้างานทะเบียน" vertex="1">
+          <mxGeometry height="60" width="30" x="58" y="1167.43" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-dDfqINMt6-CSADoH_1uA-46" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="หัวหน้างานบุคคล" vertex="1">
+          <mxGeometry height="60" width="30" x="783" y="935" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-HNE4yYzDLD9vdYbnewMJ-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="สมัครเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="182.5" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-HNE4yYzDLD9vdYbnewMJ-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="ผู้สมัครเรียน" vertex="1">
+          <mxGeometry height="60" width="30" x="58" y="875" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-HNE4yYzDLD9vdYbnewMJ-3" edge="1" parent="1" source="v3-HNE4yYzDLD9vdYbnewMJ-2" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitPerimeter=0;entryPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-HNE4yYzDLD9vdYbnewMJ-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-avkGR2KAVnRDBUsB1lYO-4" edge="1" parent="1" source="v3-avkGR2KAVnRDBUsB1lYO-1" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=block;endFill=0;entryPerimeter=0;edgeStyle=orthogonalEdgeStyle;" target="v3-v2-11">
+          <mxGeometry relative="1" x="0.0424" as="geometry">
+            <Array as="points">
+              <mxPoint x="10" y="1197.4" />
+              <mxPoint x="10" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-IWZWGF7JnsLCTGTGX0jP-78" edge="1" parent="1" source="v3-v2-48" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=block;endFill=0;entryPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="v3-avkGR2KAVnRDBUsB1lYO-1">
+          <mxGeometry relative="1" x="-0.0901" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-Aztesxu1WuwBUA5Pz3O6-1" edge="1" parent="1" source="v3-v2-48" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=block;endFill=0;edgeStyle=orthogonalEdgeStyle;" target="v3-dDfqINMt6-CSADoH_1uA-46">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="1380" />
+              <mxPoint x="860" y="965" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-Aztesxu1WuwBUA5Pz3O6-2" edge="1" parent="1" source="v3-dDfqINMt6-CSADoH_1uA-46" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=block;endFill=0;exitPerimeter=0;entryPerimeter=0;" target="v3-v2-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-Rlx_LYyASTDnaDS3WC9v-1" edge="1" parent="1" source="v3-v2-48" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=block;endFill=0;entryPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="v3-v2-20">
+          <mxGeometry relative="1" x="0.0007" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="1380" />
+              <mxPoint x="860" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G16XMzgwPR11dCB5-jlW-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=17;fontFamily=TH SarabunPSK;" value="ตรวจสอบสถานะการสมัครเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="182.5" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="G16XMzgwPR11dCB5-jlW-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=17;fontFamily=TH SarabunPSK;" value="ตรวจสอบผลการสอบเข้า" vertex="1">
+          <mxGeometry height="70" width="140" x="362.5" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="G16XMzgwPR11dCB5-jlW-5" edge="1" parent="1" source="v3-HNE4yYzDLD9vdYbnewMJ-2" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="G16XMzgwPR11dCB5-jlW-3">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="98" y="915" as="sourcePoint" />
+            <mxPoint x="192" y="915" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G16XMzgwPR11dCB5-jlW-6" edge="1" parent="1" source="v3-HNE4yYzDLD9vdYbnewMJ-2" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;curved=0;" target="G16XMzgwPR11dCB5-jlW-4">
+          <mxGeometry relative="1" x="-0.0109" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="950" />
+            </Array>
+            <mxPoint x="98" y="926" as="sourcePoint" />
+            <mxPoint x="192" y="995" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="uc-adm" name="use case · งานรับสมัครนักเรียน">
+    <mxGraphModel dx="3108" dy="2040" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="670" pageHeight="590" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys-boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;verticalAlign=top;align=center;spacingTop=8;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=21;" value="SakooSite" vertex="1">
+          <mxGeometry height="620" width="460" x="120" y="-70" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-28" parent="1" style="shape=folder;tabPosition=left;tabHeight=30;tabWidth=230;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=2;fontStyle=1;fillColor=none;strokeColor=#666666;fontFamily=TH SarabunPSK;fontSize=17;" value="งานรับสมัครนักเรียน" vertex="1">
+          <mxGeometry height="530" width="400" x="150" y="-10" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-11" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;เจ้าหน้าที่งานทะเบียน&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="60" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-29" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="จัดการข้อมูลผู้สมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-30" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="พิจารณาเอกสารผู้สมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-31" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="จัดการสถานะผู้สมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-32" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งอีเมลถึงผู้สมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="335" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-33" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งออกใบสมัคร" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-35" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-36" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-38" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-39" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-40" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-HNE4yYzDLD9vdYbnewMJ-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="สมัครเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-HNE4yYzDLD9vdYbnewMJ-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="ผู้สมัครเรียน" vertex="1">
+          <mxGeometry height="60" width="30" x="600" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-HNE4yYzDLD9vdYbnewMJ-3" edge="1" parent="1" source="v3-HNE4yYzDLD9vdYbnewMJ-2" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="v3-HNE4yYzDLD9vdYbnewMJ-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G16XMzgwPR11dCB5-jlW-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=17;fontFamily=TH SarabunPSK;" value="ตรวจสอบสถานะการสมัครเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="G16XMzgwPR11dCB5-jlW-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=17;fontFamily=TH SarabunPSK;" value="ตรวจสอบผลการสอบเข้า" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="335" as="geometry" />
+        </mxCell>
+        <mxCell id="G16XMzgwPR11dCB5-jlW-5" edge="1" parent="1" source="v3-HNE4yYzDLD9vdYbnewMJ-2" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="G16XMzgwPR11dCB5-jlW-3">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="375" as="sourcePoint" />
+            <mxPoint x="154" y="375" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G16XMzgwPR11dCB5-jlW-6" edge="1" parent="1" source="v3-HNE4yYzDLD9vdYbnewMJ-2" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="G16XMzgwPR11dCB5-jlW-4">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="60" y="386" as="sourcePoint" />
+            <mxPoint x="154" y="455" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3TomoWgiCI54CyeMSRBP-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="หัวหน้างานทะเบียน" vertex="1">
+          <mxGeometry height="60" width="30" x="-80" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="3TomoWgiCI54CyeMSRBP-2" edge="1" parent="1" source="3TomoWgiCI54CyeMSRBP-1" style="edgeStyle=none;html=1;endArrow=block;endFill=0;" target="v3-v2-11">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" y="80" as="sourcePoint" />
+            <mxPoint x="60" y="275" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="uc-reg" name="use case · งานทะเบียนนักเรียน">
+    <mxGraphModel dx="2424" dy="1013" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="670" pageHeight="670" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys-boundary" value="SakooSite" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;verticalAlign=top;align=center;spacingTop=8;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=21;" vertex="1" parent="1">
+          <mxGeometry x="120" y="-70" width="460" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-1" parent="1" style="shape=folder;tabPosition=left;tabHeight=30;tabWidth=220;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=2;fontStyle=1;fillColor=none;strokeColor=#666666;fontFamily=TH SarabunPSK;fontSize=17;" value="งานทะเบียนนักเรียน" vertex="1">
+          <mxGeometry height="610" width="400" x="150" y="-10" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ดูข้อมูลนักเรียนและศิษย์เก่า" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งออกรายชื่อนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งออกรายงานและสถิติ" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="จัดการข้อมูลนักเรียน&lt;div&gt;และศิษย์เก่า&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ย้ายห้องเรียน&amp;nbsp;&lt;div&gt;เลื่อนชั้นนักเรียน&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="จัดการนักเรียนลาออก" vertex="1">
+          <mxGeometry height="70" width="140" x="385" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ส่งออก ปพ.1 และ 2" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="แก้ไขข้อมูลนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-10" parent="1" style="shape=note;size=15;spacingLeft=5;align=left;whiteSpace=wrap;fontFamily=TH SarabunPSK;fontSize=17;" value="«constraint»&#xa; ครูประจำชั้น: เฉพาะห้องตนเอง" vertex="1">
+          <mxGeometry height="60" width="130" x="385" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-11" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;เจ้าหน้าที่งานทะเบียน&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="60" y="385" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-12" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-13" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-14" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-16" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-17" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-18" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v3-v2-20" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ครูประจำชั้น&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="600" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-21" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ครู&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="600" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-22" edge="1" parent="1" source="v3-v2-20" style="html=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-23" edge="1" parent="1" source="v3-v2-21" style="edgeStyle=none;html=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-24" edge="1" parent="1" source="v3-v2-21" style="edgeStyle=none;html=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-25" edge="1" parent="1" source="v3-v2-21" style="edgeStyle=none;html=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-26" edge="1" parent="1" source="v3-v2-20" style="edgeStyle=none;html=1;endArrow=block;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;" target="v3-v2-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-27" edge="1" parent="1" source="v3-v2-10" style="edgeStyle=none;html=1;dashed=1;endArrow=none;endFill=0;fontFamily=TH SarabunPSK;fontSize=17;" target="v3-v2-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-kZKcSAy1wAj2ijqETdWk-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="เพิ่มข้อมูลนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-1u3sQ3A9QkBxlgse1APZ-2" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-kZKcSAy1wAj2ijqETdWk-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-1u3sQ3A9QkBxlgse1APZ-3" edge="1" parent="1" source="v3-v2-11" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mGX7xdMRu5zjDd4zM7tT-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="หัวหน้างานทะเบียน" vertex="1">
+          <mxGeometry height="60" width="30" x="-80" y="385" as="geometry" />
+        </mxCell>
+        <mxCell id="piMMhSckr5h7gSebHVXV-1" edge="1" parent="1" source="mGX7xdMRu5zjDd4zM7tT-1" style="edgeStyle=none;html=1;endArrow=block;endFill=0;" target="v3-v2-11">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="10" y="220" as="sourcePoint" />
+            <mxPoint x="-20" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="uc-stf" name="use case · งานฝ่ายบุคคล">
+    <mxGraphModel dx="1834" dy="1251" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="420" pageHeight="410" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys-boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;verticalAlign=top;align=center;spacingTop=8;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=21;" value="SakooSite" vertex="1">
+          <mxGeometry height="440" width="260" x="120" y="-70" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-59" parent="1" style="shape=folder;tabPosition=left;tabHeight=30;tabWidth=160;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=2;fontStyle=1;fillColor=none;strokeColor=#666666;fontFamily=TH SarabunPSK;fontSize=17;" value="งานฝ่ายบุคคล" vertex="1">
+          <mxGeometry height="350" width="200" x="150" y="-10" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-60" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ดูข้อมูลบุคลากร" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-61" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="เพิ่ม แก้ไข ลบข้อมูลบุคลากร" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="155" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-62" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="พิมพ์แฟ้มประวัติประจำตัวบุคลากร" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-63" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="เจ้าหน้าที่งานบุคคล" vertex="1">
+          <mxGeometry height="60" width="30" x="60" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-64" edge="1" parent="1" source="v3-v2-60" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="v3-v2-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-65" edge="1" parent="1" source="v3-v2-61" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="v3-v2-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-66" edge="1" parent="1" source="v3-v2-62" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="v3-v2-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="WcS9YUO4niAyX0i7b3lk-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="หัวหน้างานบุคคล" vertex="1">
+          <mxGeometry height="60" width="30" x="-60" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="rGWc7bnTYgV1Y_Ht7LI8-2" edge="1" parent="1" source="WcS9YUO4niAyX0i7b3lk-1" style="edgeStyle=none;html=1;endArrow=block;endFill=0;" target="v3-v2-63">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="265" y="260" as="sourcePoint" />
+            <mxPoint x="265" y="633" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="uc-set" name="use case · การตั้งค่า">
+    <mxGraphModel dx="1414" dy="1251" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="670" pageHeight="410" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys-boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;verticalAlign=top;align=center;spacingTop=8;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=21;" value="SakooSite" vertex="1">
+          <mxGeometry height="370" width="460" x="120" y="-70" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-41" parent="1" style="shape=folder;tabPosition=left;tabHeight=30;tabWidth=140;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=2;fontStyle=1;fillColor=none;strokeColor=#666666;fontFamily=TH SarabunPSK;fontSize=17;" value="การตั้งค่า" vertex="1">
+          <mxGeometry height="280" width="400" x="150" y="-10" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-42" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ตั้งค่าข้อมูลระบบโรงเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-43" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ตั้งค่างานบุคลากร" vertex="1">
+          <mxGeometry height="70" width="140" x="380" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-46" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ตั้งค่างานทะเบียนนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-47" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontFamily=TH SarabunPSK;fontSize=17;" value="ตั้งค่างานรับสมัครนักเรียน" vertex="1">
+          <mxGeometry height="70" width="140" x="180" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-48" parent="1" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontFamily=TH SarabunPSK;fontSize=17;" value="&lt;b&gt;ผู้ดูแลระบบ&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="435" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-49" edge="1" parent="1" source="v3-v2-42" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="v3-v2-48">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-54" edge="1" parent="1" source="v3-v2-43" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=1;endArrow=none;endFill=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="v3-dDfqINMt6-CSADoH_1uA-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-57" edge="1" parent="1" source="v3-avkGR2KAVnRDBUsB1lYO-1" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-v2-58" edge="1" parent="1" source="v3-avkGR2KAVnRDBUsB1lYO-1" style="html=1;fontFamily=TH SarabunPSK;fontSize=17;rounded=0;endArrow=none;endFill=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="v3-v2-47">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-avkGR2KAVnRDBUsB1lYO-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="หัวหน้างานทะเบียน" vertex="1">
+          <mxGeometry height="60" width="30" x="60" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="v3-dDfqINMt6-CSADoH_1uA-46" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;whiteSpace=nowrap;fontSize=17;fontStyle=1;fontFamily=TH SarabunPSK;" value="หัวหน้างานบุคคล" vertex="1">
+          <mxGeometry height="60" width="30" x="600" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="W5CZieAkqLSVW_ybIaYC-1" edge="1" parent="1" source="v3-v2-48" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=0;" target="v3-dDfqINMt6-CSADoH_1uA-46">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="773" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W5CZieAkqLSVW_ybIaYC-2" edge="1" parent="1" source="v3-v2-48" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=0;" target="v3-avkGR2KAVnRDBUsB1lYO-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="330" as="sourcePoint" />
+            <mxPoint x="350" y="703" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

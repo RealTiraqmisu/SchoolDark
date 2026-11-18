@@ -1,11 +1,11 @@
 <mxfile host="Electron">
   <diagram id="stf" name="งานบุคลากร · แฟ้มประวัติ">
-    <mxGraphModel dx="2828" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1414" pageHeight="988" math="0" shadow="0" adaptiveColors="auto">
+    <mxGraphModel dx="4360" dy="1752" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1414" pageHeight="988" math="0" shadow="0" adaptiveColors="auto">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="F1" parent="1" style="swimlane;rounded=1;arcSize=4;startSize=50;html=1;whiteSpace=wrap;align=left;spacingLeft=16;fillColor=#1f3a5f;strokeColor=#1f3a5f;strokeWidth=2;swimlaneFillColor=#ffffff;fontColor=#ffffff;fontStyle=1;fontFamily=TH SarabunPSK;fontSize=30;" value="ตั้งค่าก่อนเริ่ม · หัวหน้างานบุคคล" vertex="1">
-          <mxGeometry height="146" width="1374" x="20" y="20" as="geometry" />
+          <mxGeometry height="146" width="1374" x="-1394" y="30" as="geometry" />
         </mxCell>
         <mxCell id="set" parent="F1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontFamily=TH SarabunPSK;fontSize=30;" value="ตั้งค่า ประเภทบุคลากร · ตำแหน่ง · แผนก/กลุ่มสาระ" vertex="1">
           <mxGeometry height="56" width="640" x="20" y="70" as="geometry" />

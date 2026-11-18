@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="RUttlcqocq81EaN6r7x-" name="ER แบบ Chen Symbol">
-        <mxGraphModel dx="764" dy="775" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1599" dy="1123" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -41,7 +41,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="pg-chen-hier-admission" name="ER แบบ Chen (ลำดับชั้น) · รับสมัคร (A4)">
-        <mxGraphModel dx="1158" dy="1174" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1671" dy="1174" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -365,7 +365,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="pg-chen-hier-registry" name="ER แบบ Chen (ลำดับชั้น) · ทะเบียนนักเรียน (A4)">
-        <mxGraphModel dx="1175" dy="2361" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1697" dy="2361" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -768,7 +768,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="pg-chen-hier-school-1" name="ER แบบ Chen (ลำดับชั้น) · ตั้งค่าโรงเรียนและตารางอ้างอิงกลาง (1/2) (A4)">
-        <mxGraphModel dx="1175" dy="2361" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1697" dy="2361" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -1121,7 +1121,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="pg-chen-hier-school-2" name="ER แบบ Chen (ลำดับชั้น) · ตั้งค่าโรงเรียนและตารางอ้างอิงกลาง (2/2) (A4)">
-        <mxGraphModel dx="1194" dy="2380" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1723" dy="2380" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -1396,7 +1396,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="pg-chen-hier-staff" name="ER แบบ Chen (ลำดับชั้น) · บุคลากร (A4)">
-        <mxGraphModel dx="1389" dy="2578" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2005" dy="2578" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -1821,7 +1821,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="pg-chen-hier-staffsetting" name="ER แบบ Chen (ลำดับชั้น) · ตั้งค่าบุคลากร (A4)">
-        <mxGraphModel dx="1252" dy="2439" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1808" dy="2439" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>

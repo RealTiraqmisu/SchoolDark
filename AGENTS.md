@@ -15,9 +15,10 @@
 |---|---|
 | `ver-full/` | **diagram หลัก (ต้นฉบับ)** · `erd-by-claude.drawio` แท็บ "ER ทั้งระบบ (ต้นฉบับ · แก้ที่นี่ที่เดียว) v3" + แท็บ draft · `system-architecture.drawio` · `unit3-how-we-work.drawio` |
 | `ver-doc/` | **diagram ที่ใส่เล่ม** (แท็บที่แยกออกมาจากไฟล์หลัก ไฟล์จะได้ไม่บวม) · `erd-er-a4.drawio` (ER A4) · `erd-hierarchical-chen-a4.drawio` (Chen สัญลักษณ์ + Chen ลำดับชั้น A4) |
+| `ver-present/` | ไฟล์ทำสไลด์พรีเซน (ไม่ลงเล่ม) · `ai-workflow-a4.drawio` (รูป 3.5.3 ลำดับการทำงานร่วมกับ AI · ย้ายมาจาก `ver-doc/` 2026-11-16 · plan 245) · `2026-11-16-erd-chen-slide-16x9.drawio` (Chen ฉบับสไลด์) · ผังบุคลากร/ฝ่ายงาน |
 | `erd/` | spec ที่ AI ใช้ตอนสร้าง ER (`md/` เช่น `erd-spec.md` · `docx/` · `script/`) |
 | `usecase/` | `usecase-merge-all.drawio` · `swimlane.drawio` + spec ที่ AI ใช้ (`md/` · `docx/` · `script/`) |
-| `draft/` | ร่างเก่า ไม่ใช่ต้นฉบับ |
+| `draft/` | ร่างเก่า ไม่ใช่ต้นฉบับ · `3.5.3-ai-workflow.md` ร่างเนื้อ 3.5.3 รอเนยสดคอมเมนต์ `(( ))` แล้ววางลง Word (plan 245) |
 
 - แท็บใน `ver-doc/` มีที่เดียว (เอาออกจากไฟล์หลักแล้ว) · **ถ้าแก้ ER ทั้งระบบใน `ver-full/` ต้องแก้แท็บลงเล่มใน `ver-doc/` ตามเอง** ไม่มีอะไร sync ให้
 - copy แท็บระหว่างไฟล์: คัดก้อน `<diagram>` ทั้งก้อนตรงตัว ห้ามแก้ไฟล์ต้นทาง

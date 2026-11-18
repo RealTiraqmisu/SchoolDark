@@ -553,19 +553,16 @@
                 <span class="min-w-0"><span class="block">ดาวน์โหลด Template นำเข้า</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
               </button>
               <div class="my-1 border-t border-slate-200"></div>
-              <div class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600">ส่งออก & พิมพ์</div>
+              <div class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600">ส่งออก</div>
               <!-- task-12: รวม "ส่งออกข้อมูล (Excel)" เดิม + "ส่งออกรายชื่อ (แยกตามห้อง)" + รายงานลาออก/นักเรียนใหม่ เป็นโมดัลเดียว เลือกประเภทข้อมูลในขั้นที่ 1 -->
               <button data-action="export" onclick="triggerExport('filter')" class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
                 <i data-lucide="file-spreadsheet" class="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5"></i>
                 <span class="min-w-0"><span class="block">ส่งออกข้อมูล</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
               </button>
-              <button data-action="printCards" onclick="triggerPrintCards('filter')" class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
+              <!-- ซ่อนไว้ตามที่ noeysod สั่ง (2026-11-18) -->
+              <button data-action="printCards" onclick="triggerPrintCards('filter')" class="hidden w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
                 <i data-lucide="credit-card" class="h-3.5 w-3.5 text-sky-600 shrink-0 mt-0.5"></i>
                 <span class="min-w-0"><span class="block">พิมพ์บัตรประจำตัวนักเรียน</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
-              </button>
-              <button data-action="regis" onclick="triggerRegisExport('filter')" class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
-                <i data-lucide="send" class="h-3.5 w-3.5 text-amber-600 shrink-0 mt-0.5"></i>
-                <span class="min-w-0"><span class="block">ส่งข้อมูล REGIS สช.</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
               </button>
             </div>
           </div>
@@ -581,13 +578,13 @@
 
             <div id="dd-registry" class="absolute right-0 mt-2 w-72 rounded-lg bg-slate-50 border border-slate-200 py-1.5 shadow-2xl hidden text-xs" style="position: absolute; z-index: 99999 !important; background-color: #ffffff !important; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12) !important;">
               <div class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-600">ทะเบียน & สำเร็จการศึกษา</div>
-              <button data-action="cert" onclick="triggerPrintGraduationCert('filter')" class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
-                <i data-lucide="award" class="h-3.5 w-3.5 text-indigo-600 shrink-0 mt-0.5"></i>
-                <span class="min-w-0"><span class="block">ออกเอกสาร ปพ.2 (สำเร็จการศึกษา)</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
-              </button>
               <button data-action="transcript" onclick="triggerPrintTranscript('filter')" class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
                 <i data-lucide="file-text" class="h-3.5 w-3.5 text-blue-600 shrink-0 mt-0.5"></i>
                 <span class="min-w-0"><span class="block">ออกเอกสาร ปพ.1 (Transcript)</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
+              </button>
+              <button data-action="cert" onclick="triggerPrintGraduationCert('filter')" class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
+                <i data-lucide="award" class="h-3.5 w-3.5 text-indigo-600 shrink-0 mt-0.5"></i>
+                <span class="min-w-0"><span class="block">ออกเอกสาร ปพ.2 (สำเร็จการศึกษา)</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
               </button>
               <button data-action="pp3" onclick="triggerPrintPp3('filter')" class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
                 <i data-lucide="list-ordered" class="h-3.5 w-3.5 text-teal-600 shrink-0 mt-0.5"></i>
@@ -597,6 +594,7 @@
                 <i data-lucide="file-check-2" class="h-3.5 w-3.5 text-purple-600 shrink-0 mt-0.5"></i>
                 <span class="min-w-0"><span class="block">ออกเอกสาร ปพ.7 (ใบรับรองผลการศึกษา)</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
               </button>
+              <div class="my-1 border-t border-slate-200"></div>
               <button data-action="enrollCert" onclick="triggerPrintEnrollCert('filter')" class="w-full text-left px-3.5 py-2 text-slate-700 hover:bg-slate-100 hover:text-slate-900 flex items-start gap-2 transition-colors">
                 <i data-lucide="badge-check" class="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5"></i>
                 <span class="min-w-0"><span class="block">หนังสือรับรองการเป็นนักเรียน</span><span class="dd-action-scope block text-[10px] text-slate-500 font-normal leading-tight"></span></span>
